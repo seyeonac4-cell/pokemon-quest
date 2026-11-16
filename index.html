@@ -14,6 +14,8 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <title>포켓몬 퀘스트</title>
 <style>
 /* ============================================================
@@ -385,6 +387,21 @@ ul{margin:0;padding:0;list-style:none}
 .badge.on{background:linear-gradient(180deg,#fffbe8,#fff2c0);border-color:#ffd979;color:#7a5200;box-shadow:0 2px 0 rgba(255,179,0,.2)}
 .badge .b-ico{font-size:13px;filter:grayscale(1);opacity:.5}
 .badge.on .b-ico{filter:none;opacity:1}
+
+/* ---------- 공식 포켓몬 아트워크 ---------- */
+.pk-art{display:block;object-fit:contain;object-position:center;background:transparent;-webkit-user-drag:none;user-select:none}
+.pc-art .pk-art{width:54px;height:54px}
+.partner-art .pk-art{width:76px;height:76px;animation:bob 3.6s ease-in-out infinite}
+.dex-item .pk-art{width:auto;height:auto;max-width:100%;max-height:66%}
+.reveal-stage .pk-art{position:relative;width:150px;height:150px;animation:revealIn .5s cubic-bezier(.2,1.3,.4,1)}
+.evo-from .pk-art{width:74px;height:74px}
+.v-critter .pk-art{width:100%;height:100%}
+.pk-ball{display:block;width:100%;height:100%;opacity:.5}
+.ty{display:inline-flex;align-items:center;font-size:9.5px;font-weight:900;letter-spacing:-.01em;padding:1.5px 6px;border-radius:7px;border:1.5px solid #e6eefc;background:#f4f8ff;color:#5b6b8c;line-height:1.35}
+.ty-wrap{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:5px}
+.partner-name .ty{font-size:9.5px;padding:1px 5px}
+.dex-item .ty-mini{font-size:8.5px;font-weight:900;color:#93a1bc;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dex-no{display:inline-block;font-size:10.5px;font-weight:900;color:#93a1bc;background:#f4f7fd;border:1.5px solid #e7eefa;border-radius:7px;padding:1px 6px;margin-left:5px;vertical-align:2px;letter-spacing:0}
 
 /* ---------- 모달 ---------- */
 .backdrop{
@@ -1016,30 +1033,31 @@ label.btn{cursor:pointer}
     { id: 'weekend', name: '주말 퀘스트', short: '주말', icon: '🏖️' }
   ];
   var RARITY = {
-    common: { label: '노말', cls: 'common', weight: 0.65, refund: 8 },
+    common: { label: '일반', cls: 'common', weight: 0.65, refund: 8 },
     rare: { label: '레어', cls: 'rare', weight: 0.90, refund: 15 },
     legend: { label: '전설', cls: 'legend', weight: 1, refund: 30 }
   };
 
+  /* 실제 포켓몬 도감 — id는 저장된 값(Firebase /family-lim-7660)과 호환되도록 그대로 유지 */
   var CREATURES = [
-    { id: 'fire1', name: '불씨룡', rarity: 'legend', ears: 'flame', body: '#ff8a3d', body2: '#f4511e', belly: '#ffe0a3', accent: '#ffd23f', extra: 'crown', desc: '꼬리에서 작은 불꽃이 피어나요. 겨울에도 따뜻!' },
-    { id: 'water1', name: '물방울이', rarity: 'common', ears: 'fin', body: '#7fd4ff', body2: '#3aa6f0', belly: '#e8f8ff', accent: '#b6ecff', extra: 'none', desc: '깜빡이면 물방울이 동글동글 맺혀요.' },
-    { id: 'leaf1', name: '잎새콩', rarity: 'common', ears: 'leaf', body: '#8fe08a', body2: '#46b95f', belly: '#eaffd9', accent: '#c8f79a', extra: 'spots', desc: '햇살을 먹고 자라는 새싹 친구예요.' },
-    { id: 'bolt1', name: '번개쥐', rarity: 'rare', ears: 'point', body: '#ffe066', body2: '#ffc400', belly: '#fff7d1', accent: '#ff9f1c', extra: 'none', desc: '깜짝 놀라면 볼에서 전기가 찌릿!' },
-    { id: 'cloud1', name: '구름솜', rarity: 'common', ears: 'round', body: '#fdfdff', body2: '#dfe6f7', belly: '#ffffff', accent: '#ffc2d6', extra: 'none', desc: '낮잠 자는 걸 제일 좋아하는 몽실이.' },
-    { id: 'star1', name: '별사탕', rarity: 'rare', ears: 'point', body: '#ffb3e6', body2: '#f062c4', belly: '#fff0fb', accent: '#ffd6ef', extra: 'sparkle', desc: '밤하늘에서 반짝이며 내려왔어요.' },
-    { id: 'wind1', name: '바람개비', rarity: 'common', ears: 'leaf', body: '#a8f0dc', body2: '#38c9ac', belly: '#e7fffa', accent: '#8ff0d2', extra: 'none', desc: '달리면 시원한 바람이 솔솔 불어요.' },
-    { id: 'rock1', name: '돌멩이', rarity: 'common', ears: 'none', body: '#c3c9d6', body2: '#8d96a8', belly: '#eef1f7', accent: '#b0b8c8', extra: 'horn', desc: '느긋하고 단단한 산책 친구.' },
-    { id: 'firefly1', name: '반딧불', rarity: 'rare', ears: 'point', body: '#d9f77a', body2: '#a8d80a', belly: '#feffe6', accent: '#ffe066', extra: 'sparkle', desc: '어두워지면 몸이 반짝반짝 빛나요.' },
-    { id: 'cat1', name: '그림자냥', rarity: 'rare', ears: 'point', body: '#b79cf0', body2: '#7c55d6', belly: '#eee6ff', accent: '#ffe066', extra: 'none', desc: '발소리 없이 살금살금, 숨바꼭질 달인.' },
-    { id: 'rainbow1', name: '무지개뿔', rarity: 'legend', ears: 'round', body: '#ffd9a8', body2: '#ff9ec4', belly: '#fffbe8', accent: '#a8e6ff', extra: 'horn', desc: '비 온 뒤 하늘에 나타나는 전설의 친구.' },
-    { id: 'choco1', name: '초코곰', rarity: 'common', ears: 'round', body: '#d7a06b', body2: '#a96f3d', belly: '#ffeeda', accent: '#ffe0b8', extra: 'none', desc: '간식 냄새를 아주 잘 맡아요.' },
-    { id: 'ice1', name: '얼음방울', rarity: 'common', ears: 'fin', body: '#c9efff', body2: '#7ec8f0', belly: '#f6fdff', accent: '#e3f7ff', extra: 'none', desc: '손으로 잡으면 살랑살랑 시원해요.' },
-    { id: 'sand1', name: '모래여우', rarity: 'rare', ears: 'point', body: '#ffd9a0', body2: '#f0a848', belly: '#fff4e0', accent: '#ffe066', extra: 'spots', desc: '모래사장에서 발자국을 콕콕 찍어요.' },
-    { id: 'heart1', name: '하트콩', rarity: 'common', ears: 'round', body: '#ffb0c4', body2: '#ff6f91', belly: '#fff0f5', accent: '#ff8fab', extra: 'none', desc: '칭찬을 들으면 몸이 분홍빛으로 물들어요.' },
-    { id: 'dragon1', name: '용용이', rarity: 'legend', ears: 'point', body: '#8fe3d6', body2: '#22a8a0', belly: '#e8fffb', accent: '#ffd23f', extra: 'horn', desc: '구름 위를 유유히 나는 아기 용.' },
-    { id: 'mush1', name: '버섯모', rarity: 'common', ears: 'none', body: '#ffc9b0', body2: '#e8896a', belly: '#fff0e8', accent: '#ff6b6b', extra: 'crown', desc: '비 오는 날 제일 신나는 숲속 친구.' },
-    { id: 'sun1', name: '해콩', rarity: 'rare', ears: 'flame', body: '#ffe066', body2: '#ffa726', belly: '#fff6cc', accent: '#ffd23f', extra: 'sparkle', desc: '아침이 되면 창가에 나타나 인사를 해요.' }
+    { id: 'leaf1', dex: 1, name: '이상해씨', types: ['풀', '독'], rarity: 'common', desc: '태어날 때부터 등에 씨앗이 있어요. 그 씨앗은 이상해씨와 함께 자라요.' },
+    { id: 'water1', dex: 7, name: '꼬부기', types: ['물'], rarity: 'common', desc: '등껍질 속에 숨어 몸을 지켜요. 빈틈을 놓치지 않고 물을 쏘아 반격해요.' },
+    { id: 'bolt1', dex: 25, name: '피카츄', types: ['전기'], rarity: 'rare', desc: '꼬리를 세우고 주변을 살펴요. 가끔 꼬리에 번개가 반짝 하고 쳐요.' },
+    { id: 'heart1', dex: 39, name: '푸린', types: ['노말', '페어리'], rarity: 'common', desc: '동그랗고 큰 눈으로 유인해서, 기분 좋은 노래로 잠들게 해요.' },
+    { id: 'cat1', dex: 52, name: '나옹', types: ['노말'], rarity: 'common', desc: '반짝반짝 빛나는 걸 보면 눈이 같이 반짝여요. 한밤중에 몰래 돌아다녀요.' },
+    { id: 'ice1', dex: 54, name: '고라파덕', types: ['물'], rarity: 'common', desc: '항상 머리가 띵～ 두통이 있어요. 두통이 심해지면 이상한 힘을 써요.' },
+    { id: 'mush1', dex: 94, name: '팬텀', types: ['고스트', '독'], rarity: 'common', desc: '그림자에 몸을 숨겨요. 팬텀이 숨어 있는 방은 5도나 차가워진대요.' },
+    { id: 'rock1', dex: 132, name: '메타몽', types: ['노말'], rarity: 'common', desc: '몸의 세포를 다시 만들어서 본 것을 똑같은 모습으로 따라 해요.' },
+    { id: 'choco1', dex: 133, name: '이브이', types: ['노말'], rarity: 'common', desc: '여러 모습으로 진화해서 어떤 환경에도 잘 적응하는 신기한 포켓몬이에요.' },
+    { id: 'cloud1', dex: 143, name: '잠만보', types: ['노말'], rarity: 'common', desc: '하루에 400kg을 먹어도 성에 차지 않아요. 배가 부르면 바로 잠들어요.' },
+    { id: 'dragon1', dex: 149, name: '망나뇽', types: ['드래곤', '비행'], rarity: 'rare', desc: '커다란 몸으로 하늘을 날아요. 지구를 16시간 만에 한 바퀴 돈다고 해요.' },
+    { id: 'sun1', dex: 150, name: '뮤츠', types: ['에스퍼'], rarity: 'legend', desc: '유전자 연구로 태어난 전설의 포켓몬이에요. 엄청난 에스퍼 힘을 가졌어요.' },
+    { id: 'rainbow1', dex: 151, name: '뮤', types: ['에스퍼'], rarity: 'legend', desc: '모든 기술을 쓸 수 있어서 포켓몬의 조상이라고 믿는 학자가 많아요.' },
+    { id: 'firefly1', dex: 175, name: '토게피', types: ['페어리'], rarity: 'rare', desc: '껍질 안에 행복이 가득해요. 상냥하게 대해 주면 행운을 나눠 줘요.' },
+    { id: 'fire1', dex: 384, name: '레쿠쟈', types: ['드래곤', '비행'], rarity: 'legend', desc: '구름보다 훨씬 높은 오존층에 살아서 땅에서는 좀처럼 볼 수 없어요.' },
+    { id: 'wind1', dex: 448, name: '루카리오', types: ['격투', '강철'], rarity: 'rare', desc: '상대가 내는 파동을 느껴서 생각과 움직임을 미리 알아채요.' },
+    { id: 'star1', dex: 700, name: '님피아', types: ['페어리'], rarity: 'rare', desc: '리본 모양 더듬이에서 부드러운 파동을 보내 싸움을 그만두게 해요.' },
+    { id: 'sand1', dex: 906, name: '나오하', types: ['풀'], rarity: 'rare', desc: '앞발에서 달콤한 냄새가 나요. 햇볕 좋은 곳을 좋아하는 풀고양이 포켓몬!' }
   ];
 
   /* 오늘의 영어 속담 (매일 한 개씩 순환) */
@@ -1179,18 +1197,18 @@ label.btn{cursor:pointer}
 
   /* 파트너 포켓몬 — 레벨에 따라 1→2→3단계 진화 */
   var PARTNERS = {
-    c1: {
+    c1: { /* 윤진 — 파이리 → 리자드 → 리자몽 */
       stages: [
-        { name: '불꼬리', tag: '새끼 불꽃', body: '#ffc79a', body2: '#ff9a5c', belly: '#fff5e8', accent: '#ffd23f', ears: 'flame', extra: 'none', desc: '꼬리에 작은 불씨가 살랑살랑.' },
-        { name: '불꽃여우', tag: '성장기', body: '#ffab6b', body2: '#f4702a', belly: '#ffe9cf', accent: '#ffd23f', ears: 'flame', extra: 'horn', desc: '불꽃을 자유롭게 다루는 진화형.' },
-        { name: '화염룡', tag: '최종 진화', body: '#ff8a3d', body2: '#e23a12', belly: '#ffe0a3', accent: '#ffd23f', ears: 'flame', extra: 'crown', desc: '하늘을 나는 전설의 불꽃 용!' }
+        { dex: 4, name: '파이리', types: ['불꽃'], tag: '새끼 불꽃', desc: '꼬리 끝에 작은 불꽃이 타요. 건강할수록 불꽃이 힘차게 타올라요.' },
+        { dex: 5, name: '리자드', types: ['불꽃'], tag: '성장기', desc: '날카로운 발톱과 꼬리를 자유자재로 쓰는 진화형이에요.' },
+        { dex: 6, name: '리자몽', types: ['불꽃', '비행'], tag: '최종 진화', desc: '입에서 뜨거운 불꽃을 뿜으며 하늘을 나는 불꽃 드래곤!' }
       ]
     },
-    c2: {
+    c2: { /* 형원 — 피츄 → 피카츄 → 라이츄 */
       stages: [
-        { name: '물방글', tag: '새끼 물방울', body: '#a9e2ff', body2: '#61bdf5', belly: '#f0fbff', accent: '#b6ecff', ears: 'fin', extra: 'none', desc: '물방울을 동글동글 만들어요.' },
-        { name: '물결이', tag: '성장기', body: '#8ad6ff', body2: '#35a0e8', belly: '#e8f8ff', accent: '#9be3ff', ears: 'fin', extra: 'horn', desc: '파도를 타고 노는 진화형.' },
-        { name: '해룡', tag: '최종 진화', body: '#8fe3d6', body2: '#1f8f9c', belly: '#e8fffb', accent: '#7fd4ff', ears: 'fin', extra: 'crown', desc: '바다를 지키는 전설의 용!' }
+        { dex: 172, name: '피츄', types: ['전기'], tag: '새끼 전기', desc: '뺨의 전기 주머니가 아직 작아서 불티만 톡톡 튀어요.' },
+        { dex: 25, name: '피카츄', types: ['전기'], tag: '성장기', desc: '꼬리로 전기를 모아 볼에서 번쩍번쩍 내뿜어요.' },
+        { dex: 26, name: '라이츄', types: ['전기'], tag: '최종 진화', desc: '긴 꼬리로 번개를 타고 달리는 전기 쥐의 최종 진화!' }
       ]
     }
   };
@@ -1336,10 +1354,76 @@ label.btn{cursor:pointer}
   }
 
   /* ============================================================
-     크리처 SVG (외부 이미지 없이 전부 코드로 그림)
+     크리처 그림 — 공식 아트워크(PokeAPI) 이미지, 없으면 코드로 그린 SVG
      ============================================================ */
-  var svgUid = 0;
+  var DEX_ART = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
+  var DEX_ART_MIRROR = 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/';
+  /* 실물 포켓몬 타입 뱃지 색 */
+  var TYPE_COLOR = {
+    '노말': ['#f3f5f9', '#dde3ec', '#5b6b8c'],
+    '불꽃': ['#fff1e7', '#ffd2b3', '#c2410c'],
+    '물': ['#e9f4ff', '#bcdcff', '#1d4ed8'],
+    '풀': ['#ebfbe7', '#bbe8b0', '#15803d'],
+    '전기': ['#fffce0', '#ffe884', '#a16207'],
+    '에스퍼': ['#ffedf4', '#ffc6da', '#be185d'],
+    '페어리': ['#fff0f7', '#ffcbe2', '#be185d'],
+    '고스트': ['#f2ebff', '#d8c6ff', '#6d28d9'],
+    '독': ['#f8edff', '#e2bcff', '#7e22ce'],
+    '드래곤': ['#efebff', '#cdc0ff', '#4338ca'],
+    '비행': ['#eef7ff', '#c9e3ff', '#0369a1'],
+    '격투': ['#fff0f0', '#ffcccc', '#b91c1c'],
+    '강철': ['#f1f5f8', '#d6dfe7', '#475569'],
+    '바위': ['#f8f2e9', '#e3d1b8', '#92400e'],
+    '땅': ['#faf3e5', '#e8d6ab', '#a16207'],
+    '얼음': ['#effdff', '#c3f3ff', '#0e7490'],
+    '벌레': ['#f5fae1', '#ddeba9', '#4d7c0f'],
+    '악': ['#f3f1f8', '#d2c9df', '#3f3f46']
+  };
+  function typeTag(t) {
+    var c = TYPE_COLOR[t] || TYPE_COLOR['노말'];
+    return '<span class="ty" style="background:' + c[0] + ';border-color:' + c[1] + ';color:' + c[2] + '">' + esc(t) + '</span>';
+  }
+  function typeTags(list) { return (list || []).map(typeTag).join(''); }
+  function pad3(n) { var v = String(n); while (v.length < 3) v = '0' + v; return v; }
+  function dexArtUrl(id) { return DEX_ART + id + '.png'; }
+  function creatureArt(c, cls) {
+    return '<img class="' + (cls || 'art') + ' pk-art" src="' + dexArtUrl(c.dex) + '"'
+      + ' alt="' + esc(c.name) + ' 공식 일러스트" width="475" height="475"'
+      + ' loading="lazy" decoding="async" draggable="false"'
+      + ' data-dex="' + c.dex + '" onerror="pkArtFail(this)">';
+  }
+  /* 그림이 안 뜨면(오프라인·차단) 미러 → 새로고침 재시도 → 몬스터볼 그림 순서로 넘어가요 */
+  function pkArtFail(img) {
+    if (!img) return;
+    var step = Number(img.getAttribute('data-step') || '0');
+    if (step === 0) {
+      img.setAttribute('data-step', '1');
+      setTimeout(function () { if (img.parentNode) img.src = DEX_ART_MIRROR + img.getAttribute('data-dex') + '.png'; }, 350);
+      return;
+    }
+    if (step === 1) {
+      img.setAttribute('data-step', '2');
+      setTimeout(function () { if (img.parentNode) img.src = dexArtUrl(img.getAttribute('data-dex')) + '?r=1'; }, 1500);
+      return;
+    }
+    var box = document.createElement('span');
+    box.innerHTML = '<svg class="' + (img.getAttribute('class') || 'art') + ' pk-ball" viewBox="0 0 100 100"'
+      + ' xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(img.getAttribute('alt') || '포켓몬') + '">'
+      + '<circle cx="50" cy="50" r="34" fill="#f4f8ff" stroke="#c3cfe4" stroke-width="4"/>'
+      + '<path d="M16 50h68" stroke="#c3cfe4" stroke-width="4"/>'
+      + '<circle cx="50" cy="50" r="12" fill="#fff" stroke="#c3cfe4" stroke-width="4"/>'
+      + '<circle cx="50" cy="50" r="4.5" fill="#c3cfe4"/></svg>';
+    if (img.parentNode && box.firstChild) img.parentNode.replaceChild(box.firstChild, img);
+  }
+  /* 인라인 onerror에서 부를 수 있도록 전역에도 올려 둬요 */
+  window.pkArtFail = pkArtFail;
+  /* 공식 아트워크가 있는 포켓몬은 이미지로, 없는 옛 크리처는 SVG로 */
   function creatureSVG(c, cls) {
+    if (c && c.dex) return creatureArt(c, cls);
+    return creatureSVGDraw(c, cls);
+  }
+  var svgUid = 0;
+  function creatureSVGDraw(c, cls) {
     var u = 'g' + (++svgUid);
     var body = c.body, body2 = c.body2 || c.body, belly = c.belly, accent = c.accent;
     var back = '';
@@ -2136,7 +2220,8 @@ label.btn{cursor:pointer}
       + '<div class="partner-art' + (stage === 3 ? ' st3' : '') + '">' + creatureSVG(spec)
       + '<span class="p-badge s' + stage + '" title="' + stage + '단계 진화" aria-label="' + stage + '단계 진화 배지">' + stage + '</span></div>'
       + '<div class="partner-info">'
-      + '<div class="partner-name">' + esc(spec.name) + '<span class="partner-tag">' + esc(spec.tag) + '</span></div>'
+      + '<div class="partner-name">' + esc(spec.name) + '<span class="partner-tag">' + esc(spec.tag) + '</span>'
+      + typeTags(spec.types) + '</div>'
       + '<div class="partner-desc">' + esc(ch.name) + '의 파트너 · ' + esc(spec.desc) + '</div>'
       + '<div class="evo-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div>'
       + '<div class="evo-note"><span>' + note + '</span><span>' + right + '</span></div>'
@@ -2758,7 +2843,9 @@ label.btn{cursor:pointer}
         + ' data-dex="' + esc(c.id) + '" aria-label="' + (owned ? esc(c.name) + ' ' + r.label : '아직 만나지 못한 친구') + '">'
         + '<span class="rar ' + r.cls + '">' + r.label + '</span>'
         + creatureSVG(c)
-        + '<span class="nm">' + (owned ? esc(c.name) : '???') + '</span></button>';
+        + '<span class="nm">' + (owned ? esc(c.name) : '???') + '</span>'
+        + (owned ? '<span class="ty-mini">' + esc(c.types.join(' · ')) + '</span>' : '')
+        + '</button>';
     }).join('');
     html += '</div>'
       + '<div class="bonus-note" style="margin-top:10px">🔮 아직 만나지 못한 친구는 실루엣으로 보여요. 뽑기로 도감을 채워 보세요!</div>'
@@ -2798,7 +2885,7 @@ label.btn{cursor:pointer}
         + creatureSVG(c) + '</div>';
     });
     var stage = stageForLevel(levelInfo(ch.xp).level);
-    critters += '<div class="v-critter" style="left:6%;top:52%;width:46px;height:46px;animation-delay:.2s">'
+    critters += '<div class="v-critter" style="left:5%;top:66%;width:46px;height:46px;animation-delay:.2s">'
       + creatureSVG(partnerSpec(k, stage)) + '</div>';
 
     var html = childSwitchHTML() + '<section class="section"><div class="section-head"><h2>🏡 ' + esc(ch.name) + '의 포켓몬 마을</h2>'
@@ -3090,7 +3177,8 @@ label.btn{cursor:pointer}
         + '<div class="evo-arrow">➜</div>'
         + '<div class="reveal-stage" style="width:150px;height:150px;margin:0"><div class="rays"></div><div class="disc"></div>'
         + creatureSVG(after) + '</div></div>'
-        + '<h3>' + esc(after.name) + '</h3>'
+        + '<h3>' + esc(after.name) + '<span class="dex-no">No.' + pad3(after.dex) + '</span></h3>'
+        + '<div class="ty-wrap">' + typeTags(after.types) + '</div>'
         + '<span class="rar-tag rar legend">' + toStage + '단계 ' + esc(after.tag) + '</span>'
         + '<p class="desc">' + esc(ch.name) + '의 파트너가 진화했어요!<br>' + esc(after.desc) + '</p>'
         + '<div class="new-tag">진화 기념 보너스 🪙 +20</div>'
@@ -3133,7 +3221,8 @@ label.btn{cursor:pointer}
       title: '✨ 뽑기 결과',
       body: '<div class="reveal">'
         + '<div class="reveal-stage"><div class="rays"></div><div class="disc"></div>' + creatureSVG(c) + '</div>'
-        + '<h3>' + esc(c.name) + '</h3>'
+        + '<h3>' + esc(c.name) + '<span class="dex-no">No.' + pad3(c.dex) + '</span></h3>'
+        + '<div class="ty-wrap">' + typeTags(c.types) + '</div>'
         + '<span class="rar-tag rar ' + r.cls + '">' + r.label + '</span>'
         + '<p class="desc">' + esc(c.desc) + '</p>'
         + (isNew
@@ -3613,7 +3702,8 @@ label.btn{cursor:pointer}
       title: owned ? '📖 도감 정보' : '🔮 아직 만나지 못한 친구',
       body: '<div class="reveal">'
         + '<div class="reveal-stage" style="width:150px;height:150px">' + creatureSVG(c) + '</div>'
-        + '<h3>' + (owned ? esc(c.name) : '???') + '</h3>'
+        + '<h3>' + (owned ? esc(c.name) : '???') + '<span class="dex-no">No.' + pad3(c.dex) + '</span></h3>'
+        + '<div class="ty-wrap">' + (owned ? typeTags(c.types) : '') + '</div>'
         + '<span class="rar-tag rar ' + r.cls + '">' + r.label + '</span>'
         + '<p class="desc">' + (owned ? esc(c.desc) : '뽑기로 이 친구를 만나면 도감에 기록돼요.<br>어떤 친구일까요?') + '</p>'
         + '</div>',
