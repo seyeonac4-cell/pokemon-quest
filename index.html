@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#bfefff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>포켓몬 퀘스트 대시보드</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="포켓몬 퀘스트">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>포켓몬 퀘스트</title>
 <style>
 /* ============================================================
    포켓몬 퀘스트 대시보드 — 단일 파일 / 외부 의존성 0
@@ -897,6 +906,18 @@ label.btn{cursor:pointer}
 .qres-btns{display:flex;gap:8px;margin-top:16px}
 .qres-btns .btn{flex:1}
 
+/* 실시간 연결 상태 배지 */
+.sync-badge{
+  position:fixed;left:10px;bottom:calc(10px + var(--safe-b));z-index:70;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:-.02em;
+  background:rgba(255,255,255,.94);border:1.5px solid var(--line);color:var(--ink-2);
+  box-shadow:0 4px 12px rgba(30,42,68,.12);pointer-events:none;
+  transition:border-color .2s,color .2s;
+}
+.sync-badge.on{border-color:#b6ecca;color:#0f7a55}
+.sync-badge.off{border-color:#f0dfb0;color:#8a6b18}
+
 /* 접근성 / 모션 */
 :focus-visible{outline:3px solid #3fa9ff;outline-offset:2px;border-radius:14px}
 @media (prefers-reduced-motion: reduce){
@@ -941,8 +962,13 @@ label.btn{cursor:pointer}
 <main class="wrap" id="app"></main>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+<div class="sync-badge off" id="syncBadge" role="status" aria-live="polite">🟡 오프라인</div>
 <div id="modalRoot"></div>
 <div id="toast" role="status" aria-live="polite"></div>
+
+<!-- 가족 실시간 동기화 (Firebase Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 
 <script>
 /* ============================================================
@@ -954,6 +980,36 @@ label.btn{cursor:pointer}
   var KEY = 'pokemon_quest_dashboard_v2';
   var GACHA_COST = 30;
   var EVOLVE_LEVELS = [4, 8];
+
+  /* ============================================================
+     가족 실시간 동기화 / 알림 설정
+     ============================================================ */
+  var FB_CFG = {
+    apiKey: 'AIzaSyCy_TrcTcwRusSeQH4x3yrGv1bwzi7wBhI',
+    authDomain: 'pokemon-quest-lim.firebaseapp.com',
+    databaseURL: 'https://pokemon-quest-lim-default-rtdb.asia-southeast1.firebasedatabase.app',
+    projectId: 'pokemon-quest-lim',
+    storageBucket: 'pokemon-quest-lim.firebasestorage.app',
+    messagingSenderId: '186869020161',
+    appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
+  };
+  var FB_PATH = 'family-lim-7660';
+  var KID_SLUG = { c1: 'yunjin', c2: 'hyungwon' };
+  var SLUG_KID = { yunjin: 'c1', hyungwon: 'c2' };
+  var NTFY_TOPIC = 'pokemon-quest-lim-7660-k9x2';
+  var NTFY_BASE = 'https://ntfy.sh/';
+  var TOPIC_RE = /^[A-Za-z0-9_-]{3,60}$/;
+
+  /* 초기 샘플 가족톡 메시지 (이제 쓰지 않음 — 예전에 저장된 값이 있으면 지움) */
+  var SAMPLE_CHEER_IDS = { ch1: 1, ch2: 1, ch3: 1 };
+  var SAMPLE_CHEER_TEXTS = [
+    '윤진아 형원아! 오늘도 하나씩 해내는 모습이 정말 멋져 💕',
+    '우리 딸들 오늘도 화이팅! 주말에 맛있는 거 먹으러 가자 🍕',
+    '형원아, 우리 마을에 분수대 같이 만들자! ⛲'
+  ];
+  function isSampleCheer(c) {
+    return !!(c && SAMPLE_CHEER_IDS[c.id] && SAMPLE_CHEER_TEXTS.indexOf(String(c.text || '')) !== -1);
+  }
 
   var DAYS = [
     { id: 'daily', name: '매일 퀘스트', short: '매일', icon: '🗓️' },
@@ -1188,11 +1244,8 @@ label.btn{cursor:pointer}
     ];
   }
   function defaultCheers() {
-    return [
-      { id: 'ch1', from: '엄마', text: '윤진아 형원아! 오늘도 하나씩 해내는 모습이 정말 멋져 💕', at: todayStr(), tm: '오전 7:30', likes: 3, likedBy: [] },
-      { id: 'ch2', from: '아빠', text: '우리 딸들 오늘도 화이팅! 주말에 맛있는 거 먹으러 가자 🍕', at: todayStr(), tm: '오전 8:05', likes: 2, likedBy: [] },
-      { id: 'ch3', from: '윤진', text: '형원아, 우리 마을에 분수대 같이 만들자! ⛲', at: todayStr(), tm: '오후 4:20', likes: 1, likedBy: [] }
-    ];
+    /* 가족톡방은 빈 상태로 시작 (예시 메시지 없음) */
+    return [];
   }
 
   function newChild(k) {
@@ -1211,6 +1264,7 @@ label.btn{cursor:pointer}
       v: 2,
       pin: '0000',
       sound: true,
+      ntfy: { on: true, topic: NTFY_TOPIC },
       active: 'c1',
       date: todayStr(),
       children: { c1: newChild('c1'), c2: newChild('c2') },
@@ -1417,6 +1471,11 @@ label.btn{cursor:pointer}
       v: 2,
       pin: /^\d{4}$/.test(String(s.pin)) ? String(s.pin) : '0000',
       sound: s.sound !== false,
+      ntfy: {
+        on: !(s.ntfy && s.ntfy.on === false),
+        topic: (s.ntfy && typeof s.ntfy.topic === 'string' && TOPIC_RE.test(s.ntfy.topic.trim()))
+          ? s.ntfy.topic.trim() : NTFY_TOPIC
+      },
       active: (s.children && s.children[s.active]) ? s.active : 'c1',
       date: typeof s.date === 'string' ? s.date : todayStr(),
       children: {},
@@ -1493,7 +1552,7 @@ label.btn{cursor:pointer}
       out.rewards = d.rewards;
     }
     if (Array.isArray(s.cheers)) {
-      out.cheers = s.cheers.filter(function (c) { return c && c.text; }).map(function (c) {
+      out.cheers = s.cheers.filter(function (c) { return c && c.text && !isSampleCheer(c); }).map(function (c) {
         return {
           id: c.id || uid('ch'),
           from: String(c.from || '가족').slice(0, 12),
@@ -1519,6 +1578,239 @@ label.btn{cursor:pointer}
   }
   function save() {
     try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 저장 불가 환경 */ }
+    pushSoon();
+  }
+
+  /* ============================================================
+     실시간 동기화 (Firebase Realtime Database)
+     경로: /family-lim-7660
+       kids/yunjin, kids/hyungwon  ← 아이별로 따로 저장 (동시에 체크해도 안 덮어씀)
+       chat/<메시지ID>              ← 가족톡 (메시지 단위로 추가/삭제)
+       settings                     ← 보상 목록 · 보호자 PIN · 알림 설정
+     ============================================================ */
+  var sync = {
+    ready: false,      // firebase SDK 준비됨
+    connected: false,  // 서버와 실제 연결됨
+    gotRemote: false,  // 서버 데이터를 한 번이라도 받음
+    seeded: false,     // 빈 DB에 처음 데이터를 넣었음
+    applying: false,   // 서버값 적용 중 (되쏘기 방지)
+    dirty: false,      // 서버 데이터 받기 전에 생긴 로컬 변경
+    lastJson: '',      // 마지막으로 적용한 서버 스냅샷
+    timer: null,
+    known: { c1: '', c2: '', chat: {}, settings: '' },
+    ref: null
+  };
+
+  function syncBadge(mode) {
+    var el = document.getElementById('syncBadge');
+    if (!el) return;
+    el.className = 'sync-badge ' + (mode === 'on' ? 'on' : 'off');
+    el.textContent = mode === 'on' ? '🟢 가족 실시간 연결됨' : '🟡 오프라인';
+  }
+
+  function childForSend(k) {
+    var o = JSON.parse(JSON.stringify(state.children[k]));
+    o.day = state.date || todayStr();   // 이 완료 기록이 어느 날짜 것인지
+    return o;
+  }
+  function settingsForSend() {
+    return JSON.parse(JSON.stringify({
+      pin: state.pin,
+      rewards: state.rewards,
+      ntfy: state.ntfy
+    }));
+  }
+  function remember() {
+    sync.known.c1 = JSON.stringify(childForSend('c1'));
+    sync.known.c2 = JSON.stringify(childForSend('c2'));
+    sync.known.settings = JSON.stringify(settingsForSend());
+    sync.known.chat = {};
+    state.cheers.forEach(function (c) { sync.known.chat[c.id] = JSON.stringify(c); });
+  }
+
+  function initSync() {
+    if (typeof firebase === 'undefined' || !firebase.initializeApp) { syncBadge('off'); return; }
+    try {
+      var app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(FB_CFG);
+      var db = app.database();
+      sync.ref = db.ref(FB_PATH);
+      db.ref('.info/connected').on('value', function (s) {
+        sync.connected = !!s.val();
+        syncBadge(sync.connected ? 'on' : 'off');
+        if (sync.connected && sync.gotRemote) pushSoon();
+      });
+      sync.ready = true;
+      sync.ref.on('value', onRemote, function () { syncBadge('off'); });
+    } catch (e) {
+      sync.ready = false;
+      syncBadge('off');
+    }
+    window.addEventListener('online', function () { pushSync(false); });
+    window.addEventListener('offline', function () { syncBadge('off'); });
+  }
+
+  function onRemote(snap) {
+    var v = snap.val();
+    var hasData = !!(v && (v.kids || v.chat || v.settings));
+    if (!hasData) { sync.gotRemote = true; seedRemote(); return; }
+    var stamp = JSON.stringify(v);
+    if (stamp === sync.lastJson) return;
+    if (!sync.gotRemote && sync.dirty) {
+      sync.gotRemote = true;
+      remember();
+      pushSync(true);
+      sync.dirty = false;
+      return;
+    }
+    sync.lastJson = stamp;
+    sync.gotRemote = true;
+    applyRemote(v);
+  }
+
+  /* 서버가 비어 있을 때만 지금 상태를 처음 값으로 넣음 */
+  function seedRemote() {
+    if (!sync.ref || sync.seeded) return;
+    sync.seeded = true;
+    var out = {};
+    ['c1', 'c2'].forEach(function (k) { out['kids/' + KID_SLUG[k]] = childForSend(k); });
+    out.settings = settingsForSend();
+    state.cheers.forEach(function (c) { out['chat/' + c.id] = c; });
+    remember();
+    sync.ref.update(out).catch(function () { sync.seeded = false; });
+  }
+
+  function applyRemote(v) {
+    sync.applying = true;
+    var kids = v.kids || {};
+    var rawKids = {};
+    ['c1', 'c2'].forEach(function (k) {
+      var raw = kids[KID_SLUG[k]];
+      if (!raw || typeof raw !== 'object') return;
+      raw = JSON.parse(JSON.stringify(raw));
+      if (raw.day && raw.day !== todayStr()) {
+        raw.done = {};
+        raw.lastAllPrev = null;
+        raw.bonus90 = null;
+        raw.academy = null;
+      }
+      rawKids[k] = raw;
+    });
+    var chats = [];
+    if (v.chat && typeof v.chat === 'object') {
+      Object.keys(v.chat).forEach(function (id) {
+        var c = v.chat[id];
+        if (c && typeof c === 'object' && c.text) {
+          c = JSON.parse(JSON.stringify(c));
+          c.id = c.id || id;
+          if (!isSampleCheer(c)) chats.push(c);
+        }
+      });
+    }
+    var st = v.settings || {};
+    var next = normalize({
+      v: 2,
+      pin: st.pin || state.pin,
+      sound: state.sound,
+      active: state.active,
+      date: state.date,
+      children: rawKids,
+      rewards: Array.isArray(st.rewards) ? st.rewards : state.rewards,
+      cheers: chats,
+      ntfy: st.ntfy || state.ntfy
+    });
+    state.pin = next.pin;
+    state.rewards = next.rewards;
+    state.ntfy = next.ntfy;
+    ['c1', 'c2'].forEach(function (k) { if (rawKids[k]) state.children[k] = next.children[k]; });
+    state.cheers = next.cheers;
+    sync.applying = false;
+    remember();
+    renderSafe();
+  }
+
+  /* 입력 중이면 화면을 건드리지 않음 (커서·글자 유지) */
+  function renderSafe() {
+    var ae = document.activeElement;
+    if (ae && (ae.tagName === 'TEXTAREA' || ae.tagName === 'INPUT' || (ae.tagName === 'SELECT'))) return;
+    try { render(); } catch (e) { /* noop */ }
+  }
+
+  function pushSoon() {
+    if (sync.timer) clearTimeout(sync.timer);
+    sync.timer = setTimeout(function () { sync.timer = null; pushSync(false); }, 90);
+  }
+
+  /* 바뀐 부분만 골라서 서버에 씀 */
+  function pushSync(force) {
+    if (sync.applying) return;
+    if (!sync.ready || !sync.connected) { if (!sync.gotRemote) sync.dirty = true; return; }
+    if (!sync.gotRemote && !sync.seeded) { sync.dirty = true; return; }
+    var out = null;
+    ['c1', 'c2'].forEach(function (k) {
+      var o = childForSend(k);
+      var j = JSON.stringify(o);
+      if (force || sync.known[k] !== j) {
+        out = out || {};
+        out['kids/' + KID_SLUG[k]] = o;
+        sync.known[k] = j;
+      }
+    });
+    var sObj = settingsForSend();
+    var sj = JSON.stringify(sObj);
+    if (force || sync.known.settings !== sj) {
+      out = out || {};
+      out.settings = sObj;
+      sync.known.settings = sj;
+    }
+    var seen = {};
+    state.cheers.forEach(function (c) {
+      seen[c.id] = 1;
+      var j = JSON.stringify(c);
+      if (force || sync.known.chat[c.id] !== j) {
+        out = out || {};
+        out['chat/' + c.id] = c;
+        sync.known.chat[c.id] = j;
+      }
+    });
+    Object.keys(sync.known.chat).forEach(function (id) {
+      if (!seen[id]) {
+        out = out || {};
+        out['chat/' + id] = null;
+        delete sync.known.chat[id];
+      }
+    });
+    if (!out) return;
+    sync.ref.update(out).catch(function () { /* 오프라인이면 다음에 다시 */ });
+  }
+
+  /* ============================================================
+     ntfy.sh 푸시 알림 (가족 휴대폰)
+     헤더를 쓰지 않고 본문 첫 줄을 제목처럼 보냅니다 (CORS preflight 회피)
+     ============================================================ */
+  function josa(word, withBatchim, noBatchim) {
+    var s = String(word == null ? '' : word).trim();
+    if (!s) return withBatchim;
+    var c = s.charCodeAt(s.length - 1);
+    if (c < 0xAC00 || c > 0xD7A3) return noBatchim;
+    return ((c - 0xAC00) % 28) ? withBatchim : noBatchim;
+  }
+  function ntfyCfg() {
+    var n = state.ntfy || {};
+    var topic = String(n.topic || '').trim();
+    return { on: n.on !== false, topic: TOPIC_RE.test(topic) ? topic : NTFY_TOPIC };
+  }
+  function ntfySend(title, body) {
+    var cfg = ntfyCfg();
+    if (!cfg.on) return;
+    var text = String(title || '') + (body ? '\n' + body : '');
+    try {
+      fetch(NTFY_BASE + encodeURIComponent(cfg.topic), {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-store',
+        body: text
+      }).catch(function () { /* 알림 실패는 화면을 막지 않음 */ });
+    } catch (e) { /* noop */ }
   }
 
   /* 날짜가 바뀌면 오늘 퀘스트를 새로 시작 */
@@ -2283,7 +2575,7 @@ label.btn{cursor:pointer}
     var authors = ['엄마', '아빠', state.children.c1.name, state.children.c2.name];
     var html = '<div class="chat">';
     if (!state.cheers.length) {
-      html += '<div class="chat-empty">아직 메시지가 없어요.<br>가족에게 첫 한마디를 남겨 보세요! 💌</div>';
+      html += '<div class="chat-empty">아직 메시지가 없어요.<br>가족에게 첫 응원 메시지를 남겨보세요! 💌</div>';
     } else {
       var list = state.cheers.slice().sort(function (x, y) { return msgStamp(x) - msgStamp(y); });
       html += list.map(function (c) {
@@ -2332,6 +2624,7 @@ label.btn{cursor:pointer}
     });
     chatDraft = '';
     save();
+    ntfySend('💬 ' + chatFrom + '의 가족톡', '💬 ' + chatFrom + ': ' + text.slice(0, 120));
     SFX.heart();
     burst(window.innerWidth / 2, window.innerHeight * 0.45,
       { count: 26, colors: ['#ff8fab', '#ff5f6d', '#ffd23f', '#ffffff'] });
@@ -2712,6 +3005,11 @@ label.btn{cursor:pointer}
 
     var totalQ = applicableQuests(k).length;
     var pctNow = totalQ ? Math.round((doneCount(k) / totalQ) * 100) : 0;
+
+    /* 가족 휴대폰 알림 */
+    ntfySend('✅ ' + ch.name + ' 퀘스트 완료',
+      ch.name + josa(ch.name, '이가', '가') + " '" + q.title + "'" + josa(q.title, '을', '를')
+      + ' 완료했어요! (오늘 ' + doneCount(k) + '/' + totalQ + ' · ' + pctNow + '%)');
     var allDoneNow = isAllDone(k) && ch.lastAll !== today;
     var hit90 = pctNow >= 90 && ch.bonus90 !== today;
 
@@ -2725,6 +3023,8 @@ label.btn{cursor:pointer}
       ch.bonus90 = today;
       ch.xp += 15;
       ch.coins += 15;
+      ntfySend('🎉 ' + ch.name + ' 90% 달성',
+        ch.name + josa(ch.name, '이가', '가') + ' 오늘 퀘스트 90% 이상을 달성했어요!');
     }
     save();
 
@@ -3136,11 +3436,22 @@ label.btn{cursor:pointer}
       + '<div class="field"><label>새 PIN (숫자 4자리)</label><input type="tel" inputmode="numeric" maxlength="4" id="pinNew" placeholder="예: 1234"></div>'
       + '<button type="button" class="btn btn-sm" data-p="pin-save">PIN 변경</button>';
 
+    var nf = state.ntfy || {};
+    var nfOn = nf.on !== false;
+    h += '<div class="sub-head"><h4>🔔 휴대폰 알림 (ntfy.sh)</h4>'
+      + '<button type="button" class="btn btn-sm ' + (nfOn ? 'btn-primary' : 'btn-ghost') + '" data-p="ntfy-toggle">'
+      + (nfOn ? '🔔 켜짐' : '🔕 꺼짐') + '</button></div>'
+      + '<div class="note">아이가 퀘스트를 완료하거나 가족 톡방에 메시지가 오면 휴대폰으로 알림이 와요.<br>'
+      + '휴대폰에 <b>ntfy</b> 앱을 설치하고 아래 토픽을 구독하면 됩니다. (토픽을 바꾸면 가족 모두 같은 토픽을 구독해야 해요)</div>'
+      + '<div class="field"><label>알림 토픽</label><input type="text" id="ntfyTopic" maxlength="60" value="' + esc(nf.topic || NTFY_TOPIC) + '" autocapitalize="off" autocorrect="off" spellcheck="false"></div>'
+      + '<div class="row-btns"><button type="button" class="btn btn-sm" data-p="ntfy-save">토픽 저장</button>'
+      + '<button type="button" class="btn btn-sm btn-ghost" data-p="ntfy-test">테스트 알림 보내기</button></div>';
+
     h += '<div class="sub-head"><h4>💾 데이터 백업</h4></div>'
       + '<div class="row-btns"><button type="button" class="btn btn-sm" data-p="export">JSON 내보내기</button>'
       + '<label class="btn btn-sm btn-ghost">JSON 가져오기<input type="file" id="importFile" accept=".json,application/json" class="sr"></label></div>'
       + '<div class="note">다른 기기에서 그대로 복원할 수 있어요. 가져오면 지금 기록을 대체해요.</div>'
-      + '<div class="note">데이터는 이 브라우저(localStorage)에만 저장돼요. 브라우저 기록을 지우면 함께 사라지니 가끔 백업해 주세요.</div>';
+      + '<div class="note">가족 폰끼리 실시간으로 같이 바뀌어요. 백업은 만약을 대비한 사본이에요.</div>';
     return h;
   }
 
@@ -3451,6 +3762,30 @@ label.btn{cursor:pointer}
         toast('PIN을 ' + v + '로 바꿨어요');
         return;
       }
+      if (op === 'ntfy-toggle') {
+        state.ntfy = state.ntfy || { topic: NTFY_TOPIC };
+        state.ntfy.on = state.ntfy.on === false;
+        save();
+        renderModal();
+        toast(state.ntfy.on ? '알림을 켰어요' : '알림을 껐어요');
+        return;
+      }
+      if (op === 'ntfy-save') {
+        var tEl = document.getElementById('ntfyTopic');
+        var tv = ((tEl && tEl.value) || '').trim();
+        if (!TOPIC_RE.test(tv)) { toast('영문·숫자·-·_ 로 3~60자 토픽을 입력해 주세요'); return; }
+        state.ntfy = state.ntfy || {};
+        state.ntfy.topic = tv;
+        save();
+        renderModal();
+        toast('알림 토픽을 저장했어요');
+        return;
+      }
+      if (op === 'ntfy-test') {
+        ntfySend('🔔 테스트 알림', '포켓몬 퀘스트 알림이 잘 도착해요!');
+        toast('테스트 알림을 보냈어요');
+        return;
+      }
       if (op === 'export') { exportJSON(); return; }
     }
 
@@ -3540,6 +3875,7 @@ label.btn{cursor:pointer}
   ensureDay();
   initFx();
   render();
+  initSync();
 
   /* 테스트/디버그용 (앱 동작에는 영향 없음) */
   window.__pqd = {
@@ -3558,7 +3894,12 @@ label.btn{cursor:pointer}
     villageItems: VILLAGE_ITEMS,
     setView: function (v) { view = v; render(); },
     setChatFrom: function (a) { chatFrom = a; render(); },
-    todayPct: todayPct
+    todayPct: todayPct,
+    sync: sync,
+    initSync: initSync,
+    pushSync: pushSync,
+    ntfySend: ntfySend,
+    ntfyCfg: ntfyCfg
   };
 })();
 </script>
