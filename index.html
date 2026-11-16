@@ -2924,8 +2924,10 @@ label.btn{cursor:pointer}
       document.body.style.overflow = '';
       document.body.classList.remove('modal-open');
       parentUnlocked = false;
+      pinActive = false;
       return;
     }
+    pinActive = !!modalStack[modalStack.length - 1].pinned;
     var cfg = modalStack[modalStack.length - 1];
     var body = typeof cfg.body === 'function' ? cfg.body() : (cfg.body || '');
     var actions = (cfg.actions && cfg.actions.length)
@@ -3314,13 +3316,16 @@ label.btn{cursor:pointer}
   var pinBuf = '';
   var pinAfter = null;
   var pinMsg = '';
+  var pinActive = false;   // PIN 입력 모달이 떠 있을 때만 숫자 키를 PIN으로 받음
 
   function askPin(reason, after) {
     pinBuf = '';
     pinMsg = '';
+    pinActive = true;
     pinAfter = after || null;
     openModal({
       title: '🔒 보호자 모드',
+      pinned: true,
       body: function () {
         return '<p style="text-align:center;font-size:12px;color:#7b8aa9;font-weight:800">' + esc(reason || '') + '</p>'
           + '<div class="pin-dots">' + [0, 1, 2, 3].map(function (i) {
@@ -3863,7 +3868,7 @@ label.btn{cursor:pointer}
     }
     if (e.key === 'Escape') { closeModal(); return; }
     var top = modalStack[modalStack.length - 1];
-    if (top && top.title && top.title.indexOf('보호자 모드') !== -1) {
+    if (top && top.title && top.title.indexOf('보호자 모드') !== -1 && pinActive) {
       if (/^[0-9]$/.test(e.key)) pinPress(e.key);
       else if (e.key === 'Backspace') pinPress('del');
       else if (e.key === 'Enter') pinPress('ok');
