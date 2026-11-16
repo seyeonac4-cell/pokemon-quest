@@ -1728,12 +1728,26 @@ label.btn{cursor:pointer}
     renderSafe();
   }
 
-  /* 입력 중이면 화면을 건드리지 않음 (커서·글자 유지) */
+  /* 입력 중이면 화면을 건드리지 않음 (커서·글자 유지) — 입력이 끝나면 바뀐 내용을 반영 */
   function renderSafe() {
     var ae = document.activeElement;
-    if (ae && (ae.tagName === 'TEXTAREA' || ae.tagName === 'INPUT' || (ae.tagName === 'SELECT'))) return;
+    if (ae && (ae.tagName === 'TEXTAREA' || ae.tagName === 'INPUT' || (ae.tagName === 'SELECT'))) {
+      sync.pendingRender = true;
+      return;
+    }
+    sync.pendingRender = false;
     try { render(); } catch (e) { /* noop */ }
   }
+  document.addEventListener('focusout', function () {
+    if (!sync.pendingRender) return;
+    setTimeout(function () {
+      if (!sync.pendingRender) return;
+      var ae = document.activeElement;
+      if (ae && (ae.tagName === 'TEXTAREA' || ae.tagName === 'INPUT' || (ae.tagName === 'SELECT'))) return;
+      sync.pendingRender = false;
+      try { render(); } catch (e) { /* noop */ }
+    }, 80);
+  });
 
   function pushSoon() {
     if (sync.timer) clearTimeout(sync.timer);
@@ -3054,7 +3068,7 @@ label.btn{cursor:pointer}
       title: '⚡ 레벨 업!',
       body: '<div class="levelup"><div style="font-size:44px">🎊</div>'
         + '<div class="lv-big">Lv.' + level + '</div>'
-        + '<div class="lv-sub">' + esc(ch.name) + '가 레벨 ' + level + '이 되었어요!<br>파트너도 점점 강해지고 있어요 ⚡</div></div>',
+        + '<div class="lv-sub">' + esc(ch.name) + josa(ch.name, '이가', '가') + ' 레벨 ' + level + josa(String(level), '이', '가') + ' 되었어요!<br>파트너도 점점 강해지고 있어요 ⚡</div></div>',
       actions: [{ label: '멋져요!', cls: 'btn-primary', fn: function () { closeModal(); } }]
     });
   }
