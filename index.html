@@ -1277,6 +1277,24 @@ label.btn{cursor:pointer}
       village: []
     };
   }
+  /* 보호자 모드 — 아이 '성장'만 0으로 되돌려요 (퀘스트 목록·보상·쿠폰·이름은 유지) */
+  function resetGrowth(k) {
+    var ch = state.children[k];
+    if (!ch) return;
+    ch.xp = 0;
+    ch.coins = 0;
+    ch.streak = 0;
+    ch.total = 0;
+    ch.done = {};
+    ch.dex = [];
+    ch.village = [];
+    ch.lastAll = null;
+    ch.lastAllPrev = null;
+    ch.bonus90 = null;
+    ch.academy = null;
+    /* ch.quests · ch.tickets · 이름/학년/아바타는 그대로 둡니다 */
+  }
+
   function defaultState() {
     return {
       v: 2,
@@ -3540,6 +3558,19 @@ label.btn{cursor:pointer}
       + '<button type="button" class="btn btn-sm btn-block btn-ghost" data-p="reset-today">오늘 퀘스트 완료 기록 지우기</button>'
       + '<div class="note">완료 기록만 지우고 XP·코인은 그대로 남겨요.</div>';
 
+    h += '<div class="sub-head"><h4>🔄 아이 성장 초기화</h4></div>';
+    h += ['c1', 'c2'].map(function (k) {
+      var gch = state.children[k];
+      var gli = levelInfo(gch.xp);
+      return '<div class="p-row"><div class="p-main">'
+        + '<div class="p-name">' + esc(gch.avatar) + ' ' + esc(gch.name) + ' <span style="color:var(--muted);font-size:11px">Lv.' + gli.level + '</span></div>'
+        + '<div class="p-meta">⚡ XP ' + gch.xp + ' · 🪙 ' + gch.coins + ' · 📖 도감 ' + gch.dex.length + '/' + CREATURES.length + ' · 🏡 마을 ' + gch.village.length + '</div>'
+        + '</div><div class="p-acts"><button type="button" class="btn btn-sm btn-ghost" data-p="reset-grow" data-k="' + k + '">초기화</button></div></div>';
+    }).join('');
+    h += '<button type="button" class="btn btn-sm btn-block btn-ghost" data-p="reset-grow" data-k="all">두 아이 모두 초기화</button>'
+      + '<div class="note">레벨·XP·코인·도감·마을을 0으로 되돌리고, 오늘 완료 체크와 연속 기록도 지워요. '
+      + '파트너 포켓몬은 1단계로 돌아가요.<br>퀘스트·보상 목록과 상점 쿠폰은 그대로 남아요.</div>';
+
     h += '<div class="sub-head"><h4>🔑 보호자 PIN</h4></div>'
       + '<div class="field"><label>새 PIN (숫자 4자리)</label><input type="tel" inputmode="numeric" maxlength="4" id="pinNew" placeholder="예: 1234"></div>'
       + '<button type="button" class="btn btn-sm" data-p="pin-save">PIN 변경</button>';
@@ -3859,6 +3890,22 @@ label.btn{cursor:pointer}
           });
           save(); render(); renderModal(); toast('오늘 기록을 지웠어요');
         }, '초기화');
+        return;
+      }
+      if (op === 'reset-grow') {
+        var gk = p.getAttribute('data-k');
+        var gks = gk === 'all' ? ['c1', 'c2'] : [gk];
+        var gnames = gks.map(function (x) { return state.children[x].name; }).join(' · ');
+        askConfirm('🔄 아이 성장 초기화',
+          '<b>' + esc(gnames) + '</b>의 성장 기록을 처음으로 되돌릴까요?<br><br>'
+          + '레벨·XP·코인·도감·마을이 0이 되고, 오늘 완료 체크와 연속 기록도 지워져요. '
+          + '파트너 포켓몬도 1단계로 돌아가요.<br><br>'
+          + '<b>퀘스트·보상 목록, 상점 쿠폰은 그대로 남아요.</b>',
+          function () {
+            gks.forEach(function (x) { resetGrowth(x); });
+            save(); render(); renderModal();
+            toast(gnames + ' 성장을 초기화했어요');
+          }, '초기화');
         return;
       }
       if (op === 'pin-save') {
