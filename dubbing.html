@@ -225,6 +225,49 @@ img{display:block}
 .helpcard ol{font-family:var(--ui);font-size:13.5px;line-height:1.7;color:var(--ink2);margin:0 0 12px;padding-left:20px}
 .helpcard .btn{width:100%;justify-content:center}
 footer{text-align:center;font-family:var(--ui);font-size:11.5px;color:var(--muted);margin:18px 0 0;line-height:1.7}
+
+/* ---------- 난이도 필터 · 새 클립 ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 10px}
+.pick .new{
+  position:absolute;left:8px;bottom:8px;padding:2px 8px 3px;border-radius:999px;font-size:10.5px;letter-spacing:.4px;
+  background:linear-gradient(160deg,#ffd75c,#ff9f45);color:#5d3305;box-shadow:0 3px 8px rgba(140,80,10,.28)
+}
+.pick .gv{position:absolute;right:8px;bottom:8px;padding:2px 8px 3px;border-radius:999px;font-size:10.5px;background:rgba(30,20,14,.62);color:#ffe6c4}
+
+/* ---------- 역할(1인다역) ---------- */
+.rolebar{margin:0 0 12px}
+.roles{display:flex;gap:6px;flex-wrap:wrap}
+.role{
+  display:inline-flex;align-items:center;gap:5px;border:2px solid var(--line);background:#fff;border-radius:999px;
+  padding:7px 12px 8px;font-size:13.5px;color:var(--ink2);box-shadow:var(--shadow-s);white-space:nowrap
+}
+.role[aria-pressed="true"]{background:linear-gradient(160deg,#efe8ff,#dcd0ff);border-color:#c8b8fa;color:#553aa8}
+.role .dot{width:8px;height:8px;border-radius:999px;background:#d9cdc0}
+.role[data-has="1"] .dot{background:var(--mint-d)}
+.vrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.vrow .lead{font-family:var(--ui);font-size:11.5px;color:var(--muted)}
+.vsel{display:inline-flex;align-items:center;gap:5px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:3px 8px 3px 10px;box-shadow:var(--shadow-s)}
+.vsel .nm{font-family:var(--ui);font-size:11.5px;font-weight:700;color:var(--ink2);white-space:nowrap}
+.vsel select{font-family:var(--ui);font-size:12px;color:var(--ink);border:0;background:transparent;padding:4px 0;max-width:158px}
+.rolehint{font-family:var(--ui);font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:6px}
+
+/* ---------- 대사 카드: 연기 가이드 · 변조 ---------- */
+.lhead{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lhead .mood{
+  display:inline-flex;align-items:center;gap:4px;font-family:var(--ui);font-size:11px;font-weight:700;
+  padding:2px 8px 3px;border-radius:999px;background:#fff6d9;border:1.5px solid #ffe3a3;color:#8a5a10
+}
+.ln.dim{opacity:.4;filter:saturate(.55)}
+.ln.focus{border-color:#c8b8fa;box-shadow:0 10px 20px rgba(124,98,216,.16)}
+select.vfx{
+  font-family:var(--ui);font-size:12px;color:var(--ink2);border:2px solid var(--line);border-radius:999px;
+  background:#fffdf9;padding:6px 8px;max-width:152px;flex:0 0 auto
+}
+.ln.dim select.vfx{pointer-events:none}
+.scene .mood{
+  display:inline-block;margin-left:6px;padding:1px 7px 2px;border-radius:999px;background:rgba(255,214,92,.92);
+  color:#5d3b06;font-family:var(--ui);font-size:11px;font-weight:700;vertical-align:2px
+}
 </style>
 </head>
 <body>
@@ -238,17 +281,24 @@ footer{text-align:center;font-family:var(--ui);font-size:11.5px;color:var(--mute
   <div class="hero">
     <div>
       <h1>🎬 영어 동화 <em>더빙 스튜디오</em></h1>
-      <p>동화 속 주인공이 되어, 내 목소리로 영어 대사를 입혀 보세요.<br>듣고 → 따라 말하고 → 녹음하고 → 우리만의 더빙 영상 완성!</p>
+      <p>동화 속 주인공이 되어, 내 목소리로 영어 대사를 입혀 보세요.<br>듣고 → 따라 말하고 → 녹음하고 → 우리만의 더빙 영상 완성!<br><b>한 사람이 여러 역할을 맡아 목소리를 바꿔 가며(1인다역) 교차편집</b>할 수도 있어요 🎭</p>
     </div>
   </div>
 
   <section class="card">
-    <div class="sec-head"><span class="num">1</span><h2>어떤 동화로 놀까?</h2><span class="hint" id="pickHint">3편</span></div>
+    <div class="sec-head"><span class="num">1</span><h2>어떤 장면으로 놀까?</h2><span class="hint" id="pickHint">6편</span></div>
+    <div class="filters" id="filters"></div>
     <div class="picker" id="picker"></div>
   </section>
 
   <section class="card">
     <div class="sec-head"><span class="num">2</span><h2>한 줄씩 듣고 따라 말하기</h2><span class="hint" id="recHint">녹음 0/5</span></div>
+
+    <div class="rolebar">
+      <div class="roles" id="roles" role="group" aria-label="역할 선택"></div>
+      <div class="vrow" id="voiceRow"></div>
+      <div class="rolehint" id="roleHint">역할을 고르면 그 역할 대사만 또렷하게 보여요. 목소리를 바꿔 가며 녹음하면 혼자서도 1인다역 대화가 돼요.</div>
+    </div>
 
     <div class="story-bar">
       <div class="ttl"><b id="stTitle">—</b><span id="stSub">—</span></div>
@@ -269,7 +319,7 @@ footer{text-align:center;font-family:var(--ui);font-size:11.5px;color:var(--mute
       <img id="sceneImg" alt="동화 장면">
       <span class="badge" id="sceneBadge">1 / 5</span>
       <div class="cap">
-        <span class="who" id="sceneWho"></span>
+        <span class="who" id="sceneWho"></span><span class="mood" id="sceneMood"></span>
         <span class="en" id="sceneEn"></span>
         <span class="ko" id="sceneKo"></span>
       </div>
@@ -295,7 +345,7 @@ footer{text-align:center;font-family:var(--ui);font-size:11.5px;color:var(--mute
       <button class="btn sky" id="again">↺ 다시 만들기</button>
     </div>
     <video id="vid" controls playsinline preload="metadata"></video>
-    <div class="note">영상은 이 브라우저에서 바로 만들어져요(약 20~40초). 만드는 동안에는 화면을 켜 두고 기다려 주세요. 완성된 파일은 위 버튼으로 저장하면 돼요.</div>
+    <div class="note">영상은 이 브라우저에서 바로 만들어져요(약 20~40초). 만드는 동안에는 화면을 켜 두고 기다려 주세요. 완성된 파일은 위 버튼으로 저장하면 돼요.<br>🎭 역할마다 다른 목소리 변조를 골라 두면, 그 효과가 그대로 섞여서 완성돼요. 녹음하지 않은 상대 역할은 자막 + 안내음(띠링)으로 이어져 대화가 끊기지 않아요.</div>
   </section>
 
   <footer>가족 전용 · 검색에 나오지 않아요<br>만든 사람: 호박이 🐰</footer>
@@ -327,64 +377,143 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const fmt = s => { s = Math.max(0, s || 0); const m = Math.floor(s / 60); const r = Math.round(s % 60); return m + ':' + String(r).padStart(2, '0'); };
 
 /* ============================================================
-   1. 동화 3편
+   1. 장면 6편 (기초 3 + 도전·꿀잼 3)
+   ------------------------------------------------------------
+   mood.e / mood.t : 연기 가이드 (이모지 + 한글 지시)
+   mood.mv         : 캔버스 연출 (shake 흔들림 / flash 섬광 / zoom / spot 조명 / pulse / party)
+   chars[].voice   : 그 역할의 기본 목소리 변조
    ============================================================ */
 const STORIES = [
   {
+    id: 'backpack',
+    group: 'pro', isNew: true,
+    imgSrc: './assets/dubbing/talking-backpack.webp',
+    title: 'The Backpack That Spilled the Beans',
+    koTitle: '책가방이 폭로했다!',
+    level: 2, levelText: 'Lv.2 코믹',
+    tip: '초3', genre: '코믹 학원물',
+    chars: {
+      bag:  { name: 'Baggy', ko: '말하는 책가방', emoji: '🎒', side: 'left',  ax: 0.435, ay: 0.575, voice: 'cute', pitch: 1.5 },
+      joon: { name: 'Joon',  ko: '주인공',       emoji: '🧒', side: 'right', ax: 0.760, ay: 0.400, voice: 'none', pitch: 1.05 },
+      mina: { name: 'Mina',  ko: '짝꿍',         emoji: '👧', side: 'left',  ax: 0.150, ay: 0.560, voice: 'cute', pitch: 1.35 }
+    },
+    lines: [
+      { who: 'bag',  en: 'Hey! Hey! Everybody, listen up!', ko: '야! 야! 다들 들어 봐!', mood: { e: '📢', t: '당당하게!', mv: 'pulse' } },
+      { who: 'joon', en: 'W-wait. Did my backpack just talk?', ko: '자, 잠깐. 내 책가방이 방금 말했어?', mood: { e: '😱', t: '얼떨결에', mv: 'shake' } },
+      { who: 'bag',  en: "Oh, you bet I did. And guess what? It's tattle time!", ko: '그럼, 당연히 말했지. 그리고 있잖아? 폭로 타임이야!', mood: { e: '😈', t: '의기양양하게' } },
+      { who: 'joon', en: 'No, no, no! Baggy, please, not in front of everyone!', ko: '안 돼, 안 돼! Baggy, 제발, 애들 앞에서는!', mood: { e: '🙏', t: '애원하며', mv: 'shake' } },
+      { who: 'bag',  en: 'He played games till midnight and left his homework at home. Boom!', ko: '얘 어제 밤 12시까지 게임하고 숙제는 집에 두고 왔어요. 뿅!', mood: { e: '🎤', t: '폭로하듯', mv: 'flash' } },
+      { who: 'mina', en: "Wait, you didn't do the math homework either? No way!", ko: '잠깐, 너 수학 숙제도 안 했어? 말도 안 돼!', mood: { e: '🤣', t: '어이없다는 듯' } },
+      { who: 'joon', en: "Ugh... fine. I'll do it at lunch. Happy now?", ko: '아... 알았어. 점심시간에 할게. 이제 만족해?', mood: { e: '😩', t: '한숨 쉬며' } },
+      { who: 'bag',  en: "Delighted! Now, who's got a snack for a talking backpack?", ko: '아주 만족! 자, 그럼 말하는 책가방한테 간식 줄 사람?', mood: { e: '😋', t: '능청스럽게', mv: 'party' } }
+    ]
+  },
+  {
+    id: 'cafe',
+    group: 'pro', isNew: true,
+    imgSrc: './assets/dubbing/time-travel-cafe.webp',
+    title: 'The Time-Traveler at the Kiosk',
+    koTitle: '키오스크 앞에 나타난 시간여행자',
+    level: 3, levelText: 'Lv.3 시트콤',
+    tip: '중급 회화', genre: '시트콤 티키타카',
+    chars: {
+      duke: { name: 'Duke', ko: '1800년대 귀족', emoji: '🎩', side: 'left',  ax: 0.170, ay: 0.300, voice: 'radio', pitch: 0.8 },
+      bari: { name: 'Mia',  ko: '바리스타',       emoji: '☕', side: 'right', ax: 0.690, ay: 0.330, voice: 'none',  pitch: 1.15 }
+    },
+    lines: [
+      { who: 'bari', en: 'Hi there! What can I get for you today?', ko: '어서 오세요! 오늘 뭐 드릴까요?', mood: { e: '😊', t: '친절하게' } },
+      { who: 'duke', en: 'Good morrow! I shall require a hot beverage.', ko: '좋은 아침일세! 따뜻한 음료를 하나 청하겠네.', mood: { e: '🎩', t: '비장하게', mv: 'spot' } },
+      { who: 'bari', en: 'Sure thing. Just tap your order on this screen.', ko: '물론이죠. 이 화면에서 주문을 눌러 주세요.', mood: { e: '👉', t: '안내하듯' } },
+      { who: 'duke', en: 'Tap the glass? Is this some kind of sorcery?!', ko: '유리를 누르라고? 이건 일종의 마법인가?!', mood: { e: '😱', t: '충격받아', mv: 'shake' } },
+      { who: 'bari', en: "Hang on, hang on. See this picture? That's a latte.", ko: '잠깐만요, 잠깐만요. 이 사진 보이죠? 이게 라떼예요.', mood: { e: '✋', t: '진정시키며' } },
+      { who: 'duke', en: 'A latte... a most peculiar name for tea.', ko: '라떼... 차에 붙은 아주 기묘한 이름이군.', mood: { e: '🤔', t: '갸웃하며' } },
+      { who: 'bari', en: "Okay, let me order for you. It's a piece of cake.", ko: '좋아요, 제가 주문해 줄게요. 식은 죽 먹기예요.', mood: { e: '😎', t: '능숙하게' } },
+      { who: 'duke', en: "You've got to be kidding me! And I pay with a... glowing box?!", ko: '말도 안 되는 소리! 그리고 이 반짝이는 상자로 낸다고?!', mood: { e: '🤯', t: '경악하며', mv: 'flash' } }
+    ]
+  },
+  {
+    id: 'pizza',
+    group: 'pro', isNew: true,
+    imgSrc: './assets/dubbing/pizza-mission.webp',
+    title: 'Mission: The Last Slice',
+    koTitle: '미션: 마지막 피자 한 조각',
+    level: 4, levelText: 'Lv.4 영화',
+    tip: '도전·성인', genre: '액션 예고편',
+    letterbox: true, endText: 'TO BE CONTINUED...',
+    chars: {
+      narr: { name: 'Narrator', ko: '내레이터',     emoji: '🎙️', side: 'center', ax: 0.500, ay: 0.180, voice: 'radio', pitch: 0.7, narr: true },
+      nova: { name: 'Nova',     ko: '요원',         emoji: '🕶️', side: 'left',  ax: 0.260, ay: 0.560, voice: 'cute',  pitch: 1.25 },
+      rex:  { name: 'Rex',      ko: '라이벌 요원', emoji: '🥊', side: 'right', ax: 0.700, ay: 0.560, voice: 'deep',  pitch: 0.72 }
+    },
+    lines: [
+      { who: 'narr', en: 'In a world where only one slice remains...', ko: '단 한 조각만 남은 세상에서...', mood: { e: '🌍', t: '웅장하게', mv: 'spot' } },
+      { who: 'nova', en: 'This is not a drill! The last slice is in the fridge!', ko: '훈련이 아니야! 마지막 조각이 냉장고에 있어!', mood: { e: '🚨', t: '다급하게', mv: 'shake' } },
+      { who: 'rex',  en: 'Hold your horses, rookie. That slice is mine.', ko: '진정해, 신참. 그 조각은 내 거야.', mood: { e: '😎', t: '여유롭게' } },
+      { who: 'nova', en: 'Whoever gets there first gets the cheese, old man!', ko: '먼저 도착하는 사람이 치즈를 갖는 거야, 아저씨!', mood: { e: '😤', t: '도발하며', mv: 'zoom' } },
+      { who: 'rex',  en: 'Hah! May the fastest hand win!', ko: '하! 가장 빠른 손이 이기는 거지!', mood: { e: '😆', t: '호탕하게', mv: 'shake' } },
+      { who: 'narr', en: 'One fridge. Two agents. Zero mercy.', ko: '냉장고 하나. 요원 둘. 자비는 없습니다.', mood: { e: '🥶', t: '냉정하게', mv: 'spot' } },
+      { who: 'nova', en: 'Wait... where did the slice go?', ko: '잠깐... 피자 어디 갔어?', mood: { e: '😨', t: '허둥지둥' } },
+      { who: 'rex',  en: 'Mom! The fridge door is locked!', ko: '엄마! 냉장고 문이 잠겼어!', mood: { e: '😭', t: '울먹이며', mv: 'flash' } }
+    ]
+  },
+  {
     id: 'bunny',
+    group: 'basic',
     imgSrc: './assets/dubbing/bunny-picnic.webp',
     title: "The Hungry Bunny's Picnic",
     koTitle: '배고픈 토끼의 소풍',
     level: 1, levelText: 'Lv.1 처음',
     tip: '7세',
     chars: {
-      bunny: { name: 'Bunny', ko: '토끼', emoji: '🐰', side: 'left',  ax: 0.370, ay: 0.360 },
-      bear:  { name: 'Bear',  ko: '곰돌이', emoji: '🐻', side: 'right', ax: 0.665, ay: 0.270 }
+      bunny: { name: 'Bunny', ko: '토끼',   emoji: '🐰', side: 'left',  ax: 0.370, ay: 0.360, voice: 'cute', pitch: 1.35 },
+      bear:  { name: 'Bear',  ko: '곰돌이', emoji: '🐻', side: 'right', ax: 0.665, ay: 0.270, voice: 'deep', pitch: 0.8 }
     },
     lines: [
-      { who: 'bunny', en: "Hello, Bear! Let's have a picnic.", ko: '안녕, 곰아! 우리 소풍하자.' },
-      { who: 'bear',  en: 'Yay! I love picnics.', ko: '야호! 나 소풍 정말 좋아해.' },
-      { who: 'bunny', en: 'Look! I have strawberries and carrots.', ko: '봐! 내가 딸기랑 당근을 가져왔어.' },
-      { who: 'bear',  en: 'Can I have one strawberry, please?', ko: '딸기 하나 먹어도 될까?' },
-      { who: 'bunny', en: 'Of course! Sharing is fun.', ko: '그럼! 나누면 더 재밌어.' }
+      { who: 'bunny', en: "Hello, Bear! Let's have a picnic.", ko: '안녕, 곰아! 우리 소풍하자.', mood: { e: '😊', t: '신나게' } },
+      { who: 'bear',  en: 'Yay! I love picnics.', ko: '야호! 나 소풍 정말 좋아해.', mood: { e: '🙌', t: '들뜬 목소리로' } },
+      { who: 'bunny', en: 'Look! I have strawberries and carrots.', ko: '봐! 내가 딸기랑 당근을 가져왔어.', mood: { e: '✨', t: '자랑스럽게' } },
+      { who: 'bear',  en: 'Can I have one strawberry, please?', ko: '딸기 하나 먹어도 될까?', mood: { e: '🥺', t: '조심스럽게' } },
+      { who: 'bunny', en: 'Of course! Sharing is fun.', ko: '그럼! 나누면 더 재밌어.', mood: { e: '💛', t: '따뜻하게' } }
     ]
   },
   {
     id: 'dragon',
+    group: 'basic',
     imgSrc: './assets/dubbing/dragon-egg.webp',
     title: 'The Lost Dragon Egg',
     koTitle: '잃어버린 드래곤의 알',
     level: 2, levelText: 'Lv.2 보통',
     tip: '초3',
     chars: {
-      mina:   { name: 'Mina', ko: '모험가', emoji: '🧒', side: 'left',  ax: 0.365, ay: 0.300 },
-      dragon: { name: 'Dragon', ko: '아기 드래곤', emoji: '🐲', side: 'right', ax: 0.665, ay: 0.590 }
+      mina:   { name: 'Mina',   ko: '모험가',     emoji: '🧒', side: 'left',  ax: 0.365, ay: 0.300, voice: 'none',  pitch: 1.1 },
+      dragon: { name: 'Dragon', ko: '아기 드래곤', emoji: '🐲', side: 'right', ax: 0.665, ay: 0.590, voice: 'cute',  pitch: 1.5 }
     },
     lines: [
-      { who: 'mina',   en: 'Wow! What is that shiny thing in the cave?', ko: '와! 동굴 안에 저 반짝이는 게 뭐지?' },
-      { who: 'dragon', en: 'Peep, peep! Hello, little human.', ko: '삐약, 삐약! 안녕, 꼬마 인간아.' },
-      { who: 'mina',   en: 'You hatched from this golden egg! Are you lost?', ko: '네가 이 황금알에서 태어났구나! 길을 잃었어?' },
-      { who: 'dragon', en: 'My family lives far away, on the mountain of clouds.', ko: '우리 가족은 아주 멀리, 구름 산에 살아.' },
-      { who: 'mina',   en: "Don't worry. I will help you find them.", ko: '걱정 마. 내가 가족을 찾아 줄게.' }
+      { who: 'mina',   en: 'Wow! What is that shiny thing in the cave?', ko: '와! 동굴 안에 저 반짝이는 게 뭐지?', mood: { e: '🤩', t: '호기심 가득' } },
+      { who: 'dragon', en: 'Peep, peep! Hello, little human.', ko: '삐약, 삐약! 안녕, 꼬마 인간아.', mood: { e: '🐣', t: '작고 가늘게' } },
+      { who: 'mina',   en: 'You hatched from this golden egg! Are you lost?', ko: '네가 이 황금알에서 태어났구나! 길을 잃었어?', mood: { e: '😲', t: '놀라서' } },
+      { who: 'dragon', en: 'My family lives far away, on the mountain of clouds.', ko: '우리 가족은 아주 멀리, 구름 산에 살아.', mood: { e: '😢', t: '시무룩하게' } },
+      { who: 'mina',   en: "Don't worry. I will help you find them.", ko: '걱정 마. 내가 가족을 찾아 줄게.', mood: { e: '💪', t: '씩씩하게' } }
     ]
   },
   {
     id: 'bakery',
+    group: 'basic',
     imgSrc: './assets/dubbing/magic-bakery.webp',
     title: 'Magic Bakery Morning',
     koTitle: '마법 빵집의 아침',
     level: 3, levelText: 'Lv.3 도전',
     tip: '생활 회화',
     chars: {
-      girl:  { name: 'Sora',  ko: '손님', emoji: '👧', side: 'left',  ax: 0.240, ay: 0.580 },
-      baker: { name: 'Baker', ko: '빵집 아저씨', emoji: '👨‍🍳', side: 'right', ax: 0.470, ay: 0.230 }
+      girl:  { name: 'Sora',  ko: '손님',       emoji: '👧', side: 'left',  ax: 0.240, ay: 0.580, voice: 'none',  pitch: 1.25 },
+      baker: { name: 'Baker', ko: '빵집 아저씨', emoji: '👨‍🍳', side: 'right', ax: 0.470, ay: 0.230, voice: 'deep',  pitch: 0.85 }
     },
     lines: [
-      { who: 'girl',  en: 'Good morning! Do you have any fresh bread?', ko: '안녕하세요! 갓 구운 빵 있어요?' },
-      { who: 'baker', en: 'Good morning! It just came out of the oven.', ko: '좋은 아침이에요! 방금 오븐에서 나왔어요.' },
-      { who: 'girl',  en: "It smells amazing. I'll take two, please.", ko: '냄새가 정말 좋아요. 두 개 주세요.' },
-      { who: 'baker', en: 'Anything else? The strawberry cake is on sale.', ko: '더 필요한 건 없나요? 딸기 케이크가 세일 중이에요.' },
-      { who: 'girl',  en: 'Yes, please. And a small milk, too.', ko: '네, 그걸로 주세요. 우유도 작은 걸로 하나요.' }
+      { who: 'girl',  en: 'Good morning! Do you have any fresh bread?', ko: '안녕하세요! 갓 구운 빵 있어요?', mood: { e: '😃', t: '밝게' } },
+      { who: 'baker', en: 'Good morning! It just came out of the oven.', ko: '좋은 아침이에요! 방금 오븐에서 나왔어요.', mood: { e: '🍞', t: '흐뭇하게' } },
+      { who: 'girl',  en: "It smells amazing. I'll take two, please.", ko: '냄새가 정말 좋아요. 두 개 주세요.', mood: { e: '🤤', t: '냄새 맡으며' } },
+      { who: 'baker', en: 'Anything else? The strawberry cake is on sale.', ko: '더 필요한 건 없나요? 딸기 케이크가 세일 중이에요.', mood: { e: '🙂', t: '권하듯' } },
+      { who: 'girl',  en: 'Yes, please. And a small milk, too.', ko: '네, 그걸로 주세요. 우유도 작은 걸로 하나요.', mood: { e: '😊', t: '공손하게' } }
     ]
   }
 ];
@@ -397,19 +526,91 @@ const state = {
   rate: 0.9,
   showEn: true,
   showKo: true,
-  takes: [[], [], []],
+  takes: STORIES.map(s => s.lines.map(() => null)),
+  fx: STORIES.map(s => s.lines.map(() => '')),
+  role: 'all',
+  filt: 'all',
   mic: null,
   rec: null,
   speech: null,
   speechChain: false,
   mineAudio: null,
   mineChain: false,
+  liveSources: [],
   render: null,
   timeline: [],
   total: 0,
   preview: { i: 0, t: 0 },
   videoUrl: null
 };
+
+/* ============================================================
+   1-b. 목소리 변조 프리셋 (Web Audio)
+   ------------------------------------------------------------
+   rate  : 재생 속도 = 피치(음높이). 1보다 크면 높고 빠르게, 작으면 낮고 느리게.
+   filters: 음색 보정 (고음/저음/라디오 대역)
+   echo  : 잔향(라디오·내레이터)
+   ============================================================ */
+const VF = {
+  none:  { label: '🎤 원래 내 목소리', short: '원래 목소리', rate: 1.00, filters: [], echo: 0 },
+  cute:  { label: '🧚 귀여운 하이톤', short: '귀여운 하이톤', rate: 1.38,
+           filters: [{ t: 'highpass', f: 210 }, { t: 'highshelf', f: 2400, g: 6 }], echo: 0 },
+  deep:  { label: '🐻 묵직한 저음', short: '묵직한 저음', rate: 0.80,
+           filters: [{ t: 'lowshelf', f: 250, g: 8 }, { t: 'lowpass', f: 3600 }], echo: 0 },
+  radio: { label: '📻 라디오 내레이터', short: '라디오 톤', rate: 0.97,
+           filters: [{ t: 'highpass', f: 420 }, { t: 'lowpass', f: 3400 }, { t: 'peaking', f: 1500, q: 1.2, g: 5 }], echo: 0.30 }
+};
+const FX_ORDER = ['none', 'cute', 'deep', 'radio'];
+
+/* 그 대사에 실제로 적용될 변조값: 대사별 선택 > 역할 기본값 */
+function effFx(i) {
+  const own = (state.fx[state.story] || [])[i];
+  if (own && VF[own]) return own;
+  const ln = curStory().lines[i];
+  const ch = ln ? curStory().chars[ln.who] : null;
+  return (ch && VF[ch.voice]) ? ch.voice : 'none';
+}
+const fxRateOf = i => VF[effFx(i)].rate;
+
+/* 변조 체인: 입력 → 필터들 → 출력 (+ 잔향) */
+function fxChain(ctx, fxId, dest) {
+  const spec = VF[fxId] || VF.none;
+  const input = ctx.createGain();
+  let tail = input;
+  spec.filters.forEach(f => {
+    const b = ctx.createBiquadFilter();
+    b.type = f.t; b.frequency.value = f.f;
+    if (f.g != null) b.gain.value = f.g;
+    if (f.q != null) b.Q.value = f.q;
+    tail.connect(b); tail = b;
+  });
+  const out = ctx.createGain();
+  tail.connect(out); out.connect(dest);
+  if (spec.echo) {
+    const dly = ctx.createDelay(0.8); dly.delayTime.value = 0.12;
+    const fb = ctx.createGain(); fb.gain.value = 0.20;
+    const wet = ctx.createGain(); wet.gain.value = spec.echo;
+    tail.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(wet); wet.connect(dest);
+  }
+  return { input: input, rate: spec.rate };
+}
+
+/* 녹음 안 한 대사의 자리 표시음 (띠-링) */
+function blip(dest, when, gain) {
+  const ctx = audioCtx();
+  const t0 = when != null ? when : ctx.currentTime + 0.01;
+  [[784, 0], [1046, 0.11]].forEach(pair => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = pair[0];
+    const at = t0 + pair[1];
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(gain || 0.07, at + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0008, at + 0.24);
+    o.connect(g); g.connect(dest);
+    try { o.start(at); o.stop(at + 0.28); } catch (_) {}
+  });
+}
 
 const IMG = {};
 STORIES.forEach(s => {
@@ -443,10 +644,32 @@ $('#help').addEventListener('click', e => { if (e.target.id === 'help') $('#help
 /* ============================================================
    4. 동화 고르기
    ============================================================ */
+function buildFilters() {
+  const wrap = $('#filters');
+  wrap.innerHTML = '';
+  [
+    { id: 'all',   label: '🎬 전체' },
+    { id: 'basic', label: '🌱 기초 (7세·초3)' },
+    { id: 'pro',   label: '🔥 도전·꿀잼 (신규)' }
+  ].forEach(g => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.dataset.f = g.id;
+    b.textContent = g.label;
+    b.setAttribute('aria-pressed', String(state.filt === g.id));
+    b.addEventListener('click', () => { state.filt = g.id; buildFilters(); buildPicker(); });
+    wrap.appendChild(b);
+  });
+}
+
 function buildPicker() {
   const wrap = $('#picker');
   wrap.innerHTML = '';
+  let shown = 0;
   STORIES.forEach((s, i) => {
+    if (state.filt !== 'all' && s.group !== state.filt) return;
+    shown++;
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'pick' + (i === state.story ? ' on' : '');
@@ -454,17 +677,21 @@ function buildPicker() {
     b.setAttribute('aria-pressed', String(i === state.story));
     b.innerHTML =
       '<div class="thumb"><img src="' + s.imgSrc + '" alt="' + esc(s.koTitle) + ' 장면">' +
-      '<span class="lv">' + s.levelText + '</span><span class="done">✓ 녹음</span></div>' +
+      '<span class="lv">' + s.levelText + '</span><span class="done">✓ 녹음</span>' +
+      (s.isNew ? '<span class="new">NEW</span>' : '') +
+      (s.genre ? '<span class="gv">' + esc(s.genre) + '</span>' : '') + '</div>' +
       '<div class="meta"><div class="t-en">' + esc(s.title) + '</div>' +
       '<div class="t-ko">' + esc(s.koTitle) + '</div>' +
       '<div class="t-sub">' + s.lines.length + '문장 · ' + esc(s.tip) + '</div></div>';
     b.addEventListener('click', () => selectStory(i));
     wrap.appendChild(b);
   });
+  $('#pickHint').textContent = shown === STORIES.length ? STORIES.length + '편' : shown + ' / ' + STORIES.length + '편';
   refreshPicker();
 }
 function refreshPicker() {
-  document.querySelectorAll('.pick').forEach((b, i) => {
+  document.querySelectorAll('.pick').forEach(b => {
+    const i = +b.dataset.i;
     const on = i === state.story;
     b.classList.toggle('on', on);
     b.setAttribute('aria-pressed', String(on));
@@ -473,15 +700,102 @@ function refreshPicker() {
   });
 }
 
+/* ---------- 역할(1인다역) 선택 ---------- */
+function buildRoles() {
+  const s = curStory();
+  const wrap = $('#roles');
+  wrap.innerHTML = '';
+  const mk = (id, label, emoji) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'role';
+    b.dataset.role = id;
+    b.innerHTML = '<span>' + emoji + '</span><span>' + esc(label) + '</span><span class="dot"></span>';
+    b.setAttribute('aria-pressed', String(state.role === id));
+    b.addEventListener('click', () => {
+      state.role = id;
+      buildRoles();
+      renderLines();
+      updateRecHint();
+      refreshRoles();
+    });
+    wrap.appendChild(b);
+  };
+  mk('all', '전체 1인다역', '🎭');
+  Object.keys(s.chars).forEach(k => {
+    const ch = s.chars[k];
+    mk(k, ch.name + ' · ' + ch.ko, ch.emoji);
+  });
+
+  // 역할별 기본 목소리 변조
+  const vr = $('#voiceRow');
+  vr.innerHTML = '<span class="lead">🎚️ 역할 기본 목소리</span>';
+  Object.keys(s.chars).forEach(k => {
+    const ch = s.chars[k];
+    const lab = document.createElement('label');
+    lab.className = 'vsel';
+    const nm = document.createElement('span');
+    nm.className = 'nm';
+    nm.textContent = ch.emoji + ' ' + ch.name;
+    const sel = document.createElement('select');
+    sel.dataset.char = k;
+    FX_ORDER.forEach(f => {
+      const o = document.createElement('option');
+      o.value = f; o.textContent = VF[f].label;
+      sel.appendChild(o);
+    });
+    sel.value = VF[ch.voice] ? ch.voice : 'none';
+    sel.addEventListener('change', () => {
+      s.chars[k].voice = sel.value;
+      // 이 역할 대사에 따로 지정해 둔 변조를 지워 역할 기본값을 따르게 한다
+      s.lines.forEach((ln, i) => { if (ln.who === k) state.fx[state.story][i] = ''; });
+      buildTimeline();
+      renderLines();
+      refreshRoles();
+      toast(ch.name + ' 역할 목소리를 ' + VF[sel.value].short + '(으)로 바꿨어요');
+    });
+    lab.appendChild(nm); lab.appendChild(sel);
+    vr.appendChild(lab);
+  });
+  refreshRoles();
+}
+function refreshRoles() {
+  const s = curStory();
+  const takes = curTakes();
+  document.querySelectorAll('.role[data-role]').forEach(b => {
+    const k = b.dataset.role;
+    let has = false;
+    if (k === 'all') has = takes.some(Boolean);
+    else s.lines.forEach((ln, i) => { if (ln.who === k && takes[i]) has = true; });
+    b.dataset.has = has ? '1' : '0';
+    b.setAttribute('aria-pressed', String(state.role === k));
+  });
+  const hint = $('#roleHint');
+  if (hint) {
+    if (state.role === 'all') {
+      const n = takes.filter(Boolean).length;
+      hint.textContent = '역할을 고르면 그 역할 대사만 또렷하게 보여요. 목소리를 바꿔 가며 녹음하면 혼자서도 1인다역 대화가 돼요.';
+      hint.dataset.n = n;
+    } else {
+      const ch = s.chars[state.role];
+      const idx = s.lines.map((ln, i) => ln.who === state.role ? i : -1).filter(i => i >= 0);
+      const n = idx.filter(i => takes[i]).length;
+      hint.textContent = ch.emoji + ' ' + ch.name + ' 역할 ' + n + '/' + idx.length + '문장 녹음 · 기본 목소리 ' + VF[ch.voice || 'none'].short;
+    }
+  }
+}
+
 function selectStory(i) {
   if (i === state.story && state.timeline.length) return;
   stopSpeech(); stopMine();
   if (state.rec) stopRec();
   state.story = i;
+  state.role = 'all';
   state.preview = { i: 0, t: 0 };
   resetVideo();
   refreshPicker();
   renderStoryMeta();
+  buildRoles();
   renderLines();
   buildTimeline();
   updateRecHint();
@@ -503,13 +817,19 @@ function renderLines() {
   wrap.innerHTML = '';
   s.lines.forEach((ln, i) => {
     const ch = s.chars[ln.who];
+    const dim = state.role !== 'all' && ln.who !== state.role;
     const row = document.createElement('div');
-    row.className = 'ln' + (state.preview.i === i ? ' cur' : '');
+    row.className = 'ln' + (state.preview.i === i ? ' cur' : '') + (dim ? ' dim' : (state.role !== 'all' ? ' focus' : ''));
     row.dataset.i = i;
+    const moodHtml = ln.mood
+      ? '<span class="mood">' + ln.mood.e + ' ' + esc(ln.mood.t) + '</span>' : '';
+    const fxOpts = FX_ORDER.map(f =>
+      '<option value="' + f + '"' + (effFx(i) === f ? ' selected' : '') + '>' + VF[f].label + '</option>'
+    ).join('');
     row.innerHTML =
       '<div class="who"><span class="av">' + ch.emoji + '</span><span class="no">' + (i + 1) + '</span></div>' +
       '<div class="body">' +
-        '<div class="nspk">' + esc(ch.name) + ' · ' + esc(ch.ko) + '</div>' +
+        '<div class="lhead"><span class="nspk">' + esc(ch.name) + ' · ' + esc(ch.ko) + '</span>' + moodHtml + '</div>' +
         '<div class="en">' + esc(ln.en) + '</div>' +
         '<div class="ko">' + esc(ln.ko) + '</div>' +
         '<div class="row">' +
@@ -517,6 +837,7 @@ function renderLines() {
           '<button class="btn coral" data-act="rec">🎙️ 녹음</button>' +
           '<button class="btn mint mine" data-act="mine">▶ 내 목소리</button>' +
           '<button class="btn mine" data-act="del" title="이 녹음 지우기">✕</button>' +
+          '<select class="vfx" data-act="fx" aria-label="이 대사 목소리 변조">' + fxOpts + '</select>' +
         '</div>' +
         '<div class="wavebox"><canvas class="wave"></canvas></div>' +
       '</div>' +
@@ -615,6 +936,8 @@ function updateScene() {
   const img = $('#sceneImg');
   if (img.getAttribute('src') !== s.imgSrc) img.setAttribute('src', s.imgSrc);
   $('#sceneWho').textContent = ch.emoji + ' ' + ch.name + ' · ' + ch.ko;
+  $('#sceneMood').textContent = ln.mood ? ln.mood.e + ' ' + ln.mood.t : '';
+  $('#sceneMood').style.display = ln.mood ? 'inline-block' : 'none';
   $('#sceneEn').textContent = ln.en;
   $('#sceneKo').textContent = ln.ko;
   $('#sceneBadge').textContent = (i + 1) + ' / ' + s.lines.length;
@@ -645,6 +968,18 @@ $('#lines').addEventListener('click', e => {
   else if (act === 'del') { dropTake(i); }
 });
 
+/* 이 대사만 목소리 변조 바꾸기 */
+$('#lines').addEventListener('change', e => {
+  const sel = e.target.closest('select[data-act="fx"]');
+  if (!sel) return;
+  const row = sel.closest('.ln');
+  const i = +row.dataset.i;
+  state.fx[state.story][i] = sel.value;
+  buildTimeline();
+  refreshRoles();
+  toast('이 대사 목소리: ' + VF[sel.value].short + ' (' + fmt(Math.max(0, (curTakes()[i] && curTakes()[i].dur || 0) / VF[sel.value].rate)) + ' 예상)');
+});
+
 function refreshCurrent() {
   document.querySelectorAll('.ln').forEach(r => r.classList.toggle('cur', +r.dataset.i === state.preview.i));
   updateScene();
@@ -670,26 +1005,28 @@ function stopSpeech() {
   $('#playAll').textContent = '🔊 원어민 전체 듣기';
   try { window.speechSynthesis.cancel(); } catch (_) {}
 }
-function utter(text, rate) {
+function utter(text, rate, pitch) {
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; u.rate = rate; u.pitch = 1.02; u.volume = 1;
+  u.lang = 'en-US'; u.rate = rate; u.pitch = pitch || 1.02; u.volume = 1;
   const v = pickVoice(); if (v) u.voice = v;
   return u;
 }
-function speak(text, rate, onend) {
+function speak(text, rate, onend, pitch) {
   if (!('speechSynthesis' in window)) { toast('이 브라우저에서는 원어민 목소리가 안 나와요. 크롬에서 열어 보세요.'); return false; }
   stopSpeech();
   try { window.speechSynthesis.cancel(); } catch (_) {}
-  const u = utter(text, rate);
+  const u = utter(text, rate, pitch);
   if (onend) { u.onend = onend; }
   setTimeout(() => { try { window.speechSynthesis.speak(u); } catch (_) {} }, 70);
   return true;
 }
 function playLine(i) {
   const ln = curStory().lines[i];
+  const ch = curStory().chars[ln.who];
   state.preview = { i: i, t: 0 }; refreshCurrent();
   if (state.rec) stopRec();
-  speak(ln.en, state.rate);
+  // 역할마다 목소리 높낚이를 달리해 원어민 예시도 1인다역처럼 들리게
+  speak(ln.en, state.rate, null, ch && ch.pitch ? ch.pitch : 1.02);
 }
 $('#playAll').addEventListener('click', () => {
   if (state.speechChain) { stopSpeech(); return; }
@@ -700,7 +1037,9 @@ $('#playAll').addEventListener('click', () => {
     if (!state.speechChain) return;
     if (i >= lines.length) { stopSpeech(); toast('끝! 이제 따라 말해 볼까요?'); return; }
     state.preview = { i: i, t: 0 }; refreshCurrent();
-    const u = utter(lines[i].en, state.rate);
+    const ln = lines[i];
+    const ch = curStory().chars[ln.who];
+    const u = utter(ln.en, state.rate, ch && ch.pitch ? ch.pitch : 1.02);
     u.onend = () => setTimeout(() => step(i + 1), 620);
     u.onerror = () => setTimeout(() => step(i + 1), 320);
     try { window.speechSynthesis.cancel(); } catch (_) {}
@@ -874,21 +1213,52 @@ function computePeaks(buffer, n) {
   return out.map(v => Math.pow(clamp(v / ref, 0, 1), 0.5));
 }
 
+/* ============================================================
+   7-b. 내 목소리 재생 (목소리 변조 적용)
+   ============================================================ */
+function stopLiveSources() {
+  state.liveSources.forEach(s => { try { s.stop(); } catch (_) {} });
+  state.liveSources = [];
+}
+
 function playTake(i) {
   const tk = curTakes()[i];
   if (!tk) return;
   stopSpeech(); stopMine();
   state.preview = { i: i, t: 0 }; refreshCurrent();
-  const a = new Audio(tk.url);
-  state.mineAudio = { el: a, i: i };
-  const row = $('.ln[data-i="' + i + '"]');
-  a.onended = () => { if (row) refreshRow(i); state.mineAudio = null; };
-  a.play().catch(() => toast('소리를 재생하지 못했어요. 음량을 확인해 주세요.'));
+  const fx = effFx(i);
+  if (tk.buffer) {
+    const ctx = audioCtx();
+    const chain = fxChain(ctx, fx, ctx.destination);
+    const src = ctx.createBufferSource();
+    src.buffer = tk.buffer;
+    src.playbackRate.value = chain.rate;
+    src.connect(chain.input);
+    state.liveSources.push(src);
+    state.mineAudio = { src: src, i: i };
+    const row = $('.ln[data-i="' + i + '"]');
+    src.onended = () => {
+      state.liveSources = state.liveSources.filter(x => x !== src);
+      if (state.mineAudio && state.mineAudio.src === src) state.mineAudio = null;
+      if (row) refreshRow(i);
+    };
+    try { src.start(); } catch (_) { toast('소리를 재생하지 못했어요.'); }
+    if (fx !== 'none') toast(VF[fx].label + ' 으로 들려줘요', 1800);
+  } else {
+    const a = new Audio(tk.url);
+    state.mineAudio = { el: a, i: i };
+    a.onended = () => { state.mineAudio = null; refreshRow(i); };
+    a.play().catch(() => toast('소리를 재생하지 못했어요. 음량을 확인해 주세요.'));
+  }
 }
 function stopMine() {
   state.mineChain = false;
   $('#playMine').textContent = '▶ 내 녹음 전체';
-  if (state.mineAudio) { try { state.mineAudio.el.pause(); } catch (_) {} state.mineAudio = null; }
+  if (state.mineAudio) {
+    try { if (state.mineAudio.el) state.mineAudio.el.pause(); } catch (_) {}
+    state.mineAudio = null;
+  }
+  stopLiveSources();
   document.querySelectorAll('.ln').forEach((_, i) => refreshRow(i));
 }
 $('#playMine').addEventListener('click', () => {
@@ -898,17 +1268,36 @@ $('#playMine').addEventListener('click', () => {
   stopSpeech();
   state.mineChain = true;
   $('#playMine').textContent = '⏹ 멈추기';
+  const lines = curStory().lines;
   const step = i => {
     if (!state.mineChain) return;
-    if (i >= curStory().lines.length) { stopMine(); toast('내 목소리 전체 듣기 끝!'); return; }
+    if (i >= lines.length) { stopMine(); toast('내 목소리 전체 듣기 끝!'); return; }
     state.preview = { i: i, t: 0 }; refreshCurrent();
     const tk = takes[i];
-    if (!tk) { setTimeout(() => step(i + 1), 500); return; }
-    const a = new Audio(tk.url);
-    state.mineAudio = { el: a, i: i };
-    a.onended = () => { state.mineAudio = null; setTimeout(() => step(i + 1), 420); };
-    a.onerror = () => setTimeout(() => step(i + 1), 300);
-    a.play().catch(() => setTimeout(() => step(i + 1), 300));
+    if (!tk || !tk.buffer) {
+      // 녹음 안 한 대사: 안내음으로 자리를 지키고 다음 대사로 넘어간다
+      blip(audioCtx().destination, null, 0.05);
+      setTimeout(() => step(i + 1), 1000);
+      return;
+    }
+    const ctx = audioCtx();
+    const chain = fxChain(ctx, effFx(i), ctx.destination);
+    const src = ctx.createBufferSource();
+    src.buffer = tk.buffer;
+    src.playbackRate.value = chain.rate;
+    src.connect(chain.input);
+    state.liveSources.push(src);
+    const dur = tk.buffer.duration / chain.rate;
+    let moved = false;
+    const next = () => {
+      if (moved) return;
+      moved = true;
+      state.liveSources = state.liveSources.filter(x => x !== src);
+      setTimeout(() => step(i + 1), 420);
+    };
+    src.onended = next;
+    setTimeout(() => { if (state.mineChain) next(); }, (dur + 0.45) * 1000);
+    try { src.start(); } catch (_) { setTimeout(next, 300); }
   };
   step(0);
 });
@@ -920,13 +1309,20 @@ function dropTake(i) {
   curTakes()[i] = null;
   buildTimeline();
   refreshRow(i); refreshPicker(); updateRecHint();
-  toast('이 대사 녹음을 지웠어요.');
-}
+  toast('이 대사 녹음을 지웠어요.');}
 
 function updateRecHint() {
+  const s = curStory();
   const takes = curTakes();
   const n = takes.filter(Boolean).length;
-  $('#recHint').textContent = '녹음 ' + n + '/' + curStory().lines.length;
+  if (state.role !== 'all') {
+    const idx = s.lines.map((ln, i) => ln.who === state.role ? i : -1).filter(i => i >= 0);
+    const k = idx.filter(i => takes[i]).length;
+    $('#recHint').textContent = s.chars[state.role].emoji + ' ' + k + '/' + idx.length + ' · 전체 ' + n + '/' + s.lines.length;
+  } else {
+    $('#recHint').textContent = '녹음 ' + n + '/' + s.lines.length;
+  }
+  refreshRoles();
 }
 
 $('#clearTakes').addEventListener('click', function () {
@@ -954,10 +1350,16 @@ function buildTimeline() {
   const segs = [];
   s.lines.forEach((ln, i) => {
     const tk = takes[i];
+    const fx = effFx(i);
+    const rate = VF[fx].rate;
     const words = ln.en.split(/\s+/).length;
-    const est = Math.max(1.5, (words * 0.52 + 1.0) / Math.max(0.6, state.rate));
-    const dur = tk && tk.dur ? Math.max(tk.dur + 0.6, 1.5) : est;
-    segs.push({ i: i, line: ln, start: t, dur: dur, take: tk || null });
+    const est = Math.max(2.0, (words * 0.52 + 1.0) / Math.max(0.6, state.rate));
+    let dur;
+    if (tk && tk.buffer) dur = tk.buffer.duration / rate + 0.6;
+    else if (tk && tk.dur) dur = tk.dur / rate + 0.6;
+    else dur = est;
+    dur = Math.max(1.6, dur);
+    segs.push({ i: i, line: ln, start: t, dur: dur, take: tk || null, fx: fx, rate: rate });
     t += dur;
   });
   state.timeline = segs;
@@ -1007,7 +1409,7 @@ function ampAt(seg, localT) {
   if (!seg || !seg.take || !seg.take.buffer) return 0.32 + 0.18 * Math.sin(localT * 6.2);
   const b = seg.take.buffer;
   const ch = b.getChannelData(0);
-  const idx = clamp(Math.floor((localT / Math.max(0.01, b.duration)) * ch.length), 0, ch.length - 1);
+  const idx = clamp(Math.floor((localT * (seg.rate || 1) / Math.max(0.01, b.duration)) * ch.length), 0, ch.length - 1);
   let sum = 0, c = 0;
   for (let j = idx; j < Math.min(ch.length, idx + 900); j += 3) { sum += ch[j] * ch[j]; c++; }
   const rms = Math.sqrt(sum / Math.max(1, c));
@@ -1040,6 +1442,7 @@ function drawBubble(seg, t, amp) {
   const s = curStory();
   const ch = s.chars[seg.line.who];
   const right = ch.side === 'right';
+  const center = ch.side === 'center';
   const maxW = 486;
   const text = seg.line.en;
   const padX = 24, nameH = 30, padTop = 16, padBot = 18;
@@ -1066,8 +1469,8 @@ function drawBubble(seg, t, amp) {
   const muted = !seg.take;
   const noteH = muted ? 32 : 0;
   const bh = padTop + nameH + textH + noteH + padBot;
-  const bx = right ? W - 56 - bw : 56;
-  const by = 44;
+  const bx = center ? Math.round((W - bw) / 2) : (right ? W - 56 - bw : 56);
+  const by = 44 + (s.letterbox ? 46 : 0);
 
   // 말꼬리
   const ax = ch.ax * W, ay = ch.ay * H;
@@ -1077,6 +1480,7 @@ function drawBubble(seg, t, amp) {
   FC.strokeStyle = 'rgba(120,92,72,.16)';
   FC.lineWidth = 3;
   const bottomY = by + bh;
+  if (!center) {
   FC.beginPath();
   if (ay >= bottomY - 6) {
     const px = clamp(ax, bx + 30, bx + bw - 30);
@@ -1089,6 +1493,7 @@ function drawBubble(seg, t, amp) {
     FC.moveTo(bx + bw - 3, py - 19); FC.lineTo(bx + bw - 3, py + 19); FC.lineTo(Math.min(ax - 10, bx + bw + 0.22 * W), ay);
   }
   FC.closePath(); FC.fill();
+  }
 
   // 본체
   FC.shadowColor = 'rgba(60,40,25,.28)';
@@ -1097,6 +1502,22 @@ function drawBubble(seg, t, amp) {
   FC.fill();
   FC.shadowColor = 'transparent';
   FC.stroke();
+
+  // 연기 가이드 뱃지 (말풍선 위)
+  if (seg.line.mood) {
+    FC.save();
+    FC.font = "700 19px -apple-system,'Apple SD Gothic Neo',system-ui,sans-serif";
+    const lbl = seg.line.mood.e + ' ' + seg.line.mood.t;
+    const pw = FC.measureText(lbl).width + 26;
+    const px = clamp(bx, 20, W - pw - 20);
+    FC.fillStyle = 'rgba(255,208,74,.96)';
+    roundRect(FC, px, by - 36, pw, 30, 15);
+    FC.fill();
+    FC.fillStyle = '#5d3b06';
+    FC.textAlign = 'left'; FC.textBaseline = 'middle';
+    FC.fillText(lbl, px + 13, by - 20);
+    FC.restore();
+  }
 
   // 이름 + 말하는 표시
   FC.font = '400 26px Jua,"Apple SD Gothic Neo",sans-serif';
@@ -1132,7 +1553,7 @@ function drawBubble(seg, t, amp) {
     FC.font = "600 17px -apple-system,'Apple SD Gothic Neo',system-ui,sans-serif";
     FC.fillStyle = 'rgba(140,118,100,.92)';
     FC.textAlign = 'left'; FC.textBaseline = 'middle';
-    FC.fillText('🔇 내 목소리 없음 · 자막만 나와요', bx + padX, by + padTop + nameH + textH + 16);
+    FC.fillText('🤖 자막 대타 · 안내음이 나와요', bx + padX, by + padTop + nameH + textH + 16);
     FC.restore();
   }
 }
@@ -1153,16 +1574,91 @@ function drawKo(seg) {
   FC.restore();
 }
 
+/* 화자를 비추는 스포트라이트 + 가장자리 어둡게 */
+function drawVignette(strength) {
+  const v = FC.createRadialGradient(W / 2, H * 0.52, H * 0.30, W / 2, H * 0.52, H * 0.92);
+  v.addColorStop(0, 'rgba(14,8,4,0)');
+  v.addColorStop(1, 'rgba(14,8,4,' + (0.55 * clamp(strength == null ? 0.6 : strength, 0, 1)).toFixed(3) + ')');
+  FC.fillStyle = v;
+  FC.fillRect(0, 0, W, H);
+}
+function drawSpotlight(who, mv) {
+  const s = curStory();
+  const ch = s.chars[who] || { ax: 0.5, ay: 0.4 };
+  const cx = ch.ax * W, cy = ch.ay * H - 40;
+  const strong = mv === 'spot' ? 1 : 0.55;
+  const g = FC.createRadialGradient(cx, cy, 30, cx, cy, 620);
+  g.addColorStop(0, 'rgba(255,244,210,' + (0.20 * strong).toFixed(3) + ')');
+  g.addColorStop(1, 'rgba(255,244,210,0)');
+  FC.fillStyle = g;
+  FC.fillRect(0, 0, W, H);
+  drawVignette(strong);
+}
+
+/* 말하는 사람 옆에 튀어오르는 감정 이모지 */
+function drawEmote(ch, mood, local, dur) {
+  if (!mood || !mood.e) return;
+  const pop = clamp(local / 0.24, 0, 1);
+  const fade = clamp((dur - local) / 0.3, 0, 1);
+  if (pop <= 0 || fade <= 0) return;
+  const sc = 0.55 + 0.6 * (1 - Math.pow(1 - pop, 3));
+  const bob = Math.sin(local * 5.4) * 9;
+  const x = ch.side === 'center' ? W * 0.5 : ch.ax * W;
+  const y = ch.side === 'center' ? H * 0.42 : ch.ay * H - 155 + bob;
+  FC.save();
+  FC.globalAlpha = Math.min(1, pop * 1.2) * fade;
+  FC.font = Math.round(92 * sc) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui,sans-serif';
+  FC.textAlign = 'center';
+  FC.textBaseline = 'middle';
+  FC.shadowColor = 'rgba(0,0,0,.5)';
+  FC.shadowBlur = 20;
+  FC.fillText(mood.e, x, y);
+  FC.restore();
+}
+
+/* 축하 장면 색종이 */
+const CONF_COLORS = ['#ff8a6b', '#ffc247', '#8fe0c0', '#8ed2f5', '#b6a2f2', '#ffffff'];
+function drawConfetti(local) {
+  for (let k = 0; k < 32; k++) {
+    const ph = (k * 0.137) % 1;
+    const life = (local * 0.5 + ph) % 1;
+    const x = ((k * 197) % 100) / 100 * W;
+    const y = -20 + life * (H * 0.8);
+    FC.save();
+    FC.globalAlpha = 0.85 * (1 - Math.abs(life - 0.5) * 1.3);
+    FC.translate(x, y);
+    FC.rotate(local * 3 + k);
+    FC.fillStyle = CONF_COLORS[k % CONF_COLORS.length];
+    FC.fillRect(-5, -3, 10, 6);
+    FC.restore();
+  }
+}
+
 function drawFrame(t) {
   const s = curStory();
   const img = IMG[s.id];
+  const LB = s.letterbox ? 46 : 0;
+  const seg = segAt(t);
+  const local = seg ? t - seg.start : 0;
+  const amp = seg ? ampAt(seg, local) : 0.2;
+  const mood = (seg && seg.line.mood) ? seg.line.mood : null;
+  const mv = (mood && mood.mv) ? mood.mv : '';
+
   FC.clearRect(0, 0, W, H);
   FC.fillStyle = '#241a15';
   FC.fillRect(0, 0, W, H);
 
+  // 액션 씬 흔들림
+  const dx = mv === 'shake' ? Math.sin(t * 43) * 5 + Math.sin(t * 27) * 3 : 0;
+  const dy = mv === 'shake' ? Math.cos(t * 37) * 4 : 0;
+  FC.save();
+  FC.translate(dx, dy);
+
   const prog = clamp(t / Math.max(1, state.total), 0, 1);
   if (img && img.complete && img.naturalWidth) {
-    const zoom = 1.035 + 0.055 * prog;
+    const pulse = mv === 'pulse' ? 0.018 * Math.abs(Math.sin(local * 3.4)) : 0;
+    const zoomBoost = mv === 'zoom' ? 0.035 * clamp(local / 0.5, 0, 1) : 0;
+    const zoom = 1.035 + 0.055 * prog + pulse + zoomBoost;
     const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight) * zoom;
     const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
     FC.drawImage(img, (W - dw) / 2, (H - dh) / 2 + Math.sin(t * 0.3) * 5, dw, dh);
@@ -1172,10 +1668,6 @@ function drawFrame(t) {
     FC.fillStyle = g; FC.fillRect(0, 0, W, H);
   }
 
-  const seg = segAt(t);
-  const local = seg ? t - seg.start : 0;
-  const amp = seg ? ampAt(seg, local) : 0.2;
-
   // 위아래 그라데이션
   let g1 = FC.createLinearGradient(0, 0, 0, 190);
   g1.addColorStop(0, 'rgba(30,18,10,.42)'); g1.addColorStop(1, 'rgba(30,18,10,0)');
@@ -1184,11 +1676,31 @@ function drawFrame(t) {
   g2.addColorStop(0, 'rgba(24,14,8,0)'); g2.addColorStop(1, 'rgba(24,14,8,.62)');
   FC.fillStyle = g2; FC.fillRect(0, H - 250, W, 250);
 
+  // 지금 말하는 사람을 비추는 조명
+  if (seg) drawSpotlight(seg.line.who, mv);
+  else drawVignette(0.6);
+
   drawSparkles(t, amp);
 
   if (seg) {
+    drawEmote(s.chars[seg.line.who], mood, local, seg.dur);
+    if (mv === 'party') drawConfetti(local);
     drawBubble(seg, t, amp);
     drawKo(seg);
+  }
+
+  // 섬광 (반전·충격 순간)
+  if (mv === 'flash' && local < 0.24) {
+    FC.fillStyle = 'rgba(255,255,255,' + (0.5 * (1 - local / 0.24)).toFixed(3) + ')';
+    FC.fillRect(-40, -40, W + 80, H + 80);
+  }
+  FC.restore();
+
+  // 영화식 레터박스
+  if (LB) {
+    FC.fillStyle = '#0b0704';
+    FC.fillRect(0, 0, W, LB);
+    FC.fillRect(0, H - LB, W, LB);
   }
 
   // 진행 바
@@ -1206,11 +1718,11 @@ function drawFrame(t) {
     const tag = (seg.i + 1) + ' / ' + s.lines.length;
     const tw = FC.measureText(tag).width + 26;
     FC.fillStyle = 'rgba(30,18,10,.45)';
-    roundRect(FC, W - tw - 26, H - 56, tw, 32, 16);
+    roundRect(FC, W - tw - 26, H - 56 - LB, tw, 32, 16);
     FC.fill();
     FC.fillStyle = 'rgba(255,255,255,.92)';
     FC.textAlign = 'center'; FC.textBaseline = 'middle';
-    FC.fillText(tag, W - tw / 2 - 26, H - 39);
+    FC.fillText(tag, W - tw / 2 - 26, H - 39 - LB);
     FC.restore();
   }
 
@@ -1225,7 +1737,7 @@ function drawFrame(t) {
     FC.font = '400 74px Jua,"Apple SD Gothic Neo",sans-serif';
     FC.fillStyle = '#fff6e2';
     FC.shadowColor = 'rgba(0,0,0,.4)'; FC.shadowBlur = 24;
-    FC.fillText('The End', W / 2, H / 2 - 16);
+    FC.fillText(s.endText || 'The End', W / 2, H / 2 - 16);
     FC.font = "600 26px -apple-system,'Apple SD Gothic Neo',system-ui,sans-serif";
     FC.globalAlpha = a * 0.9;
     FC.fillStyle = '#ffe6c4';
@@ -1319,17 +1831,23 @@ async function startRender() {
   try { rec.start(250); } catch (e) { state.render = null; $('#render').disabled = false; toast('녹화를 시작하지 못했어요.'); return; }
 
   const t0 = ctx.currentTime + 0.12;
+  let miss = 0;
   state.timeline.forEach(seg => {
-    if (!seg.take || !seg.take.buffer) return;
+    if (!seg.take || !seg.take.buffer) {
+      miss++;
+      // 녹음 안 한 상대 역할: 대사 타이밍에 맞춰 안내음만 넣어 교차 대화 흐름을 잇는다
+      blip(dest, t0 + seg.start + 0.08, 0.05);
+      return;
+    }
+    const chain = fxChain(ctx, seg.fx, dest);
     const src = ctx.createBufferSource();
     src.buffer = seg.take.buffer;
-    const g = ctx.createGain();
-    g.gain.value = 1.0;
-    src.connect(g); g.connect(dest);
+    src.playbackRate.value = chain.rate;
+    src.connect(chain.input);
     try { src.start(t0 + seg.start + 0.05); } catch (_) {}
     state.render.sources.push(src);
   });
-  toast('🎬 더빙 영상 만드는 중이에요!', 3000);
+  toast('🎬 더빙 영상 만드는 중이에요!' + (miss ? ' (녹음 안 한 ' + miss + '대사는 자막+안내음)' : ''), 3200);
 }
 
 async function finishRender() {
@@ -1380,8 +1898,10 @@ $('#again').addEventListener('click', () => { resetVideo(); startRender(); });
 /* ============================================================
    12. 시작
    ============================================================ */
+buildFilters();
 buildPicker();
 renderStoryMeta();
+buildRoles();
 renderLines();
 buildTimeline();
 updateRecHint();
@@ -1390,7 +1910,10 @@ requestAnimationFrame(loop);
 drawFrame(0);
 
 /* 검증용 (화면에는 영향 없음) */
-window.__dbg = { state: state, STORIES: STORIES, build: buildTimeline, film: FILM };
+window.__dbg = {
+  state: state, STORIES: STORIES, build: buildTimeline, film: FILM,
+  VF: VF, effFx: effFx, fxChain: fxChain, drawFrame: drawFrame, blip: blip
+};
 </script>
 </body>
 </html>
