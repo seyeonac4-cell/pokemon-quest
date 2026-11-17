@@ -101,7 +101,11 @@ h1 em{font-style:normal;color:var(--mint)}
 .filters{
   position:sticky;top:0;z-index:20;padding:12px 14px 10px;
   background:linear-gradient(180deg,rgba(238,240,247,.97) 62%,rgba(238,240,247,.82) 100%);
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px)
+}
+.filters::after{
+  content:"";position:absolute;right:0;top:0;bottom:0;width:24px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(238,240,247,0),rgba(238,240,247,.98))
 }
 .chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 5px;scrollbar-width:none;-ms-overflow-style:none}
 .chips::-webkit-scrollbar{display:none}
@@ -226,7 +230,7 @@ h1 em{font-style:normal;color:var(--mint)}
       <div class="h-quiet">🤫 층간소음 0dB</div>
     </div>
     <h1>세연님의<br><em>조용한</em> 홈트</h1>
-    <div class="h-sub">뛰지 않아도 충분한 <b>노점핑 홈트</b> · 아이들과 함께하는 성장 홈트까지</div>
+    <div class="h-sub">뛰지 않아도 충분한 <b>노점핑 홈트</b> · 아이들 성장 홈트까지</div>
 
     <div class="stats">
       <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
@@ -403,7 +407,7 @@ function renderList(){
         '<div class="meta">'+
           '<span class="tag t-'+v.category+'">'+CAT_LABEL[v.category]+'</span>'+
           '<div class="title">'+esc(v.title)+'</div>'+
-          '<div class="ch">'+esc(v.channel)+' · '+esc(v.level||"")+'</div>'+
+          '<div class="ch">'+esc(v.channel)+' · <b style="color:#5a6080">'+esc(v.duration)+'</b> · '+esc(v.level||"")+'</div>'+
         '</div>'+
       '</div>'+
       '<div class="card-bottom">'+
