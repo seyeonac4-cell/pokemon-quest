@@ -260,7 +260,7 @@ img{display:block}
     <div class="top">
       <div class="brand">🎀 <b>형원이 티니핑</b></div>
       <span class="sp"></span>
-      <span class="use-chip" id="usePill" role="status" aria-label="화면 사용 시간">⏰ 5:00</span>
+      <span class="use-chip" id="usePill" role="status" aria-label="화면 사용 시간">⏰ 15:00</span>
       <button class="icon-btn" id="btnParent" type="button" aria-label="보호자 메뉴" title="보호자 메뉴">🛡️</button>
     </div>
 
@@ -316,11 +316,11 @@ img{display:block}
   </div>
 </div>
 
-<!-- 5분 사용 시간 종료 -->
+<!-- 15분 사용 시간 종료 -->
 <div class="timeup" id="timeup" aria-hidden="true">
   <div class="timeup-card" role="alertdialog" aria-modal="true" aria-labelledby="tuTitle">
     <span class="tu-clock" aria-hidden="true">⏰</span>
-    <h2 id="tuTitle">5분이 지났어요!</h2>
+    <h2 id="tuTitle">15분이 지났어요!</h2>
     <p>티니핑은 잠깐 쉬어야 해요.<br>눈을 쉬고 엄마·아빠를 불러 주세요 💗</p>
     <button class="tu-btn" id="tuPin" type="button">🔒 보호자 PIN으로 연장하기</button>
     <p class="tu-note">3분 넘게 쉬면 다시 놀 수 있어요</p>
@@ -591,7 +591,7 @@ img{display:block}
   }
 
   /* ============================================================
-     보호자 메뉴 (5분 타이머 새로 시작만)
+     보호자 메뉴 (15분 타이머 새로 시작만)
      ============================================================ */
   function openParent() {
     actx();
@@ -602,7 +602,7 @@ img{display:block}
       emoji: '🛡️',
       title: '보호자 메뉴',
       body: '<div class="menu">'
-        + '<button class="menu-btn" type="button" data-act="p-usage">⏰ 화면 시간 처음부터<small>5분 사용 시간을 새로 시작해요</small></button>'
+        + '<button class="menu-btn" type="button" data-act="p-usage">⏰ 화면 시간 처음부터<small>15분 사용 시간을 새로 시작해요</small></button>'
         + '</div>'
         + '<div class="menu-note">보호자 PIN은 가족 대시보드와 같아요(기본 0000).</div>',
       buttons: [{ label: '닫기', cls: 'ghost', fn: closeOv }]
@@ -620,10 +620,10 @@ img{display:block}
   }
 
   /* ============================================================
-     화면 사용 시간 (5분)
+     화면 사용 시간 (15분)
      ============================================================ */
   var USE_KEY = 'teenieping_usage_v1';
-  var USE_LIMIT = 300, USE_BREAK = 180, USE_WARN = 270;
+  var USE_LIMIT = 900, USE_BREAK = 180, USE_WARN = 840;
   var usage = { acc: 0, last: 0 };
   var useStart = 0, useWarned = false, useUp = false, useTick = null;
 
@@ -684,7 +684,7 @@ img{display:block}
     usage.acc = Math.max(0, useElapsed() - USE_LIMIT);
     useWarned = false;
     hideTimeUp(); useResume(); useSave(); usePaint();
-    toast('5분 더 놀 수 있어요 💗');
+    toast('15분 더 놀 수 있어요 💗');
   }
   function useOnVisible() {
     var now = Date.now();
@@ -699,7 +699,7 @@ img{display:block}
       var e = useElapsed();
       if (!useWarned && e >= USE_WARN && e < USE_LIMIT) {
         useWarned = true;
-        toast('⏰ 곧 5분이에요! 이번 것만 마무리해 볼까요?');
+        toast('⏰ 곧 15분이에요! 이번 것만 마무리해 볼까요?');
       }
       if (e >= USE_LIMIT) { showTimeUp(); return; }
       if (Math.floor(e) % 5 === 0) useFold();
