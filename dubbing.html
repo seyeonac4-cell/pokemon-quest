@@ -173,7 +173,8 @@ img{display:block}
 .ln .row{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:8px 13px 9px;font-size:13.5px;
-  background:#fff;border:2px solid var(--line);color:var(--ink2);box-shadow:var(--shadow-s);white-space:nowrap
+  background:#fff;border:2px solid var(--line);color:var(--ink2);box-shadow:var(--shadow-s);
+  white-space:nowrap;word-break:keep-all;flex:0 0 auto
 }
 .btn:active{transform:translateY(1px)}
 .btn.sky{background:linear-gradient(160deg,#e2f4ff,#c3e9ff);border-color:#a9dcf8;color:#11658c}
@@ -335,7 +336,7 @@ const STORIES = [
     title: "The Hungry Bunny's Picnic",
     koTitle: '배고픈 토끼의 소풍',
     level: 1, levelText: 'Lv.1 처음',
-    tip: '7세 · 처음 시작',
+    tip: '7세',
     chars: {
       bunny: { name: 'Bunny', ko: '토끼', emoji: '🐰', side: 'left',  ax: 0.370, ay: 0.360 },
       bear:  { name: 'Bear',  ko: '곰돌이', emoji: '🐻', side: 'right', ax: 0.665, ay: 0.270 }
@@ -354,7 +355,7 @@ const STORIES = [
     title: 'The Lost Dragon Egg',
     koTitle: '잃어버린 드래곤의 알',
     level: 2, levelText: 'Lv.2 보통',
-    tip: '초3 · 윤진 추천',
+    tip: '초3',
     chars: {
       mina:   { name: 'Mina', ko: '모험가', emoji: '🧒', side: 'left',  ax: 0.365, ay: 0.300 },
       dragon: { name: 'Dragon', ko: '아기 드래곤', emoji: '🐲', side: 'right', ax: 0.665, ay: 0.590 }
@@ -373,7 +374,7 @@ const STORIES = [
     title: 'Magic Bakery Morning',
     koTitle: '마법 빵집의 아침',
     level: 3, levelText: 'Lv.3 도전',
-    tip: '생활 회화 · 엄마와 함께',
+    tip: '생활 회화',
     chars: {
       girl:  { name: 'Sora',  ko: '손님', emoji: '👧', side: 'left',  ax: 0.240, ay: 0.580 },
       baker: { name: 'Baker', ko: '빵집 아저씨', emoji: '👨‍🍳', side: 'right', ax: 0.470, ay: 0.230 }
@@ -627,7 +628,7 @@ document.querySelectorAll('#speedSeg button').forEach(b => {
     state.rate = parseFloat(b.dataset.rate);
     document.querySelectorAll('#speedSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     buildTimeline();
-    toast('속도 ' + b.dataset.rate + 'x');
+    toast('원어민 속도 ' + b.textContent);
   });
 });
 
@@ -847,8 +848,10 @@ function computePeaks(buffer, n) {
     for (let j = s; j < e; j += 2) { const v = ch[j]; sum += v * v; c++; }
     out.push(Math.sqrt(sum / Math.max(1, c)));
   }
-  const max = Math.max.apply(null, out.concat([1e-4]));
-  return out.map(v => Math.pow(clamp(v / max * 1.3, 0, 1), 0.72));
+  // 한 번의 튀는 소리(클릭·기침)가 그래프를 눌러 버리지 않도록 위쪽 8%를 기준으로 맞춘다
+  const sorted = out.slice().sort((a, b) => a - b);
+  const ref = Math.max(1e-5, sorted[Math.floor(n * 0.92)] || 1e-5);
+  return out.map(v => Math.pow(clamp(v / ref, 0, 1), 0.5));
 }
 
 function playTake(i) {
@@ -1040,10 +1043,11 @@ function drawBubble(seg, t, amp) {
   const contentW = Math.max(nameW + 96, textW, 190);
   const bw = Math.min(maxW, Math.ceil(contentW) + padX * 2);
   const textH = (state.showEn && lines.length) ? lines.length * lh + 8 : 0;
-  const bh = padTop + nameH + textH + padBot;
+  const muted = !seg.take;
+  const noteH = muted ? 26 : 0;
+  const bh = padTop + nameH + textH + noteH + padBot;
   const bx = right ? W - 56 - bw : 56;
   const by = 44;
-  const muted = !seg.take;
 
   // 말꼬리
   const ax = ch.ax * W, ay = ch.ay * H;
@@ -1102,18 +1106,13 @@ function drawBubble(seg, t, amp) {
   }
   FC.restore();
 
-  // 녹음 없음 표시
+  // 녹음 없음 표시 (말풍선 안쪽, 흐린 글씨)
   if (muted) {
     FC.save();
     FC.font = "600 17px -apple-system,'Apple SD Gothic Neo',system-ui,sans-serif";
-    const tag = '내 목소리 없음 · 자막만';
-    const tw = FC.measureText(tag).width + 24;
-    FC.fillStyle = 'rgba(58,44,36,.62)';
-    roundRect(FC, bx + bw - tw - 12, by + bh - 6, tw, 30, 15);
-    FC.fill();
-    FC.fillStyle = 'rgba(255,255,255,.92)';
-    FC.textAlign = 'center'; FC.textBaseline = 'middle';
-    FC.fillText(tag, bx + bw - tw / 2 - 12, by + bh + 9);
+    FC.fillStyle = 'rgba(140,118,100,.92)';
+    FC.textAlign = 'left'; FC.textBaseline = 'top';
+    FC.fillText('🔇 내 목소리 없음 · 자막만 나와요', bx + padX, by + padTop + nameH + textH + 4);
     FC.restore();
   }
 }
@@ -1335,6 +1334,14 @@ async function finishRender() {
   if (state.videoUrl) URL.revokeObjectURL(state.videoUrl);
   state.videoUrl = URL.createObjectURL(blob);
   const v = $('#vid');
+  // MediaRecorder가 만든 webm은 길이 정보가 비어 있어 ∞로 보인다 → 한 번 끝까지 감아 길이를 계산시킨 뒤 되돌린다
+  v.onloadedmetadata = () => {
+    if (!isFinite(v.duration)) {
+      v.currentTime = 1e6;
+      const back = () => { v.removeEventListener('timeupdate', back); v.currentTime = 0; };
+      v.addEventListener('timeupdate', back);
+    }
+  };
   v.src = state.videoUrl;
   v.classList.add('on');
   const s = curStory();
