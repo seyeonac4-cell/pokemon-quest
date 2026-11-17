@@ -23,7 +23,7 @@
       "purpose": "any"
     },
     {
-      "src": "./assets/shift/shift-icon-512.png",
+      "src": "assets/shift/shift-icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
