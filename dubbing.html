@@ -1696,10 +1696,11 @@ function drawFrame(t) {
   drawSparkles(t, amp);
 
   if (seg) {
-    drawEmote(s.chars[seg.line.who], mood, local, seg.dur);
-    if (mv === 'party') drawConfetti(local);
     drawBubble(seg, t, amp);
     drawKo(seg);
+    // 감정 이모지는 말풍선보다 위에 그려 가려지지 않게 한다
+    drawEmote(s.chars[seg.line.who], mood, local, seg.dur);
+    if (mv === 'party') drawConfetti(local);
   }
 
   // 섬광 (반전·충격 순간)
