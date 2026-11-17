@@ -200,13 +200,12 @@ img{display:block}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ---------- 사용 시간 ---------- */
-.use-pill{
-  position:fixed;right:12px;bottom:14px;z-index:60;
-  background:#fff;border:2.5px solid #ffd9ec;border-radius:999px;padding:6px 11px;
-  font-size:12.5px;color:#b4578f;box-shadow:0 4px 12px rgba(226,140,183,.2);
+.use-chip{
+  font-size:12px;color:#b4578f;background:#fff;border:2px solid #ffd9ec;border-radius:999px;
+  padding:5px 9px;white-space:nowrap;flex:0 0 auto;
 }
-.use-pill.warn{background:#fff3d9;border-color:#ffd58a;color:#a06a00}
-.use-pill.hot{background:#ffe0e0;border-color:#ffb0b0;color:#b03030}
+.use-chip.warn{background:#fff3d9;border-color:#ffd58a;color:#a06a00}
+.use-chip.hot{background:#ffe0e0;border-color:#ffb0b0;color:#b03030}
 
 /* ---------- 오버레이 ---------- */
 .ov{
@@ -301,14 +300,13 @@ img{display:block}
   <i>💗</i><i>⭐</i><i>✨</i><i>🎀</i><i>💫</i><i>🌸</i><i>💗</i><i>⭐</i>
 </div>
 
-<div class="use-pill" id="usePill" role="status" aria-label="화면 사용 시간">⏰ 5:00</div>
-
 <div class="wrap">
   <header class="hero">
 
     <div class="top">
       <div class="brand">🎀 <b>형원이 티니핑</b></div>
       <span class="sp"></span>
+      <span class="use-chip" id="usePill" role="status" aria-label="화면 사용 시간">⏰ 5:00</span>
       <button class="icon-btn" id="btnParent" type="button" aria-label="보호자 메뉴" title="보호자 메뉴">🛡️</button>
     </div>
 
