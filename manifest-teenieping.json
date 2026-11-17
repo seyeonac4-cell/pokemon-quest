@@ -1,7 +1,7 @@
 {
   "name": "형원이 티니핑",
   "short_name": "티니핑",
-  "description": "형원이 전용 티니핑 놀이터 — 오늘 할 일 체크와 공부 놀이",
+  "description": "형원이 전용 티니핑 공부 놀이터 — 구구단·파닉스·사이트워드",
   "start_url": "./teenieping.html",
   "scope": "./",
   "display": "standalone",

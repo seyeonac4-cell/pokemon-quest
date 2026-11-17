@@ -99,9 +99,9 @@ img{display:block}
 .icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #ffd0e5}
 
 /* ---------- 인사 ---------- */
-.hello{position:relative;display:flex;align-items:center;gap:12px;margin-top:12px;z-index:2}
+.hello{position:relative;display:flex;align-items:center;gap:14px;margin-top:16px;z-index:2}
 .fairy{
-  position:relative;flex:0 0 auto;width:104px;height:104px;border-radius:50%;
+  position:relative;flex:0 0 auto;width:118px;height:118px;border-radius:50%;
   background:radial-gradient(circle at 50% 38%,#fff 0%,#ffe6f4 55%,#eedcff 100%);
   border:3px solid #fff;box-shadow:0 8px 20px rgba(226,140,183,.28),inset 0 0 18px rgba(255,255,255,.9);
   overflow:hidden;padding:0;transition:transform .16s;
@@ -115,77 +115,44 @@ img{display:block}
 .fairy:active{transform:scale(.95)}
 .fairy img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
 .hello-txt{min-width:0}
-.hello-name{font-size:20px;line-height:1.25;color:#a04478;letter-spacing:-.3px}
-.hello-sub{margin-top:3px;font-size:12.5px;color:var(--ink2);line-height:1.4}
-.hearts{
-  position:relative;z-index:2;margin-top:14px;display:flex;align-items:center;gap:10px;
-  background:#fff;border:3px solid #ffd9ec;border-radius:22px;padding:11px 14px;
-  box-shadow:0 5px 0 #ffe4f1;
-}
-.hearts .hh{font-size:26px;line-height:1}
-.hearts .hn{font-size:26px;color:#ef6aa8;line-height:1;min-width:22px;text-align:center}
-.hearts .hl{font-size:13.5px;color:var(--ink2);line-height:1.3}
-.hearts .hl b{display:block;font-size:14.5px;color:#a04478}
-.hearts.pop{animation:pop .4s ease}
-@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+.hello-name{font-size:21px;line-height:1.25;color:#a04478;letter-spacing:-.3px}
+.hello-sub{margin-top:5px;font-size:13px;color:var(--ink2);line-height:1.5}
+.hello-sub b{color:#c05b95}
 
 /* ---------- 공통 카드 ---------- */
 .card{
-  margin-top:14px;background:var(--paper);border:3px solid #fff;border-radius:var(--radius);
+  margin-top:16px;background:var(--paper);border:3px solid #fff;border-radius:var(--radius);
   box-shadow:var(--shadow-s);padding:14px 14px 16px;
 }
-.card-head{display:flex;align-items:center;gap:8px;margin:0 2px 10px}
-.card-head b{font-size:17px;color:#a04478;letter-spacing:-.2px}
-.card-head .cnt{
-  margin-left:auto;font-size:12.5px;color:#c05b95;background:#ffe9f4;border-radius:999px;
-  padding:4px 11px;white-space:nowrap;
-}
-
-/* ---------- 오늘 할 일 ---------- */
-.qlist{display:flex;flex-direction:column;gap:9px}
-.qitem{
-  display:flex;align-items:center;gap:11px;width:100%;text-align:left;
-  padding:13px 12px;border-radius:20px;background:#fff;
-  border:2.5px solid #ffe1ef;box-shadow:0 4px 0 #ffe1ef;
-  transition:transform .1s,background .15s,border-color .15s;
-}
-.qitem:active{transform:translateY(2px);box-shadow:0 2px 0 #ffe1ef}
-.qcheck{
-  flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:#fff5fa;
-  border:2.5px solid #ffc2dd;display:flex;align-items:center;justify-content:center;
-  font-size:17px;color:#fff;line-height:1;
-}
-.qicon{flex:0 0 auto;font-size:25px;line-height:1}
-.qt{flex:1;min-width:0;font-size:17.5px;line-height:1.25;color:var(--ink);letter-spacing:-.2px}
-.qh{flex:0 0 auto;font-size:13px;color:#e57fae;background:#fff0f7;border-radius:999px;padding:3px 8px}
-.qitem.is-done{background:linear-gradient(180deg,#fff0f8,#ffe2f1);border-color:#ffb3d7;box-shadow:0 4px 0 #ffc9e2}
-.qitem.is-done .qcheck{background:linear-gradient(180deg,#ff8fc2,#ef6aa8);border-color:#ef6aa8}
-.qitem.is-done .qt{color:#b06a92}
-.qitem.is-done .qh{background:#fff;color:#c2799f}
-.hint{margin:11px 4px 0;font-size:12px;color:var(--muted);line-height:1.55;text-align:center}
+.card-head{display:flex;align-items:baseline;gap:8px;margin:0 2px 11px}
+.card-head b{font-size:18px;color:#a04478;letter-spacing:-.2px}
+.card-head .sub{margin-left:auto;font-size:12px;color:#c79ab3;white-space:nowrap}
 
 /* ---------- 공부 놀이 ---------- */
-.playlist{display:flex;flex-direction:column;gap:10px}
+.playlist{display:flex;flex-direction:column;gap:11px}
 .play{
-  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
-  padding:15px 16px;border-radius:22px;background:#fff;
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  padding:16px;border-radius:22px;background:#fff;
   border:3px solid #ffe1ef;box-shadow:0 6px 0 #ffe1ef;
   text-decoration:none;color:inherit;transition:transform .1s;
 }
 .play:active{transform:translateY(3px);box-shadow:0 3px 0 #ffe1ef}
 .play .pi{
-  flex:0 0 auto;width:52px;height:52px;border-radius:17px;display:flex;align-items:center;
-  justify-content:center;font-size:27px;line-height:1;background:#fff7fb;
+  flex:0 0 auto;width:56px;height:56px;border-radius:18px;display:flex;align-items:center;
+  justify-content:center;font-size:29px;line-height:1;background:#fff7fb;
 }
 .play .pt{flex:1;min-width:0}
-.play .pt b{display:block;font-size:18.5px;color:var(--ink);letter-spacing:-.2px}
-.play .pt small{display:block;margin-top:2px;font-size:12.5px;color:var(--ink2)}
-.play .go{flex:0 0 auto;font-size:20px;color:#e0a5c6}
+.play .pt b{display:block;font-size:19px;color:var(--ink);letter-spacing:-.2px}
+.play .pt small{display:block;margin-top:3px;font-size:12.5px;color:var(--ink2);line-height:1.35}
+.play .go{flex:0 0 auto;font-size:22px;color:#e0a5c6}
 .play.gugu{border-color:#ffe0a8;box-shadow:0 6px 0 #ffe0a8}
+.play.gugu:active{box-shadow:0 3px 0 #ffe0a8}
 .play.gugu .pi{background:#fff6e3}
-.play.pho{border-color:#b8eeddff;box-shadow:0 6px 0 #b8eedd}
+.play.pho{border-color:#b8eedd;box-shadow:0 6px 0 #b8eedd}
+.play.pho:active{box-shadow:0 3px 0 #b8eedd}
 .play.pho .pi{background:#e9fbf5}
 .play.sight{border-color:#dccdff;box-shadow:0 6px 0 #dccdff}
+.play.sight:active{box-shadow:0 3px 0 #dccdff}
 .play.sight .pi{background:#f2ecff}
 
 .foot{text-align:center;font-size:11px;color:#c9aec3;margin:22px 0 4px}
@@ -226,7 +193,6 @@ img{display:block}
 .ov-card h2{margin:8px 0 6px;font-size:20px;color:#a04478;letter-spacing:-.3px}
 .ov-body{font-size:14.5px;color:var(--ink2);line-height:1.65;text-align:center}
 .ov-body p{margin:7px 0}
-.ov-body .big{font-size:16px;color:var(--ink)}
 .ov-btns{display:flex;gap:9px;margin-top:17px}
 .ov-btns .btn{
   flex:1;padding:13px 10px;border-radius:17px;font-size:15.5px;
@@ -251,18 +217,6 @@ img{display:block}
 .menu-btn small{display:block;margin-top:3px;font-size:12px;color:var(--muted);font-weight:400}
 .menu-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #ffe1ef}
 .menu-note{margin-top:9px;font-size:11.5px;color:var(--muted);line-height:1.55}
-/* 할 일 고치기 */
-.edit-list{display:flex;flex-direction:column;gap:8px;margin-top:6px;text-align:left}
-.edit-row{display:flex;gap:7px;align-items:center}
-.edit-row .ed-ic{width:30px;text-align:center;font-size:20px}
-.edit-row input{
-  flex:1;min-width:0;padding:10px 12px;border:2.5px solid #ffd0e5;border-radius:14px;
-  background:#fff7fb;font-family:inherit;font-size:15px;color:var(--ink);
-}
-.edit-row select{
-  flex:0 0 auto;padding:10px 8px;border:2.5px solid #ffd0e5;border-radius:14px;
-  background:#fff7fb;font-family:inherit;font-size:14px;color:#a04478;
-}
 
 /* ---------- 시간 종료 ---------- */
 .timeup{
@@ -285,10 +239,10 @@ img{display:block}
 
 /* 넓은 화면 */
 @media(min-width:640px){
-  .wrap{max-width:600px;padding-top:22px}
-  .playlist{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  .play{flex-direction:column;align-items:center;text-align:center;gap:9px;padding:18px 10px}
-  .play .pt b{font-size:16.5px}
+  .wrap{max-width:640px;padding-top:22px}
+  .playlist{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+  .play{flex-direction:column;align-items:center;text-align:center;gap:10px;padding:18px 12px}
+  .play .pt b{font-size:17px}
   .play .pt small{font-size:11.5px}
   .play .go{display:none}
 }
@@ -319,46 +273,34 @@ img{display:block}
         <div class="hello-sub" id="fairyLine">요정을 눌러 봐! 인사해 줄 거야</div>
       </div>
     </div>
-
-    <div class="hearts" id="heartBox">
-      <span class="hh" aria-hidden="true">💗</span>
-      <span class="hn" id="statHearts">0</span>
-      <span class="hl"><b>오늘 모은 하트</b>할 일을 하면 하트가 쌓여요</span>
-    </div>
   </header>
-
-  <!-- 오늘 할 일 -->
-  <section class="card" aria-labelledby="qTitle">
-    <div class="card-head">
-      <b id="qTitle">✅ 오늘 할 일</b>
-      <span class="cnt" id="qCount">0 / 5</span>
-    </div>
-    <div class="qlist" id="qList"></div>
-  </section>
 
   <!-- 공부 놀이 -->
   <section class="card" aria-labelledby="pTitle">
-    <div class="card-head"><b id="pTitle">🎮 공부 놀이</b></div>
+    <div class="card-head">
+      <b id="pTitle">🎮 형원이 공부 놀이</b>
+      <span class="sub">골라서 놀아 봐!</span>
+    </div>
     <div class="playlist">
       <a class="play gugu" href="./gugudan.html">
         <span class="pi" aria-hidden="true">🔢</span>
-        <span class="pt"><b>구구단 놀이</b><small>곱셈을 신나게</small></span>
+        <span class="pt"><b>구구단 놀이</b><small>묶음 그림으로 원리 깨치기!</small></span>
         <span class="go" aria-hidden="true">›</span>
       </a>
       <a class="play pho" href="./phonics.html">
         <span class="pi" aria-hidden="true">🔤</span>
-        <span class="pt"><b>파닉스 놀이</b><small>영어 소리 퍼즐</small></span>
+        <span class="pt"><b>파닉스 놀이</b><small>A~Z 소리 &amp; 합쳐 읽기!</small></span>
         <span class="go" aria-hidden="true">›</span>
       </a>
       <a class="play sight" href="./sightwords.html">
         <span class="pi" aria-hidden="true">⭐</span>
-        <span class="pt"><b>사이트워드</b><small>영어 단어 듣기</small></span>
+        <span class="pt"><b>사이트워드</b><small>기초 영어 단어 48개!</small></span>
         <span class="go" aria-hidden="true">›</span>
       </a>
     </div>
   </section>
 
-  <p class="foot">형원이 전용 · 우리 가족만 볼 수 있어요 🎀</p>
+  <p class="foot">형원이 전용 놀이터 · 우리 가족만 볼 수 있어요 🎀</p>
 </div>
 
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -393,7 +335,7 @@ img{display:block}
   'use strict';
 
   /* ============================================================
-     데이터 연결 (형원 전용 노드만 사용)
+     보호자 PIN (가족 대시보드와 같은 값)
      ============================================================ */
   var FB_CFG = {
     apiKey: 'AIzaSyCy_TrcTcwRusSeQH4x3yrGv1bwzi7wBhI',
@@ -405,7 +347,7 @@ img{display:block}
     appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
   };
   var FB_ROOT = 'family-lim-7660';
-  var KID = 'hyungwon';
+  var guardPin = '0000';
 
   /* 티니핑 요정 친구들 (응원 목소리 + 그림) */
   var FAIRIES = [
@@ -419,60 +361,11 @@ img{display:block}
     { id: 'cloud',   name: '구름핑',   img: './assets/teenieping/cloud.webp',   cheer: '구름핑이야. 폭신한 구름 위에서 같이 놀래?' }
   ];
 
-  /* 오늘 할 일 기본 목록 */
-  function defaultQuests() {
-    return [
-      { id: 'q1', icon: '🎨', title: '유치원 숙제',   hearts: 3 },
-      { id: 'q2', icon: '📐', title: '수학학원 숙제', hearts: 3 },
-      { id: 'q3', icon: '📚', title: '책 2권 읽기',   hearts: 3 },
-      { id: 'q4', icon: '🔤', title: '엄마랑 파닉스', hearts: 2 },
-      { id: 'q5', icon: '🔢', title: '구구단 놀이',   hearts: 2 }
-    ];
-  }
-  var PRAISE = ['잘했어!', '최고야!', '멋져!', '훌륭해!', '대단해!'];
-  var CHEER_ALL = '와! 오늘 할 일을 다 했어. 형원이는 정말 멋진 아이야!';
-
-  /* ============================================================
-     상태
-     ============================================================ */
-  var state = { hearts: 0, done: {}, quests: defaultQuests(), day: '' };
-  var guardPin = '0000';
-  var sync = { teRef: null };
-
   /* ============================================================
      유틸
      ============================================================ */
   function $(id) { return document.getElementById(id); }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function ymd(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
-  function today() { return ymd(new Date()); }
-  function num(v) { var n = Number(v); return isFinite(n) && n > 0 ? Math.floor(n) : 0; }
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-  function normQuests(arr) {
-    var out = [];
-    if (Array.isArray(arr)) {
-      arr.forEach(function (q, i) {
-        if (!q || !q.title) return;
-        out.push({
-          id: String(q.id || ('q' + (i + 1))),
-          icon: String(q.icon || '⭐').slice(0, 4),
-          title: String(q.title).slice(0, 24),
-          hearts: clamp(num(q.hearts) || 2, 1, 5)
-        });
-      });
-    }
-    return out.length ? out.slice(0, 6) : defaultQuests();
-  }
-  function doneCount() {
-    var n = 0;
-    state.quests.forEach(function (q) { if (state.done[q.id]) n++; });
-    return n;
-  }
 
   /* ============================================================
      소리
@@ -499,9 +392,6 @@ img{display:block}
     } catch (e) {}
   }
   function sfxTap() { tone(1180, 0, 0.07, 'sine', 0.05); }
-  function sfxQuest() { tone(880, 0, 0.12, 'triangle', 0.07); tone(1174, 0.09, 0.14, 'triangle', 0.06); tone(1568, 0.19, 0.2, 'triangle', 0.055); }
-  function sfxUndo() { tone(520, 0, 0.12, 'sine', 0.05); tone(400, 0.1, 0.16, 'sine', 0.045); }
-  function sfxWin() { [523, 659, 784, 1046, 1318].forEach(function (f, i) { tone(f, i * 0.085, 0.26, 'triangle', 0.06); }); }
   function sfxNo() { tone(330, 0, 0.14, 'sine', 0.05); tone(262, 0.13, 0.2, 'sine', 0.05); }
 
   /* 한국어 TTS 응원 */
@@ -582,7 +472,7 @@ img{display:block}
   }
 
   /* ============================================================
-     그리기
+     오늘의 요정
      ============================================================ */
   var fairyGreeted = false;
   function renderFairy() {
@@ -594,38 +484,22 @@ img{display:block}
     img.src = f.img;
     img.alt = f.name + ' 요정';
     $('fairy').setAttribute('data-idx', String(idx));
-    if (!fairyGreeted) $('fairyLine').textContent = f.name + '이 기다리고 있어요';
+    if (!fairyGreeted) $('fairyLine').textContent = f.name + '이 기다리고 있어요 · 눌러 봐!';
     return f;
   }
   function currentFairy() {
     var i = Number($('fairy').getAttribute('data-idx'));
     return FAIRIES[isFinite(i) && i >= 0 ? i : 0] || FAIRIES[0];
   }
-
-  function renderQuests() {
-    var h = '';
-    state.quests.forEach(function (q) {
-      var on = !!state.done[q.id];
-      h += '<button class="qitem' + (on ? ' is-done' : '') + '" type="button" data-act="quest" data-id="' + esc(q.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
-        + '<span class="qcheck" aria-hidden="true">' + (on ? '✓' : '') + '</span>'
-        + '<span class="qicon" aria-hidden="true">' + esc(q.icon) + '</span>'
-        + '<span class="qt">' + esc(q.title) + '</span>'
-        + '<span class="qh" aria-hidden="true">💗 +' + q.hearts + '</span>'
-        + '</button>';
-    });
-    $('qList').innerHTML = h;
-    $('qCount').textContent = doneCount() + ' / ' + state.quests.length;
+  function greetFairy(el) {
+    actx();
+    var f = currentFairy();
+    fairyGreeted = true;
+    $('fairyLine').textContent = f.name + ': “' + f.cheer + '”';
+    burstEl(el, 30);
+    sfxTap();
+    speak(f.cheer);
   }
-  function renderHearts(pop) {
-    $('statHearts').textContent = state.hearts;
-    if (pop) {
-      var b = $('heartBox');
-      b.classList.remove('pop');
-      void b.offsetWidth;
-      b.classList.add('pop');
-    }
-  }
-  function render() { renderQuests(); renderHearts(false); }
 
   /* ============================================================
      창(오버레이)
@@ -702,146 +576,22 @@ img{display:block}
   });
 
   /* ============================================================
-     저장 (localStorage + 형원 전용 Firebase)
+     보호자 PIN 불러오기
      ============================================================ */
-  var KEY = 'teenieping_simple_v2';
-  function cacheSave() {
-    try {
-      window.localStorage.setItem(KEY, JSON.stringify({
-        day: state.day, hearts: state.hearts, done: state.done, quests: state.quests
-      }));
-    } catch (e) {}
-  }
-  function cacheLoad() {
-    try {
-      var raw = window.localStorage.getItem(KEY);
-      if (!raw) return;
-      var o = JSON.parse(raw);
-      if (!o) return;
-      if (o.quests) state.quests = normQuests(o.quests);
-      if (o.day === today()) {
-        state.day = o.day;
-        state.hearts = num(o.hearts);
-        state.done = (o.done && typeof o.done === 'object') ? o.done : {};
-      }
-    } catch (e) {}
-  }
-  function push() {
-    if (!sync.teRef) return;
-    try {
-      sync.teRef.update({
-        day: state.day || today(),
-        hearts: state.hearts,
-        done: state.done,
-        questsJson: JSON.stringify(state.quests)
-      }).catch(function () {
-        toast('📶 지금은 저장이 안 돼요');
-      });
-    } catch (e) {}
-  }
   function initSync() {
     if (typeof firebase === 'undefined' || !firebase.initializeApp) return;
     try {
       var app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(FB_CFG);
       var db = app.database();
-      sync.teRef = db.ref(FB_ROOT + '/teenieping/' + KID);
-
-      sync.teRef.on('value', function (snap) {
-        var v = snap.val() || {};
-        if (v.questsJson) {
-          try { state.quests = normQuests(JSON.parse(v.questsJson)); } catch (e) {}
-        }
-        if (v.day === today()) {
-          state.day = v.day;
-          state.hearts = num(v.hearts);
-          state.done = (v.done && typeof v.done === 'object') ? v.done : {};
-        } else if (v.day && v.day !== today()) {
-          /* 어제 기록이면 오늘은 새로 시작 */
-          state.day = today(); state.hearts = 0; state.done = {};
-          cacheSave();
-          push();
-        }
-        render();
-      }, function () {});
-
       db.ref(FB_ROOT + '/settings/pin').on('value', function (s) {
         var p = String(s.val() || '');
         if (/^\d{4}$/.test(p)) guardPin = p;
-      });
+      }, function () {});
     } catch (e) {}
   }
 
   /* ============================================================
-     할 일 체크
-     ============================================================ */
-  function toggleQuest(id, el) {
-    actx();
-    var q = null;
-    state.quests.forEach(function (x) { if (x.id === id) q = x; });
-    if (!q) return;
-    var wasDone = !!state.done[id];
-    var done = {};
-    Object.keys(state.done).forEach(function (k) { if (state.done[k]) done[k] = true; });
-
-    if (wasDone) {
-      delete done[id];
-      state.hearts = Math.max(0, state.hearts - q.hearts);
-      sfxUndo();
-      toast('다음에 또 해요 💗');
-    } else {
-      done[id] = true;
-      state.hearts += q.hearts;
-      sfxQuest();
-      burstEl(el, 18);
-      renderHearts(true);
-      var praise = PRAISE[Math.floor(Math.random() * PRAISE.length)];
-      toast(praise + ' 💗 하트 +' + q.hearts);
-      var allDone = state.quests.length > 0;
-      for (var i = 0; i < state.quests.length; i++) {
-        if (!done[state.quests[i].id]) { allDone = false; break; }
-      }
-      if (allDone) {
-        state.done = done;
-        celebrate();
-        return;
-      }
-    }
-    state.done = done;
-    state.day = today();
-    renderAll();
-    push();
-  }
-  function renderAll() { renderQuests(); renderHearts(false); cacheSave(); }
-
-  function celebrate() {
-    state.day = today();
-    renderAll();
-    push();
-    sfxWin();
-    speak(CHEER_ALL);
-    burst(window.innerWidth / 2, window.innerHeight * 0.3, 70);
-    setTimeout(function () { burst(window.innerWidth / 2, window.innerHeight * 0.5, 50); }, 320);
-    openOv({
-      emoji: '🎉',
-      title: '오늘 할 일 다 했어요!',
-      body: '<p class="big">형원이는 정말 멋져요!</p><p>모은 하트 <b>' + state.hearts + '개</b> 💗<br>내일도 같이 놀아요!</p>',
-      buttons: [{ label: '최고예요!', cls: 'primary', fn: closeOv }]
-    });
-  }
-
-  /* 요정 인사 */
-  function greetFairy(el) {
-    actx();
-    var f = currentFairy();
-    fairyGreeted = true;
-    $('fairyLine').textContent = f.name + ': “' + f.cheer + '”';
-    burstEl(el, 26);
-    sfxTap();
-    speak(f.cheer);
-  }
-
-  /* ============================================================
-     보호자 메뉴
+     보호자 메뉴 (5분 타이머 새로 시작만)
      ============================================================ */
   function openParent() {
     actx();
@@ -853,60 +603,11 @@ img{display:block}
       title: '보호자 메뉴',
       body: '<div class="menu">'
         + '<button class="menu-btn" type="button" data-act="p-usage">⏰ 화면 시간 처음부터<small>5분 사용 시간을 새로 시작해요</small></button>'
-        + '<button class="menu-btn" type="button" data-act="p-edit">✏️ 오늘 할 일 고치기<small>할 일 이름과 하트를 바꿔요</small></button>'
-        + '<button class="menu-btn" type="button" data-act="p-clear">🧹 오늘 체크 지우기<small>체크와 오늘 모은 하트를 지워요</small></button>'
         + '</div>'
         + '<div class="menu-note">보호자 PIN은 가족 대시보드와 같아요(기본 0000).</div>',
       buttons: [{ label: '닫기', cls: 'ghost', fn: closeOv }]
     });
   }
-  function openEditor() {
-    var h = '<div class="edit-list">';
-    state.quests.forEach(function (q, i) {
-      h += '<div class="edit-row">'
-        + '<span class="ed-ic" aria-hidden="true">' + esc(q.icon) + '</span>'
-        + '<input type="text" maxlength="24" value="' + esc(q.title) + '" data-i="' + i + '" aria-label="할 일 ' + (i + 1) + ' 이름">'
-        + '<select data-i="' + i + '" aria-label="할 일 ' + (i + 1) + ' 하트">';
-      for (var n = 1; n <= 5; n++) {
-        h += '<option value="' + n + '"' + (q.hearts === n ? ' selected' : '') + '>💗' + n + '</option>';
-      }
-      h += '</select></div>';
-    });
-    h += '</div>';
-    openOv({
-      emoji: '✏️',
-      title: '오늘 할 일 고치기',
-      body: h,
-      buttons: [
-        { label: '그냥 둘래요', cls: 'ghost', fn: closeOv },
-        { label: '저장', cls: 'primary', fn: saveEditor }
-      ]
-    });
-  }
-  function saveEditor() {
-    var ins = document.querySelectorAll('.edit-row input');
-    var sels = document.querySelectorAll('.edit-row select');
-    var next = [];
-    state.quests.forEach(function (q, i) {
-      var t = ins[i] ? String(ins[i].value || '').trim() : q.title;
-      next.push({
-        id: q.id,
-        icon: q.icon,
-        title: t ? t.slice(0, 24) : q.title,
-        hearts: clamp(num(sels[i] && sels[i].value) || q.hearts, 1, 5)
-      });
-    });
-    state.quests = next;
-    state.day = today();
-    /* 지운 할 일의 체크는 정리 */
-    var keep = {};
-    next.forEach(function (q) { if (state.done[q.id]) keep[q.id] = true; });
-    state.done = keep;
-    renderAll();
-    push();
-    toast('할 일 목록을 저장했어요 ✏️');
-  }
-
   function parentAction(act) {
     if (act === 'p-usage') {
       usage.acc = 0; useWarned = false; useUp = false;
@@ -915,16 +616,6 @@ img{display:block}
       useSave(); usePaint();
       toast('⏰ 화면 시간을 새로 시작했어요');
       closeOv();
-      return;
-    }
-    if (act === 'p-edit') { openEditor(); return; }
-    if (act === 'p-clear') {
-      state.done = {}; state.hearts = 0; state.day = today();
-      renderAll();
-      push();
-      toast('오늘 체크를 지웠어요');
-      closeOv();
-      return;
     }
   }
 
@@ -1037,32 +728,19 @@ img{display:block}
     if (!t || t === document) return;
 
     if (t.id === 'btnParent') { openParent(); return; }
-    if (t.id === 'fairy') { greetFairy(t); return; }
     if (t.id === 'tuPin') { askPin('보호자 확인', 'PIN 4자리를 입력해 주세요', useExtend); return; }
+    if (t.id === 'fairy') { greetFairy(t); return; }
 
     var act = t.getAttribute ? t.getAttribute('data-act') : null;
     if (!act) return;
-    if (act === 'quest') { toggleQuest(t.getAttribute('data-id') || '', t); return; }
     if (act.indexOf('p-') === 0) { parentAction(act); return; }
   });
-
-  /* 날짜가 바뀌면 새로 */
-  setInterval(function () {
-    if (state.day && state.day !== today()) {
-      state.day = today(); state.done = {}; state.hearts = 0;
-      renderAll();
-      toast('새로운 하루가 시작됐어요! 🌸');
-    }
-  }, 30000);
 
   /* ============================================================
      시작
      ============================================================ */
   sizeFx();
-  cacheLoad();
-  state.day = state.day || today();
   renderFairy();
-  render();
   useBoot();
   initSync();
 
