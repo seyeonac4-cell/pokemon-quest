@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="세연 홈트">
+<meta name="apple-mobile-web-app-title" content="세연 홈트&살림">
 <meta name="robots" content="noindex, nofollow">
 <meta name="googlebot" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,11 +17,12 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./assets/homet/homet-icon-512.png">
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/homet/homet-icon-180.png">
 <link rel="manifest" href="./manifest-homet.json">
-<title>🧘‍♀️ 세연님의 조용한 홈트</title>
+<title>🧘‍♀️ 세연님의 홈트 &amp; 살림 대시보드</title>
 <style>
 /* ============================================================
-   🧘‍♀️ 세연님의 조용한 홈트 — 층간소음 없는 홈트 스튜디오
-   영상 목록은 homet-data.json 하나만 갈아끼우면 갱신됨
+   🧘‍♀️ 세연님의 홈트 & 살림 대시보드
+   · 운동(노점핑·점핑보드) + 청소 노동요 + 정리마켓 + 집안일 투두
+   · 영상 목록은 homet-data.json 하나만 갈아끼우면 갱신됨
    ============================================================ */
 :root{
   --navy:#121834;
@@ -50,7 +51,7 @@ body{
 
 /* ---------------- 헤더 ---------------- */
 .head{
-  position:relative;overflow:hidden;color:#fff;padding:26px 22px 22px;
+  position:relative;overflow:hidden;color:#fff;padding:26px 22px 34px;
   background:linear-gradient(155deg,#222a63 0%,#161c44 48%,#0d1230 100%);
   border-bottom-left-radius:30px;border-bottom-right-radius:30px;
 }
@@ -74,7 +75,7 @@ h1{
   font-size:26px;line-height:1.28;font-weight:700;letter-spacing:-.02em
 }
 h1 em{font-style:normal;color:var(--mint)}
-.h-sub{position:relative;font-size:13px;color:#c2c8f0;font-weight:400;line-height:1.5}
+.h-sub{position:relative;font-size:12.5px;color:#c2c8f0;font-weight:400;line-height:1.55}
 .h-sub b{color:#fff;font-weight:700}
 
 /* 기록 */
@@ -97,9 +98,59 @@ h1 em{font-style:normal;color:var(--mint)}
 .dot.on{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#0b2a22;border-color:transparent;box-shadow:0 4px 12px rgba(127,227,196,.35)}
 .dot.today{outline:2px solid rgba(185,168,245,.85);outline-offset:2px}
 
+/* ---------------- 집안일 투두 ---------------- */
+.todo{
+  position:relative;margin:-20px 14px 0;background:#fff;border-radius:22px;padding:16px 15px 13px;
+  box-shadow:0 16px 40px rgba(24,28,60,.14);border:1px solid rgba(255,255,255,.9);
+}
+.todo-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.todo-title{font-size:14.5px;font-weight:900;letter-spacing:-.02em}
+.todo-title span{font-weight:500;font-size:11px;color:var(--muted);margin-left:5px;letter-spacing:-.01em}
+.todo-count{font-size:12px;font-weight:800;color:var(--lav2);letter-spacing:-.01em}
+.todo-count.all{color:var(--mint2)}
+.progress{height:5px;border-radius:99px;background:#eef0f8;margin:9px 0 10px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--mint),var(--lav2));transition:width .25s}
+.todo-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.todo-item{display:flex;align-items:center;gap:9px;padding:8px 2px;border-bottom:1px solid #f2f3f9}
+.todo-item:last-child{border-bottom:0}
+.tick{
+  flex:0 0 auto;width:23px;height:23px;border-radius:8px;border:1.6px solid #d8dbea;background:#fff;
+  cursor:pointer;font-size:12px;line-height:1;color:transparent;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;transition:.15s;padding:0
+}
+.todo-item.done .tick{background:linear-gradient(135deg,var(--mint),var(--mint2));border-color:transparent;color:#08251d}
+.todo-text{flex:1;font-size:13.5px;line-height:1.45;letter-spacing:-.02em;word-break:break-all;cursor:pointer}
+.todo-item.done .todo-text{color:#a3a8bd;text-decoration:line-through}
+.todo-del{
+  flex:0 0 auto;width:24px;height:24px;border:0;background:transparent;color:#c9cddd;
+  font-size:14px;cursor:pointer;border-radius:8px;font-family:inherit;padding:0
+}
+.todo-del:active{background:#f4f5fa}
+.todo-add{display:flex;gap:7px;margin-top:11px}
+.todo-add input{
+  flex:1;min-width:0;border:1px solid #e2e5f1;background:#f8f9fd;border-radius:11px;
+  padding:10px 12px;font-family:inherit;font-size:13px;color:var(--ink);letter-spacing:-.02em;outline:none
+}
+.todo-add input::placeholder{color:#a7acc0}
+.todo-add input:focus{border-color:#c3b6f3;background:#fff;box-shadow:0 0 0 3px rgba(185,168,245,.18)}
+.todo-add button{
+  flex:0 0 auto;border:0;border-radius:11px;padding:0 15px;font-family:inherit;font-size:12.5px;font-weight:800;
+  background:linear-gradient(135deg,#2a3273,#161c44);color:#fff;cursor:pointer;letter-spacing:-.02em;
+  box-shadow:0 6px 14px rgba(22,28,68,.22)
+}
+.todo-add button:active{transform:scale(.97)}
+.todo-foot{display:flex;justify-content:space-between;align-items:center;margin-top:9px;gap:8px}
+.todo-note{font-size:10.5px;color:#aab0c4;letter-spacing:-.01em}
+.todo-clear{
+  border:0;background:transparent;color:#8b90a8;font-family:inherit;font-size:11.5px;font-weight:700;
+  cursor:pointer;letter-spacing:-.01em;padding:4px 0;text-decoration:underline;text-underline-offset:2px
+}
+.todo-clear:disabled{color:#d2d5e2;text-decoration:none;cursor:default}
+.todo-empty{padding:16px 4px 12px;text-align:center;font-size:12.5px;color:#a7acc0;line-height:1.6}
+
 /* ---------------- 필터 ---------------- */
 .filters{
-  position:sticky;top:0;z-index:20;padding:12px 14px 10px;
+  position:sticky;top:0;z-index:20;padding:14px 14px 10px;
   background:linear-gradient(180deg,rgba(238,240,247,.97) 62%,rgba(238,240,247,.82) 100%);
   backdrop-filter:blur(10px)
 }
@@ -154,10 +205,13 @@ h1 em{font-style:normal;color:var(--mint)}
   padding:3px 8px;border-radius:6px;margin-bottom:6px
 }
 .t-cardio{background:#fde8ea;color:#c2434f}
+.t-jump{background:#ffe4f1;color:#b3308a}
 .t-core{background:#efe8fd;color:#6b4fc4}
 .t-lower{background:#e5f0fd;color:#3169b4}
 .t-stretch{background:#e2f6ef;color:#1f8d70}
 .t-kids{background:#fff2d9;color:#a97517}
+.t-clean{background:#e3f3fb;color:#12718f}
+.t-organize{background:#eeeaf7;color:#5b4b94}
 .title{
   font-size:14px;font-weight:700;line-height:1.4;letter-spacing:-.02em;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
@@ -215,10 +269,10 @@ h1 em{font-style:normal;color:var(--mint)}
 .ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .m-foot{display:flex;gap:8px;padding:12px 14px 14px}
 .m-foot .btn{padding:12px}
+.m-note{color:#7f86ad;font-size:10.5px;text-align:center;padding:0 14px 12px;line-height:1.5}
 #mDone{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#08251d;font-weight:900;box-shadow:0 8px 20px rgba(78,201,166,.28)}
 #mDone.is-done{background:rgba(255,255,255,.13);color:#cfd4f2;border:1px solid rgba(255,255,255,.18);box-shadow:none}
 #mClose2{background:rgba(255,255,255,.10);color:#e7e9fb;border:1px solid rgba(255,255,255,.14)}
-.m-note{color:#7f86ad;font-size:10.5px;text-align:center;padding:0 14px 12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -229,8 +283,8 @@ h1 em{font-style:normal;color:var(--mint)}
       <div class="h-date" id="todayLabel">—</div>
       <div class="h-quiet">🤫 층간소음 0dB</div>
     </div>
-    <h1>세연님의<br><em>조용한</em> 홈트</h1>
-    <div class="h-sub">뛰지 않아도 충분한 <b>노점핑 홈트</b> · 아이들 성장 홈트까지</div>
+    <h1>세연님의<br><em>홈트 &amp; 살림</em></h1>
+    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁까지 <b>한 페이지에</b></div>
 
     <div class="stats">
       <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
@@ -244,17 +298,35 @@ h1 em{font-style:normal;color:var(--mint)}
     </div>
   </header>
 
+  <!-- ✅ 오늘의 집안일 투두리스트 -->
+  <section class="todo" aria-label="오늘의 집안일">
+    <div class="todo-head">
+      <div class="todo-title">✅ 오늘의 집안일<span id="todoDay"></span></div>
+      <div class="todo-count" id="todoCount">0 / 0</div>
+    </div>
+    <div class="progress"><i id="todoBar"></i></div>
+    <ul class="todo-list" id="todoList"></ul>
+    <form class="todo-add" id="todoForm" autocomplete="off">
+      <input id="todoInput" type="text" maxlength="40" placeholder="집안일 추가 (예: 화장실 청소)">
+      <button type="submit">+ 추가</button>
+    </form>
+    <div class="todo-foot">
+      <span class="todo-note">체크는 이 폰에만 저장돼요</span>
+      <button class="todo-clear" id="todoClear" type="button">완료 항목 비우기</button>
+    </div>
+  </section>
+
   <div class="filters">
     <div class="chips" id="chips"></div>
   </div>
 
   <main class="list" id="list">
-    <div class="loading">오늘의 운동을 불러오는 중…</div>
+    <div class="loading">오늘의 영상을 불러오는 중…</div>
   </main>
 
   <div class="foot">
     <b id="footDate">—</b><br>
-    영상은 유튜브에서 재생되고, 완료 체크는 이 폰에만 저장돼요.<br>
+    영상은 유튜브에서 재생되고, 완료 체크·집안일은 이 폰에만 저장돼요.<br>
     세연님 전용 · 가족만 보는 페이지
   </div>
 </div>
@@ -264,7 +336,7 @@ h1 em{font-style:normal;color:var(--mint)}
   <div class="sheet">
     <div class="m-head">
       <div class="m-tt">
-        <div class="m-title" id="mTitle">운동</div>
+        <div class="m-title" id="mTitle">영상</div>
         <div class="m-sub" id="mSub"></div>
       </div>
       <button class="m-close" id="mClose" aria-label="닫기">✕</button>
@@ -283,16 +355,21 @@ h1 em{font-style:normal;color:var(--mint)}
    설정
    ============================================================ */
 const CATS = [
-  {key:"all",     label:"전체"},
-  {key:"cardio",  label:"🔥 전신 유산소"},
-  {key:"core",    label:"💪 복부·코어"},
-  {key:"lower",   label:"🦵 하체·붓기"},
-  {key:"stretch", label:"🧘‍♀️ 스트레칭"},
-  {key:"kids",    label:"🎒 초등 고학년"}
+  {key:"all",      label:"전체"},
+  {key:"cardio",   label:"🔥 전신 유산소"},
+  {key:"jump",     label:"⚡ 점핑보드"},
+  {key:"core",     label:"💪 복부·코어"},
+  {key:"lower",    label:"🦵 하체·붓기"},
+  {key:"stretch",  label:"🧘‍♀️ 스트레칭"},
+  {key:"kids",     label:"🎒 초등 고학년"},
+  {key:"clean",    label:"🧹 청소 노동요"},
+  {key:"organize", label:"📦 정리마켓"}
 ];
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
+const KEY_TODO = "homet.todo.v1";
+const DEFAULT_TODOS = ["세탁기 돌리기", "분리수거 내놓기", "장보기 목록 확인", "현관 신발장 정리"];
 
 /* 콘솔 오류 수집(검증용, 화면에는 안 보임) */
 window.__errs = [];
@@ -327,8 +404,8 @@ function setDone(id, val){
 }
 function countOn(dateKey){ return (done[dateKey] || []).length; }
 
-/* ---------- 날짜 / 기록 ---------- */
-function startOfWeek(d){ // 월요일 시작
+/* ---------- 날짜 / 운동 기록 ---------- */
+function startOfWeek(d){
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const wd = (x.getDay() + 6) % 7;
   x.setDate(x.getDate() - wd);
@@ -339,6 +416,7 @@ function renderStats(){
   const names = ["일","월","화","수","목","금","토"];
   document.getElementById("todayLabel").textContent =
     now.getFullYear() + ". " + (now.getMonth()+1) + ". " + now.getDate() + " (" + names[now.getDay()] + ")";
+  document.getElementById("todoDay").textContent = (now.getMonth()+1) + "/" + now.getDate();
 
   const mon = startOfWeek(now);
   let weekCount = 0;
@@ -355,7 +433,6 @@ function renderStats(){
   document.getElementById("sWeek").innerHTML = weekCount + '<small>회</small>';
   document.getElementById("sToday").innerHTML = countOn(todayKey()) + '<small>개</small>';
 
-  // 연속 일수: 오늘(또는 어제)부터 하루씩 거슬러 올라가며 운동한 날 세기
   let streak = 0;
   const cur = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   if(!countOn(ymd(cur))) cur.setDate(cur.getDate()-1);
@@ -366,6 +443,71 @@ function renderStats(){
   }
   document.getElementById("sStreak").innerHTML = streak + '<small>일</small>';
 }
+
+/* ---------- 집안일 투두 ---------- */
+let todos = loadTodos();
+function loadTodos(){
+  try{
+    const o = JSON.parse(localStorage.getItem(KEY_TODO) || "null");
+    if(Array.isArray(o)) return o.filter(t=>t && typeof t.text === "string");
+  }catch(e){}
+  return DEFAULT_TODOS.map((t,i)=>({id:"d"+i, text:t, done:false}));
+}
+function saveTodos(){ try{ localStorage.setItem(KEY_TODO, JSON.stringify(todos)); }catch(e){} }
+function newId(){ return "t" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function renderTodos(){
+  const ul = document.getElementById("todoList");
+  const total = todos.length;
+  const finished = todos.filter(t=>t.done).length;
+  const cnt = document.getElementById("todoCount");
+  cnt.textContent = finished + " / " + total;
+  cnt.classList.toggle("all", total > 0 && finished === total);
+  document.getElementById("todoBar").style.width = (total ? Math.round(finished/total*100) : 0) + "%";
+  document.getElementById("todoClear").disabled = finished === 0;
+
+  if(!total){
+    ul.innerHTML = '<li class="todo-empty">오늘 할 집안일을 아래에 적어보세요 🙂</li>';
+    return;
+  }
+  ul.innerHTML = todos.map(t=>
+    '<li class="todo-item'+(t.done?' done':'')+'" data-id="'+esc(t.id)+'">'+
+      '<button class="tick" data-act="toggle" aria-label="완료 체크">✓</button>'+
+      '<span class="todo-text" data-act="toggle">'+esc(t.text)+'</span>'+
+      '<button class="todo-del" data-act="del" aria-label="삭제">✕</button>'+
+    '</li>'
+  ).join("");
+
+  ul.querySelectorAll(".todo-item").forEach(li=>{
+    const id = li.dataset.id;
+    li.querySelectorAll('[data-act="toggle"]').forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const it = todos.find(x=>x.id===id);
+        if(!it) return;
+        it.done = !it.done;
+        saveTodos(); renderTodos();
+      });
+    });
+    li.querySelector('[data-act="del"]').addEventListener("click", ()=>{
+      todos = todos.filter(x=>x.id!==id);
+      saveTodos(); renderTodos();
+    });
+  });
+}
+document.getElementById("todoForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const input = document.getElementById("todoInput");
+  const text = input.value.trim();
+  if(!text) return;
+  todos.push({id:newId(), text:text, done:false});
+  input.value = "";
+  saveTodos(); renderTodos();
+});
+document.getElementById("todoClear").addEventListener("click", ()=>{
+  todos = todos.filter(t=>!t.done);
+  saveTodos(); renderTodos();
+});
 
 /* ---------- 필터 ---------- */
 function renderChips(){
@@ -380,13 +522,13 @@ function renderChips(){
       filter = b.dataset.cat;
       try{ localStorage.setItem(KEY_FILTER, filter); }catch(e){}
       renderChips(); renderList();
-      window.scrollTo({top:0, behavior:"smooth"});
+      const y = document.querySelector(".filters").getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({top:y, behavior:"smooth"});
     });
   });
 }
 
 /* ---------- 카드 ---------- */
-function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function renderList(){
   const el = document.getElementById("list");
   const list = filter === "all" ? VIDEOS : VIDEOS.filter(v=>v.category===filter);
@@ -411,9 +553,9 @@ function renderList(){
         '</div>'+
       '</div>'+
       '<div class="card-bottom">'+
-        '<div class="reason"><span class="ic">🤫</span><span>'+v.reason+'</span></div>'+
+        '<div class="reason"><span class="ic">'+(v.category==="jump"?"⚡":"🤫")+'</span><span>'+v.reason+'</span></div>'+
         '<div class="actions">'+
-          '<button class="btn btn-go" data-act="play">▶ 운동 시작</button>'+
+          '<button class="btn btn-go" data-act="play">▶ '+(v.cat_action||"운동 시작")+'</button>'+
           '<button class="btn btn-done" data-act="done">'+(dn?'완료 취소':'✅ 완료!')+'</button>'+
         '</div>'+
       '</div>'+
@@ -425,8 +567,7 @@ function renderList(){
     card.querySelectorAll('[data-act="play"]').forEach(b=>{
       b.addEventListener("click", ()=>openPlayer(id));
     });
-    const db = card.querySelector('[data-act="done"]');
-    db.addEventListener("click", ()=>{
+    card.querySelector('[data-act="done"]').addEventListener("click", ()=>{
       setDone(id, !isDone(id));
       renderStats(); renderList();
     });
@@ -455,14 +596,14 @@ function closePlayer(){
   document.body.style.overflow = "";
   current = null;
 }
-document.getElementById("mClose").addEventListener("click", closePlayer);
-document.getElementById("mClose2").addEventListener("click", closePlayer);
 function syncModalDone(id){
   const btn = document.getElementById("mDone");
   const dn = isDone(id);
   btn.textContent = dn ? "오늘 완료 · 취소하기" : "✅ 오늘 완료!";
   btn.classList.toggle("is-done", dn);
 }
+document.getElementById("mClose").addEventListener("click", closePlayer);
+document.getElementById("mClose2").addEventListener("click", closePlayer);
 document.getElementById("mDone").addEventListener("click", ()=>{
   if(!current) return;
   setDone(current.id, !isDone(current.id));
@@ -479,6 +620,7 @@ async function boot(){
   try{ filter = localStorage.getItem(KEY_FILTER) || "all"; }catch(e){}
   if(!CATS.some(c=>c.key===filter)) filter = "all";
   renderStats();
+  renderTodos();
 
   try{
     const res = await fetch("./homet-data.json?t=" + Date.now(), {cache:"no-store"});
