@@ -134,9 +134,9 @@ img{image-rendering:auto}
   padding:5px 10px; border-bottom:2px solid var(--ink);
   background:linear-gradient(#f6fbff,#e7f3ff);
 }
-.card-hd h2{margin:0;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:5px}
+.card-hd h2{margin:0;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:5px}
 .card-hd .hd-right{margin-left:auto;display:flex;align-items:center;gap:5px}
-.card-hd .hd-note{font-size:10.5px;color:var(--ink2);font-weight:700}
+.card-hd .hd-note{font-size:11px;color:var(--ink2);font-weight:700}
 .mini-btn{
   border:1.5px solid var(--ink);border-radius:6px;background:#fff;font-weight:700;
   font-size:10.5px;padding:1px 6px;box-shadow:0 1.5px 0 rgba(40,50,79,.18);
@@ -171,7 +171,7 @@ img{image-rendering:auto}
 .cell.today .dnum{color:#d6457a}
 .cell .evs{display:flex;flex-direction:column;gap:1px;min-height:0;overflow:hidden}
 .ev{
-  font-size:9.5px;line-height:1.2;padding:0 3px;border-radius:3px;border:1px solid rgba(40,50,79,.25);
+  font-size:10px;line-height:1.2;padding:0 3px;border-radius:3px;border:1px solid rgba(40,50,79,.25);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;
 }
 .ev.more{background:#eef2f9;color:var(--ink2);border-style:dashed}
@@ -179,7 +179,7 @@ img{image-rendering:auto}
 /* ---------- 오늘 일정 ---------- */
 .today-card{flex:1 1 0}
 .ev-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 8px;display:flex;flex-direction:column;gap:4px}
-.ev-row{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 5px;border-radius:6px;background:#f7fbff;border:1px solid #e4eefb}
+.ev-row{display:flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 5px;border-radius:6px;background:#f7fbff;border:1px solid #e4eefb}
 .ev-row .dot{width:9px;height:9px;border-radius:3px;border:1.5px solid rgba(40,50,79,.4);flex:0 0 auto}
 .ev-row .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 .ev-row .dday{font-size:10px;font-weight:700;color:var(--pink-d);flex:0 0 auto}
@@ -216,11 +216,11 @@ img{image-rendering:auto}
 .rt-kid.full{background:var(--yellow)}
 .rt-row{display:grid;grid-template-columns:1fr 76px 76px;gap:5px;align-items:stretch}
 .rt-label{
-  display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+  display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
   border:1.5px solid var(--line);border-radius:6px;padding:3px 7px;background:#fbfdff;min-width:0
 }
 .rt-label .ic{font-size:14px;line-height:1}
-.rt-label .sub{display:block;font-size:9.5px;color:var(--muted);font-weight:700;line-height:1.15}
+.rt-label .sub{display:block;font-size:10px;color:#6d7c9c;font-weight:700;line-height:1.2}
 .rt-btn{
   border:2px solid var(--ink);border-radius:7px;background:#fff;font-size:19px;line-height:1;
   display:grid;place-items:center;padding:0;min-height:34px;
@@ -240,7 +240,8 @@ img{image-rendering:auto}
 .pk-list{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:8px}
 .pk{
   border:2px solid var(--ink);border-radius:9px;padding:8px 10px;display:flex;gap:10px;align-items:center;
-  background:linear-gradient(#fff,#fdfdff);box-shadow:var(--shadow);position:relative;overflow:hidden
+  background:linear-gradient(#fff,#fdfdff);box-shadow:var(--shadow);position:relative;overflow:hidden;
+  flex:1 1 0;min-height:0
 }
 .pk.k1{background:linear-gradient(#fff5f9,#ffe8f1)}
 .pk.k2{background:linear-gradient(#f1fff7,#ddf7ea)}
@@ -256,14 +257,14 @@ img{image-rendering:auto}
 .pk-bar{height:9px;border:1.5px solid var(--ink);border-radius:999px;background:#eef3fc;overflow:hidden}
 .pk-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd93d,#ffb03a);border-right:1.5px solid rgba(40,50,79,.35)}
 .pk.k2 .pk-bar i{background:linear-gradient(90deg,#8fe3b0,#3fc78d)}
-.pk-meta{display:flex;gap:8px;font-size:10px;color:var(--ink2);font-weight:700;flex-wrap:wrap}
+.pk-meta{display:flex;gap:8px;font-size:10.5px;color:var(--ink2);font-weight:700;flex-wrap:wrap}
 .pk-meta b{color:var(--ink)}
 .pk-meta .pnext{margin-left:auto;color:var(--muted);font-size:9.5px}
-.pk-quest{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink2);font-weight:700;margin-top:1px}
+.pk-quest{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink2);font-weight:700;margin-top:1px}
 .pk-quest .qbar{flex:1 1 auto;height:7px;border:1.5px solid var(--ink);border-radius:999px;background:#eef3fc;overflow:hidden}
 .pk-quest .qbar i{display:block;height:100%;background:#7fb6ff}
 .pk-quest.all .qbar i{background:var(--mint-d)}
-.pk-todo{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--ink2);font-weight:700;margin-top:1px;overflow:hidden}
+.pk-todo{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ink2);font-weight:700;margin-top:2px;overflow:hidden}
 .pk-todo .chipq{border:1px solid var(--line);border-radius:999px;padding:0 5px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px}
 .pk-todo.done{color:var(--mint-d)}
 .pk-off{font-size:11px;color:var(--muted);text-align:center;padding:12px 0;font-weight:700}
@@ -271,10 +272,10 @@ img{image-rendering:auto}
 /* ---------- D-day ---------- */
 .dd-card{flex:.72 1 0;min-height:104px}
 .dd-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 7px;display:flex;flex-direction:column;gap:4px}
-.dd-row{display:flex;align-items:center;gap:6px;font-size:11.5px}
+.dd-row{display:flex;align-items:center;gap:6px;font-size:12px}
 .dd-row .ico{font-size:13px}
 .dd-row .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-.dd-row .when{font-size:10px;color:var(--muted);font-weight:700}
+.dd-row .when{font-size:10.5px;color:var(--muted);font-weight:700}
 .dd-row .d{
   font-weight:700;font-size:10.5px;border:1.5px solid var(--ink);border-radius:999px;padding:0 6px;
   background:#fff;white-space:nowrap
@@ -308,7 +309,7 @@ img{image-rendering:auto}
 
 /* ---------- 하단 ---------- */
 .footbar{
-  flex:0 0 auto;display:flex;align-items:center;gap:10px;font-size:10px;color:var(--ink2);
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;font-size:10.5px;color:var(--ink2);
   padding:0 4px;font-weight:700
 }
 .sync{display:flex;align-items:center;gap:4px}
