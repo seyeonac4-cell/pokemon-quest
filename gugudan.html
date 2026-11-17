@@ -856,7 +856,9 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       for(var i = 0; i < btns.length; i++) btns[i].disabled = true;
       $('qBar').style.width = ((quiz.i+1) / quiz.list.length * 100) + '%';
       var waitMs = mem.muted ? 2100 : Math.min(4200, 1900 + q.b * 30 + q.a * 20 + q.ans * 4);
+      var atQuiz = quiz, atIdx = quiz.i;
       setTimeout(function(){
+        if(quiz !== atQuiz || quiz.i !== atIdx) return;
         quiz.i++;
         if(quiz.i >= quiz.list.length) finishQuiz();
         else renderQuestion();
