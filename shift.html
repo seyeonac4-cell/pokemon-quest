@@ -138,10 +138,94 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 .pin{width:100%;margin:4px 0 0;border:1.5px solid #dfe2ef;border-radius:14px;padding:14px;font-family:inherit;font-size:22px;font-weight:900;letter-spacing:.42em;text-align:center;color:#242257;background:#fbfbfe;outline:none}
 .pin:focus{border-color:#4a49b4;background:#fff}
 .pinerr{min-height:16px;margin:8px 0 2px;font-size:12px;font-weight:700;color:#d1495b;text-align:center}
+/* ---------- 인쇄 / PDF 저장 버튼 ---------- */
+.printbtn{
+  position:absolute;top:15px;right:15px;z-index:3;
+  display:inline-flex;align-items:center;gap:5px;
+  border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.13);
+  color:#fff;font-family:inherit;font-size:11.5px;font-weight:800;letter-spacing:-.01em;
+  padding:7px 12px;border-radius:100px;cursor:pointer;backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);transition:transform .12s ease,background .15s ease;
+}
+.printbtn:active{transform:scale(.96);background:rgba(255,255,255,.22)}
+.printbtn span{font-size:12.5px;line-height:1}
+.printf{display:none}
+.pyear{display:none}
 @media (max-width:400px){
   .cell{min-height:74px}
   .cell .mates{font-size:9.6px}
   h1{font-size:22px}
+  .printbtn{font-size:10.5px;padding:6px 10px;top:12px;right:12px}
+}
+/* ============================================================
+   🖨️ A4 세로 1장 인쇄 / PDF 저장
+   ============================================================ */
+@media print{
+  @page{size:A4 portrait;margin:8mm 10mm}
+  html,body{
+    margin:0!important;padding:0!important;height:auto!important;
+    background:#fff!important;background-image:none!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  body{display:block}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .wrap{max-width:none;width:auto}
+  .card{
+    display:flex;flex-direction:column;
+    width:100%;height:277mm;
+    border:none;border-radius:0;box-shadow:none;overflow:hidden;background:#fff;
+    page-break-inside:avoid;break-inside:avoid;
+  }
+  /* 화면 전용 UI는 인쇄에서 숨김 */
+  .printbtn,.up,.upbtn,.upnote,.upmsg,.badge-inbox,.sheet,#upFile,.foot,
+  .head-actions,.toast,.banner,.backlink,a.dashboard-link{display:none!important}
+  /* 헤더 */
+  .head{padding:5mm 6mm 4.6mm;flex:0 0 auto;border-radius:0}
+  .head::after{width:38mm;height:38mm;right:-10mm;top:-13mm}
+  .h-top{font-size:8pt;letter-spacing:.08em}
+  .h-top .dot{width:1.5mm;height:1.5mm}
+  .pyear{display:inline}
+  h1{margin:1.4mm 0 .6mm;font-size:19pt;line-height:1.15}
+  .h-sub{font-size:9pt}
+  .stats{gap:2mm;margin-top:3.4mm}
+  .stat{padding:2mm 2mm 1.8mm;border-radius:2.4mm;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .stat .n{font-size:15pt}
+  .stat .k{font-size:7.5pt;margin-top:.7mm}
+  /* 범례 */
+  .legend{padding:2.4mm 6mm 0;font-size:8pt;gap:4.5mm;flex:0 0 auto}
+  .sw{width:3mm;height:3mm;border-radius:.9mm}
+  /* 달력 */
+  .cal{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:1.6mm 4mm 0}
+  .dow{flex:0 0 auto;padding:1.6mm 0 1.4mm;gap:1.2mm}
+  .dow div{font-size:8pt}
+  .grid{flex:1 1 auto;min-height:0;grid-auto-rows:1fr;gap:1.2mm;padding-bottom:0}
+  .cell{
+    min-height:0;border-radius:1.8mm;padding:1.2mm .7mm .9mm;
+    transition:none;cursor:default;overflow:hidden;
+  }
+  .cell:active{transform:none}
+  .cell.n,.cell.o,.cell.o.first{box-shadow:none}
+  .cell.today{outline:.55mm solid #f5b64a;outline-offset:-.55mm}
+  .cell .dnum{font-size:9.5pt}
+  .cell .badge{font-size:7.5pt;margin-top:.9mm;padding:.5mm 0;border-radius:1.2mm;letter-spacing:.03em}
+  .cell .mates{font-size:8pt;line-height:1.32;padding-bottom:.3mm}
+  .cell .mates i{white-space:nowrap}
+  /* 동료 목록 */
+  .sec{padding:2.6mm 6mm 0;flex:0 0 auto}
+  .sec h2{font-size:8.5pt;margin:0 0 1.6mm;gap:1.6mm}
+  .sec h2 .bar{width:1mm;height:3mm}
+  .chips{gap:1.2mm}
+  .chip{font-size:7.5pt;padding:.9mm 2mm;border-radius:100px;background:#f3f4fb}
+  .chip b{font-weight:900}
+  .chip .c{font-size:6.5pt;padding:.1mm 1.2mm}
+  /* 인쇄 전용 하단 한 줄 */
+  .printf{
+    display:flex!important;align-items:center;justify-content:space-between;gap:4mm;
+    margin-top:auto;padding:2.2mm 6mm 0;border-top:.25mm solid #e7e8f0;
+    font-size:7pt;color:#8b90a6;line-height:1.4;
+  }
+  .printf b{color:#5c6180;font-weight:800}
+  .printf .r{text-align:right;white-space:nowrap}
 }
 </style>
 </head>
@@ -149,7 +233,8 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 <div class="wrap">
   <div class="card" id="card">
     <div class="head">
-      <div class="h-top"><span class="dot"></span>병동 근무표 · NIGHT</div>
+      <button class="printbtn" id="printBtn" type="button" title="A4 1장으로 인쇄하거나 PDF로 저장"><span>🖨️</span> 인쇄 / PDF</button>
+      <div class="h-top"><span class="dot"></span>병동 근무표 · NIGHT<span class="pyear" id="printYear"></span></div>
       <h1 id="title">11월 근무 달력</h1>
       <div class="h-sub"><b id="nurseName">임세연</b> 님의 나이트 근무와 함께 서는 동료</div>
       <div class="stats">
@@ -185,6 +270,8 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
     </div>
 
     <div class="foot" id="foot"></div>
+
+    <div class="printf" id="printFoot"></div>
   </div>
 </div>
 
@@ -252,8 +339,18 @@ function render(){
   const chips=document.getElementById('chips');
   chips.innerHTML=d.colleagues.map(c=>'<span class="chip">'+c.name+' <span class="c">'+c.count+'</span></span>').join('');
 
+  // 문서 제목(인쇄/PDF 파일 이름에 쓰임)
+  document.title='🌙 세연님의 '+d.monthNum+'월 근무 달력';
+  const py=document.getElementById('printYear');
+  if(py) py.textContent=' · '+d.label;
+
   // 하단 설명
   const v=d.verification||{};
+  const pf=document.getElementById('printFoot');
+  if(pf){
+    pf.innerHTML='<span><b>'+d.label+' '+d.unit+' 근무표</b> · 하루 나이트 '+(v.nightTotalPerDay||3)+'명(세연님 포함)</span>'+
+      '<span class="r">'+d.nurse.name+' 님 · N '+nights+'회 · 휴무 '+offs+'일</span>';
+  }
   document.getElementById('foot').innerHTML=
     '<b>'+d.label+'</b> · 하루 나이트 인원 '+ (v.nightTotalPerDay||3) +'명(세연님 포함)<br>'+
     '근무표 사진을 칸 단위로 확대해 읽고, 요약표(N수 '+nights+'·휴무 '+offs+')와 날짜별 NIGHT 인원으로 두 번 대조해 확인했어요.<br>'+
@@ -277,6 +374,12 @@ function openSheet(day){
   document.getElementById('shRows').innerHTML=rows;
   document.getElementById('sheet').classList.add('on');
 }
+/* 🖨️ 인쇄 / PDF 저장 */
+document.getElementById('printBtn').addEventListener('click',()=>{
+  closeSheet(); closePin();
+  setTimeout(()=>window.print(),60);
+});
+
 function closeSheet(){document.getElementById('sheet').classList.remove('on');}
 document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
 
