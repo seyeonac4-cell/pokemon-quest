@@ -617,7 +617,7 @@ img{display:block}
     img.src = f.img;
     img.alt = f.name + ' 요정';
     $('fairy').setAttribute('data-idx', String(idx));
-    if (!fairyGreeted) $('fairyLine').textContent = f.name + '가 기다리고 있어요';
+    if (!fairyGreeted) $('fairyLine').textContent = f.name + '이 기다리고 있어요';
     return f;
   }
   function currentFairy() {
@@ -819,9 +819,12 @@ img{display:block}
       renderHearts(true);
       var praise = PRAISE[Math.floor(Math.random() * PRAISE.length)];
       toast(praise + ' 💗 하트 +' + q.hearts);
-      if (doneCount() === state.quests.length) {
+      var allDone = state.quests.length > 0;
+      for (var i = 0; i < state.quests.length; i++) {
+        if (!done[state.quests[i].id]) { allDone = false; break; }
+      }
+      if (allDone) {
         state.done = done;
-        renderAll();
         celebrate();
         return;
       }
