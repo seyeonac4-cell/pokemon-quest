@@ -288,6 +288,40 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .done p{margin:0 0 14px;font-size:14.5px;font-weight:700;color:var(--ink2);word-break:keep-all;line-height:1.5}
 .badge{display:inline-block;padding:10px 18px;border-radius:99px;border:2.5px solid var(--ink);background:linear-gradient(180deg,#fff3cf,#ffd97a);font-weight:900;font-size:15px;margin-bottom:16px;box-shadow:var(--shadow-s)}
 
+/* ---------- 알파블록스 영상 카드/모달 ---------- */
+.vcard{
+  width:100%;display:flex;align-items:center;gap:10px;text-align:left;
+  background:linear-gradient(180deg,#fff7f9,#ffe6ef);border:3px solid var(--ink);
+  border-radius:22px;box-shadow:var(--shadow);padding:11px 13px;margin-bottom:12px;
+  transition:transform .12s,box-shadow .12s;
+}
+.vcard:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,49,79,.14)}
+.vcard .vico{font-size:26px;line-height:1;flex:0 0 auto}
+.vcard .vmain{flex:1;min-width:0;display:block}
+.vcard .vname{display:block;font-size:15.5px;font-weight:900;line-height:1.25}
+.vcard .vsub{display:block;font-size:11px;font-weight:700;color:var(--ink2);margin-top:2px}
+.vcard .vplay{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:2.5px solid var(--ink);
+  background:linear-gradient(180deg,#ffdce9,#ffb3d1);display:grid;place-items:center;
+  font-size:14px;font-weight:900;padding-left:2px;
+}
+.vmodal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:12px}
+.vmodal[hidden]{display:none}
+.vbackdrop{position:absolute;inset:0;background:rgba(20,32,55,.62)}
+.vsheet{
+  position:relative;width:100%;max-width:720px;background:#fff;border:3px solid var(--ink);
+  border-radius:22px;box-shadow:0 12px 0 rgba(34,49,79,.25);overflow:hidden;
+}
+.vhead{display:flex;align-items:center;gap:8px;padding:9px 11px;background:linear-gradient(180deg,#ffffff,#eef7ff);border-bottom:2.5px solid var(--line)}
+.vhead .vtitle{flex:1;min-width:0;font-size:14.5px;font-weight:900;line-height:1.3;overflow:hidden}
+.vclose{
+  flex:0 0 auto;width:36px;height:36px;border-radius:12px;border:2.5px solid var(--ink);
+  background:#fff;font-size:15px;font-weight:900;
+}
+.vframe{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vtip{margin:0;padding:8px 11px 10px;font-size:11.5px;font-weight:900;color:var(--muted);text-align:center;line-height:1.4}
+
 /* ---------- 효과 ---------- */
 .spark{position:fixed;pointer-events:none;font-size:26px;z-index:50;animation:fly .9s ease-out forwards}
 @keyframes fly{0%{opacity:1;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3)}}
@@ -331,6 +365,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       <p class="sh1" id="stageTitle">2단계 · 단모음</p>
       <p class="sh2" id="stageDesc"></p>
     </div>
+    <button class="vcard" id="stageVideo" type="button">
+      <span class="vico">📺</span>
+      <span class="vmain">
+        <span class="vname" id="stageVideoName">알파블록스 영상 보기</span>
+        <span class="vsub" id="stageVideoSub">공식 알파블록스 영어 영상</span>
+      </span>
+      <span class="vplay">▶</span>
+    </button>
     <div id="unitList"></div>
     <button class="btn pink wide" id="stageQuiz" type="button">🎧 이 단계 전체 퀴즈</button>
     <p class="tiny">단원을 누르면 단어를 듣고 합쳐 읽을 수 있어요.</p>
@@ -413,6 +455,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 
     <div class="az" id="azBoard"></div>
     <p class="tiny">글자를 누르면 소리를 들려줘요. 초록색 체크는 오늘 탐험한 글자예요.</p>
+    <button class="vcard" id="azVideo" type="button">
+      <span class="vico">📺</span>
+      <span class="vmain">
+        <span class="vname">알파블록스 · A to Z 알파벳</span>
+        <span class="vsub">공식 알파블록스 영어 영상</span>
+      </span>
+      <span class="vplay">▶</span>
+    </button>
     <button class="btn pink wide" id="azQuiz" type="button" style="margin-top:10px">🎧 1단계 소리 퀴즈 (10문제)</button>
   </section>
 
@@ -456,6 +506,19 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     </div>
   </section>
 
+</div>
+
+<!-- ================= 알파블록스 영상 모달 ================= -->
+<div class="vmodal" id="vModal" hidden>
+  <div class="vbackdrop" id="vBackdrop"></div>
+  <div class="vsheet" role="dialog" aria-modal="true" aria-label="알파블록스 영상">
+    <div class="vhead">
+      <span class="vtitle" id="vTitle">📺 알파블록스</span>
+      <button class="vclose" id="vClose" type="button" aria-label="영상 닫기">✕</button>
+    </div>
+    <div class="vframe" id="vFrame"></div>
+    <p class="vtip">공식 알파블록스 영어 영상이에요. 끝나면 다른 영상 없이 멈춰요.</p>
+  </div>
 </div>
 
 <script>
@@ -584,12 +647,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       id:'s1', n:1, emoji:'🔤', title:'알파벳 음가', en:'Alphabet Sounds',
       badge:'A~Z', tone:'sky',
       desc:'A부터 Z까지 26글자의 소리를 하나씩 들어 봐요. 글자마다 대표 단어도 함께!',
+      video:{ id:'xg4_gWt8N_Q', name:'A to Z 알파벳', sub:'알파벳 26글자 소리 (공식 알파블록스)' },
       units:[ { id:'az', label:'A ~ Z', ends:'26글자 · 대표 단어 26개', group:'', words:[] } ]
     },
     {
       id:'s2', n:2, emoji:'🐱', title:'단모음', en:'Short Vowels',
       badge:'숏바울', tone:'mint',
       desc:'숏바울! a·e·i·o·u를 짧게 「애·에·이·아·어」로 읽어요. 받침이 붙은 -at, -en 같은 덩어리로 익혀요.',
+      video:{ id:'hhxltYxHlQ0', name:'CVC 단모음', sub:'캣·햇·팬처럼 짧은 모음 단어 (공식 알파블록스)' },
       units:[
         U('s2a', 'Short a', '-at · -an · -ap', [
           'cat|🐱|고양이|c-a-t', 'hat|🎩|모자|h-a-t', 'bat|🦇|박쥐|b-a-t',
@@ -627,6 +692,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       id:'s3', n:3, emoji:'🚲', title:'장모음', en:'Long Vowels',
       badge:'롱바울', tone:'sun',
       desc:'롱바울! 글자 이름 그대로 길게 「에이·아이·오우·유」로 읽어요. 마법의 e와 모음팀으로 배워요.',
+      video:{ id:'Qp0OZvXj5ko', name:'매직 E · 롱바울', sub:'cap → cape, 길게 바뀌는 소리 (공식 알파블록스)' },
       units:[
         U('s3a', 'a_e  (마법의 e)', 'cake · make · cape · lake', [
           'cake|🎂|케이크|c-a-k-e', 'make|🛠️|만들다|m-a-k-e', 'cape|🦸|망토|c-a-p-e',
@@ -672,6 +738,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       id:'s4', n:4, emoji:'🚢', title:'이중자음 · 자음군', en:'Digraphs & Blends',
       badge:'sh · ch · st', tone:'pink',
       desc:'두 글자가 손잡고 한 소리를 내요. sh는 「쉬」, ch는 「취」처럼요!',
+      video:{ id:'5TH8bIFcu-w', name:'sh · ch · th', sub:'레터팀 이중자음 (공식 알파블록스)' },
       units:[
         U('s4sh', 'sh', 'ship · shop · fish', [
           'ship|🚢|배|sh-i-p', 'shop|🏪|가게|sh-o-p', 'fish|🐟|물고기|f-i-sh',
@@ -708,6 +775,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       id:'s5', n:5, emoji:'🚗', title:'R-모음 · 이중모음', en:'R-Controlled & Diphthongs',
       badge:'ar · oo · oi', tone:'lav',
       desc:'r이 붙으면 소리가 뭉개져요. ar는 「아르」, or는 「오르」! 나머지 이중모음도 함께!',
+      video:{ id:'EeEch_XJrWc', name:'ar · or · oi · ow', sub:'R모음과 이중모음 (공식 알파블록스)' },,
       units:[
         U('s5ar', 'ar', 'car · star · park', [
           'car|🚗|자동차|c-ar', 'jar|🫙|단지|j-ar', 'far|🔭|먼|f-ar',
@@ -994,8 +1062,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
      2) 단계 안 단원 목록
      ========================================================= */
   function renderStage(){
-    var s = cur.stage;
-    $('stageCrumb').textContent = s.n + '단계';
+    var s = cur.stage;    $('stageCrumb').textContent = s.n + '단계';
     $('stageTitle').textContent = s.emoji + ' ' + s.n + '단계 · ' + s.title;
     $('stageDesc').textContent = s.desc;
     var box = $('unitList');
@@ -1034,6 +1101,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       box.appendChild(b);
     });
     var quizBtn = $('stageQuiz');
+    var vBtn = $('stageVideo');
+    if(s.video){
+      vBtn.hidden = false;
+      $('stageVideoName').textContent = '알파블록스 · ' + s.video.name;
+      $('stageVideoSub').textContent = s.video.sub;
+    } else {
+      vBtn.hidden = true;
+    }
     if(s.id === 's1'){
       quizBtn.textContent = '🎧 1단계 알파벳 소리 퀴즈 (10문제)';
     } else {
@@ -1047,6 +1122,40 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     var s = cur.stage;
     startQuiz(s.allWords, s.n + '단계 전체', 'stage');
   });
+
+  /* ---------- 알파블록스 영상 (페이지 안에서만 재생) ---------- */
+  function openVideo(stage){
+    if(!stage || !stage.video) return;
+    sfxTap();
+    stopSpeak();
+    var v = stage.video;
+    $('vTitle').textContent = '📺 알파블록스 · ' + v.name;
+    var frame = $('vFrame');
+    frame.innerHTML = '';
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + v.id + '?rel=0&modestbranding=1&playsinline=1';
+    f.setAttribute('title', '알파블록스 ' + v.name);
+    f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    f.setAttribute('allowfullscreen', '');
+    f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    frame.appendChild(f);
+    $('vModal').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVideo(){
+    var frame = $('vFrame');
+    if(frame) frame.innerHTML = '';
+    $('vModal').hidden = true;
+    document.body.style.overflow = '';
+    stopSpeak();
+  }
+  $('vClose').addEventListener('click', function(){ sfxTap(); closeVideo(); });
+  $('vBackdrop').addEventListener('click', function(){ closeVideo(); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !$('vModal').hidden) closeVideo();
+  });
+  $('stageVideo').addEventListener('click', function(){ openVideo(cur.stage); });
+  $('azVideo').addEventListener('click', function(){ openVideo(STAGES[0]); });
 
   /* =========================================================
      3) 단원 (단어 블록 + 합쳐 읽기)
