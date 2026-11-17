@@ -755,7 +755,13 @@ function micFail(err) {
   else showHelp('마이크를 켜지 못했어요. 다시 시도해 주세요.');
 }
 
+let lastRecTap = 0;
 async function toggleRec(i) {
+  // 녹음 버튼이 순간에 두 번 눌힌 것처럼 들어와도(더블탭·중복 이벤트)
+  // 멈춘 직후 바로 새 녹음이 시작되지 않도록 잠깐 잠근다
+  const now = performance.now();
+  if (now - lastRecTap < 600) return;
+  lastRecTap = now;
   if (state.rec && state.rec.line === i) { stopRec(); return; }
   if (state.rec) stopRec();
   stopSpeech(); stopMine();
