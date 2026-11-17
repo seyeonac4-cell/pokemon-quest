@@ -775,7 +775,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       id:'s5', n:5, emoji:'🚗', title:'R-모음 · 이중모음', en:'R-Controlled & Diphthongs',
       badge:'ar · oo · oi', tone:'lav',
       desc:'r이 붙으면 소리가 뭉개져요. ar는 「아르」, or는 「오르」! 나머지 이중모음도 함께!',
-      video:{ id:'EeEch_XJrWc', name:'ar · or · oi · ow', sub:'R모음과 이중모음 (공식 알파블록스)' },,
+      video:{ id:'EeEch_XJrWc', name:'ar · or · oi · ow', sub:'R모음과 이중모음 (공식 알파블록스)' },
       units:[
         U('s5ar', 'ar', 'car · star · park', [
           'car|🚗|자동차|c-ar', 'jar|🫙|단지|j-ar', 'far|🔭|먼|f-ar',
@@ -1062,7 +1062,8 @@ button{font-family:inherit;color:inherit;cursor:pointer}
      2) 단계 안 단원 목록
      ========================================================= */
   function renderStage(){
-    var s = cur.stage;    $('stageCrumb').textContent = s.n + '단계';
+    var s = cur.stage;
+    $('stageCrumb').textContent = s.n + '단계';
     $('stageTitle').textContent = s.emoji + ' ' + s.n + '단계 · ' + s.title;
     $('stageDesc').textContent = s.desc;
     var box = $('unitList');
