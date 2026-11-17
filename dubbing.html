@@ -853,7 +853,7 @@ function trimBuffer(ctx, buf, secs) {
   const len = Math.max(1, Math.floor(secs * buf.sampleRate));
   const out = ctx.createBuffer(buf.numberOfChannels, len, buf.sampleRate);
   for (let c = 0; c < buf.numberOfChannels; c++) {
-    out.copyToChannel(buf.getChannelData(c).subarray(0, len), c);
+    try { out.getChannelData(c).set(buf.getChannelData(c).subarray(0, len)); } catch (_) {}
   }
   return out;
 }
