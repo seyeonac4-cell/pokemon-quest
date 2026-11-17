@@ -115,7 +115,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   position:relative;padding:8px 4px 5px;border-radius:18px;border:2.5px dashed var(--line);
   background:#fbf9ff;text-align:center;transition:background .18s,border-color .18s,transform .18s;
 }
-.group .dots{display:grid;justify-items:center;align-items:center;gap:1px;justify-content:center}
+.group .dots{display:grid;justify-items:center;align-items:center;gap:2px;justify-content:center;width:max-content;margin:0 auto}
 .group .dots .stk{font-size:clamp(15px,4.2vw,24px);line-height:1.05;display:block}
 .group .gno{margin-top:4px;font-size:11.5px;font-weight:700;color:var(--muted);display:block}
 .group.done{background:#fff4c9;border-color:var(--sun-d);border-style:solid;transform:translateY(-3px) scale(1.03)}
@@ -542,7 +542,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       el.setAttribute('data-g', g);
       var dots = document.createElement('div');
       dots.className = 'dots';
-      dots.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+      dots.style.gridTemplateColumns = 'repeat(' + cols + ', auto)';
       for(var i = 0; i < a; i++){
         var sp = document.createElement('span');
         sp.className = 'stk';
