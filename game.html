@@ -715,8 +715,8 @@ function makeWordQ(pool, wantKo){
     answerWord:w
   };
 }
-function eubneun(n){ var d=n%10; return (d===1||d===3||d===6||d===7||d===8)?'은':'는'; }
-function hasFinalNum(n){ var d=n%10; if(d===0) return true; return d===1||d===3||d===6||d===7||d===8; }
+function eubneun(n){ return hasFinalNum(n)?'은':'는'; }
+function hasFinalNum(n){ if(n<0) n=-n; var d=n%10; if(d===0) return true; return d===1||d===3||d===6||d===7||d===8; }
 function eulReul(n){ return n+(hasFinalNum(n)?'을':'를'); }
 function mathOpts(ans, spread){
   var set = {}; set[ans]=1;
@@ -947,7 +947,7 @@ function onOptClick(btn, o){
       $('qBite').className='bite on';
       $('qBite').innerHTML='<span class="bh">💡 오늘의 '+(G.cur.answerWord?'단어':'상식')+' 한 입</span><span class="bt">'+escB(bt)+'</span>';
       setTimeout(function(){
-        try{ $('qBite').scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(e){}
+        try{ $('qBite').scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
       }, 120);
     }
     $('qNext').style.display='block';
