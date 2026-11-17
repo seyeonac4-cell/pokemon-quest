@@ -1064,7 +1064,7 @@ function drawBubble(seg, t, amp) {
   const bw = Math.min(maxW, Math.ceil(contentW) + padX * 2);
   const textH = (state.showEn && lines.length) ? lines.length * lh + 8 : 0;
   const muted = !seg.take;
-  const noteH = muted ? 26 : 0;
+  const noteH = muted ? 32 : 0;
   const bh = padTop + nameH + textH + noteH + padBot;
   const bx = right ? W - 56 - bw : 56;
   const by = 44;
@@ -1131,8 +1131,8 @@ function drawBubble(seg, t, amp) {
     FC.save();
     FC.font = "600 17px -apple-system,'Apple SD Gothic Neo',system-ui,sans-serif";
     FC.fillStyle = 'rgba(140,118,100,.92)';
-    FC.textAlign = 'left'; FC.textBaseline = 'top';
-    FC.fillText('🔇 내 목소리 없음 · 자막만 나와요', bx + padX, by + padTop + nameH + textH + 4);
+    FC.textAlign = 'left'; FC.textBaseline = 'middle';
+    FC.fillText('🔇 내 목소리 없음 · 자막만 나와요', bx + padX, by + padTop + nameH + textH + 16);
     FC.restore();
   }
 }
