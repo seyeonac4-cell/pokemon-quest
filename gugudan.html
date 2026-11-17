@@ -117,7 +117,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 }
 .group .dots{display:grid;justify-items:center;align-items:center;gap:2px;justify-content:center;width:max-content;margin:0 auto}
 .group .dots .stk{font-size:clamp(15px,4.2vw,24px);line-height:1.05;display:block}
-.group .gno{margin-top:4px;font-size:11.5px;font-weight:700;color:var(--muted);display:block}
+.group .gno{margin-top:4px;font-size:11.5px;font-weight:700;color:var(--muted);display:block;white-space:nowrap}
 .group.done{background:#fff4c9;border-color:var(--sun-d);border-style:solid;transform:translateY(-3px) scale(1.03)}
 .group.counting{background:#ffe9f2;border-color:var(--pink-d);border-style:solid;transform:scale(1.05)}
 .sumline{
@@ -554,7 +554,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       if(withNo !== false){
         var no = document.createElement('span');
         no.className = 'gno';
-        no.textContent = (g+1) + '묶음 · ' + a + '개';
+        no.textContent = (g+1) + '묶음';
         el.appendChild(no);
       }
       box.appendChild(el);
