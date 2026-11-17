@@ -1616,8 +1616,8 @@ function drawEmote(ch, mood, local, dur) {
   if (pop <= 0 || fade <= 0) return;
   const sc = 0.55 + 0.6 * (1 - Math.pow(1 - pop, 3));
   const bob = Math.sin(local * 5.4) * 9;
-  const x = ch.side === 'center' ? W * 0.5 : ch.ax * W;
-  const y = ch.side === 'center' ? H * 0.42 : ch.ay * H - 155 + bob;
+  const x = ch.side === 'center' ? W * 0.80 : ch.ax * W;
+  const y = ch.side === 'center' ? H * 0.30 : ch.ay * H - 155 + bob;
   FC.save();
   FC.globalAlpha = Math.min(1, pop * 1.2) * fade;
   FC.font = Math.round(92 * sc) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui,sans-serif';
