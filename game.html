@@ -792,6 +792,7 @@ $('qNext').addEventListener('click', function(){
 function revealPiece(){
   G.piece.classList.add('open');
   G.opened++;
+  G.answered=false;
   sFlip();
   $('qcard').style.display='none';
   updateProgress();
