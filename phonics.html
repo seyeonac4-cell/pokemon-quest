@@ -308,11 +308,11 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   background:linear-gradient(180deg,#ffdce9,#ffb3d1);display:grid;place-items:center;
   font-size:16px;font-weight:900;padding-left:2px;
 }
-.vmodal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:12px}
+.vmodal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:6px}
 .vmodal[hidden]{display:none}
 .vbackdrop{position:absolute;inset:0;background:rgba(20,32,55,.62)}
 .vsheet{
-  position:relative;width:100%;max-width:720px;background:#fff;border:3px solid var(--ink);
+  position:relative;width:100%;max-width:900px;background:#fff;border:3px solid var(--ink);
   border-radius:22px;box-shadow:0 12px 0 rgba(34,49,79,.25);overflow:hidden;
 }
 .vhead{display:flex;align-items:center;gap:8px;padding:9px 11px;background:linear-gradient(180deg,#ffffff,#eef7ff);border-bottom:2.5px solid var(--line)}
@@ -329,10 +329,10 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .vend{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,#eaf6ff,#ffffff);text-align:center;padding:14px}
 .vend[hidden]{display:none}
 .vend p{margin:0;font-size:20px;font-weight:900;color:var(--ink)}
-.vctl{display:flex;gap:8px;padding:0 11px 2px}
+.vctl{display:flex;gap:7px;padding:0 9px 2px}
 .vctl button{
-  flex:1;min-height:52px;border-radius:14px;border:2.5px solid var(--ink);background:#fff;
-  font-size:16.5px;font-weight:900;box-shadow:var(--shadow-s);
+  flex:1 1 0;min-width:0;min-height:52px;padding:0 6px;border-radius:14px;border:2.5px solid var(--ink);background:#fff;
+  font-size:16px;font-weight:900;box-shadow:var(--shadow-s);white-space:nowrap;
 }
 .vctl button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,49,79,.12)}
 .vend .vrb{
@@ -342,6 +342,21 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 }
 .vend .vrb:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,49,79,.14)}
 .vtip{margin:0;padding:9px 11px 11px;font-size:14.5px;font-weight:900;color:var(--muted);text-align:center;line-height:1.45}
+
+/* ---------- 영상 전체화면 (우리 래퍼 그대로, 유튜브 조작은 가려 둔 채) ---------- */
+.vsheet:fullscreen,.vsheet.fs{
+  width:100vw;height:100vh;height:100dvh;max-width:none;border-radius:0;border:0;
+  display:flex;flex-direction:column;justify-content:center;background:#0b1220;
+}
+.vsheet.fs{position:fixed;inset:0;z-index:95}
+.vsheet:fullscreen .vhead,.vsheet.fs .vhead{background:linear-gradient(180deg,#0f1d31,#16283f);border-bottom:2.5px solid rgba(255,255,255,.14)}
+.vsheet:fullscreen .vhead .vtitle,.vsheet.fs .vhead .vtitle{color:#eaf6ff}
+.vsheet:fullscreen .vclose,.vsheet.fs .vclose{background:#1b2c46;color:#eaf6ff;border-color:#3c577d}
+.vsheet:fullscreen .vframe,.vsheet.fs .vframe{flex:1 1 auto;min-height:0;aspect-ratio:auto;width:100%}
+.vsheet:fullscreen .vctl,.vsheet.fs .vctl{padding:6px 9px calc(10px + env(safe-area-inset-bottom));background:#0b1220}
+.vsheet:fullscreen .vctl button,.vsheet.fs .vctl button{background:#1b2c46;color:#eaf6ff;border-color:#3c577d;box-shadow:none}
+.vsheet:fullscreen .vtip,.vsheet.fs .vtip{display:none}
+#vFs{white-space:nowrap}
 
 /* ---------- 효과 ---------- */
 .spark{position:fixed;pointer-events:none;font-size:26px;z-index:50;animation:fly .9s ease-out forwards}
@@ -532,9 +547,10 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 <!-- ================= 알파블록스 영상 모달 ================= -->
 <div class="vmodal" id="vModal" hidden>
   <div class="vbackdrop" id="vBackdrop"></div>
-  <div class="vsheet" role="dialog" aria-modal="true" aria-label="알파블록스 영상">
+  <div class="vsheet" id="vSheet" role="dialog" aria-modal="true" aria-label="알파블록스 영상">
     <div class="vhead">
       <span class="vtitle" id="vTitle">📺 알파블록스</span>
+      <button class="vclose" id="vFs" type="button" aria-label="전체화면으로 보기" aria-pressed="false">⛶</button>
       <button class="vclose" id="vClose" type="button" aria-label="영상 닫기">✕</button>
     </div>
     <div class="vframe" id="vFrame">
@@ -547,6 +563,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     <div class="vctl">
       <button id="vToggle" type="button">▶ 재생</button>
       <button id="vRestart" type="button">🔁 처음부터</button>
+      <button id="vFs2" type="button">⛶ 전체화면</button>
     </div>
     <p class="vtip">공식 알파블록스 영어 영상만 나와요. 끝나면 자동으로 멈춰요.</p>
   </div>
@@ -1205,6 +1222,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     document.body.style.overflow = 'hidden';
   }
   function closeVideo(){
+    if(fsEl() || ($('vSheet') && $('vSheet').classList.contains('fs'))) exitFs();
     var f = vIframe();
     if(f) f.remove();
     if($('vEnd')) $('vEnd').hidden = true;
@@ -1251,10 +1269,70 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     else { vCmd('seekTo', [0, true]); vCmd('playVideo'); }
   });
   $('vReplay').addEventListener('click', function(){ sfxTap(); mountVideo(); });
+
+  /* ---------- 영상 전체화면 (보호 레이어·조작 버튼까지 우리 래퍼째로) ---------- */
+  function fsEl(){
+    return document.fullscreenElement || document.webkitFullscreenElement ||
+           document.mozFullScreenElement || document.msFullscreenElement || null;
+  }
+  function fsOn(){
+    var sh = $('vSheet');
+    return !!sh && (sh.classList.contains('fs') || fsEl() === sh);
+  }
+  function paintVs(){
+    var on = fsOn();
+    var b2 = $('vFs2');
+    if(b2) b2.textContent = on ? '🗗 작게 보기' : '⛶ 전체화면';
+    [$('vFs'), b2].forEach(function(b){
+      if(!b) return;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var b1 = $('vFs');
+    if(b1) b1.setAttribute('aria-label', on ? '전체화면 끄기' : '전체화면으로 보기');
+  }
+  function exitFs(){
+    var p = null;
+    try{
+      var ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if(fsEl() && ex) p = ex.call(document);
+    }catch(e){}
+    var sh = $('vSheet');
+    if(sh) sh.classList.remove('fs');
+    if(p && p.then){ p.then(paintVs).catch(paintVs); } else { setTimeout(paintVs, 60); }
+  }
+  function enterFs(){
+    var sh = $('vSheet');
+    if(!sh) return;
+    var req = sh.requestFullscreen || sh.webkitRequestFullscreen || sh.msRequestFullscreen;
+    if(req){
+      var p = null;
+      try{ p = req.call(sh); }catch(e){ p = null; }
+      if(p && p.then){
+        p.then(paintVs).catch(function(){ sh.classList.add('fs'); paintVs(); });
+      } else {
+        setTimeout(function(){ if(fsEl() !== sh) { /* 브라우저가 막으면 아래 버튼으로 CSS 전체화면 */ } paintVs(); }, 300);
+      }
+    } else {
+      sh.classList.add('fs');
+      paintVs();
+    }
+  }
+  function toggleFs(){
+    sfxTap();
+    if(fsOn()) exitFs(); else enterFs();
+  }
+  if($('vFs')) $('vFs').addEventListener('click', function(){ toggleFs(); });
+  if($('vFs2')) $('vFs2').addEventListener('click', function(){ toggleFs(); });
+  document.addEventListener('fullscreenchange', paintVs);
+  document.addEventListener('webkitfullscreenchange', paintVs);
+  paintVs();
   $('vClose').addEventListener('click', function(){ sfxTap(); closeVideo(); });
   $('vBackdrop').addEventListener('click', function(){ closeVideo(); });
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && !$('vModal').hidden) closeVideo();
+    if(e.key !== 'Escape' || $('vModal').hidden) return;
+    if(fsEl()) return;                 /* 브라우저가 전체화면만 닫는다 */
+    if(fsOn()){ exitFs(); return; }     /* CSS 전체화면이면 한 단계씩 */
+    closeVideo();
   });
   $('stageVideo').addEventListener('click', function(){ openVideo(cur.stage); });
   $('azVideo').addEventListener('click', function(){ openVideo(STAGES[0]); });
