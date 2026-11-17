@@ -270,6 +270,15 @@ h1 em{font-style:normal;color:var(--mint)}
 .m-foot{display:flex;gap:8px;padding:12px 14px 14px}
 .m-foot .btn{padding:12px}
 .m-note{color:#7f86ad;font-size:10.5px;text-align:center;padding:0 14px 12px;line-height:1.5}
+.m-yt{
+  display:flex;align-items:center;justify-content:center;gap:7px;margin:0 14px 10px;padding:13px 12px;
+  border-radius:14px;text-decoration:none;font-size:13.5px;font-weight:900;letter-spacing:-.02em;
+  color:#fff;background:linear-gradient(135deg,#ff2d55,#ff5f45);box-shadow:0 8px 20px rgba(255,45,85,.3);
+  -webkit-tap-highlight-color:transparent
+}
+.m-yt:active{transform:scale(.985);filter:brightness(.95)}
+.m-yt .tv{font-size:15px;line-height:1}
+.m-yt small{font-weight:700;font-size:11px;opacity:.9}
 #mDone{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#08251d;font-weight:900;box-shadow:0 8px 20px rgba(78,201,166,.28)}
 #mDone.is-done{background:rgba(255,255,255,.13);color:#cfd4f2;border:1px solid rgba(255,255,255,.18);box-shadow:none}
 #mClose2{background:rgba(255,255,255,.10);color:#e7e9fb;border:1px solid rgba(255,255,255,.14)}
@@ -343,6 +352,9 @@ h1 em{font-style:normal;color:var(--mint)}
     </div>
     <div class="ratio" id="mFrameWrap"></div>
     <div class="m-note" id="mNote"></div>
+    <a class="m-yt" id="mYT" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
+      <span class="tv">📺</span> 유튜브 앱에서 열기 <small>(TV 전송)</small>
+    </a>
     <div class="m-foot">
       <button class="btn btn-done" id="mDone" style="flex:1">✅ 완료!</button>
       <button class="btn btn-done" id="mClose2" style="flex:0 0 96px">닫기</button>
@@ -586,8 +598,9 @@ function openPlayer(id){
   document.getElementById("mNote").innerHTML = v.reason;
   const wrap = document.getElementById("mFrameWrap");
   wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+v.id+
-    '?rel=0&modestbranding=1&playsinline=1&autoplay=1" title="'+esc(v.title)+
+    '?rel=0&modestbranding=1&playsinline=1&autoplay=1&enablejsapi=1" title="'+esc(v.title)+
     '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+  document.getElementById("mYT").href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.id);
   syncModalDone(v.id);
   document.getElementById("modal").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -604,6 +617,14 @@ function syncModalDone(id){
   btn.textContent = dn ? "오늘 완료 · 취소하기" : "✅ 오늘 완료!";
   btn.classList.toggle("is-done", dn);
 }
+/* 유튜브 앱으로 넘어갈 때 이 페이지 소리가 겹치지 않게 잠깐 멈춤 */
+document.getElementById("mYT").addEventListener("click", ()=>{
+  const f = document.querySelector("#mFrameWrap iframe");
+  if(!f || !f.contentWindow) return;
+  try{
+    f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
+  }catch(e){}
+});
 document.getElementById("mClose").addEventListener("click", closePlayer);
 document.getElementById("mClose2").addEventListener("click", closePlayer);
 document.getElementById("mDone").addEventListener("click", ()=>{
