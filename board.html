@@ -331,13 +331,27 @@ img{image-rendering:auto}
   .col.c1{grid-column:1 / -1}
   body{overflow:auto}
   .screen{height:auto;min-height:100%}
+  .cal-card,.today-card,.rt-card,.note-card,.pk-card,.dd-card{flex:0 0 auto}
   .cal-card{min-height:320px}
+  .today-card{min-height:210px}
+  .note-card{min-height:280px}
+  .pk-card{min-height:300px}
+  .dd-card{min-height:140px}
 }
 @media (max-width:720px){
   .grid{grid-template-columns:1fr}
   .col.c1,.col.c2,.col.c3{grid-column:1}
-  .clock{font-size:32px}
+  .topbar{flex-wrap:wrap;gap:8px}
+  .clockbox{align-items:flex-start;margin:0}
+  .clock{font-size:30px}
+  .wx{order:3;flex:1 1 100%;margin-top:4px;height:auto}
+  .wx-meta{grid-template-columns:auto auto auto auto;gap:1px 10px}
   .wx-hours{display:none}
+  .top-actions{flex-direction:row}
+  .cal-card{min-height:0}
+  .cal-wrap{padding-bottom:8px}
+  .cal-grid{grid-auto-rows:minmax(46px,auto)}
+  .cell{min-height:44px}
 }
 </style>
 </head>
