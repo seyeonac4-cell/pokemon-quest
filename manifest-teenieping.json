@@ -1,0 +1,17 @@
+{
+  "name": "형원이 티니핑",
+  "short_name": "티니핑",
+  "description": "형원이 전용 티니핑 놀이터 — 오늘 할 일 체크와 공부 놀이",
+  "start_url": "./teenieping.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7FC",
+  "theme_color": "#FFD9EC",
+  "lang": "ko",
+  "icons": [
+    { "src": "assets/teenieping/teenieping-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/teenieping/teenieping-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/teenieping/teenieping-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
