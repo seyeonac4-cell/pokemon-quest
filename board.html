@@ -186,6 +186,9 @@ img{image-rendering:auto}
 .ev-row .x{border:none;background:none;font-size:12px;color:var(--muted);padding:0 2px;flex:0 0 auto}
 .ev-row .x:hover{color:var(--red)}
 .ev-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:10px 0}
+.shop-list .ev-empty{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:0}
+.memo-list .ev-empty{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:0}
+.dd-list .ev-empty{flex:1 1 auto;display:flex;align-items:center;justify-content:center}
 .ev-form{flex:0 0 auto;display:flex;gap:4px;padding:5px 6px;border-top:2px dashed var(--line);background:#fbfdff}
 .ev-form input[type=text]{flex:1 1 auto;min-width:0}
 .ev-form input,.ev-form select,.note-form input,.note-form select{
@@ -234,17 +237,17 @@ img{image-rendering:auto}
 
 /* ---------- 포켓몬 현황 ---------- */
 .pk-card{flex:1.32 1 0}
-.pk-list{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:7px;padding:7px}
+.pk-list{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:8px}
 .pk{
-  border:2px solid var(--ink);border-radius:9px;padding:6px 8px;display:flex;gap:8px;align-items:center;
+  border:2px solid var(--ink);border-radius:9px;padding:8px 10px;display:flex;gap:10px;align-items:center;
   background:linear-gradient(#fff,#fdfdff);box-shadow:var(--shadow);position:relative;overflow:hidden
 }
 .pk.k1{background:linear-gradient(#fff5f9,#ffe8f1)}
 .pk.k2{background:linear-gradient(#f1fff7,#ddf7ea)}
-.pk-art{width:66px;height:66px;flex:0 0 auto;display:grid;place-items:center;
+.pk-art{width:78px;height:78px;flex:0 0 auto;display:grid;place-items:center;
   border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
 .pk-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 0 rgba(40,50,79,.15))}
-.pk-art .emo{font-size:34px}
+.pk-art .emo{font-size:40px}
 .pk-info{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
 .pk-top{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700}
 .pk-top .who{font-size:13px}
@@ -1215,7 +1218,7 @@ img{image-rendering:auto}
       }
       var dd = dayDiff(today, next);
       if (dd < 0) return;               /* 지난 일정은 D-day에서 빼기 */
-      if (dd > 200) return;
+      if (dd > 200 && e.cat !== 'birthday') return;
       list.push({ id: id, e: e, dd: dd, when: next });
     });
     list.sort(function (a, b) { return a.dd - b.dd; });
