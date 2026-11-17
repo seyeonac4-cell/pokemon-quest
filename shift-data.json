@@ -1,0 +1,537 @@
+{
+ "month": "2026-11",
+ "label": "2026년 11월",
+ "year": 2026,
+ "monthNum": 11,
+ "nurse": {
+  "name": "임세연",
+  "row": 19,
+  "tag": "N"
+ },
+ "unit": "병동",
+ "stats": {
+  "night": 15,
+  "off": 15,
+  "nightPerDay": 3
+ },
+ "days": [
+  {
+   "d": 1,
+   "date": "2026-11-01",
+   "weekday": "일",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 2,
+   "date": "2026-11-02",
+   "weekday": "월",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 3,
+   "date": "2026-11-03",
+   "weekday": "화",
+   "shift": "N",
+   "colleagues": [
+    "최기영",
+    "최수진"
+   ]
+  },
+  {
+   "d": 4,
+   "date": "2026-11-04",
+   "weekday": "수",
+   "shift": "N",
+   "colleagues": [
+    "최기영",
+    "김신혜"
+   ]
+  },
+  {
+   "d": 5,
+   "date": "2026-11-05",
+   "weekday": "목",
+   "shift": "N",
+   "colleagues": [
+    "조혜빈",
+    "김신혜"
+   ]
+  },
+  {
+   "d": 6,
+   "date": "2026-11-06",
+   "weekday": "금",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 7,
+   "date": "2026-11-07",
+   "weekday": "토",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 8,
+   "date": "2026-11-08",
+   "weekday": "일",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 9,
+   "date": "2026-11-09",
+   "weekday": "월",
+   "shift": "N",
+   "colleagues": [
+    "최유경",
+    "조여름"
+   ]
+  },
+  {
+   "d": 10,
+   "date": "2026-11-10",
+   "weekday": "화",
+   "shift": "N",
+   "colleagues": [
+    "김지현",
+    "최수진"
+   ]
+  },
+  {
+   "d": 11,
+   "date": "2026-11-11",
+   "weekday": "수",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 12,
+   "date": "2026-11-12",
+   "weekday": "목",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 13,
+   "date": "2026-11-13",
+   "weekday": "금",
+   "shift": "N",
+   "colleagues": [
+    "김하은",
+    "박정민"
+   ]
+  },
+  {
+   "d": 14,
+   "date": "2026-11-14",
+   "weekday": "토",
+   "shift": "N",
+   "colleagues": [
+    "박미소",
+    "김신혜"
+   ]
+  },
+  {
+   "d": 15,
+   "date": "2026-11-15",
+   "weekday": "일",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 16,
+   "date": "2026-11-16",
+   "weekday": "월",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 17,
+   "date": "2026-11-17",
+   "weekday": "화",
+   "shift": "N",
+   "colleagues": [
+    "김지영",
+    "김신혜"
+   ]
+  },
+  {
+   "d": 18,
+   "date": "2026-11-18",
+   "weekday": "수",
+   "shift": "N",
+   "colleagues": [
+    "조혜빈",
+    "김신혜"
+   ]
+  },
+  {
+   "d": 19,
+   "date": "2026-11-19",
+   "weekday": "목",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 20,
+   "date": "2026-11-20",
+   "weekday": "금",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 21,
+   "date": "2026-11-21",
+   "weekday": "토",
+   "shift": "N",
+   "colleagues": [
+    "심주화",
+    "조여름"
+   ]
+  },
+  {
+   "d": 22,
+   "date": "2026-11-22",
+   "weekday": "일",
+   "shift": "N",
+   "colleagues": [
+    "심주화",
+    "이혜성"
+   ]
+  },
+  {
+   "d": 23,
+   "date": "2026-11-23",
+   "weekday": "월",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 24,
+   "date": "2026-11-24",
+   "weekday": "화",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 25,
+   "date": "2026-11-25",
+   "weekday": "수",
+   "shift": "N",
+   "colleagues": [
+    "김유라",
+    "조여름"
+   ]
+  },
+  {
+   "d": 26,
+   "date": "2026-11-26",
+   "weekday": "목",
+   "shift": "N",
+   "colleagues": [
+    "김유라",
+    "조여름"
+   ]
+  },
+  {
+   "d": 27,
+   "date": "2026-11-27",
+   "weekday": "금",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 28,
+   "date": "2026-11-28",
+   "weekday": "토",
+   "shift": "OFF",
+   "colleagues": []
+  },
+  {
+   "d": 29,
+   "date": "2026-11-29",
+   "weekday": "일",
+   "shift": "N",
+   "colleagues": [
+    "김하은",
+    "최수진"
+   ]
+  },
+  {
+   "d": 30,
+   "date": "2026-11-30",
+   "weekday": "월",
+   "shift": "N",
+   "colleagues": [
+    "최기영",
+    "최수진"
+   ]
+  }
+ ],
+ "colleagues": [
+  {
+   "name": "김신혜",
+   "count": 5
+  },
+  {
+   "name": "최수진",
+   "count": 4
+  },
+  {
+   "name": "조여름",
+   "count": 4
+  },
+  {
+   "name": "최기영",
+   "count": 3
+  },
+  {
+   "name": "조혜빈",
+   "count": 2
+  },
+  {
+   "name": "김하은",
+   "count": 2
+  },
+  {
+   "name": "심주화",
+   "count": 2
+  },
+  {
+   "name": "김유라",
+   "count": 2
+  },
+  {
+   "name": "최유경",
+   "count": 1
+  },
+  {
+   "name": "김지현",
+   "count": 1
+  },
+  {
+   "name": "박정민",
+   "count": 1
+  },
+  {
+   "name": "박미소",
+   "count": 1
+  },
+  {
+   "name": "김지영",
+   "count": 1
+  },
+  {
+   "name": "이혜성",
+   "count": 1
+  }
+ ],
+ "roster": [
+  {
+   "name": "임세연",
+   "nDays": [
+    3,
+    4,
+    5,
+    9,
+    10,
+    13,
+    14,
+    17,
+    18,
+    21,
+    22,
+    25,
+    26,
+    29,
+    30
+   ],
+   "nCount": 15
+  },
+  {
+   "name": "유현정",
+   "nDays": [],
+   "nCount": 0
+  },
+  {
+   "name": "김지영",
+   "nDays": [
+    16,
+    17
+   ],
+   "nCount": 2
+  },
+  {
+   "name": "박미소",
+   "nDays": [
+    2,
+    14,
+    15
+   ],
+   "nCount": 3
+  },
+  {
+   "name": "최유경",
+   "nDays": [
+    8,
+    9,
+    19,
+    20
+   ],
+   "nCount": 4
+  },
+  {
+   "name": "김지현",
+   "nDays": [
+    10,
+    11,
+    23,
+    24
+   ],
+   "nCount": 4
+  },
+  {
+   "name": "심주화",
+   "nDays": [
+    1,
+    2,
+    21,
+    22
+   ],
+   "nCount": 4
+  },
+  {
+   "name": "김하은",
+   "nDays": [
+    8,
+    12,
+    13,
+    29
+   ],
+   "nCount": 4
+  },
+  {
+   "name": "조혜빈",
+   "nDays": [
+    5,
+    6,
+    18,
+    27,
+    28
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "김유라",
+   "nDays": [
+    6,
+    7,
+    12,
+    25,
+    26
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "최기영",
+   "nDays": [
+    3,
+    4,
+    15,
+    16,
+    30
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "조하나",
+   "nDays": [
+    11,
+    19,
+    20,
+    27
+   ],
+   "nCount": 4
+  },
+  {
+   "name": "박정민",
+   "nDays": [
+    1,
+    12,
+    13,
+    23,
+    24
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "이혜성",
+   "nDays": [
+    7,
+    8,
+    22,
+    27,
+    28
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "김신혜",
+   "nDays": [
+    4,
+    5,
+    14,
+    17,
+    18
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "조여름",
+   "nDays": [
+    1,
+    9,
+    21,
+    25,
+    26
+   ],
+   "nCount": 5
+  },
+  {
+   "name": "최수진",
+   "nDays": [
+    2,
+    3,
+    6,
+    7,
+    10,
+    11,
+    15,
+    16,
+    19,
+    20,
+    23,
+    24,
+    28,
+    29,
+    30
+   ],
+   "nCount": 15
+  }
+ ],
+ "verification": {
+  "method": "셀 단위 확대 크롭 + 글리프 클러스터링 + 요약표 교차검증",
+  "nurseRowSN": 15,
+  "nurseRowOFF": 15,
+  "nightTotalPerDay": 3,
+  "rowsMatched": 15,
+  "rowsMismatched": 0,
+  "daysChecked": 30,
+  "status": "ok"
+ },
+ "source": "attachments/2026-11-18/1230-f37fd9216e684276b8c06cfd3ac39b75.jpg",
+ "updatedAt": "2026-11-18"
+}

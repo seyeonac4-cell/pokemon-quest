@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#161a3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="세연님 근무 달력">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<title>🌙 세연님의 11월 근무 달력</title>
+<style>
+/* ============================================================
+   🌙 세연님의 병동 근무 달력
+   데이터는 shift-data.json 하나만 갈아끼우면 다음 달로 갱신됨
+   ============================================================ */
+:root{
+  --night:#3b3a94;
+  --night2:#242257;
+  --night-ink:#eef0ff;
+  --off:#e4f6ee;
+  --off2:#f7dbe7;
+  --off-ink:#3f6b5c;
+  --ink:#1b1d2b;
+  --muted:#7b8095;
+  --line:#e7e8f0;
+  --card:#ffffff;
+  --sun:#d1495b;
+  --sat:#3d6fb4;
+  --shadow:0 18px 48px rgba(30,32,64,.13);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:var(--ink);background:#eceef6;
+  background-image:radial-gradient(1200px 600px at 50% -10%,#dfe3f7 0%,#eceef6 55%,#e9ebf3 100%);
+  min-height:100vh;display:flex;justify-content:center;padding:24px 14px 40px;
+}
+.wrap{width:100%;max-width:468px}
+.card{background:var(--card);border-radius:26px;box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(255,255,255,.7)}
+/* ---------- 헤더 ---------- */
+.head{background:linear-gradient(150deg,#31307a 0%,#242257 52%,#171a3f 100%);color:#fff;padding:22px 22px 18px;position:relative;overflow:hidden}
+.head::after{content:"";position:absolute;right:-46px;top:-58px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(150,160,255,.45),rgba(150,160,255,0) 70%)}
+.h-top{display:flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.06em;color:#b9bdf0;font-weight:500}
+.h-top .dot{width:6px;height:6px;border-radius:50%;background:#8f96ff;box-shadow:0 0 10px #8f96ff}
+h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-height:1.2}
+.h-sub{font-size:13px;color:#c4c8f2;font-weight:500}
+.h-sub b{color:#fff;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px 8px;text-align:center;backdrop-filter:blur(6px)}
+.stat .n{font-size:20px;font-weight:900;line-height:1.1}
+.stat .k{font-size:10.5px;color:#b9bdf0;margin-top:3px;letter-spacing:.03em}
+/* ---------- 범례 ---------- */
+.legend{display:flex;gap:14px;align-items:center;padding:13px 20px 4px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+.sw{width:13px;height:13px;border-radius:5px;display:inline-block}
+.sw.n{background:linear-gradient(150deg,#4a49b4,#242257)}
+.sw.o{background:linear-gradient(150deg,#e4f6ee,#cfeade)}
+.sw.t{background:#fff;border:1.5px solid #3b3a94}
+/* ---------- 달력 ---------- */
+.cal{padding:10px 14px 4px}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:8px 0 7px}
+.dow div{text-align:center;font-size:11.5px;font-weight:700;color:#9aa0b4;letter-spacing:.04em}
+.dow div:first-child{color:var(--sun)}
+.dow div:last-child{color:var(--sat)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding-bottom:14px}
+.cell{
+  position:relative;min-height:74px;border-radius:12px;background:#fbfbfe;border:1px solid var(--line);
+  padding:5px 3px 4px;display:flex;flex-direction:column;align-items:center;overflow:hidden;
+  cursor:pointer;transition:transform .12s ease,box-shadow .12s ease;
+}
+.cell:active{transform:scale(.97)}
+.cell.empty{background:transparent;border:none;cursor:default}
+.cell .dnum{font-size:11.5px;font-weight:700;color:#8b90a6;line-height:1}
+.cell.n{background:linear-gradient(158deg,#4a49b4 0%,#302e78 55%,#242257 100%);border-color:#2b2970;box-shadow:0 6px 14px rgba(43,41,112,.22)}
+.cell.n .dnum{color:#cdd1ff}
+.cell.o{background:linear-gradient(158deg,#f2fbf7 0%,#e0f3ea 100%);border-color:#d3ebdf}
+.cell.o.first{background:linear-gradient(158deg,#fdf1f5 0%,#f7dbe7 100%);border-color:#f1d2de}
+.cell.today{outline:2.5px solid #f5b64a;outline-offset:-2.5px}
+.cell .badge{
+  margin-top:5px;font-size:10.5px;font-weight:900;letter-spacing:.04em;border-radius:7px;
+  padding:2.5px 0;width:100%;text-align:center;line-height:1.1;
+}
+.cell.n .badge{color:#fff;background:rgba(255,255,255,.16)}
+.cell.o .badge{color:var(--off-ink);background:rgba(255,255,255,.72)}
+.cell.o.first .badge{color:#a9506b;background:rgba(255,255,255,.80)}
+.cell .mates{margin-top:auto;font-size:9.5px;line-height:1.25;color:#cfd3ff;text-align:center;font-weight:500;padding-bottom:1px;word-break:keep-all}
+.cell .mates i{display:block;font-style:normal}
+/* ---------- 동료 순위 ---------- */
+.sec{padding:2px 20px 18px}
+.sec h2{margin:6px 0 10px;font-size:13.5px;font-weight:900;color:#2b2d42;display:flex;align-items:center;gap:7px}
+.sec h2 .bar{width:3px;height:14px;border-radius:2px;background:linear-gradient(#4a49b4,#242257)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#f3f4fb;border:1px solid #e4e6f3;border-radius:100px;padding:6px 11px 6px 9px;font-size:12px;font-weight:700;color:#3a3d55}
+.chip b{color:#3b3a94;font-weight:900}
+.chip .c{background:#e6e8fa;color:#3b3a94;border-radius:100px;padding:1px 6px;font-size:10.5px;font-weight:900}
+.foot{padding:0 20px 20px;font-size:10.5px;color:#a2a7bb;line-height:1.6}
+.foot b{color:#7b8095;font-weight:700}
+/* ---------- 상세 시트 ---------- */
+.sheet{position:fixed;inset:0;background:rgba(20,22,44,.42);opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:flex-end;justify-content:center;z-index:50}
+.sheet.on{opacity:1;pointer-events:auto}
+.sheet .box{width:100%;max-width:468px;background:#fff;border-radius:24px 24px 0 0;padding:20px 22px 26px;transform:translateY(16px);transition:transform .22s ease}
+.sheet.on .box{transform:translateY(0)}
+.sheet h3{margin:0 0 4px;font-size:18px;font-weight:900}
+.sheet .sm{font-size:12px;color:var(--muted);margin-bottom:14px}
+.sheet .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+.sheet .row:first-of-type{border-top:none}
+.sheet .row b{font-weight:800}
+.pill{font-size:11px;font-weight:900;padding:3px 9px;border-radius:100px}
+.pill.n{background:#eaeaff;color:#3b3a94}
+.pill.o{background:#e4f6ee;color:#3f6b5c}
+.sheet .close{margin-top:16px;width:100%;border:none;background:#242257;color:#fff;font-family:inherit;font-size:14px;font-weight:800;padding:13px;border-radius:14px}
+@media (max-width:400px){
+  .cell{min-height:66px}
+  .cell .mates{font-size:8.8px}
+  h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <div class="head">
+      <div class="h-top"><span class="dot"></span>병동 근무표 · NIGHT</div>
+      <h1 id="title">11월 근무 달력</h1>
+      <div class="h-sub"><b id="nurseName">임세연</b> 님의 나이트 근무와 함께 서는 동료</div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sNight">–</div><div class="k">나이트</div></div>
+        <div class="stat"><div class="n" id="sOff">–</div><div class="k">휴무</div></div>
+        <div class="stat"><div class="n" id="sMates">–</div><div class="k">함께 선 동료</div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="sw n"></i>나이트(N)</span>
+      <span><i class="sw o"></i>휴무</span>
+      <span><i class="sw t"></i>오늘</span>
+    </div>
+
+    <div class="cal">
+      <div class="dow"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="sec">
+      <h2><span class="bar"></span>함께 나이트 선 동료</h2>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="foot" id="foot"></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="box">
+    <h3 id="shTitle">11월 3일 (화)</h3>
+    <div class="sm" id="shSub">나이트 근무</div>
+    <div id="shRows"></div>
+    <button class="close" onclick="closeSheet()">닫기</button>
+  </div>
+</div>
+
+<script>
+const WD=['일','월','화','수','목','금','토'];
+let DATA=null;
+const TODAY=new Date();
+const TODAY_KEY=(TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0'));
+
+function fmt(d){return (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')';}
+
+fetch('./shift-data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{DATA=d;render();}).catch(e=>{
+  document.getElementById('foot').textContent='근무 데이터를 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.';
+});
+
+function render(){
+  const d=DATA;
+  document.getElementById('title').textContent=d.monthNum+'월 근무 달력';
+  document.getElementById('nurseName').textContent=d.nurse.name;
+  const nights=d.days.filter(x=>x.shift==='N').length;
+  const offs=d.days.filter(x=>x.shift!=='N').length;
+  document.getElementById('sNight').textContent=nights;
+  document.getElementById('sOff').textContent=offs;
+  document.getElementById('sMates').textContent=d.colleagues.length;
+
+  // 달력 그리드
+  const first=new Date(d.year,d.monthNum-1,1).getDay();
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cell empty';grid.appendChild(e);}
+  d.days.forEach(day=>{
+    const c=document.createElement('div');
+    const isNight=day.shift==='N';
+    c.className='cell '+(isNight?'n':'o')+((!isNight&&(day.weekday==='일'||day.weekday==='토'))?' first':'')+(day.date===TODAY_KEY?' today':'');
+    let mates='';
+    if(isNight&&day.colleagues.length){
+      mates='<div class="mates">'+day.colleagues.map(n=>'<i>'+n+'</i>').join('')+'</div>';
+    }
+    c.innerHTML='<div class="dnum">'+day.d+'</div><div class="badge">'+(isNight?'N':'휴무')+'</div>'+mates;
+    c.onclick=()=>openSheet(day);
+    grid.appendChild(c);
+  });
+
+  // 동료 칩
+  const chips=document.getElementById('chips');
+  chips.innerHTML=d.colleagues.map(c=>'<span class="chip">'+c.name+' <span class="c">'+c.count+'</span></span>').join('');
+
+  // 하단 설명
+  const v=d.verification||{};
+  document.getElementById('foot').innerHTML=
+    '<b>'+d.label+'</b> · 하루 나이트 인원 '+ (v.nightTotalPerDay||3) +'명(세연님 포함)<br>'+
+    '근무표 사진을 칸 단위로 확대해 읽고, 요약표(N수 '+nights+'·휴무 '+offs+')와 날짜별 NIGHT 인원으로 두 번 대조해 확인했어요.<br>'+
+    '다음 달 근무표는 데이터(shift-data.json)만 바꾸면 이 달력이 그대로 갱신됩니다.';
+}
+
+function openSheet(day){
+  const isNight=day.shift==='N';
+  document.getElementById('shTitle').textContent=(DATA.monthNum)+'월 '+day.d+'일 ('+day.weekday+')';
+  document.getElementById('shSub').textContent=isNight?'나이트 근무 · 함께 서는 동료 2명':'휴무';
+  let rows='<div class="row"><span>근무</span><span class="pill '+(isNight?'n':'o')+'">'+(isNight?'N · 나이트':'휴무')+'</span></div>';
+  if(isNight){
+    day.colleagues.forEach(c=>{
+      const p=(DATA.roster||[]).find(r=>r.name===c);
+      rows+='<div class="row"><span><b>'+c+'</b></span><span style="color:#7b8095;font-size:12px">이번 달 N '+(p?p.nCount:0)+'회</span></div>';
+    });
+  }else{
+    const nx=(DATA.days||[]).find(x=>x.d>day.d&&x.shift==='N');
+    if(nx) rows+='<div class="row"><span>다음 나이트</span><span style="font-weight:800">'+DATA.monthNum+'월 '+nx.d+'일 ('+nx.weekday+')</span></div>';
+  }
+  document.getElementById('shRows').innerHTML=rows;
+  document.getElementById('sheet').classList.add('on');
+}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');}
+document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
+</script>
+</body>
+</html>
