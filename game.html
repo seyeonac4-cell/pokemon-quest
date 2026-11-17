@@ -703,7 +703,7 @@ function makeWordQ(pool, wantKo){
     return {
       kicker:'📖 영단어', q:w.en, sub:'이 단어의 뜻은 무엇일까요?',
       opts:four.map(function(o){ return { label:o.ko, correct:o.ko===w.ko }; }),
-      fb:'「'+w.en+'」은(는) "'+w.ko+'"라는 뜻이에요!',
+      fb:'「'+w.en+'」 = 「'+w.ko+'」',
       answerWord:w
     };
   }
@@ -711,7 +711,7 @@ function makeWordQ(pool, wantKo){
   return {
     kicker:'📖 영단어', q:'"'+w.ko+'"', sub:'이 뜻을 가진 영어 단어는?',
     opts:four.map(function(o){ return { html:'<span class="en">'+o.en+'</span>', correct:o.en===w.en }; }),
-    fb:'"'+w.ko+'"은(는) 영어로 「'+w.en+'」!',
+    fb:'「'+w.ko+'」 = 「'+w.en+'」',
     answerWord:w
   };
 }
@@ -946,6 +946,9 @@ function onOptClick(btn, o){
     if(bt){
       $('qBite').className='bite on';
       $('qBite').innerHTML='<span class="bh">💡 오늘의 '+(G.cur.answerWord?'단어':'상식')+' 한 입</span><span class="bt">'+escB(bt)+'</span>';
+      setTimeout(function(){
+        try{ $('qBite').scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(e){}
+      }, 120);
     }
     $('qNext').style.display='block';
     $('qNext').textContent = G.opened>=5 ? '그림 완성하기 🎉' : '조각 열기 ✨';
