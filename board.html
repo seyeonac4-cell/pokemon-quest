@@ -166,12 +166,12 @@ img{image-rendering:auto}
 .cell.sat{background:#f4f8ff}
 .cell.today{border-color:var(--pink-d);border-width:2px;background:#fff3f8;box-shadow:inset 0 0 0 1.5px #ffd6e4}
 .cell.sel{outline:2.5px solid var(--yellow);outline-offset:-1px}
-.cell .dnum{font-size:10.5px;font-weight:700;line-height:1.1;display:flex;align-items:center;gap:3px}
+.cell .dnum{font-size:11.5px;font-weight:700;line-height:1.1;display:flex;align-items:center;gap:3px}
 .cell .dnum .bd{font-size:9px}
 .cell.today .dnum{color:#d6457a}
 .cell .evs{display:flex;flex-direction:column;gap:1px;min-height:0;overflow:hidden}
 .ev{
-  font-size:9px;line-height:1.15;padding:0 3px;border-radius:3px;border:1px solid rgba(40,50,79,.25);
+  font-size:9.5px;line-height:1.2;padding:0 3px;border-radius:3px;border:1px solid rgba(40,50,79,.25);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;
 }
 .ev.more{background:#eef2f9;color:var(--ink2);border-style:dashed}
@@ -207,7 +207,7 @@ img{image-rendering:auto}
   text-align:center;font-size:11.5px;font-weight:700;border:1.5px solid var(--ink);border-radius:6px;
   padding:2px 0;box-shadow:0 2px 0 rgba(40,50,79,.15)
 }
-.rt-kid .n{font-size:10px;color:var(--ink2);margin-left:2px}
+.rt-kid .n{font-size:10px;color:var(--ink2);margin-left:5px}
 .rt-kid.yj{background:var(--pink)}
 .rt-kid.hw{background:var(--mint)}
 .rt-kid.full{background:var(--yellow)}
@@ -217,12 +217,13 @@ img{image-rendering:auto}
   border:1.5px solid var(--line);border-radius:6px;padding:3px 7px;background:#fbfdff;min-width:0
 }
 .rt-label .ic{font-size:14px;line-height:1}
-.rt-label .sub{display:block;font-size:9px;color:var(--muted);font-weight:700;line-height:1.1}
+.rt-label .sub{display:block;font-size:9.5px;color:var(--muted);font-weight:700;line-height:1.15}
 .rt-btn{
-  border:2px solid var(--ink);border-radius:7px;background:#fff;font-size:15px;line-height:1;
+  border:2px solid var(--ink);border-radius:7px;background:#fff;font-size:19px;line-height:1;
   display:grid;place-items:center;padding:0;min-height:34px;
   box-shadow:0 2px 0 rgba(40,50,79,.18); color:#c3cee2;
 }
+.rt-btn.done{color:#1b2340}
 .rt-btn:active{transform:translateY(2px);box-shadow:none}
 .rt-btn.done{background:var(--yellow);color:#1b2340;border-color:var(--ink)}
 .rt-row .rt-btn.done.k1{background:var(--pink)}
@@ -259,6 +260,9 @@ img{image-rendering:auto}
 .pk-quest .qbar{flex:1 1 auto;height:7px;border:1.5px solid var(--ink);border-radius:999px;background:#eef3fc;overflow:hidden}
 .pk-quest .qbar i{display:block;height:100%;background:#7fb6ff}
 .pk-quest.all .qbar i{background:var(--mint-d)}
+.pk-todo{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--ink2);font-weight:700;margin-top:1px;overflow:hidden}
+.pk-todo .chipq{border:1px solid var(--line);border-radius:999px;padding:0 5px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px}
+.pk-todo.done{color:var(--mint-d)}
 .pk-off{font-size:11px;color:var(--muted);text-align:center;padding:12px 0;font-weight:700}
 
 /* ---------- D-day ---------- */
@@ -1157,6 +1161,19 @@ img{image-rendering:auto}
       var doneCount = todays.filter(function (q) { return doneMap[q.id]; }).length;
       var total = todays.length;
       var qpct = total ? Math.round(doneCount / total * 100) : 0;
+      var pending = todays.filter(function (q) { return !doneMap[q.id]; });
+      var todoHtml = '';
+      if (total) {
+        if (!pending.length) {
+          todoHtml = '<div class="pk-todo done">오늘 퀘스트 다 했어요! 🎉</div>';
+        } else {
+          var chips = pending.slice(0, 2).map(function (q) {
+            return '<span class="chipq">' + esc((q.icon || '⭐') + ' ' + q.title) + '</span>';
+          }).join('');
+          todoHtml = '<div class="pk-todo"><span>남은</span>' + chips
+            + (pending.length > 2 ? '<span>외 ' + (pending.length - 2) + '</span>' : '') + '</div>';
+        }
+      }
       var nextNote = stage < 3 ? ('진화 Lv.' + EVOLVE_LEVELS[stage - 1]) : '최종 진화';
       html += '<div class="pk ' + k.cls + '">'
         + '<div class="pk-art"><img src="' + ART + dex + '.png" alt="' + esc(pname) + '" '
@@ -1173,6 +1190,7 @@ img{image-rendering:auto}
         + '<div class="pk-quest' + (total && doneCount === total ? ' all' : '') + '">'
         + '<span>오늘 퀘스트</span><b>' + doneCount + '/' + total + '</b>'
         + '<span class="qbar"><i style="width:' + clamp(qpct, 2, 100) + '%"></i></span></div>'
+        + todoHtml
         + '</div></div>';
     });
     box.innerHTML = html;
