@@ -122,6 +122,12 @@ img{display:block}
 }
 .wcard.on .wex{display:block}
 .wex em{display:block;margin-top:4px;font-family:var(--font);font-style:normal;font-size:15.5px;font-weight:500;color:var(--muted)}
+.wtip{
+  display:block;margin-top:9px;padding:10px 12px;border-radius:14px;
+  background:#fffdf3;border:2px dashed #ffd58a;
+  font-family:var(--font);font-size:16px;font-weight:700;color:#8a6220;line-height:1.5;
+  word-break:keep-all;
+}
 
 /* 퀴즈 */
 .quizbox{
@@ -153,6 +159,21 @@ img{display:block}
 .opt.hint{background:#fff8e5;border-color:#ffd58a;box-shadow:0 4px 0 #ffe6b0}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .opt:disabled{opacity:1;cursor:default}
+/* 정답·오답 한 줄 팁 */
+.qfb{
+  display:none;margin-top:14px;padding:12px 14px;border-radius:16px;
+  font-size:16.5px;font-weight:800;line-height:1.55;text-align:left;word-break:keep-all;
+  animation:pop .28s;
+}
+.qfb.on{display:block}
+.qfb.good{background:#f0fdf8;border:2.5px dashed #7fdcc4;color:#17715a}
+.qfb.bad{background:#fff7fa;border:2.5px dashed #ffb3d7;color:#a03a6d}
+.qfb .qfbhead{display:block;font-size:18px;font-weight:900;margin-bottom:3px}
+.qfb .qfben{
+  display:block;font-family:var(--font-en);font-size:19px;font-weight:800;color:#7b3f68;margin-top:6px;
+}
+.qfb .qfbko{display:block;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink2);margin-top:1px}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.04)}100%{transform:scale(1)}}
 
 .startbox{text-align:center;padding:8px 4px 4px}
 .startbox .ic{font-size:56px;line-height:1}
@@ -282,7 +303,65 @@ img{display:block}
   ];
 
   var QUIZ_LEN = 10;
-  var CHEERS = ['잘했어!', '최고야!', '멋져!', '정말 잘했어!', '훌륭해!'];
+  var CHEERS = [
+    '잘했어!', '최고야!', '멋져!', '정말 잘했어!', '훌륭해!',
+    '귀가 밝다!', '딩동댕!', '짝짝짝!'
+  ];
+
+  /* ============================================================
+     단어마다 “이럴 때 쓰는 만능 단어!” 한 줄 팁
+     ============================================================ */
+  var TIPS = {
+    'I':      '나를 말할 때는 언제나 대문자 I! 문장 어디에 있어도 크게 써요. I can jump!',
+    'a':      '셀 수 있는 것 하나 앞에 붙여요. a red ball = 빨간 공 하나!',
+    'the':    '이미 우리가 아는 그~ 것이에요. the cat = 우리가 아는 그 고양이!',
+    'and':    '둘을 이어 주는 다리! Mia and I = 미아와 나, 둘 다!',
+    'to':     '어디로 가는지 알려 줘요. Go to bed = 침대로 가!',
+    'is':     '한 사람·한 가지를 설명할 때! She is my mom.',
+    'it':     '물건 하나를 가리켜요. It is big = 그거 커!',
+    'in':     '무언가 안에 들어 있을 때! in the box = 상자 안에.',
+    'on':     '위에 올려져 있을 때! on the desk = 책상 위에.',
+    'you':    '앞에 있는 사람에게 말할 때! You are my friend.',
+    'he':     '남자 한 명을 가리켜요. He is my dad.',
+    'she':    '여자 한 명을 가리켜요. She is happy.',
+    'we':     '나와 너, 우리! We like apples.',
+    'my':     '내 것이라는 표시! my bag = 내 가방.',
+    'me':     '나에게, 나를! Look at me = 나를 봐!',
+    'see':    '눈으로 보는 것! I see a bird.',
+    'like':   '좋아하는 것을 말해요. I like milk.',
+    'can':    '할 수 있다는 만능 단어! I can run = 나는 달릴 수 있어.',
+    'go':     '가자! 어디론가 갈 때! Let us go to the park.',
+    'come':   '나에게 오라는 말! Come here = 이리 와!',
+    'look':   '고개를 돌려 봐요! Look at the star = 별을 봐!',
+    'play':   '노는 일은 다 play! I play with my dog.',
+    'big':    '큰 것! a big elephant = 큰 코끼리.',
+    'little': '작은 것! a little mouse = 작은 쥐.',
+    'red':    '빨간색! My ball is red.',
+    'blue':   '하늘색 같이 파란색! The sky is blue.',
+    'one':    '하나! I have one cookie = 쿠키 하나 있어.',
+    'two':    '둘! Two cats are here = 고양이 둘이 왔어.',
+    'yes':    '좋아, 응! Yes, I can!',
+    'no':     '아니, 싫어! No, thank you.',
+    'here':   '여기! 손으로 가리키며 Come here!',
+    'where':  '어디? 궁금할 때 문장 맨 앞에! Where is my hat?',
+    'what':   '무엇? 물건이 궁금할 때! What is this?',
+    'who':    '누구? 사람이 궁금할 때! Who is she?',
+    'have':   '내가 가진 것! I have a pen.',
+    'has':    'he·she가 가진 것! She has a hat.',
+    'do':     '무엇을 해요! I do my homework.',
+    'make':   '만들어요! Let us make a cake.',
+    'jump':   '껑충! Jump up high = 높이 뛰어!',
+    'run':    '달려요! I run in the park.',
+    'up':     '위로! Look up = 위를 봐!',
+    'down':   '아래로! Sit down = 앉아.',
+    'this':   '가까이 있는 이것! This is my toy.',
+    'that':   '멀리 있는 저것! That is a star.',
+    'with':   '함께! Play with me = 나랑 놀아.',
+    'for':    '누군가를 위해! This is for you.',
+    'are':    '여럿이거나 you일 때! We are happy.',
+    'was':    '지난 일을 말해요. I was at home = 집에 있었어.'
+  };
+  function tipOf(o){ return TIPS[o.w] || '매일 쓰는 만능 단어! 소리 내어 세 번 말해 봐요.'; }
 
   /* ============================================================
      유틸
@@ -444,6 +523,7 @@ img{display:block}
         + '<span class="wspk" aria-hidden="true">🔊</span>'
         + '</span>'
         + '<span class="wex">' + esc(o.ex) + '<em>' + esc(o.exko) + '</em></span>'
+        + '<span class="wtip">💡 ' + esc(tipOf(o)) + '</span>'
         + '</button>';
     });
     $('wlist').innerHTML = h;
@@ -518,6 +598,7 @@ img{display:block}
       h += '<button class="opt" type="button" data-act="q-pick" data-w="' + esc(o.w) + '">' + esc(o.w) + '</button>';
     });
     h += '</div>';
+    h += '<div class="qfb" id="qfb" aria-live="polite"></div>';
     $('quizBox').innerHTML = h;
     actx();
     setTimeout(function () { if (quiz.running && quiz.i < quiz.pool.length) sayWord(target.w); }, 220);
@@ -530,17 +611,28 @@ img{display:block}
     if (!target) return;
     quiz.answered = true;
     actx();
+    var fb = $('qfb');
 
     if (chosen === target.w) {
       quiz.score += 1;
       btn.classList.add('ok');
       sfxOk();
       burstEl(btn, 20);
-      sayKo(pick(CHEERS));
+      var head = pick(CHEERS);
+      if (fb) {
+        fb.className = 'qfb good on';
+        fb.innerHTML = '<span class="qfbhead">🎉 ' + esc(head) + ' 「' + esc(target.w) + '」는 ' + esc(target.ko) + '!</span>'
+          + '💡 ' + esc(tipOf(target))
+          + '<span class="qfben">' + esc(target.ex) + '<span class="qfbko">' + esc(target.exko) + '</span></span>';
+      }
+      sayKo(head + '! ' + target.ko);
       advanceTimer = setTimeout(function () {
-        quiz.i += 1;
-        askQuestion();
-      }, 1000);
+        sayWord(target.ex);
+        advanceTimer = setTimeout(function () {
+          quiz.i += 1;
+          askQuestion();
+        }, 1800);
+      }, 1200);
     } else {
       btn.classList.add('bad');
       btn.disabled = true;
@@ -549,14 +641,23 @@ img{display:block}
         b.disabled = true;
         if (b.getAttribute('data-w') === target.w) b.classList.add('hint');
       });
-      toast('이건 ' + target.w + '! 다시 들어 봐요 💗');
+      if (fb) {
+        fb.className = 'qfb bad on';
+        fb.innerHTML = '<span class="qfbhead">💗 이건 「' + esc(target.w) + '」(' + esc(target.ko) + ')</span>'
+          + '💡 ' + esc(tipOf(target))
+          + '<span class="qfben">' + esc(target.ex) + '<span class="qfbko">' + esc(target.exko) + '</span></span>';
+      }
+      sayKo('이건 ' + target.w + '! 같이 읽어 봐요.');
       advanceTimer = setTimeout(function () {
         sayWord(target.w);
         advanceTimer = setTimeout(function () {
-          quiz.i += 1;
-          askQuestion();
-        }, 1500);
-      }, 420);
+          sayWord(target.ex);
+          advanceTimer = setTimeout(function () {
+            quiz.i += 1;
+            askQuestion();
+          }, 1700);
+        }, 1100);
+      }, 1500);
     }
   }
 

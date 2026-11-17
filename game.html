@@ -187,6 +187,16 @@ body{
 .fb{margin-top:12px;font-size:15px;font-weight:800;border-radius:14px;padding:12px 14px;line-height:1.5;display:none;text-align:left}
 .fb.good{display:block;background:#e8fbef;color:#188a52}
 .fb.bad{display:block;background:#fff0e8;color:#c96a2b}
+/* 오늘의 상식 · 단어 한 입 */
+.bite{
+  display:none;margin-top:10px;border-radius:14px;padding:12px 14px;text-align:left;
+  background:linear-gradient(180deg,#fffdf2,#fff6dc);border:2px dashed var(--gold);
+  color:#8a5a00;animation:fadein .3s;
+}
+.bite.on{display:block}
+.bite .bh{display:block;font-size:13.5px;font-weight:900;color:#b07800;letter-spacing:.2px;margin-bottom:4px}
+.bite .bt{display:block;font-size:15.5px;font-weight:800;line-height:1.55;word-break:keep-all}
+.bite .bt em{font-style:normal;font-family:inherit;font-weight:900;color:#a36100}
 .nextbtn{margin-top:12px}
 
 /* ---------- 완성 ---------- */
@@ -338,6 +348,7 @@ body{
       <div class="qsub" id="qSub"></div>
       <div class="opts" id="qOpts"></div>
       <div class="fb" id="qFb"></div>
+      <div class="bite" id="qBite"></div>
       <button class="btn green nextbtn" id="qNext" style="display:none">조각 열기 ✨</button>
     </div>
   </section>
@@ -535,7 +546,154 @@ function resetToday(kid){
   save('pz_done_'+kid, all);
 }
 
-/* ---------- 문제 생성: {kicker, q, sub, opts:[{label,html?,correct}], fb} ---------- */
+/* ---------- 오늘의 상식 · 단어 한 입 ---------- */
+var BITE = {
+  /* 윤진: 오늘 배운 32단어 */
+  'stressed out':'stress(마음의 짐)가 가득 쌓인 기분! 반대로 편하게 쉬는 건 chill out.',
+  'homework':'home(집) + work(일) = 집에서 하는 일! 영어에선 셀 수 없어서 homeworks라고 하지 않아요.',
+  'finish':'‘끝’이라는 옛 프랑스어에서 왔어요! 경주에서 결생선을 finish line이라고 해요.',
+  'pack':'짐을 꾸리는 것! 등에 메는 가방은 back(등) + pack이에요.',
+  'move':'‘음직이다’도 되고 ‘이사하다’도 돼요! We moved to a new house.',
+  'awesome':'awe(와~ 소름 돗는 느낌) + some → ‘소름 돗게 멋진’! 미국 아이들이 제일 많이 쓰는 칭찬이에요.',
+  'definitely':'‘한계를 정하다’(define)에서 나온 말 → 틀림없이! 확답할 때 Just definitely 하나만 말해도 통해요.',
+  'jog':'run보다 천천히 뛰는 것! 아침 조강(jogging)은 하루를 상쾌하게 해 줘요.',
+  'remodel':'re(다시) + model(모양) → 집 모양을 다시 만드는 것!',
+  'replace':'re(다시) + place(자리) → 그 자리에 다른 걸 다시 놓기 = 바꾸다!',
+  'decide':'de(완전히) + cide(자르다) → 고민을 똑 자르는 것! 결정은 decision.',
+  'repaint':'re(다시) + paint(칠하다) → 다시 칠하기! 같은 방식으로 rewrite는 다시 쓰기.',
+  'cabinet':'문이 달린 수납장! 미국에서는 대통령을 도와주는 각료들을 cabinet이라고 불러요.',
+  'handy':'hand(손) + y → 손에 딱 맞는, 쓰기 편한! ‘손재주가 있다’는 뜻도 있어요.',
+  'fix':'‘고치다’! 원래는 못으로 ‘고정하다’라는 뜻에서 시작했어요.',
+  'broken':'break(깨다)의 변한 모양! My toy is broken = 내 장난감이 고장 났어.',
+  'screwdriver':'screw(나사) + driver(돌리는 것) → 나사를 돌리는 도구!',
+  'hammer':'망치! 동사로는 ‘두드리다’! ‘hammer’는 소리가 나는 말이라 금방 외워져요.',
+  'sunlight':'sun(해) + light(빛) → 햇빛! 아침 햇빛은 morning sunlight.',
+  'stream':'물이 졸졸 흐르다! 인터넷으로 영상을 보내는 streaming도 같은 말이에요.',
+  'sunset':'sun(해) + set(지다) → 해가 지는 것! 반대는 sunrise(일출).',
+  'brand-new':'brand는 ‘불로 찍은 상표’ → 새것 표시가 붙은 = 완전 새것!',
+  'appliance':'apply(적용하다)에서 → 집에 적용해 쓰는 기계 = 가전제품!',
+  'state-of-the-art':'‘예술(state of the art)의 최고 수준’ → 가장 최신 기술!',
+  'refrigerator':'refrigerate(차갑게 하다) + or(하는 것) → 차갑게 하는 기계! 줄여서 fridge.',
+  'bathtub':'bath(목욕) + tub(통) → 목욕하는 통!',
+  'electronic':'electron(전자) + ic → 전자로 움직이는! 전자제품은 electronics.',
+  'plenty of':'plenty는 ‘넉넉함’! 셀 수 있는 것도 없는 것도 다 붙여요.',
+  'notice':'‘알려진’이라는 말이 뿌리 → 눈에 띄어 알아채다! 휴대폰 알림(notification)도 같은 말이에요.',
+  'clear':'유리처럼 훤히 보이는 것! ‘분명한’이라는 뜻도 있어요.',
+  'view':'‘눈에 보이는 풍경’! 전망이 좋은 방은 a room with a view.',
+  'charming':'charm(매력) + ing → 매력 넘치는! 마법 주문을 charm이라고도 해요.',
+
+  /* 윤진: 중등 기초 단어 */
+  'improve':'im(안으로) + prove(좋게) → 속이 더 좋아지다 = 향상되다!',
+  'knowledge':'know(알다) + ledge → 아는 것이 쌓인 창고 = 지식!',
+  'maintain':'main(손) + tain(잡다) → 손에 계속 잡고 있는 것 = 유지하다!',
+  'obvious':'ob(앞에) + via(길) → 길 한가운데 있어서 안 보일 수가 없어 = 명백한!',
+  'recognize':'re(다시) + cognize(알다) → 다시 알아보다!',
+  'significant':'sign(표시) + fic(만들다) → 표시를 만들 만큼 중요한!',
+  'tradition':'tra(건너) + dit(주다) → 세대를 건너 전해 준 것 = 전통!',
+  'opportunity':'ob(향해) + port(항구) → 배가 항구로 들어오는 순간을 놓치지 마 = 기회!',
+  'responsibility':'response(대답) + ibility → 내가 대답해야 하는 것 = 책임!',
+  'curious':'cura(돌봄) → 궁금해서 계속 들여다보는 마음 = 호기심 많은!',
+  'independent':'in(아니) + depend(기대다) → 기대지 않는 = 독립적인!',
+  'appreciate':'ad(향해) + price(가치) → 가치를 알아보다 = 감사하다!',
+  'ability':'able(할 수 있는) + ity → 할 수 있는 힘 = 능력!',
+  'advice':'advise(조언하다)의 명사 모양! 조언은 셀 수 없어서 advices라고 안 해요.',
+  'ancient':'아주 오래된 것! 이집트 피라미드는 ancient 건축물이에요.',
+  'average':'평균! 시험 점수의 average를 내면 반 전체 실력이 보여요.',
+  'balance':'양팔 저울의 두 접시(bi + lanx)에서 왔어요 → 균형!',
+  'celebrate':'celeber(붐비는) → 여럿이 모여 기뻐하는 것 = 기념하다!',
+  'challenge':'‘도전’! 옛날에는 ‘이의를 제기한다’는 뜻이었어요.',
+  'communicate':'commun(함께) + icate → 함께 나누다 = 의사소통하다!',
+  'compare':'com(함께) + par(같은) → 나란히 놓고 보기 = 비교하다!',
+  'continue':'con(함께) + tin(잡다) → 끊지 않고 계속 잡고 가는 것!',
+  'create':'없던 것을 만들어 내다! creative는 창의적인.',
+  'dangerous':'danger(위험) + ous(가득한) → 위험이 가득한!',
+  'describe':'de(아래로) + scribe(쓰다) → 그림처럼 써 내려가기 = 묘사하다!',
+  'develop':'de(반대로) + velop(감싸다) → 감싼 것을 펼치다 = 발전시키다!',
+  'discover':'dis(반대로) + cover(덮다) → 덮개를 벗기다 = 발견하다!',
+  'encourage':'en(넣다) + courage(용기) → 용기를 넣어 주다 = 격려하다!',
+  'expect':'ex(밖으로) + spect(보다) → 밖을 내다보며 기다리다 = 기대하다!',
+  'familiar':'family(가족)에서 왔어요 → 가족처럼 익숙한!',
+  'gradually':'grade(계단) → 계단처럼 한 칸씩 = 점차!',
+  'imagine':'image(그림)를 마음속에 그리다 = 상상하다!',
+  'include':'in(안에) + clude(닫다) → 안에 넣어 닫다 = 포함하다!',
+  'introduce':'intro(안으로) + duce(이끌다) → 안으로 데려와 소개하다!',
+  'journey':'하루(jour)의 여정에서 왔어요 → 여행! 프랑스어 journée(하루)가 뿌리예요.',
+  'kindness':'kind(친절한) + ness → 친절함! kind는 ‘종류’라는 뜻도 있어요.',
+  'memorize':'memory(기억) + ize(만들다) → 기억으로 만들다 = 암기하다!',
+  'neighbor':'nigh(가까운) + boor(사는 사람) → 가까이 사는 사람 = 이웃!',
+  'patient':'pati(견디다) → 잘 견디는 = 참을성 있는! 병원의 ‘환자’라는 뜻도 있어요.',
+  'protect':'pro(앞에) + tect(덮다) → 앞에서 덮어 가려 주다 = 보호하다!',
+  'realize':'real(진짜) + ize → 진짜로 알아차리다 = 깨닫다!',
+  'respect':'re(다시) + spect(보다) → 다시 보고 또 봐도 대단한 것 = 존경!',
+  'silence':'sile(조용한) + ence → 조용함, 칭목! 도서관의 silence 표지판.',
+  'success':'suc(뒤따라) + cess(가다) → 잘 따라가서 도착한 것 = 성공!',
+  'suggest':'sug(아래에서) + gest(가져오다) → 살짝 올려 주는 생각 = 제안!',
+  'survive':'sur(넘어) + vive(살다) → 어려움을 넘어 살아남다!',
+  'valuable':'value(가치) + able → 가치가 있는 = 귀중한!',
+  'weather':'‘날씨’! whether(~인지 아닌지)와 발음이 같아 헷갈리기 쉬워요.',
+
+  /* 형원: 7세 기본 단어 */
+  'apple':'사과! 나무 한 그루에서 사과가 100개 넘게 열리기도 해요.',
+  'bear':'곰! 겨울잠을 자며 봄을 기다려요.',
+  'cat':'고양이는 하루에 16시간도 잠을 자요!',
+  'dog':'강아지 코는 사람보다 냄새를 곱 훨씬 잘 맡아요.',
+  'egg':'달걀 껍데기는 작은 숨구명으로 숨을 쉬어요.',
+  'fish':'물고기는 물속에서 아가미로 숨을 쉬어요.',
+  'green':'초록색! 잎이 초록인 건 햇빛을 먹는 엽록소 때문이에요.',
+  'happy':'행복한! 웃으면 정말로 기분이 좋아져요.',
+  'jump':'껑충! 캥거루는 한 번에 거의 3미터나 뛸 수 있어요.',
+  'milk':'우유! 소는 하루에 30리터 가까이 우유를 만들어요.',
+  'moon':'달은 지구 주위를 한 달에 한 바퀴 돌아요.',
+  'sun':'해는 우리에게서 1억 5천만 km 떨어진 별이에요!',
+  'star':'밤에 보이는 별은 아주 먼 곳의 해와 같은 별이에요.',
+  'water':'물! 지구의 70%가 물이에요.',
+  'book':'책! 책장을 넘기면 새로운 이야기가 시작돼요.',
+  'bird':'새는 깃털이 있어서 하늘을 날 수 있어요.',
+  'cake':'케이크! 생일에 초를 불고 소원을 빌어요.',
+  'duck':'오리는 물에 젖지 않는 깃털을 가지고 있어요.',
+  'eye':'눈은 스스로 눈물을 만들어 촉촉하게 지켜 줘요.',
+  'hand':'손! 엄지부터 새끼까지 다 다치면 다섯 개!',
+  'ball':'공! 둥글어서 어디로든 잘 굴러가요.',
+  'bed':'사람은 하루의 상당한 시간을 잠으로 보내요.',
+  'bus':'버스! 한 대에 사람이 수십 명 타요.',
+  'car':'자동차! 바퀴 네 개가 같이 돌아가요.',
+  'cup':'컵! 뜨거운 것은 조심조심.',
+  'door':'문! 열면 나가고 들어올 수 있어요.',
+  'flower':'꽃! 벌과 나비가 꽃가루를 옮겨 줘요.',
+  'hat':'모자! 햇빛을 가려 줘요.',
+  'house':'집! 사람이 살아가는 곳.',
+  'king':'왕! 옛날 나라의 첫 번째 사람이었어요.',
+  'lion':'사자는 무리에서 암사자들이 사냥을 해요.',
+  'mom':'엄마! 세계 여러 나라에서 비슷한 소리로 불러요.',
+  'nose':'코! 냄새를 맡는 곳.',
+  'pig':'돼지! 코로 땅을 파서 먹이를 찾아요.',
+  'rain':'비! 구름 속 물방울이 무거워져서 떨어지는 거예요.',
+  'rice':'밥! 벼를 키워서 만든 쌀로 지어요.',
+  'shoe':'신발! 왼발 오른발 모양이 달라요.',
+  'tree':'나무! 나이테를 세면 나이를 알 수 있어요.',
+  'umbrella':'우산! 비를 막아 줘요.',
+  'yellow':'노란색! 바나나와 병아리 색.',
+  'frog':'개구리는 긴 혀로 멀리 있는 곤충도 낚아져요.',
+  'monkey':'원숭이는 나무를 잘 타고 꼬리로도 물건을 잡아요.',
+  'tiger':'호랑이 줄무늬는 사람 지문처럼 하나뿐이에요!',
+  'rabbit':'토끼 이는 계속 자라서 계속 갉아야 해요.',
+  'banana':'바나나는 나무가 아니라 큰 풀에서 열려요!',
+  'orange':'오렌지! 비타민 C가 가득해요.',
+  'pencil':'연필심은 흑연이에요! 다이아몬드와 같은 재료예요.',
+  'chair':'의자! 다리가 네 개라서 편안하게 앉을 수 있어요.'
+};
+function biteOf(q){
+  if(q.bite) return q.bite;
+  var w = q.answerWord;
+  if(w && BITE[w.en]) return BITE[w.en];
+  if(w) return '‘' + w.en + '’를 소리 내어 세 번 읽으면 오래 기억나요!';
+  return '';
+}
+function escB(t){
+  return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ---------- 문제 생성: {kicker, q, sub, opts:[{label,html?,correct}], fb, bite} ---------- */
 function makeWordQ(pool, wantKo){
   var w = pick(pool);
   var others = shuffle(pool.filter(function(x){ return x.en!==w.en; })).slice(0,3);
@@ -545,14 +703,16 @@ function makeWordQ(pool, wantKo){
     return {
       kicker:'📖 영단어', q:w.en, sub:'이 단어의 뜻은 무엇일까요?',
       opts:four.map(function(o){ return { label:o.ko, correct:o.ko===w.ko }; }),
-      fb:'「'+w.en+'」은(는) "'+w.ko+'"라는 뜻이에요!'
+      fb:'「'+w.en+'」은(는) "'+w.ko+'"라는 뜻이에요!',
+      answerWord:w
     };
   }
   /* 뜻 → 영어 고르기 (보기: 영어) */
   return {
     kicker:'📖 영단어', q:'"'+w.ko+'"', sub:'이 뜻을 가진 영어 단어는?',
     opts:four.map(function(o){ return { html:'<span class="en">'+o.en+'</span>', correct:o.en===w.en }; }),
-    fb:'"'+w.ko+'"은(는) 영어로 「'+w.en+'」!'
+    fb:'"'+w.ko+'"은(는) 영어로 「'+w.en+'」!',
+    answerWord:w
   };
 }
 function eubneun(n){ var d=n%10; return (d===1||d===3||d===6||d===7||d===8)?'은':'는'; }
@@ -565,35 +725,40 @@ function mathOpts(ans, spread){
   return shuffle(Object.keys(set).map(Number));
 }
 function makeMathYunjin(){
-  var t = ri(3), a, b, ans, txt, sub, fb;
+  var t = ri(3), a, b, ans, txt, sub, fb, bite;
   if(t===0){
     a=12+ri(70); b=12+ri(70); ans=a+b;
     txt=a+' + '+b+' = ?'; sub='받아올림 조심!'; fb=a+' 더하기 '+b+eubneun(b)+' '+ans+'!';
+    bite='받아올림! 일의 자리끼리 더해 10이 넘으면 십의 자리로 1을 올려 줘요.';
   } else if(t===1){
     a=30+ri(60); b=10+ri(a-20); ans=a-b;
     txt=a+' − '+b+' = ?'; sub='받아내림 조심!'; fb=a+' 빼기 '+b+eubneun(b)+' '+ans+'!';
+    bite='받아내림! 일의 자리가 모자라면 십의 자리에서 10을 빌려 와요.';
   } else {
     a=3+ri(8); b=12+ri(8); ans=a*b;
     txt=a+' × '+b+' = ?'; sub='구구단 실력을 보여줘!'; fb=a+' 곱하기 '+b+eubneun(b)+' '+ans+'!';
+    bite='곱셈은 같은 수를 여러 번 더하는 빠른 셈! '+a+'×'+b+' = '+a+'을 '+b+'번 더한 것.';
   }
   var opts = mathOpts(ans, Math.max(3, Math.round(ans*0.12)));
   return { kicker:'✏️ 암산', q:txt, sub:sub,
     opts:opts.map(function(o){ return { label:String(o), correct:o===ans }; }),
-    fb:fb };
+    fb:fb, bite:bite };
 }
 function makeMathHyungwon(){
-  var t = ri(2), a, b, ans, txt, sub, fb;
+  var t = ri(2), a, b, ans, txt, sub, fb, bite;
   if(t===0){
     a=2+ri(9); b=1+ri(9); ans=a+b;
     txt=a+' + '+b+' = ?'; sub='손가락으로 세어도 좋아요!'; fb=a+' 더하기 '+b+eubneun(b)+' '+ans+'!';
+    bite='손가락으로 세어도 좋아요! 큰 수부터 이어 세면 더 빨라요.';
   } else {
     a=5+ri(12); b=1+ri(a-1); ans=a-b;
     txt=a+' − '+b+' = ?'; sub='천천히 세어 보세요!'; fb=a+' 빼기 '+b+eubneun(b)+' '+ans+'!';
+    bite='빼기는 "얼마나 남을까?" — 큰 수에서 작은 수를 덜어 내는 거예요.';
   }
   var opts = mathOpts(ans, 3);
   return { kicker:'✏️ 연산', q:txt, sub:sub,
     opts:opts.map(function(o){ return { label:String(o), correct:o===ans }; }),
-    fb:fb };
+    fb:fb, bite:bite };
 }
 function makeSix(kid){
   var qs=[], i;
@@ -762,6 +927,7 @@ function openQuestion(q){
     box.appendChild(b);
   });
   $('qFb').className='fb'; $('qFb').textContent='';
+  $('qBite').className='bite'; $('qBite').textContent='';
   $('qNext').style.display='none';
   $('qcard').style.display='block';
   $('qcard').scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -774,6 +940,11 @@ function onOptClick(btn, o){
     $('qFb').className='fb good';
     $('qFb').textContent=(G.retried[G.cur===null?0:Number(G.piece.dataset.idx)]?'다시 도전해서 정답! 잘했어요 💪 ':'정답! ')+G.cur.fb;
     if(!G.retried[Number(G.piece.dataset.idx)]) G.firstTry++;
+    var bt=biteOf(G.cur);
+    if(bt){
+      $('qBite').className='bite on';
+      $('qBite').innerHTML='<span class="bh">💡 오늘의 '+(G.cur.answerWord?'단어':'상식')+' 한 입</span><span class="bt">'+escB(bt)+'</span>';
+    }
     $('qNext').style.display='block';
     $('qNext').textContent = G.opened>=5 ? '그림 완성하기 🎉' : '조각 열기 ✨';
     sCorrect();

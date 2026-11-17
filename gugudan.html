@@ -164,6 +164,20 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .feedback{min-height:34px;text-align:center;font-size:19.5px;font-weight:900;color:var(--ink2);margin:2px 0 0;word-break:keep-all;line-height:1.45}
 .feedback.good{color:#1f8f68}
 .feedback.soft{color:#c2548a}
+/* 정답·오답 한 줄 해설 */
+.tip{
+  margin:8px 2px 0;padding:12px 14px;border-radius:16px;
+  border:2.5px dashed var(--sun-d);background:#fffdf3;
+  font-size:17.5px;font-weight:900;color:#8a5a00;line-height:1.5;
+  text-align:left;word-break:keep-all;animation:pop .28s;
+}
+.tip[hidden]{display:none}
+.tip.ok{border-color:var(--mint-d);background:#f1fdf8;color:#0f6b4d}
+.tip.soft{border-color:var(--pink-d);background:#fff6fa;color:#a23a6d}
+.tip .calc{font-family:var(--font-num);font-size:19px;letter-spacing:.3px}
+.tip .mini{display:block;margin-top:4px;font-size:15.5px;font-weight:800;opacity:.8;letter-spacing:-.2px}
+.tipline{text-align:center;font-size:16px;font-weight:900;color:var(--ink2);margin:10px 0 0;word-break:keep-all;min-height:24px}
+.tipline[hidden]{display:none}
 .hintwrap{margin-top:14px;padding:12px 8px 8px;border-radius:18px;background:#fffaf0;border:2.5px dashed var(--sun-d);animation:pop .3s}
 .hintmsg{text-align:center;font-size:18.5px;font-weight:900;color:#a37100;margin:0 0 10px;word-break:keep-all}
 .hintwrap .groups{grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:6px}
@@ -238,6 +252,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       <div class="groups" id="pGroups" aria-hidden="true"></div>
       <div class="sumline" id="pSum"></div>
       <div class="totline" id="pTot"></div>
+      <div class="tip" id="pTip" hidden></div>
     </div>
     <p class="howto">🍓가 <b>3개씩 4묶음</b> 있어요. 하나씩 짚으면서 세어 보세요!</p>
     <div class="row">
@@ -275,6 +290,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       </div>
       <div class="answers" id="answers"></div>
       <p class="feedback" id="feedback" aria-live="polite"></p>
+      <div class="tip" id="qTip" hidden aria-live="polite"></div>
     </div>
 
     <div id="qDone" hidden>
@@ -283,6 +299,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
         <h2 id="doneTitle">참 잘했어요!</h2>
         <p id="doneMsg"></p>
         <div class="badge" id="doneBadge">🏅 구구단 새싹</div>
+        <p class="tipline" id="doneLearn" hidden></p>
         <button class="btn huge pink" id="btnAgain" type="button">🔁 한 판 더!</button>
       </div>
       <button class="btn wide" id="btnToSetup" type="button">🔢 단 골라서 하기</button>
@@ -535,8 +552,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   }
 
   /* ---------- 묶음 그리기 ---------- */
-  function stickerOf(a, b){ return EMA[(a*5 + b*3) % EMA.length]; }
-  function drawGroups(box, a, b, withNo){
+  function stickerOf(a, b){ return EMA[(a*5 + b*3) % EMA.length]; }  function drawGroups(box, a, b, withNo){
     box.innerHTML = '';
     var st = stickerOf(a, b);
     var cols = a <= 3 ? a : (a <= 6 ? 3 : 3);
@@ -566,6 +582,50 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   }
   function groupLabel(a, b){ return a + '개씩 ' + b + '묶음'; }
 
+  /* ---------- 칭찬 · 원리 한 줄 (피드백) ---------- */
+  var PRAISE = [
+    '딩동댕! 정답이야! 🎉',
+    '우와, 번개처럼 빠르네! ⚡',
+    '짝짝짝! 구구단 요정 등장! 🧚',
+    '완벽해! 머리에서 불꽃이 튀었어! 🎆',
+    '똑똑! 정답 문을 활짝 열었어! 🚪✨',
+    '딱 맞았어! 형원이 최고! 🏆',
+    '정답! 오늘 구구단이랑 친해졌네! 🤝',
+    '맞았어! 손뼉 짝짝! 👏'
+  ];
+  var PRAISE_LATE = [
+    '고쳐서 맞혔어! 그게 진짜 실력이야! 💪',
+    '포기 안 하고 맞혔어! 최고! 🥇',
+    '다시 해서 맞혔어! 머리가 반짝반짝! 🌟'
+  ];
+  var SOFT = [
+    '괜찮아! 같이 세어 볼까? 🤗',
+    '거의 다 왔어! 하나씩 세어 보자! 🌱',
+    '아깝다! 손가락으로 세어 볼까? ✋'
+  ];
+  var MINI = [
+    '곱하기는 같은 수를 여러 번 더하는 빠른 셈이야!',
+    '묶음으로 세면 하나씩 세는 것보다 훨씬 빨라!',
+    '개수와 묶음을 바꿔도 답은 같아! 묶음으로 세어 봐.',
+    '곱하기를 알면 세지 않고도 바로 알 수 있어!',
+    '손가락으로 짚어 가며 세면 더 잘 기억나!' 
+  ];
+  function sumText(a, b){
+    var arr = [];
+    for(var i = 0; i < b; i++) arr.push(a);
+    return arr.join('+');
+  }
+  function principleOf(a, b, ans){
+    return '<span class="calc">' + a + '가 ' + b + '묶음이면 ' + sumText(a, b) + ' = ' + ans + '!</span>';
+  }
+  function showTip(el, cls, main, mini){
+    if(!el) return;
+    el.className = 'tip ' + (cls || '');
+    el.innerHTML = main + (mini ? '<span class="mini">' + mini + '</span>' : '');
+    el.hidden = false;
+  }
+  function hideTip(el){ if(el){ el.hidden = true; el.innerHTML = ''; } }
+
   /* ---------- 원리 화면 ---------- */
   var pA = 3, pB = 4, pBusy = false, pGen = 0;
   function newPrinciple(a, b){
@@ -582,6 +642,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     drawGroups($('pGroups'), pA, pB, true);
     $('pSum').textContent = '';
     $('pTot').textContent = groupLabel(pA, pB) + '을 세어 볼까?';
+    hideTip($('pTip'));
     $('btnCount').textContent = '👆 세어 보기';
     var st = stickerOf(pA, pB);
     var how = document.querySelector('.howto');
@@ -628,6 +689,9 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     for(var i = 0; i < pB; i++) sum.push(pA);
     $('pSum').textContent = sum.join(' + ') + ' = ' + total;
     $('pTot').textContent = '그래서 ' + pA + ' × ' + pB + ' = ' + total + '!';
+    showTip($('pTip'), 'ok',
+      '💡 ' + principleOf(pA, pB, total),
+      '곱하기는 같은 수를 여러 번 더하는 빠른 셈이야. ' + pA + '을 ' + pB + '번 더한 게 ' + total + '개!');
     var aEl = document.getElementById('pA');
     if(aEl){ aEl.textContent = String(total); aEl.classList.remove('hidden'); }
     pBusy = false;
@@ -746,6 +810,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     $('hintWrap').hidden = true;
     $('feedback').textContent = '';
     $('feedback').className = 'feedback';
+    hideTip($('qTip'));
     var opts = makeOptions(q.ans, q.a, q.b);
     var box = $('answers');
     box.innerHTML = '';
@@ -768,33 +833,43 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       quiz.locked = true;
       btn.classList.add('ok');
       if(quiz.tried === 0){ quiz.first++; }
-      var praise = ['딩동댕! 정답이야! 🎉','와! 정확해! ✨','멋져요, 맞았어요! 🌟','짝짝짝! 잘했어! 👏'];
-      $('feedback').textContent = praise[Math.floor(Math.random()*praise.length)];
+      $('feedback').textContent = quiz.tried === 0
+        ? PRAISE[Math.floor(Math.random()*PRAISE.length)]
+        : PRAISE_LATE[Math.floor(Math.random()*PRAISE_LATE.length)];
       $('feedback').className = 'feedback good';
+      showTip($('qTip'), 'ok',
+        '💡 ' + principleOf(q.a, q.b, q.ans) + ' 딱 맞았어!',
+        MINI[Math.floor(Math.random()*MINI.length)]);
       sfxDing();
       var r = btn.getBoundingClientRect();
       sparkles(r.left + r.width/2, r.top + 10, 6);
-      say(q.a + ' 곱하기 ' + q.b + '는 ' + q.ans + '!', { rate: 0.92 });
+      say(q.a + ' 곱하기 ' + q.b + '는 ' + q.ans + '! ' + q.a + '를 ' + q.b + '번 더한 거야!', { rate: 0.92 });
       var btns = $('answers').querySelectorAll('.ans-btn');
       for(var i = 0; i < btns.length; i++) btns[i].disabled = true;
       $('qBar').style.width = ((quiz.i+1) / quiz.list.length * 100) + '%';
+      var waitMs = mem.muted ? 2100 : Math.min(4200, 1900 + q.b * 30 + q.a * 20 + q.ans * 4);
       setTimeout(function(){
         quiz.i++;
         if(quiz.i >= quiz.list.length) finishQuiz();
         else renderQuestion();
-      }, 1150);
+      }, waitMs);
     } else {
       quiz.tried++;
       quiz.mistakes++;
       btn.classList.add('no');
       btn.disabled = true;
-      $('feedback').textContent = '괜찮아! 같이 세어 볼까? 🤗';
+      $('feedback').textContent = SOFT[Math.floor(Math.random()*SOFT.length)];
       $('feedback').className = 'feedback soft';
+      showTip($('qTip'), 'soft',
+        '💡 ' + q.a + '×' + q.b + '는 ' + q.a + '를 ' + q.b + '번 더한 거야 (' + sumText(q.a, q.b) + ')',
+        quiz.tried >= 2
+          ? '그래서 답은 ' + q.ans + '! 아래 묶음을 다 세면 ' + q.ans + '개야 🤗'
+          : '아래 묶음을 보며 ' + q.a + '개씩 세어 보자!');
       sfxSoft();
       $('hintMsg').textContent = q.a + '개씩 ' + q.b + '묶음을 세어 볼까?';
       drawGroups($('hintGroups'), q.a, q.b, false);
       $('hintWrap').hidden = false;
-      say(q.a + '개씩 ' + q.b + '묶음이야. 하나씩 세어 보자.', { rate: 0.88 });
+      say(q.a + ' 곱하기 ' + q.b + '는 ' + q.a + '를 ' + q.b + '번 더한 거야. 같이 세어 보자.', { rate: 0.88 });
     }
   }
 
@@ -824,6 +899,9 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       (quiz.mistakes ? ' 틀린 문제도 함께 세어 보면 금방 늘어요!' : ' 모두 정확했어요!');
     var badges = { 3: '🏅 구구단 박사', 2: '🎖️ 구구단 요정', 1: '🌱 구구단 새싹' };
     $('doneBadge').textContent = badges[st];
+    $('doneLearn').hidden = false;
+    $('doneLearn').innerHTML = '💡 오늘의 발견 — 곱하기는 같은 수를 여러 번 더하는 빠른 셈이야! 예) 3×4 = 3+3+3+3 = 12' +
+      (quiz.mistakes ? '<br>틀린 문제도 묶음으로 세어 보면 다음엔 딱 맞아! 💪' : '<br>모두 한 번에 맞혔어! 구구단이 머리에 쏙 들어갔네 🧠✨');
     sfxWin();
     saySeq([
       { text: '짝짝짝! ' + quiz.list.length + '문제를 다 풀었어요.', pause: 300 },

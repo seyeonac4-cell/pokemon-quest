@@ -230,6 +230,12 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .stepdots i.on{background:var(--mint-d)}
 .slowpill{display:inline-block;font-size:14.5px;font-weight:900;color:var(--ink2);background:#fff;border:2px solid var(--line);border-radius:99px;padding:4px 11px;margin-bottom:6px}
 .silentnote{font-size:15px;font-weight:900;color:var(--muted);min-height:20px;margin:0 0 6px}
+.silentnote.tipnote{
+  font-size:16px;font-weight:800;color:#0f6b4d;background:#f1fdf8;
+  border:2.5px dashed #3ecb9a;border-radius:14px;padding:10px 12px;
+  text-align:left;line-height:1.55;min-height:0;word-break:keep-all;
+}
+.silentnote.tipnote .chain{font-family:var(--font-en);font-weight:900;opacity:.95}
 
 /* ---------- 짧은/긴 소리 비교 ---------- */
 .cmp{border:3px dashed var(--sun-d);border-radius:20px;background:linear-gradient(180deg,#fffdf2,#fff8e0);padding:12px;margin-bottom:12px}
@@ -285,6 +291,18 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .feedback{min-height:32px;text-align:center;font-size:19px;font-weight:900;color:var(--ink2);margin:2px 0 0;word-break:keep-all;line-height:1.45}
 .feedback.good{color:#1c9870}
 .feedback.soft{color:#c9558c}
+/* 정답·오답 한 줄 해설 */
+.tip{
+  margin:8px 2px 0;padding:12px 14px;border-radius:16px;
+  border:2.5px dashed #f5a623;background:#fffdf3;
+  font-size:17.5px;font-weight:900;color:#8a5a00;line-height:1.5;
+  text-align:left;word-break:keep-all;animation:pop .28s;
+}
+.tip[hidden]{display:none}
+.tip.ok{border-color:#3ecb9a;background:#f1fdf8;color:#0f6b4d}
+.tip.soft{border-color:#e8639a;background:#fff6fa;color:#a23a6d}
+.tip .chain{display:block;font-family:var(--font-en);font-size:16.5px;letter-spacing:.2px;opacity:.95}
+.tip .mini{display:block;margin-top:5px;font-size:16px;font-weight:800;line-height:1.5}
 .done{text-align:center;padding:20px 14px}
 .bigstars{font-size:clamp(44px,13vw,62px);letter-spacing:4px;line-height:1;margin-bottom:8px}
 .done h2{margin:6px 0 8px;font-size:clamp(27px,7.4vw,36px)}
@@ -527,6 +545,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       </div>
       <div class="answers" id="qAnswers"></div>
       <p class="feedback" id="qFeed" aria-live="polite"></p>
+      <div class="tip" id="qTip" hidden aria-live="polite"></div>
       <button class="btn small wide" id="qStop" type="button" style="margin-top:10px">← 그만하기</button>
     </div>
 
@@ -657,7 +676,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     var silentLast = out.length >= 3 && out[last].g === 'e' && !out[last].forced;
     if(silentLast){
       var hasVowel = false;
-      for(var v = 0; v < last; v++){ if(/^[aeiou]$/.test(out[v].g)) hasVowel = true; }
+      for(var v = 0; v < last; v++){ if(/[aeiou]/.test(out[v].g)) hasVowel = true; }
       if(!hasVowel) silentLast = false;
     }
     out.forEach(function(b, i){
@@ -1432,7 +1451,8 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       var dot = document.createElement('i'); dots.appendChild(dot);
       if(b.silent) hasSilent = true;
     });
-    $('wNote').textContent = hasSilent ? '🤫 마법의 e는 소리가 없어요. 앞 모음을 길게 읽게 해 줘요!' : '';
+    $('wNote').className = 'silentnote tipnote';
+    $('wNote').innerHTML = '<span class="chain">' + esc(w.w) + ' = ' + chainOf(w) + '</span><br>💡 ' + esc(ruleOf(w));
     $('wBig').className = 'bw';
     $('wEmoji').className = 'be';
     $('wMean').className = 'bm';
@@ -1598,6 +1618,134 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   function firstKey(w){
     return w.blocks[0].g;
   }
+
+  /* =========================================================
+     음가 한 줄 해설 (정답·오답 피드백)
+     - 단어의 조각을 그대로 읽어 주고, 왜 그 소리가 나는지 한 줄
+     ========================================================= */
+  var RULE = {
+    sh:'s와 h가 손잡으면 살짝 「쉬~」 소리!',
+    ch:'c와 h가 손잡으면 「취」 소리!',
+    th:'t와 h는 혀끝을 살짝 물고 「뜨」!',
+    wh:'w와 h는 입술을 동그랗게 「우~」!',
+    ph:'p와 h가 만나면 「프」 소리! (phone)',
+    ck:'ck는 「크」 하나만 소리 내!',
+    ng:'ng는 코로 울리는 「응」!',
+    ai:'ai는 가운데서 「에이」!',
+    ay:'ay는 끝에서 「에이」!',
+    ee:'ee는 입을 옆으로 쭉 늘려 「이~」!',
+    ea:'ea도 「이~」! (eat, sea)',
+    oa:'oa는 「오우」!',
+    ow:'ow는 「오우」! snow처럼 「오」로 읽는 단어도 있어요.',
+    oo:'oo는 입술을 쭉 내밀고 「우~」!',
+    ou:'ou는 「아우」!',
+    oi:'oi는 「오이」!',
+    oy:'oy는 끝에서 「오이」!',
+    ue:'ue는 「유~」!',
+    ar:'r이 붙으면 입을 크게 벌려 「아르~」!',
+    or:'or는 입술 동그랗게 「오르~」!',
+    er:'er는 「어르~」!',
+    ir:'ir도 「어르~」! (er·ur와 셋이 같은 소리)',
+    ur:'ur도 「어르~」! (er·ir와 셋이 같은 소리)',
+    air:'air는 「에어」!',
+    eer:'eer는 「이어」!',
+    bl:'b와 l을 빠르게 붙여 「불」!',
+    br:'b와 r을 빠르게 붙여 「브르」!',
+    cl:'c와 l을 빠르게 붙여 「클」!',
+    dr:'d와 r을 빠르게 붙여 「드르」!',
+    fl:'f와 l을 빠르게 붙여 「플」!',
+    fr:'f와 r을 빠르게 붙여 「프르」!',
+    gl:'g와 l을 빠르게 붙여 「그을」!',
+    gr:'g와 r을 빠르게 붙여 「그르」!',
+    pl:'p와 l을 빠르게 붙여 「플」!',
+    pr:'p와 r을 빠르게 붙여 「프르」!',
+    sk:'s와 k를 빠르게 붙여 「스크」!',
+    sl:'s와 l을 빠르게 붙여 「스을」!',
+    sm:'s와 m을 빠르게 붙여 「스므」!',
+    sn:'s와 n을 빠르게 붙여 「스느」!',
+    sp:'s와 p를 빠르게 붙여 「스프」!',
+    st:'s와 t를 빠르게 붙여 「스뜨」!',
+    sw:'s와 w를 빠르게 붙여 「스우」!',
+    tr:'t와 r을 빠르게 붙여 「트르」!'
+  };
+  var VOWEL_KO = { a:'애', e:'에', i:'이', o:'아', u:'어' };
+  /* 예외 단어는 직접 설명 */
+  var WORDRULE = {
+    fly:'fly의 y는 「아이」! 날다도 fly, 파리도 fly — 같은 철자예요!',
+    trophy:'trophy의 y는 끝에서 「이」! 상을 받으면 트로피!'
+  };
+  /* 단어 조각 → “c[크] · a[에이] · k[크] · e[🤫]” */
+  function chainOf(w){
+    var parts = [];
+    w.blocks.forEach(function(b){
+      var k = b.silent ? '🤫' : (b.ko || '');
+      if(b.forced && b.g === 'oo') k = '우';
+      if(b.forced && b.g === 'ow') k = '오';
+      parts.push(esc(b.g) + (k ? '[' + esc(k) + ']' : ''));
+    });
+    return parts.join(' · ');
+  }
+  /* 왜 그런 소리가 나는지 한 줄 */
+  function ruleOf(w){
+    if(WORDRULE[w.w]) return WORDRULE[w.w];
+    var bl = w.blocks, last = bl.length - 1;
+    if(bl[last] && bl[last].silent){
+      var v = null;
+      for(var i = 0; i < last; i++){ if(/^[aeiou]$/.test(bl[i].g)) v = bl[i]; }
+      if(v && LONG[v.g] && v.snd === LONG[v.g]) return '끝의 마법의 e(🤫) 덕분에 ' + v.g + '가 길게 「' + (v.ko || '') + '」 소리가 나!';
+      return '끝의 e는 소리 없이 숨는 글자(🤫)! 앞부분만 이어 읽으면 돼요.';
+    }
+    for(var j = 0; j < bl.length; j++){
+      var b = bl[j];
+      if(b.forced && b.g === 'oo') return 'book의 oo는 짧게 「우」! moon은 길게 「우~」 — oo는 두 가지 소리가 있어!';
+      if(b.forced && b.g === 'ow') return 'snow의 ow는 「오」! cow는 「아우」 — ow는 두 가지 소리야!';
+      if(b.g.length > 1 && RULE[b.g]) return RULE[b.g];
+    }
+    if(bl[last] && bl[last].g === 'y') return '끝에 있는 y는 「이」로 가볍게! (fly처럼 「아이」인 친구도 있어요)';
+    for(var k = 0; k < bl.length; k++){
+      if(/^[aeiou]$/.test(bl[k].g)) return bl[k].g + '는 짧게 「' + (VOWEL_KO[bl[k].g] || bl[k].ko || '') + '」! 받침이 붙으면 더 짧게 들려.';
+    }
+    return '조각 소리를 하나씩 이어서 빠르게 읽으면 단어가 돼요!';
+  }
+  function tipOf(w){
+    return '<span class="chain">' + esc(w.w) + ' = ' + chainOf(w) + '</span><span class="mini">💡 ' + esc(ruleOf(w)) + '</span>';
+  }
+  function showTip(box, cls, html){
+    if(!box) return;
+    box.className = 'tip ' + (cls || '');
+    box.innerHTML = html;
+    box.hidden = false;
+  }
+  function hideTip(box){ if(box){ box.hidden = true; box.innerHTML = ''; } }
+
+  /* 틀렸을 때: 고른 단어와 정답을 나란히 놓고 소리 차이 짚어 주기 */
+  function cmpTip(q, val){
+    var w = q.word;
+    if(q.type === 'first'){
+      var k0 = firstKey(w);
+      return '<span class="chain">정답: ' + esc(k0) + '[' + esc(KO[k0] || '') + '] — ' + esc(w.w) + ' (' + esc(w.m) + ')</span>' +
+        '<span class="mini">💡 ' + esc(ruleOf(w)) + '</span>';
+    }
+    var pool = (quiz && quiz.pool ? quiz.pool : []).concat(STAGES[1].allWords);
+    var other = null;
+    for(var i = 0; i < pool.length; i++){ if(pool[i].w === val){ other = pool[i]; break; } }
+    var head = '<span class="chain">정답: ' + esc(w.w) + ' (' + esc(w.m) + ')</span>';
+    if(other){
+      var a = other.blocks.map(function(b){ return b.g; });
+      var b2 = w.blocks.map(function(b){ return b.g; });
+      var aStr = a.join('-'), bStr = b2.join('-');
+      if(bStr === aStr + '-e'){
+        return head + '<span class="mini">💡 ' + esc(other.w) + '는 e가 없어 짧게, ' + esc(w.w) + '는 끝의 마법의 e 덕분에 앞 모음이 길게! e는 소리가 없어 🤫</span>';
+      }
+      if(aStr === bStr + '-e'){
+        return head + '<span class="mini">💡 ' + esc(other.w) + '는 끝에 e가 붙어 길게, ' + esc(w.w) + '는 e가 없어 짧게 「' + esc(w.w) + '」!</span>';
+      }
+      if(a[0] !== b2[0]){
+        return head + '<span class="mini">💡 ' + esc(other.w) + '는 ' + esc(a[0]) + ' 소리, ' + esc(w.w) + '는 ' + esc(b2[0]) + ' 소리로 시작해! 첫소리를 잘 들어 봐 👂</span>';
+      }
+    }
+    return head + '<span class="mini">💡 ' + chainOf(w) + '로 읽어! ' + esc(ruleOf(w)) + '</span>';
+  }
   function buildSet(pool){
     var n = 10;
     var picked = [];
@@ -1638,11 +1786,13 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   function renderQ(){
     var q = quiz.list[quiz.i];
     quiz.locked = false; quiz.tried = 0;
+    quizNextLocked = false; clearQTimers();
     $('qProg').textContent = (quiz.i+1) + ' / ' + quiz.list.length;
     $('qBar').style.width = (quiz.i / quiz.list.length * 100) + '%';
     $('qStars').textContent = '⭐ ' + quiz.first;
     $('qFeed').textContent = '';
     $('qFeed').className = 'feedback';
+    hideTip($('qTip'));
     $('qScope').textContent = quiz.title + ' · ' + (quiz.i+1) + '번째';
     var box = $('qAnswers');
     box.innerHTML = '';
@@ -1717,40 +1867,68 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       quiz.locked = true;
       btn.classList.add('ok');
       if(quiz.tried === 0) quiz.first++;
-      var praise = ['딩동댕! 맞았어요! 🎉','와! 귀가 밝아요! ✨','정확해요! 👏','짝짝짝, 잘 들었어요! 🌟'];
+      var praise = [
+        '딩동댕! 귀가 아주 밝아요! 🎉',
+        '우와, 소리를 딱 잡았어! ✨',
+        '귀에 스피커가 달렸나 봐! 🔊',
+        '짝짝짝, 잘 들었어요! 🌟',
+        '완벽해! 그 소리 그대로야! 🎯',
+        '맞았어! 파닉스 요정 등장! 🧚',
+        '정확해! 귀가 반짝반짝! 👂✨'
+      ];
+      if(quiz.tried > 0) praise = ['다시 듣고 맞혔어! 진짜 귀 훈련이야! 💪', '고쳐서 맞혔어! 최고! 🥇'];
       var f = $('qFeed');
       f.textContent = praise[Math.floor(Math.random()*praise.length)];
       f.className = 'feedback good';
+      showTip($('qTip'), 'ok', tipOf(q.word));
       sfxDing();
       var r = btn.getBoundingClientRect();
       sparkles(r.left + r.width/2, r.top + 10, 6);
+      var ruleShort = ruleOf(q.word);
+      minWaitDone = false; speechFinished = false;
+      clearQTimers();
       saySeq([
         { text: q.word.w, rate:0.72, pause:300 },
-        { text: q.word.w, rate:0.92 }
-      ]);
+        { text: q.word.w, rate:0.92, pause:240 },
+        { text: ruleShort, lang:'ko-KR', rate:0.95 }
+      ], null, onSpeechDone);
       var opts = $('qAnswers').querySelectorAll('.opt');
       for(var i = 0; i < opts.length; i++) opts[i].disabled = true;
       $('qBar').style.width = ((quiz.i+1) / quiz.list.length * 100) + '%';
-      after(1400, function(){
-        quiz.i++;
-        if(quiz.i >= quiz.list.length) finishQ();
-        else renderQ();
-      });
+      /* 해설을 읽을 시간을 주고 넘어가요 (말이 끝나면 더 빨리) */
+      qAfter(2300, function(){ minWaitDone = true; if(speechFinished) goNextQ(); });
+      qAfter(7000, goNextQ);
     } else {
       quiz.tried++; quiz.mistakes++;
       btn.classList.add('no');
       btn.disabled = true;
       var f2 = $('qFeed');
-      f2.textContent = '괜찮아! 다시 들어 볼까? 🎧';
       f2.className = 'feedback soft';
       sfxSoft();
       if(quiz.tried >= 2){
-        f2.textContent = (q.type === 'first')
-          ? '힌트: ' + firstKey(q.word) + ' (' + (KO[firstKey(q.word)] || '') + ') 소리로 시작해! 🎧'
-          : '힌트: ' + firstKey(q.word) + ' 소리로 시작하는 단어를 찾아봐! 🎧';
+        f2.textContent = '같이 볼까? 이 단어의 소리를 알려 줄게! 🔍';
+        showTip($('qTip'), 'soft', cmpTip(q, val));
+      } else {
+        f2.textContent = '괜찮아! 다시 들어 볼까? 🎧';
+        var k0 = firstKey(q.word);
+        showTip($('qTip'), 'soft',
+          '<span class="mini">🔎 첫소리 힌트: ' + esc(k0) + '[' + esc(KO[k0] || '') + '] 소리로 시작해! 하나씩 들어 봐 👂</span>');
       }
       playQ();
     }
+  }
+  /* 다음 문제로 넘어가기 (해설 시간 · 말이 끝나면 바로) */
+  var minWaitDone = false, speechFinished = false, quizNextLocked = false;
+  var qTimers = [];
+  function qAfter(ms, fn){ qTimers.push(setTimeout(fn, ms)); }
+  function clearQTimers(){ for(var i = 0; i < qTimers.length; i++) clearTimeout(qTimers[i]); qTimers = []; }
+  function onSpeechDone(){ speechFinished = true; if(minWaitDone) goNextQ(); }
+  function goNextQ(){
+    if(quizNextLocked) return;
+    quizNextLocked = true;
+    quiz.i++;
+    if(quiz.i >= quiz.list.length) finishQ();
+    else renderQ();
   }
 
   function starsFor(first){
