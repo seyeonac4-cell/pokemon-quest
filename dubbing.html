@@ -819,7 +819,11 @@ async function toggleRec(i) {
     const ctx2 = audioCtx();
     let buffer = null;
     try { buffer = await decodeBuf(ctx2, await blob.arrayBuffer()); } catch (_) { buffer = null; }
-    const dur = buffer ? buffer.duration : (performance.now() - startedAt) / 1000;
+    // 기기·브라우저에 따라 녹음 파일의 길이가 실제 녹음 시간보다 길게 잡히는 경우가 있어
+    // 실제로 버튼을 누르고 있던 시간을 기준으로 너무 긴 꼬리는 잘라 낸다
+    const elapsed = (performance.now() - startedAt) / 1000;
+    if (buffer && buffer.duration > elapsed * 1.35 + 0.5) buffer = trimBuffer(ctx2, buffer, Math.max(0.6, elapsed));
+    const dur = buffer ? buffer.duration : elapsed;
     const peaks = buffer ? computePeaks(buffer, 52) : new Array(52).fill(0.25);
     const old = curTakes()[i];
     if (old && old.url) URL.revokeObjectURL(old.url);
@@ -842,6 +846,16 @@ function stopRec() {
   try { r.src.disconnect(); } catch (_) {}
   refreshRow(r.line);
   updateRecHint();
+}
+
+function trimBuffer(ctx, buf, secs) {
+  if (!buf || buf.duration <= secs + 0.05) return buf;
+  const len = Math.max(1, Math.floor(secs * buf.sampleRate));
+  const out = ctx.createBuffer(buf.numberOfChannels, len, buf.sampleRate);
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    out.copyToChannel(buf.getChannelData(c).subarray(0, len), c);
+  }
+  return out;
 }
 
 function computePeaks(buffer, n) {
