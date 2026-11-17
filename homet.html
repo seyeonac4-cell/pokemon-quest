@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121834">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="세연 홈트">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/homet/homet-icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/homet/homet-icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/homet/homet-icon-180.png">
+<link rel="manifest" href="./manifest-homet.json">
+<title>🧘‍♀️ 세연님의 조용한 홈트</title>
+<style>
+/* ============================================================
+   🧘‍♀️ 세연님의 조용한 홈트 — 층간소음 없는 홈트 스튜디오
+   영상 목록은 homet-data.json 하나만 갈아끼우면 갱신됨
+   ============================================================ */
+:root{
+  --navy:#121834;
+  --navy2:#1b2350;
+  --navy3:#0c1029;
+  --lav:#b9a8f5;
+  --lav2:#8f7ce8;
+  --mint:#7fe3c4;
+  --mint2:#4ec9a6;
+  --ink:#1a1c2e;
+  --muted:#7a7f96;
+  --line:#e8e9f2;
+  --card:#ffffff;
+  --bg:#eef0f7;
+  --shadow:0 16px 44px rgba(24,28,60,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:var(--ink);background:var(--bg);min-height:100vh;
+  background-image:radial-gradient(900px 520px at 50% -12%,#dfe2f7 0%,#eef0f7 58%,#eaecf5 100%);
+  display:flex;justify-content:center;padding:0 0 46px;
+}
+.wrap{width:100%;max-width:480px}
+
+/* ---------------- 헤더 ---------------- */
+.head{
+  position:relative;overflow:hidden;color:#fff;padding:26px 22px 22px;
+  background:linear-gradient(155deg,#222a63 0%,#161c44 48%,#0d1230 100%);
+  border-bottom-left-radius:30px;border-bottom-right-radius:30px;
+}
+.head::before{
+  content:"";position:absolute;right:-70px;top:-90px;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle,rgba(185,168,245,.42),rgba(185,168,245,0) 68%);
+}
+.head::after{
+  content:"";position:absolute;left:-60px;bottom:-110px;width:210px;height:210px;border-radius:50%;
+  background:radial-gradient(circle,rgba(127,227,196,.22),rgba(127,227,196,0) 70%);
+}
+.h-row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.h-date{font-size:12.5px;letter-spacing:.12em;color:#a9b0e8;font-weight:500}
+.h-quiet{
+  display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+  color:#0e3a30;background:linear-gradient(135deg,var(--mint),#b9f3e0);
+  padding:5px 9px;border-radius:999px;letter-spacing:-.01em;white-space:nowrap
+}
+h1{
+  position:relative;margin:12px 0 4px;font-family:"Noto Serif KR","Noto Sans KR",serif;
+  font-size:26px;line-height:1.28;font-weight:700;letter-spacing:-.02em
+}
+h1 em{font-style:normal;color:var(--mint)}
+.h-sub{position:relative;font-size:13px;color:#c2c8f0;font-weight:400;line-height:1.5}
+.h-sub b{color:#fff;font-weight:700}
+
+/* 기록 */
+.stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.stat{
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);
+  border-radius:15px;padding:11px 6px 9px;text-align:center;backdrop-filter:blur(6px)
+}
+.stat .n{font-size:19px;font-weight:900;letter-spacing:-.02em;line-height:1.1}
+.stat .n small{font-size:11px;font-weight:700;margin-left:1px;color:#b9c0ef}
+.stat .k{font-size:10.5px;color:#a4abe0;margin-top:3px;font-weight:500;letter-spacing:-.01em}
+.week{position:relative;display:flex;align-items:center;gap:7px;margin-top:13px}
+.week .lab{font-size:11px;color:#9ba2da;font-weight:500;margin-right:2px}
+.dots{display:flex;gap:6px}
+.dot{
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:700;color:#8b92c8;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12)
+}
+.dot.on{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#0b2a22;border-color:transparent;box-shadow:0 4px 12px rgba(127,227,196,.35)}
+.dot.today{outline:2px solid rgba(185,168,245,.85);outline-offset:2px}
+
+/* ---------------- 필터 ---------------- */
+.filters{
+  position:sticky;top:0;z-index:20;padding:12px 14px 10px;
+  background:linear-gradient(180deg,rgba(238,240,247,.97) 62%,rgba(238,240,247,.82) 100%);
+  backdrop-filter:blur(10px);
+}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 5px;scrollbar-width:none;-ms-overflow-style:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;border:1px solid #dcdff0;background:#fff;color:#5c6280;
+  font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:-.02em;
+  padding:8px 13px;border-radius:999px;cursor:pointer;transition:.18s;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(24,28,60,.04)
+}
+.chip:active{transform:scale(.96)}
+.chip.on{
+  background:linear-gradient(135deg,#242c6b,#161c44);color:#fff;border-color:transparent;
+  box-shadow:0 8px 20px rgba(22,28,68,.28)
+}
+.chip.on::after{content:"";display:inline-block;width:0}
+
+/* ---------------- 카드 ---------------- */
+.list{padding:4px 14px 8px;display:flex;flex-direction:column;gap:12px}
+.card{
+  position:relative;background:var(--card);border-radius:20px;box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.8);overflow:hidden;transition:.18s
+}
+.card:active{transform:scale(.995)}
+.card.done{border-color:rgba(78,201,166,.55);box-shadow:0 10px 30px rgba(78,201,166,.16)}
+.card-top{display:flex;gap:12px;padding:12px 13px 0}
+.thumb{
+  position:relative;flex:0 0 116px;width:116px;height:66px;border-radius:12px;overflow:hidden;
+  background:linear-gradient(135deg,#2a326e,#141a3f);cursor:pointer
+}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .play{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(12,16,41,.05),rgba(12,16,41,.42))
+}
+.thumb .play i{
+  width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.93);
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:#161c44;
+  font-style:normal;padding-left:2px;box-shadow:0 3px 10px rgba(0,0,0,.25)
+}
+.thumb .len{
+  position:absolute;right:5px;bottom:5px;font-size:10px;font-weight:700;color:#fff;
+  background:rgba(12,16,41,.78);padding:2px 6px;border-radius:5px;letter-spacing:-.01em
+}
+.meta{flex:1;min-width:0}
+.tag{
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:-.01em;
+  padding:3px 8px;border-radius:6px;margin-bottom:6px
+}
+.t-cardio{background:#fde8ea;color:#c2434f}
+.t-core{background:#efe8fd;color:#6b4fc4}
+.t-lower{background:#e5f0fd;color:#3169b4}
+.t-stretch{background:#e2f6ef;color:#1f8d70}
+.t-kids{background:#fff2d9;color:#a97517}
+.title{
+  font-size:14px;font-weight:700;line-height:1.4;letter-spacing:-.02em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+}
+.ch{font-size:11.5px;color:var(--muted);margin-top:4px;font-weight:500;letter-spacing:-.01em}
+.card-bottom{padding:10px 13px 12px}
+.reason{
+  display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:1.5;color:#4e5470;
+  background:#f6f7fc;border-radius:11px;padding:8px 10px;letter-spacing:-.02em
+}
+.reason b{color:#20244a;font-weight:700}
+.reason .ic{flex:0 0 auto;font-size:12px;line-height:1.4}
+.actions{display:flex;gap:8px;margin-top:10px}
+.btn{
+  flex:1;border:0;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:-.02em;
+  padding:11px 10px;border-radius:12px;cursor:pointer;transition:.16s
+}
+.btn:active{transform:scale(.97)}
+.btn-go{background:linear-gradient(135deg,#2a3273,#161c44);color:#fff;box-shadow:0 8px 18px rgba(22,28,68,.22)}
+.btn-done{flex:0 0 108px;background:#f1f2f8;color:#6a7089;border:1px solid #e3e5f0}
+.card.done .btn-done{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#08251d;border-color:transparent}
+.badge-done{
+  position:absolute;right:12px;top:-1px;font-size:10px;font-weight:900;color:#0b2a22;
+  background:linear-gradient(135deg,var(--mint),#a9f0da);padding:4px 10px;border-radius:0 0 10px 10px;
+  letter-spacing:-.01em;box-shadow:0 4px 12px rgba(78,201,166,.3)
+}
+
+/* ---------------- 빈 상태 / 푸터 ---------------- */
+.empty{padding:44px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+.foot{padding:18px 22px 0;text-align:center;color:#9aa0b8;font-size:11px;line-height:1.7;letter-spacing:-.01em}
+.foot b{color:#6c7290}
+.loading{padding:40px;text-align:center;color:#9aa0b8;font-size:13px}
+
+/* ---------------- 모달 플레이어 ---------------- */
+.modal{
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(8,11,28,.82);backdrop-filter:blur(6px);padding:14px
+}
+.modal.open{display:flex}
+.sheet{
+  width:100%;max-width:520px;background:#0f1430;border-radius:22px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);border:1px solid rgba(185,168,245,.22);
+  animation:up .22s ease-out
+}
+@keyframes up{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+.m-head{display:flex;align-items:flex-start;gap:10px;padding:13px 14px 10px}
+.m-tt{flex:1;min-width:0}
+.m-title{color:#fff;font-size:14px;font-weight:700;line-height:1.4;letter-spacing:-.02em}
+.m-sub{color:#9ba2ca;font-size:11.5px;margin-top:3px;font-weight:500}
+.m-close{
+  flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(255,255,255,.12);color:#fff;font-size:16px;line-height:1;font-family:inherit
+}
+.ratio{position:relative;width:100%;padding-top:56.25%;background:#000}
+.ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.m-foot{display:flex;gap:8px;padding:12px 14px 14px}
+.m-foot .btn{padding:12px}
+.m-note{color:#7f86ad;font-size:10.5px;text-align:center;padding:0 14px 12px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="h-row">
+      <div class="h-date" id="todayLabel">—</div>
+      <div class="h-quiet">🤫 층간소음 0dB</div>
+    </div>
+    <h1>세연님의<br><em>조용한</em> 홈트</h1>
+    <div class="h-sub">뛰지 않아도 충분한 <b>노점핑 홈트</b> · 아이들과 함께하는 성장 홈트까지</div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
+      <div class="stat"><div class="n" id="sStreak">0<small>일</small></div><div class="k">연속 운동</div></div>
+      <div class="stat"><div class="n" id="sToday">0<small>개</small></div><div class="k">오늘 완료</div></div>
+    </div>
+
+    <div class="week">
+      <span class="lab">이번 주</span>
+      <span class="dots" id="weekDots"></span>
+    </div>
+  </header>
+
+  <div class="filters">
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <main class="list" id="list">
+    <div class="loading">오늘의 운동을 불러오는 중…</div>
+  </main>
+
+  <div class="foot">
+    <b id="footDate">—</b><br>
+    영상은 유튜브에서 재생되고, 완료 체크는 이 폰에만 저장돼요.<br>
+    세연님 전용 · 가족만 보는 페이지
+  </div>
+</div>
+
+<!-- 모달 플레이어 -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="m-head">
+      <div class="m-tt">
+        <div class="m-title" id="mTitle">운동</div>
+        <div class="m-sub" id="mSub"></div>
+      </div>
+      <button class="m-close" id="mClose" aria-label="닫기">✕</button>
+    </div>
+    <div class="ratio" id="mFrameWrap"></div>
+    <div class="m-note" id="mNote"></div>
+    <div class="m-foot">
+      <button class="btn btn-done" id="mDone" style="flex:1">✅ 완료!</button>
+      <button class="btn btn-done" id="mClose2" style="flex:0 0 96px">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   설정
+   ============================================================ */
+const CATS = [
+  {key:"all",     label:"전체"},
+  {key:"cardio",  label:"🔥 전신 유산소"},
+  {key:"core",    label:"💪 복부·코어"},
+  {key:"lower",   label:"🦵 하체·붓기"},
+  {key:"stretch", label:"🧘‍♀️ 스트레칭"},
+  {key:"kids",    label:"🎒 초등 고학년"}
+];
+const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
+const KEY_DONE = "homet.done.v1";
+const KEY_FILTER = "homet.filter.v1";
+
+let VIDEOS = [];
+let filter = "all";
+let done = loadDone();
+let current = null;
+
+/* ---------- 저장소 ---------- */
+function loadDone(){
+  try{ const o = JSON.parse(localStorage.getItem(KEY_DONE) || "{}"); return (o && typeof o === "object") ? o : {}; }catch(e){ return {}; }
+}
+function saveDone(){ try{ localStorage.setItem(KEY_DONE, JSON.stringify(done)); }catch(e){} }
+function pad(n){ return n<10 ? "0"+n : ""+n; }
+function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function todayKey(){ return ymd(new Date()); }
+function isDone(id){
+  const list = done[todayKey()] || [];
+  return list.indexOf(id) >= 0;
+}
+function setDone(id, val){
+  const k = todayKey();
+  let list = (done[k] || []).slice();
+  const i = list.indexOf(id);
+  if(val && i < 0) list.push(id);
+  if(!val && i >= 0) list.splice(i,1);
+  if(list.length) done[k] = list; else delete done[k];
+  saveDone();
+}
+function countOn(dateKey){ return (done[dateKey] || []).length; }
+
+/* ---------- 날짜 / 기록 ---------- */
+function startOfWeek(d){ // 월요일 시작
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const wd = (x.getDay() + 6) % 7;
+  x.setDate(x.getDate() - wd);
+  return x;
+}
+function renderStats(){
+  const now = new Date();
+  const names = ["일","월","화","수","목","금","토"];
+  document.getElementById("todayLabel").textContent =
+    now.getFullYear() + ". " + (now.getMonth()+1) + ". " + now.getDate() + " (" + names[now.getDay()] + ")";
+
+  const mon = startOfWeek(now);
+  let weekCount = 0;
+  const dots = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate()+i);
+    const k = ymd(d);
+    const n = countOn(k);
+    if(n) weekCount += n;
+    const isToday = k === todayKey();
+    dots.push('<span class="dot'+(n?' on':'')+(isToday?' today':'')+'" title="'+k+'">'+names[d.getDay()]+'</span>');
+  }
+  document.getElementById("weekDots").innerHTML = dots.join("");
+  document.getElementById("sWeek").innerHTML = weekCount + '<small>회</small>';
+  document.getElementById("sToday").innerHTML = countOn(todayKey()) + '<small>개</small>';
+
+  // 연속 일수: 오늘(또는 어제)부터 하루씩 거슬러 올라가며 운동한 날 세기
+  let streak = 0;
+  const cur = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(!countOn(ymd(cur))) cur.setDate(cur.getDate()-1);
+  while(countOn(ymd(cur)) > 0){
+    streak++;
+    cur.setDate(cur.getDate()-1);
+    if(streak > 3650) break;
+  }
+  document.getElementById("sStreak").innerHTML = streak + '<small>일</small>';
+}
+
+/* ---------- 필터 ---------- */
+function renderChips(){
+  const el = document.getElementById("chips");
+  el.innerHTML = CATS.map(c=>{
+    const n = c.key === "all" ? VIDEOS.length : VIDEOS.filter(v=>v.category===c.key).length;
+    return '<button class="chip'+(filter===c.key?' on':'')+'" data-cat="'+c.key+'">'+c.label+
+      ' <span style="opacity:.55;font-weight:600">'+n+'</span></button>';
+  }).join("");
+  el.querySelectorAll(".chip").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      filter = b.dataset.cat;
+      try{ localStorage.setItem(KEY_FILTER, filter); }catch(e){}
+      renderChips(); renderList();
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  });
+}
+
+/* ---------- 카드 ---------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function renderList(){
+  const el = document.getElementById("list");
+  const list = filter === "all" ? VIDEOS : VIDEOS.filter(v=>v.category===filter);
+  if(!list.length){
+    el.innerHTML = '<div class="empty">이 카테고리에 담긴 영상이 아직 없어요.<br>다른 카테고리를 눌러보세요 🙂</div>';
+    return;
+  }
+  el.innerHTML = list.map(v=>{
+    const dn = isDone(v.id);
+    return '<article class="card'+(dn?' done':'')+'" data-id="'+v.id+'">'+
+      (dn?'<div class="badge-done">오늘 완료 ✅</div>':'')+
+      '<div class="card-top">'+
+        '<div class="thumb" data-act="play">'+
+          '<img loading="lazy" src="https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg" alt="">'+
+          '<div class="play"><i>▶</i></div>'+
+          '<div class="len">'+esc(v.duration)+'</div>'+
+        '</div>'+
+        '<div class="meta">'+
+          '<span class="tag t-'+v.category+'">'+CAT_LABEL[v.category]+'</span>'+
+          '<div class="title">'+esc(v.title)+'</div>'+
+          '<div class="ch">'+esc(v.channel)+' · '+esc(v.level||"")+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card-bottom">'+
+        '<div class="reason"><span class="ic">🤫</span><span>'+v.reason+'</span></div>'+
+        '<div class="actions">'+
+          '<button class="btn btn-go" data-act="play">▶ 운동 시작</button>'+
+          '<button class="btn btn-done" data-act="done">'+(dn?'완료 취소':'✅ 완료!')+'</button>'+
+        '</div>'+
+      '</div>'+
+    '</article>';
+  }).join("");
+
+  el.querySelectorAll(".card").forEach(card=>{
+    const id = card.dataset.id;
+    card.querySelectorAll('[data-act="play"]').forEach(b=>{
+      b.addEventListener("click", ()=>openPlayer(id));
+    });
+    const db = card.querySelector('[data-act="done"]');
+    db.addEventListener("click", ()=>{
+      setDone(id, !isDone(id));
+      renderStats(); renderList();
+    });
+  });
+}
+
+/* ---------- 플레이어 ---------- */
+function openPlayer(id){
+  const v = VIDEOS.find(x=>x.id===id);
+  if(!v) return;
+  current = v;
+  document.getElementById("mTitle").textContent = v.title;
+  document.getElementById("mSub").textContent = v.channel + " · " + v.duration + " · " + (v.level||"");
+  document.getElementById("mNote").innerHTML = v.reason;
+  const wrap = document.getElementById("mFrameWrap");
+  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+v.id+
+    '?rel=0&modestbranding=1&playsinline=1&autoplay=1" title="'+esc(v.title)+
+    '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+  const btn = document.getElementById("mDone");
+  btn.textContent = isDone(v.id) ? "완료 취소" : "✅ 완료!";
+  document.getElementById("modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closePlayer(){
+  document.getElementById("modal").classList.remove("open");
+  document.getElementById("mFrameWrap").innerHTML = "";
+  document.body.style.overflow = "";
+  current = null;
+}
+document.getElementById("mClose").addEventListener("click", closePlayer);
+document.getElementById("mClose2").addEventListener("click", closePlayer);
+document.getElementById("mDone").addEventListener("click", ()=>{
+  if(!current) return;
+  setDone(current.id, !isDone(current.id));
+  document.getElementById("mDone").textContent = isDone(current.id) ? "완료 취소" : "✅ 완료!";
+  renderStats(); renderList();
+});
+document.getElementById("modal").addEventListener("click", (e)=>{
+  if(e.target.id === "modal") closePlayer();
+});
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closePlayer(); });
+
+/* ---------- 데이터 로드 ---------- */
+async function boot(){
+  try{ filter = localStorage.getItem(KEY_FILTER) || "all"; }catch(e){}
+  if(!CATS.some(c=>c.key===filter)) filter = "all";
+  renderStats();
+
+  try{
+    const res = await fetch("./homet-data.json?t=" + Date.now(), {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    VIDEOS = (data.videos || []).filter(v=>v && v.id);
+    if(data.updated){
+      const p = String(data.updated).split("-");
+      document.getElementById("footDate").textContent = "영상 목록 업데이트 · " + p[0] + ". " + Number(p[1]) + ". " + Number(p[2]);
+    }
+  }catch(err){
+    document.getElementById("list").innerHTML =
+      '<div class="empty">영상 목록을 불러오지 못했어요.<br>잠시 뒤 새로고침 해 주세요.<br><span style="font-size:11px;opacity:.7">'+esc(err.message||err)+'</span></div>';
+    return;
+  }
+  renderChips();
+  renderList();
+  renderStats();
+}
+boot();
+</script>
+</body>
+</html>
