@@ -716,6 +716,8 @@ function makeWordQ(pool, wantKo){
   };
 }
 function eubneun(n){ var d=n%10; return (d===1||d===3||d===6||d===7||d===8)?'은':'는'; }
+function hasFinalNum(n){ var d=n%10; if(d===0) return true; return d===1||d===3||d===6||d===7||d===8; }
+function eulReul(n){ return n+(hasFinalNum(n)?'을':'를'); }
 function mathOpts(ans, spread){
   var set = {}; set[ans]=1;
   while(Object.keys(set).length<4){
@@ -737,7 +739,7 @@ function makeMathYunjin(){
   } else {
     a=3+ri(8); b=12+ri(8); ans=a*b;
     txt=a+' × '+b+' = ?'; sub='구구단 실력을 보여줘!'; fb=a+' 곱하기 '+b+eubneun(b)+' '+ans+'!';
-    bite='곱셈은 같은 수를 여러 번 더하는 빠른 셈! '+a+'×'+b+' = '+a+'을 '+b+'번 더한 것.';
+    bite='곱셈은 같은 수를 여러 번 더하는 빠른 셈! '+a+'×'+b+' = '+eulReul(a)+' '+b+'번 더한 것.';
   }
   var opts = mathOpts(ans, Math.max(3, Math.round(ans*0.12)));
   return { kicker:'✏️ 암산', q:txt, sub:sub,

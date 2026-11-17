@@ -615,8 +615,17 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     for(var i = 0; i < b; i++) arr.push(a);
     return arr.join('+');
   }
+  /* 숫자 뒤 조사 (1·3·6·7·8·0·십은 받침 있음) */
+  function hasFinal(n){
+    var d = n % 10;
+    if(d === 0) return true;
+    return d === 1 || d === 3 || d === 6 || d === 7 || d === 8;
+  }
+  function iGa(n){ return n + (hasFinal(n) ? '이' : '가'); }
+  function eunNeun(n){ return n + (hasFinal(n) ? '은' : '는'); }
+  function eulReul(n){ return n + (hasFinal(n) ? '을' : '를'); }
   function principleOf(a, b, ans){
-    return '<span class="calc">' + a + '가 ' + b + '묶음이면 ' + sumText(a, b) + ' = ' + ans + '!</span>';
+    return '<span class="calc">' + iGa(a) + ' ' + b + '묶음이면 ' + sumText(a, b) + ' = ' + ans + '!</span>';
   }
   function showTip(el, cls, main, mini){
     if(!el) return;
@@ -806,8 +815,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     $('qProg').textContent = (quiz.i+1) + ' / ' + quiz.list.length;
     $('qBar').style.width = (quiz.i / quiz.list.length * 100) + '%';
     $('qStars').textContent = '⭐ ' + quiz.first;
-    $('qText').textContent = q.a + ' × ' + q.b + ' = ?';
-    $('hintWrap').hidden = true;
+    $('qText').textContent = q.a + ' × ' + q.b + ' = ?';    $('hintWrap').hidden = true;
     $('feedback').textContent = '';
     $('feedback').className = 'feedback';
     hideTip($('qTip'));
@@ -843,7 +851,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       sfxDing();
       var r = btn.getBoundingClientRect();
       sparkles(r.left + r.width/2, r.top + 10, 6);
-      say(q.a + ' 곱하기 ' + q.b + '는 ' + q.ans + '! ' + q.a + '를 ' + q.b + '번 더한 거야!', { rate: 0.92 });
+      say(q.a + ' 곱하기 ' + q.b + (hasFinal(q.b) ? '은' : '는') + ' ' + q.ans + '! ' + eulReul(q.a) + ' ' + q.b + '번 더한 거야!', { rate: 0.92 });
       var btns = $('answers').querySelectorAll('.ans-btn');
       for(var i = 0; i < btns.length; i++) btns[i].disabled = true;
       $('qBar').style.width = ((quiz.i+1) / quiz.list.length * 100) + '%';
@@ -861,7 +869,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       $('feedback').textContent = SOFT[Math.floor(Math.random()*SOFT.length)];
       $('feedback').className = 'feedback soft';
       showTip($('qTip'), 'soft',
-        '💡 ' + q.a + '×' + q.b + '는 ' + q.a + '를 ' + q.b + '번 더한 거야 (' + sumText(q.a, q.b) + ')',
+        '💡 ' + q.a + '×' + q.b + (hasFinal(q.b) ? '은' : '는') + ' ' + eulReul(q.a) + ' ' + q.b + '번 더한 거야 (' + sumText(q.a, q.b) + ')',
         quiz.tried >= 2
           ? '그래서 답은 ' + q.ans + '! 아래 묶음을 다 세면 ' + q.ans + '개야 🤗'
           : '아래 묶음을 보며 ' + q.a + '개씩 세어 보자!');
@@ -869,7 +877,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       $('hintMsg').textContent = q.a + '개씩 ' + q.b + '묶음을 세어 볼까?';
       drawGroups($('hintGroups'), q.a, q.b, false);
       $('hintWrap').hidden = false;
-      say(q.a + ' 곱하기 ' + q.b + '는 ' + q.a + '를 ' + q.b + '번 더한 거야. 같이 세어 보자.', { rate: 0.88 });
+      say(q.a + ' 곱하기 ' + q.b + (hasFinal(q.b) ? '은' : '는') + ' ' + eulReul(q.a) + ' ' + q.b + '번 더한 거야. 같이 세어 보자.', { rate: 0.88 });
     }
   }
 

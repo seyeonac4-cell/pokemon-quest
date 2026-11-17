@@ -1735,13 +1735,13 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       var b2 = w.blocks.map(function(b){ return b.g; });
       var aStr = a.join('-'), bStr = b2.join('-');
       if(bStr === aStr + '-e'){
-        return head + '<span class="mini">💡 ' + esc(other.w) + '는 e가 없어 짧게, ' + esc(w.w) + '는 끝의 마법의 e 덕분에 앞 모음이 길게! e는 소리가 없어 🤫</span>';
+        return head + '<span class="mini">💡 「' + esc(other.w) + '」 → 짧게 (e 없음) · 「' + esc(w.w) + '」 → 길게 (마법의 e 🤫가 앞 모음을 늘렸어!)</span>';
       }
       if(aStr === bStr + '-e'){
-        return head + '<span class="mini">💡 ' + esc(other.w) + '는 끝에 e가 붙어 길게, ' + esc(w.w) + '는 e가 없어 짧게 「' + esc(w.w) + '」!</span>';
+        return head + '<span class="mini">💡 「' + esc(other.w) + '」 → 길게 (마법의 e) · 「' + esc(w.w) + '」 → 짧게 (e 없음)</span>';
       }
       if(a[0] !== b2[0]){
-        return head + '<span class="mini">💡 ' + esc(other.w) + '는 ' + esc(a[0]) + ' 소리, ' + esc(w.w) + '는 ' + esc(b2[0]) + ' 소리로 시작해! 첫소리를 잘 들어 봐 👂</span>';
+        return head + '<span class="mini">💡 첫소리 비교 — 「' + esc(other.w) + '」 = ' + esc(a[0]) + '[' + esc(other.blocks[0].ko || '') + '] / 「' + esc(w.w) + '」 = ' + esc(b2[0]) + '[' + esc(w.blocks[0].ko || '') + ']</span>';
       }
     }
     return head + '<span class="mini">💡 ' + chainOf(w) + '로 읽어! ' + esc(ruleOf(w)) + '</span>';

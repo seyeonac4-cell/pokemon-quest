@@ -621,7 +621,7 @@ img{display:block}
       var head = pick(CHEERS);
       if (fb) {
         fb.className = 'qfb good on';
-        fb.innerHTML = '<span class="qfbhead">🎉 ' + esc(head) + ' 「' + esc(target.w) + '」는 ' + esc(target.ko) + '!</span>'
+        fb.innerHTML = '<span class="qfbhead">🎉 ' + esc(head) + ' 「' + esc(target.w) + '」 = ' + esc(target.ko) + '!</span>'
           + '💡 ' + esc(tipOf(target))
           + '<span class="qfben">' + esc(target.ex) + '<span class="qfbko">' + esc(target.exko) + '</span></span>';
       }
@@ -643,7 +643,7 @@ img{display:block}
       });
       if (fb) {
         fb.className = 'qfb bad on';
-        fb.innerHTML = '<span class="qfbhead">💗 이건 「' + esc(target.w) + '」(' + esc(target.ko) + ')</span>'
+        fb.innerHTML = '<span class="qfbhead">💗 정답은 「' + esc(target.w) + '」 = ' + esc(target.ko) + '</span>'
           + '💡 ' + esc(tipOf(target))
           + '<span class="qfben">' + esc(target.ex) + '<span class="qfbko">' + esc(target.exko) + '</span></span>';
       }
