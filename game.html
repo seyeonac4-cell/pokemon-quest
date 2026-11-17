@@ -60,6 +60,7 @@ body{
   display:inline-flex;align-items:center;gap:5px;
 }
 .chip:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,0)}
+.chip.back{text-decoration:none;font-weight:800;color:var(--ink2);padding:8px 10px;font-size:12.5px;white-space:nowrap}
 
 /* ---------- 공통 ---------- */
 .card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px;}
@@ -258,6 +259,7 @@ body{
 
   <!-- 상단 바 -->
   <div class="topbar">
+    <a class="chip back" href="./" title="포켓몬 대시보드로 돌아가기" aria-label="포켓몬 대시보드로 돌아가기">← 대시보드</a>
     <div class="ttl">🧩 지식 퍼즐 어드벤처</div>
     <button class="chip" id="btnShelf">🏆 <span id="shelfCnt">0</span></button>
     <button class="chip" id="btnSound">🔊</button>
