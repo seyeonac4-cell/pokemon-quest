@@ -116,7 +116,6 @@ h1 em{font-style:normal;color:var(--mint)}
   background:linear-gradient(135deg,#242c6b,#161c44);color:#fff;border-color:transparent;
   box-shadow:0 8px 20px rgba(22,28,68,.28)
 }
-.chip.on::after{content:"";display:inline-block;width:0}
 
 /* ---------------- 카드 ---------------- */
 .list{padding:4px 14px 8px;display:flex;flex-direction:column;gap:12px}
@@ -212,6 +211,9 @@ h1 em{font-style:normal;color:var(--mint)}
 .ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .m-foot{display:flex;gap:8px;padding:12px 14px 14px}
 .m-foot .btn{padding:12px}
+#mDone{background:linear-gradient(135deg,var(--mint),var(--mint2));color:#08251d;font-weight:900;box-shadow:0 8px 20px rgba(78,201,166,.28)}
+#mDone.is-done{background:rgba(255,255,255,.13);color:#cfd4f2;border:1px solid rgba(255,255,255,.18);box-shadow:none}
+#mClose2{background:rgba(255,255,255,.10);color:#e7e9fb;border:1px solid rgba(255,255,255,.14)}
 .m-note{color:#7f86ad;font-size:10.5px;text-align:center;padding:0 14px 12px;line-height:1.5}
 </style>
 </head>
@@ -287,6 +289,11 @@ const CATS = [
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
+
+/* 콘솔 오류 수집(검증용, 화면에는 안 보임) */
+window.__errs = [];
+window.addEventListener("error", e=>{ window.__errs.push(String(e.message||e.type)); });
+window.addEventListener("unhandledrejection", e=>{ window.__errs.push("promise: " + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
 
 let VIDEOS = [];
 let filter = "all";
@@ -434,8 +441,7 @@ function openPlayer(id){
   wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+v.id+
     '?rel=0&modestbranding=1&playsinline=1&autoplay=1" title="'+esc(v.title)+
     '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-  const btn = document.getElementById("mDone");
-  btn.textContent = isDone(v.id) ? "완료 취소" : "✅ 완료!";
+  syncModalDone(v.id);
   document.getElementById("modal").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -447,10 +453,16 @@ function closePlayer(){
 }
 document.getElementById("mClose").addEventListener("click", closePlayer);
 document.getElementById("mClose2").addEventListener("click", closePlayer);
+function syncModalDone(id){
+  const btn = document.getElementById("mDone");
+  const dn = isDone(id);
+  btn.textContent = dn ? "오늘 완료 · 취소하기" : "✅ 오늘 완료!";
+  btn.classList.toggle("is-done", dn);
+}
 document.getElementById("mDone").addEventListener("click", ()=>{
   if(!current) return;
   setDone(current.id, !isDone(current.id));
-  document.getElementById("mDone").textContent = isDone(current.id) ? "완료 취소" : "✅ 완료!";
+  syncModalDone(current.id);
   renderStats(); renderList();
 });
 document.getElementById("modal").addEventListener("click", (e)=>{
