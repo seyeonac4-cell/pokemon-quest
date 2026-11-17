@@ -485,6 +485,34 @@ body.modal-open #toast{bottom:auto;top:calc(14px + env(safe-area-inset-top,0px))
 body.modal-open #toast.on{transform:translate(-50%,0)}
 #fx{position:fixed;inset:0;z-index:95;pointer-events:none;width:100%;height:100%}
 
+/* ---------- 포켓몬 울음소리·타입 이펙트 ---------- */
+@keyframes pkPop{
+  0%{transform:scale(1) rotate(0)}
+  26%{transform:scale(1.12) rotate(-3.5deg)}
+  50%{transform:scale(.95) rotate(2.5deg)}
+  74%{transform:scale(1.04) rotate(-1.2deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.pk-pop{animation:pkPop .66s cubic-bezier(.2,.9,.25,1) both}
+.cry-btn{border:0;background:none;padding:0;margin:2px auto 6px;-webkit-tap-highlight-color:transparent;border-radius:50%}
+.cry-btn:active{transform:scale(.96)}
+@keyframes cryHintPulse{0%,100%{opacity:.62;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+.cry-hint{
+  display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:900;color:#2a5bd7;
+  background:#eaf2ff;border:1.5px solid #cfe0ff;border-radius:99px;padding:4px 11px;margin-top:4px;
+  animation:cryHintPulse 2.6s ease-in-out infinite;
+}
+.cry-hint.off{color:#8a93a8;background:#f4f7fd;border-color:#e7eefa;animation:none}
+.cry-once{font-size:9px;font-weight:900;opacity:.7;margin-left:3px}
+.cry-mark{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:900;color:#5b6b8c;opacity:.85}
+/* 퀴즈 보상 횟수 */
+.sc-cap{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;max-width:100%;font-size:10px;font-weight:900;color:#0e7a52;background:#e9fbf3;border:1.5px solid #b9eed6;border-radius:99px;padding:1.5px 7px;margin-top:4px;line-height:1.4}
+.sc-cap.full{color:#8a5a00;background:#fff7dd;border-color:#ffe09a}
+.q-cap{font-size:11px;font-weight:900;color:#7b8aa9;margin-bottom:8px;text-align:center;letter-spacing:-.01em}
+.q-cap.full{color:#a16207}
+.qres-cap{font-size:12.5px;font-weight:900;color:#a16207;background:#fff7dd;border:1.5px solid #ffe09a;border-radius:14px;padding:8px 12px;margin-top:9px;line-height:1.5}
+.qres-cap.done{color:#0e7a52;background:#e9fbf3;border-color:#b9eed6}
+
 /* 뽑기 결과 */
 .reveal{text-align:center}
 .reveal-stage{
@@ -621,7 +649,7 @@ body.modal-open #toast.on{transform:translate(-50%,0)}
 .cell .bld{font-size:31px;line-height:1;filter:drop-shadow(0 4px 3px rgba(30,42,68,.22));animation:buildIn .55s cubic-bezier(.2,1.3,.4,1)}
 @keyframes buildIn{from{transform:scale(.2) translateY(12px);opacity:0}to{transform:none;opacity:1}}
 .cell .bld-name{position:absolute;bottom:0;font-size:7.5px;font-weight:900;color:#2c4a2a;background:rgba(255,255,255,.78);padding:0 4px;border-radius:5px;white-space:nowrap}
-.v-critter{position:absolute;width:38px;height:38px;z-index:3;pointer-events:none;animation:hop 3.2s ease-in-out infinite;filter:drop-shadow(0 3px 2px rgba(30,42,68,.18))}
+.v-critter{position:absolute;width:38px;height:38px;z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:hop 3.2s ease-in-out infinite;filter:drop-shadow(0 3px 2px rgba(30,42,68,.18))}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .build-list{display:grid;gap:8px}
 @media (min-width:700px){.build-list{grid-template-columns:1fr 1fr}}
@@ -997,6 +1025,8 @@ label.btn{cursor:pointer}
   var KEY = 'pokemon_quest_dashboard_v2';
   var GACHA_COST = 30;
   var EVOLVE_LEVELS = [4, 8];
+  /* 암산·영단어 퀴즈는 하루에 이만큼만 XP·코인을 줘요 (그 뒤는 연습) */
+  var QUIZ_REWARD_MAX = 3;
 
   /* ============================================================
      가족 실시간 동기화 / 알림 설정
@@ -1408,7 +1438,7 @@ label.btn{cursor:pointer}
     return '<img class="' + (cls || 'art') + ' pk-art" src="' + dexArtUrl(c.dex) + '"'
       + ' alt="' + esc(c.name) + ' 공식 일러스트" width="475" height="475"'
       + ' loading="lazy" decoding="async" draggable="false"'
-      + ' data-dex="' + c.dex + '" onerror="pkArtFail(this)">';
+      + ' data-pid="' + c.dex + '" onerror="pkArtFail(this)">';
   }
   /* 그림이 안 뜨면(오프라인·차단) 미러 → 새로고침 재시도 → 몬스터볼 그림 순서로 넘어가요 */
   function pkArtFail(img) {
@@ -1416,12 +1446,12 @@ label.btn{cursor:pointer}
     var step = Number(img.getAttribute('data-step') || '0');
     if (step === 0) {
       img.setAttribute('data-step', '1');
-      setTimeout(function () { if (img.parentNode) img.src = DEX_ART_MIRROR + img.getAttribute('data-dex') + '.png'; }, 350);
+      setTimeout(function () { if (img.parentNode) img.src = DEX_ART_MIRROR + img.getAttribute('data-pid') + '.png'; }, 350);
       return;
     }
     if (step === 1) {
       img.setAttribute('data-step', '2');
-      setTimeout(function () { if (img.parentNode) img.src = dexArtUrl(img.getAttribute('data-dex')) + '?r=1'; }, 1500);
+      setTimeout(function () { if (img.parentNode) img.src = dexArtUrl(img.getAttribute('data-pid')) + '?r=1'; }, 1500);
       return;
     }
     var box = document.createElement('span');
@@ -1559,10 +1589,15 @@ label.btn{cursor:pointer}
   }
 
   function normQuizSlot(sl) {
+    var tries = clamp(nz(sl && sl.tries, 0), 0, 999);
+    var rw = (sl && sl.rewardTries != null)
+      ? clamp(nz(sl.rewardTries, 0), 0, QUIZ_REWARD_MAX)
+      : Math.min(tries, QUIZ_REWARD_MAX);   /* 예전 기록은 도전 횟수만큼 받은 것으로 계산 */
     return {
       best: clamp(nz(sl && sl.best, 0), 0, 10),
-      tries: clamp(nz(sl && sl.tries, 0), 0, 999),
-      lastSec: clamp(nz(sl && sl.lastSec, 0), 0, 9999)
+      tries: tries,
+      lastSec: clamp(nz(sl && sl.lastSec, 0), 0, 9999),
+      rewardTries: rw
     };
   }
 
@@ -2057,15 +2092,74 @@ label.btn{cursor:pointer}
     fxCtx.clearRect(0, 0, W, H);
     for (var i = fxParticles.length - 1; i >= 0; i--) {
       var p = fxParticles[i];
-      p.vy += p.g; p.vx *= 0.995; p.x += p.vx; p.y += p.vy;
+      var kd = p.kind || 'spark';
+
+      /* 퍼지는 빛 고리 */
+      if (kd === 'ring') {
+        p.r += p.vr; p.life -= p.decay;
+        if (p.life <= 0) { fxParticles.splice(i, 1); continue; }
+        fxCtx.save();
+        fxCtx.globalAlpha = Math.max(0, p.life) * 0.9;
+        fxCtx.strokeStyle = p.c;
+        fxCtx.lineWidth = Math.max(1, (p.w || 3) * p.life);
+        fxCtx.beginPath(); fxCtx.arc(p.x, p.y, p.r, 0, 6.2832); fxCtx.stroke();
+        fxCtx.restore();
+        continue;
+      }
+
+      /* 포켓몬 뒤에서 번지는 빛 */
+      if (kd === 'glow') {
+        p.life -= p.decay;
+        if (p.life <= 0) { fxParticles.splice(i, 1); continue; }
+        var gr = p.r * (1.45 - p.life * 0.45);
+        try {
+          var grad = fxCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, gr);
+          grad.addColorStop(0, hexA(p.c, 0.55 * p.life));
+          grad.addColorStop(0.55, hexA(p.c, 0.22 * p.life));
+          grad.addColorStop(1, hexA(p.c, 0));
+          fxCtx.save();
+          fxCtx.fillStyle = grad;
+          fxCtx.beginPath(); fxCtx.arc(p.x, p.y, gr, 0, 6.2832); fxCtx.fill();
+          fxCtx.restore();
+        } catch (e) { /* noop */ }
+        continue;
+      }
+
+      /* 번개 줄기 */
+      if (kd === 'bolt') {
+        p.life -= p.decay;
+        if (p.life <= 0) { fxParticles.splice(i, 1); continue; }
+        fxCtx.save();
+        fxCtx.globalAlpha = Math.max(0, p.life);
+        fxCtx.strokeStyle = p.c;
+        fxCtx.lineJoin = 'round'; fxCtx.lineCap = 'round';
+        fxCtx.shadowColor = p.c; fxCtx.shadowBlur = 12;
+        fxCtx.lineWidth = 1.4 + p.life * 2.4;
+        fxCtx.beginPath();
+        fxCtx.moveTo(p.pts[0].x, p.pts[0].y);
+        for (var s = 1; s < p.pts.length; s++) fxCtx.lineTo(p.pts[s].x, p.pts[s].y);
+        fxCtx.stroke();
+        fxCtx.restore();
+        continue;
+      }
+
+      /* 이모지(불꽃·번개·물방울·나뭇잎…) + 반짝 알갱이 */
+      p.vy += p.g; p.vx *= (p.drag == null ? 0.995 : p.drag); p.x += p.vx; p.y += p.vy;
       p.life -= p.decay; p.rot += p.vr;
-      if (p.life <= 0 || p.y > H + 30) { fxParticles.splice(i, 1); continue; }
+      if (p.life <= 0 || p.y > H + 40) { fxParticles.splice(i, 1); continue; }
       fxCtx.save();
-      fxCtx.globalAlpha = Math.max(0, Math.min(1, p.life));
-      fxCtx.fillStyle = p.c;
-      fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
-      if (p.shape === 'rect') fxCtx.fillRect(-p.r, -p.r * 0.6, p.r * 2, p.r * 1.2);
-      else { fxCtx.beginPath(); fxCtx.arc(0, 0, p.r, 0, 6.2832); fxCtx.fill(); }
+      fxCtx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.25));
+      if (kd === 'glyph') {
+        fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
+        fxCtx.font = '700 ' + Math.round(p.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","EmojiOne Color",sans-serif';
+        fxCtx.textAlign = 'center'; fxCtx.textBaseline = 'middle';
+        fxCtx.fillText(p.ch, 0, 0);
+      } else {
+        fxCtx.fillStyle = p.c;
+        fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
+        if (p.shape === 'rect') fxCtx.fillRect(-p.r, -p.r * 0.6, p.r * 2, p.r * 1.2);
+        else { fxCtx.beginPath(); fxCtx.arc(0, 0, p.r, 0, 6.2832); fxCtx.fill(); }
+      }
       fxCtx.restore();
     }
     if (fxParticles.length) requestAnimationFrame(fxTick);
@@ -2075,6 +2169,322 @@ label.btn{cursor:pointer}
     if (!el || !el.getBoundingClientRect) return burst(window.innerWidth / 2, window.innerHeight * 0.45, opts);
     var r = el.getBoundingClientRect();
     burst(r.left + r.width / 2, r.top + r.height / 2, opts);
+  }
+  function hexA(hex, a) {
+    var h = String(hex || '#ffffff').replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (isNaN(n)) return 'rgba(255,255,255,' + a + ')';
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+
+  /* ============================================================
+     타입별 이펙트 — 카드/모달에서 이모지 파티클이 터져요
+     ============================================================ */
+  var TYPE_FX = {
+    '불꽃': { emo: ['🔥', '🔥', '💥', '✨'], colors: ['#ff6a00', '#ffa000', '#ffd23f', '#ff3d00'], n: 16, sp: 5.0, g: 0.03, rise: -2.2, glow: '#ff7a18', rings: 1, bolts: 0, spark: 16, cone: 0.4, coneAngle: -0.32 },
+    '전기': { emo: ['⚡', '⚡', '✨', '💥'], colors: ['#ffe14d', '#ffd000', '#fff7b0', '#ffb300'], n: 14, sp: 6.0, g: 0.05, rise: -1.0, glow: '#ffe14d', rings: 1, bolts: 5, spark: 18 },
+    '물': { emo: ['💧', '💧', '🌊', '✨'], colors: ['#3fa9ff', '#8fd6ff', '#c7ecff', '#1d4ed8'], n: 16, sp: 4.6, g: 0.28, rise: -1.6, glow: '#3fa9ff', rings: 3, bolts: 0, spark: 14 },
+    '풀': { emo: ['🍃', '🍃', '🌿', '✨'], colors: ['#2fc98a', '#8fe0b4', '#c8f7d9', '#15803d'], n: 14, sp: 3.6, g: 0.07, rise: -0.8, glow: '#2fc98a', rings: 1, bolts: 0, spark: 12, swirl: 1 },
+    '에스퍼': { emo: ['🔮', '✨', '⭐', '💫'], colors: ['#9a6bff', '#c9a7ff', '#ff9ed2', '#6d28d9'], n: 14, sp: 3.2, g: 0.01, rise: -0.5, glow: '#9a6bff', rings: 3, bolts: 0, spark: 14, swirl: 1 },
+    '페어리': { emo: ['💗', '✨', '⭐', '💫'], colors: ['#ff7ab8', '#ffc6e3', '#ffd23f', '#ffffff'], n: 14, sp: 3.4, g: 0.04, rise: -1.2, glow: '#ff7ab8', rings: 2, bolts: 0, spark: 14 },
+    '고스트': { emo: ['👻', '🌙', '💜', '✨'], colors: ['#6d28d9', '#a78bfa', '#4c1d95', '#c4b5fd'], n: 13, sp: 2.8, g: -0.03, rise: -1.8, glow: '#7c3aed', rings: 1, bolts: 0, spark: 12 },
+    '드래곤': { emo: ['🐉', '💫', '✨', '🔥'], colors: ['#4338ca', '#8b5cf6', '#22d3ee', '#fbbf24'], n: 15, sp: 5.2, g: 0.05, rise: -2.0, glow: '#6366f1', rings: 2, bolts: 2, spark: 16 },
+    '노말': { emo: ['✨', '⭐', '💫'], colors: ['#5b6b8c', '#dde3ec', '#ffd23f'], n: 11, sp: 3.8, g: 0.09, rise: -1.2, glow: '#9aa8c4', rings: 1, bolts: 0, spark: 12 },
+    '독': { emo: ['💜', '💚', '✨'], colors: ['#7e22ce', '#c084fc', '#86efac'], n: 12, sp: 3.6, g: 0.06, rise: -1.0, glow: '#a855f7', rings: 1, bolts: 0, spark: 12 },
+    '비행': { emo: ['💨', '✨', '💫'], colors: ['#0369a1', '#7dd3fc', '#e0f2fe'], n: 12, sp: 5.0, g: 0.02, rise: -1.6, glow: '#38bdf8', rings: 1, bolts: 0, spark: 12, swirl: 1 },
+    '격투': { emo: ['👊', '💥', '✨'], colors: ['#b91c1c', '#ef4444', '#fca5a5'], n: 12, sp: 5.4, g: 0.1, rise: -1.0, glow: '#ef4444', rings: 1, bolts: 0, spark: 14 },
+    '강철': { emo: ['⚙️', '✨', '💫'], colors: ['#475569', '#94a3b8', '#e2e8f0'], n: 11, sp: 4.2, g: 0.12, rise: -0.8, glow: '#94a3b8', rings: 1, bolts: 0, spark: 12 },
+    '얼음': { emo: ['❄️', '❄️', '✨'], colors: ['#0ea5e9', '#7dd3fc', '#e0f2fe', '#ffffff'], n: 13, sp: 3.8, g: 0.1, rise: -0.8, glow: '#38bdf8', rings: 2, bolts: 0, spark: 14 },
+    '벌레': { emo: ['🐛', '🍃', '✨'], colors: ['#4d7c0f', '#a3e635', '#d9f99d'], n: 11, sp: 3.4, g: 0.08, rise: -0.8, glow: '#84cc16', rings: 1, bolts: 0, spark: 12 },
+    '바위': { emo: ['💥', '⭐', '✨'], colors: ['#92400e', '#d97706', '#fcd34d'], n: 12, sp: 4.4, g: 0.16, rise: -0.9, glow: '#b45309', rings: 1, bolts: 0, spark: 14 },
+    '땅': { emo: ['💥', '⭐', '✨'], colors: ['#a16207', '#ca8a04', '#fde68a'], n: 12, sp: 4.2, g: 0.18, rise: -0.8, glow: '#a16207', rings: 1, bolts: 0, spark: 14 },
+    '악': { emo: ['🌙', '✨', '💥'], colors: ['#3f3f46', '#71717a', '#a1a1aa', '#f472b6'], n: 12, sp: 3.6, g: 0.06, rise: -0.9, glow: '#52525b', rings: 1, bolts: 0, spark: 12 }
+  };
+  /* 타입 키 별칭 — '불'/'불꽃타입' 같은 표기를 모두 받아 줘요 */
+  var TYPE_ALIAS = { '불': '불꽃', '전기타입': '전기', '에스퍼타입': '에스퍼', '노말타입': '노말' };
+  function typeFxOf(types) {
+    var list = types || [];
+    for (var i = 0; i < list.length; i++) {
+      var t = String(list[i] || '');
+      if (TYPE_FX[t]) return TYPE_FX[t];
+      if (TYPE_ALIAS[t] && TYPE_FX[TYPE_ALIAS[t]]) return TYPE_FX[TYPE_ALIAS[t]];
+    }
+    return TYPE_FX['노말'];
+  }
+  function boltPoints(x, y) {
+    var a = Math.random() * Math.PI * 2;
+    var len = 54 + Math.random() * 74;
+    var segs = 4;
+    var pts = [{ x: x, y: y }];
+    for (var i = 1; i <= segs; i++) {
+      var t = i / segs;
+      pts.push({
+        x: x + Math.cos(a) * len * t + (Math.random() - 0.5) * 28,
+        y: y + Math.sin(a) * len * t + (Math.random() - 0.5) * 28
+      });
+    }
+    return pts;
+  }
+  function typeBurst(x, y, cfg, opts) {
+    if (!fxCtx || !cfg) return;
+    opts = opts || {};
+    if (fxParticles.length > 340) fxParticles.splice(0, fxParticles.length - 340);
+    var emo = cfg.emo || ['✨'];
+    var n = Math.round((cfg.n || 12) * (opts.scale || 1));
+    var i, a, sp;
+    for (i = 0; i < n; i++) {
+      var cone = cfg.cone && (i / n) < cfg.cone;
+      if (cone) {
+        a = (cfg.coneAngle || -0.3) + (Math.random() - 0.5) * 0.5;
+        sp = (cfg.sp || 4) * (1.3 + Math.random() * 1.4);
+      } else {
+        a = -Math.PI / 2 + (Math.random() - 0.5) * 2.9;
+        sp = (cfg.sp || 4) * (0.45 + Math.random() * 0.85);
+      }
+      fxParticles.push({
+        kind: 'glyph',
+        ch: emo[(Math.random() * emo.length) | 0],
+        x: x + (Math.random() - 0.5) * 12,
+        y: y + (Math.random() - 0.5) * 12,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp + (cfg.rise || 0),
+        g: cfg.g == null ? 0.08 : cfg.g,
+        life: 1, decay: 0.010 + Math.random() * 0.010,
+        size: 15 + Math.random() * 13,
+        rot: (Math.random() - 0.5) * 0.9,
+        vr: (Math.random() - 0.5) * (cfg.swirl ? 0.4 : 0.22)
+      });
+    }
+    var cols = cfg.colors || ['#ffd23f'];
+    for (i = 0; i < (cfg.spark || 12); i++) {
+      var a2 = Math.random() * Math.PI * 2;
+      var s2 = (cfg.sp || 4) * (0.5 + Math.random() * 1.1);
+      fxParticles.push({
+        x: x, y: y,
+        vx: Math.cos(a2) * s2, vy: Math.sin(a2) * s2 - 1.4,
+        g: 0.1 + Math.random() * 0.1,
+        life: 1, decay: 0.02 + Math.random() * 0.018,
+        r: 1.6 + Math.random() * 2.6,
+        c: cols[(Math.random() * cols.length) | 0],
+        rot: 0, vr: 0.12, shape: 'circle'
+      });
+    }
+    for (i = 0; i < (cfg.rings || 0); i++) {
+      fxParticles.push({
+        kind: 'ring', x: x, y: y, r: 12 + i * 8,
+        vr: 3.4 + Math.random() * 1.8, life: 1, decay: 0.036 - i * 0.006,
+        c: cfg.glow || '#ffffff', w: Math.max(1.4, 3.6 - i * 0.7)
+      });
+    }
+    for (i = 0; i < (cfg.bolts || 0); i++) {
+      fxParticles.push({ kind: 'bolt', x: x, y: y, pts: boltPoints(x, y), life: 1, decay: 0.075, c: '#fff9c4' });
+    }
+    if (cfg.glow) fxParticles.push({ kind: 'glow', x: x, y: y, r: 64 * (opts.scale || 1), life: 1, decay: 0.055, c: cfg.glow });
+    if (!fxRunning) { fxRunning = true; requestAnimationFrame(fxTick); }
+  }
+  function popEl(el) {
+    if (!el || !el.classList) return;
+    try {
+      el.classList.remove('pk-pop');
+      void el.offsetWidth;
+      el.classList.add('pk-pop');
+      if (el.__pkPopT) clearTimeout(el.__pkPopT);
+      el.__pkPopT = setTimeout(function () { el.classList.remove('pk-pop'); }, 760);
+    } catch (e) { /* noop */ }
+  }
+  /* 포켓몬을 누르면: 카드 흔들림 + 타입별 이펙트 */
+  function pokeFX(el, types, opts) {
+    opts = opts || {};
+    var cfg = typeFxOf(types);
+    var cx = window.innerWidth / 2, cy = window.innerHeight * 0.45;
+    var rect = (el && el.getBoundingClientRect) ? el.getBoundingClientRect() : null;
+    if (rect && (rect.width || rect.height)) { cx = rect.left + rect.width / 2; cy = rect.top + rect.height / 2; }
+    if (!opts.noPop) popEl(el);
+    var w = rect ? Math.max(rect.width, rect.height) : 0;
+    typeBurst(cx, cy, cfg, { scale: opts.scale || (w > 130 ? 1.15 : (w > 40 ? 1 : 0.85)) });
+    return cfg;
+  }
+
+  /* ============================================================
+     포켓몬 울음소리 — PokeAPI 공식 cries(.ogg)
+     ogg 재생 불가/실패 → mp3 미러 → Web Audio 합성음 순서로 넘어가요
+     ============================================================ */
+  var CRY_OGG = 'https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/';
+  var CRY_OGG_MIRROR = 'https://cdn.jsdelivr.net/gh/PokeAPI/cries@main/cries/pokemon/latest/';
+  var CRY_MP3 = 'https://play.pokemonshowdown.com/audio/cries/';
+  /* 도감 번호 → 영어 이름 (mp3 폴백용) */
+  var CRY_EN = {
+    1: 'bulbasaur', 4: 'charmander', 5: 'charmeleon', 6: 'charizard', 7: 'squirtle',
+    25: 'pikachu', 26: 'raichu', 39: 'jigglypuff', 52: 'meowth', 54: 'psyduck',
+    94: 'gengar', 132: 'ditto', 133: 'eevee', 143: 'snorlax', 149: 'dragonite',
+    150: 'mewtwo', 151: 'mew', 172: 'pichu', 175: 'togepi', 384: 'rayquaza',
+    448: 'lucario', 700: 'sylveon', 906: 'sprigatito'
+  };
+  var CRY_OGG_OK = (function () {
+    try {
+      var a = document.createElement('audio');
+      return !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"'));
+    } catch (e) { return false; }
+  })();
+  var cryEls = {};
+  var cryNow = null;
+  var cryToken = 0;
+  var CRY_VOL = 0.9;
+
+  function cryStep(dex, types, step, token) {
+    if (token !== cryToken) return;
+    var url = '';
+    if (step === 0) url = CRY_OGG + dex + '.ogg';
+    else if (step === 1) url = CRY_OGG_MIRROR + dex + '.ogg';
+    else if (step === 2 && CRY_EN[dex]) url = CRY_MP3 + CRY_EN[dex] + '.mp3';
+    if (!url) { crySynth(types); return; }
+    var el = cryEls[url];
+    if (!el) {
+      try {
+        el = new Audio();
+        el.preload = 'auto';
+        el.volume = CRY_VOL;
+        el.src = url;
+        cryEls[url] = el;
+      } catch (e) { crySynth(types); return; }
+    }
+    cryNow = el;
+    el.onerror = function () {
+      if (token !== cryToken) return;
+      el.onerror = null;
+      cryStep(dex, types, step + 1, token);
+    };
+    try { el.currentTime = 0; } catch (e) { /* noop */ }
+    var pr = null;
+    try { pr = el.play(); } catch (e) { pr = null; }
+    if (pr && pr.catch) {
+      pr.catch(function (err) {
+        if (token !== cryToken) return;
+        if (err && err.name === 'NotAllowedError') return;   /* 사용자 제스처 없음 — 소리만 조용히 */
+        cryStep(dex, types, step + 1, token);
+      });
+    }
+  }
+
+  function playCry(dex, types) {
+    if (!state.sound) return false;
+    var id = parseInt(dex, 10);
+    var tys = types || [];
+    var token = ++cryToken;
+    if (cryNow) { try { cryNow.pause(); cryNow.currentTime = 0; } catch (e) { /* noop */ } }
+    if (!id) { crySynth(tys); return false; }
+    cryStep(id, tys, CRY_OGG_OK ? 0 : 2, token);
+    return true;
+  }
+
+  /* 미리 받아 두기 — 첫 탭이 바로 들리도록 */
+  function prefetchCry(dex) {
+    var id = parseInt(dex, 10);
+    if (!id) return;
+    var url = '';
+    if (CRY_OGG_OK) url = CRY_OGG + id + '.ogg';
+    else if (CRY_EN[id]) url = CRY_MP3 + CRY_EN[id] + '.mp3';
+    if (!url || cryEls[url]) return;
+    try {
+      var el = new Audio();
+      el.preload = 'auto';
+      el.volume = CRY_VOL;
+      el.src = url;
+      cryEls[url] = el;
+    } catch (e) { /* noop */ }
+  }
+
+  /* --- 울음소리를 못 들려줄 때: 타입별 귀여운 합성음 --- */
+  function glide(f0, f1, start, dur, type, vol) {
+    var ac = audio();
+    if (!ac) return;
+    try {
+      var t0 = ac.currentTime + (start || 0);
+      var o = ac.createOscillator();
+      var g = ac.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(Math.max(20, f0), t0);
+      o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + (dur || 0.2));
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol == null ? 0.11 : vol, t0 + 0.025);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + (dur || 0.2));
+      o.connect(g); g.connect(ac.destination);
+      o.start(t0); o.stop(t0 + (dur || 0.2) + 0.05);
+    } catch (e) { /* noop */ }
+  }
+  function noiseHit(start, dur, vol, freq, q) {
+    var ac = audio();
+    if (!ac) return;
+    try {
+      var t0 = ac.currentTime + (start || 0);
+      var len = Math.max(1, Math.floor(ac.sampleRate * (dur || 0.2)));
+      var buf = ac.createBuffer(1, len, ac.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      var src = ac.createBufferSource();
+      src.buffer = buf;
+      var bp = ac.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = freq || 1200; bp.Q.value = q || 0.8;
+      var g = ac.createGain();
+      g.gain.setValueAtTime(vol == null ? 0.1 : vol, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + (dur || 0.2));
+      src.connect(bp); bp.connect(g); g.connect(ac.destination);
+      src.start(t0); src.stop(t0 + (dur || 0.2));
+    } catch (e) { /* noop */ }
+  }
+  function crySynth(types) {
+    var ac = audio();
+    if (!ac) return;
+    var t = String((types && types[0]) || '노말');
+    t = TYPE_ALIAS[t] || t;
+    if (t === '불꽃') {
+      noiseHit(0, 0.3, 0.07, 760, 0.6);
+      glide(760, 250, 0, 0.34, 'sawtooth', 0.09);
+      glide(1140, 420, 0.05, 0.26, 'triangle', 0.045);
+    } else if (t === '전기') {
+      for (var i = 0; i < 5; i++) glide(i % 2 ? 980 : 1600, i % 2 ? 1300 : 2050, i * 0.055, 0.05, 'square', 0.04);
+      noiseHit(0.02, 0.3, 0.045, 3300, 1.4);
+    } else if (t === '물') {
+      glide(520, 980, 0, 0.09, 'sine', 0.09);
+      glide(760, 1240, 0.1, 0.09, 'sine', 0.08);
+      glide(430, 300, 0.23, 0.18, 'sine', 0.055);
+      noiseHit(0, 0.2, 0.035, 2300, 0.7);
+    } else if (t === '풀') {
+      glide(560, 720, 0, 0.12, 'triangle', 0.08);
+      glide(720, 900, 0.12, 0.14, 'triangle', 0.07);
+      noiseHit(0.02, 0.26, 0.025, 4200, 0.9);
+    } else if (t === '에스퍼') {
+      glide(520, 1040, 0, 0.34, 'sine', 0.06);
+      glide(540, 1080, 0.02, 0.32, 'sine', 0.05);
+      glide(1560, 2080, 0.2, 0.18, 'sine', 0.03);
+    } else if (t === '페어리') {
+      [880, 1175, 1568, 2093].forEach(function (f, i2) { glide(f, f * 1.02, i2 * 0.07, 0.16, 'sine', 0.055); });
+    } else if (t === '고스트') {
+      glide(240, 140, 0, 0.4, 'sine', 0.08);
+      glide(180, 110, 0.12, 0.34, 'triangle', 0.05);
+      noiseHit(0.04, 0.36, 0.03, 420, 1.6);
+    } else if (t === '드래곤') {
+      glide(150, 420, 0, 0.42, 'sawtooth', 0.075);
+      glide(300, 520, 0.06, 0.3, 'square', 0.035);
+      noiseHit(0, 0.4, 0.04, 620, 0.5);
+    } else if (t === '격투') {
+      glide(320, 180, 0, 0.1, 'square', 0.07);
+      noiseHit(0, 0.14, 0.06, 900, 0.7);
+    } else if (t === '강철') {
+      glide(1400, 1900, 0, 0.12, 'square', 0.04);
+      glide(2100, 1500, 0.08, 0.18, 'triangle', 0.035);
+    } else if (t === '얼음') {
+      glide(1800, 2400, 0, 0.1, 'sine', 0.05);
+      glide(1500, 1100, 0.1, 0.16, 'sine', 0.045);
+      noiseHit(0, 0.24, 0.025, 5200, 1.2);
+    } else if (t === '비행') {
+      noiseHit(0, 0.34, 0.05, 1600, 0.5);
+      glide(900, 620, 0, 0.24, 'sine', 0.045);
+    } else {
+      glide(660, 880, 0, 0.1, 'triangle', 0.09);
+      glide(880, 1175, 0.09, 0.12, 'triangle', 0.07);
+    }
   }
 
   var toastTimer = null;
@@ -2154,11 +2564,11 @@ label.btn{cursor:pointer}
       + ' style="--pc-tint:' + tint + ';--pc-line:' + line + '"'
       + ' aria-label="' + esc(ch.name) + ' 오늘 할 일 보기, 달성률 ' + pct + '%">'
       + '<span class="pc-top">'
-      + '<span class="pc-art">' + creatureSVG(p.spec)
+      + '<span class="pc-art" data-cry="' + p.spec.dex + '" data-cry-t="' + esc(p.spec.types.join('|')) + '">' + creatureSVG(p.spec)
       + '<span class="p-badge s' + p.stage + '" title="' + p.stage + '단계 진화">' + p.stage + '</span></span>'
       + '<span class="pc-id">'
       + '<span class="pc-name">' + esc(ch.avatar) + ' ' + esc(ch.name) + '<span class="g">' + esc(ch.grade) + '</span></span>'
-      + '<span class="pc-mon">' + esc(p.spec.name) + ' · ' + p.stage + '단계 진화</span>'
+      + '<span class="pc-mon">' + esc(p.spec.name) + ' · ' + p.stage + '단계 진화<span class="cry-once" aria-hidden="true">🔊</span></span>'
       + '<span class="pc-lv">⚡ Lv.' + p.li.level + '</span>'
       + '</span>'
       + '<span class="pc-pct' + (hit ? ' hit' : '') + '"><b>' + pct + '%</b><small>오늘 달성</small></span>'
@@ -2235,7 +2645,7 @@ label.btn{cursor:pointer}
     }).join('');
 
     return '<div class="partner">'
-      + '<div class="partner-art' + (stage === 3 ? ' st3' : '') + '">' + creatureSVG(spec)
+      + '<div class="partner-art' + (stage === 3 ? ' st3' : '') + '" data-cry="' + spec.dex + '" data-cry-t="' + esc(spec.types.join('|')) + '" title="탭하면 울음소리">' + creatureSVG(spec)
       + '<span class="p-badge s' + stage + '" title="' + stage + '단계 진화" aria-label="' + stage + '단계 진화 배지">' + stage + '</span></div>'
       + '<div class="partner-info">'
       + '<div class="partner-name">' + esc(spec.name) + '<span class="partner-tag">' + esc(spec.tag) + '</span>'
@@ -2244,6 +2654,7 @@ label.btn{cursor:pointer}
       + '<div class="evo-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div>'
       + '<div class="evo-note"><span>' + note + '</span><span>' + right + '</span></div>'
       + '<div class="evo-stages">' + stages + '</div>'
+      + '<div class="cry-mark" data-cry="' + spec.dex + '" data-cry-t="' + esc(spec.types.join('|')) + '">🔊 탭하면 울음소리</div>'
       + '</div></div>';
   }
 
@@ -2401,11 +2812,20 @@ label.btn{cursor:pointer}
     if (!ch.academy || ch.academy.day !== todayStr()) {
       ch.academy = {
         day: todayStr(),
-        math: { best: 0, tries: 0, lastSec: 0 },
-        words: { best: 0, tries: 0, lastSec: 0 }
+        math: { best: 0, tries: 0, lastSec: 0, rewardTries: 0 },
+        words: { best: 0, tries: 0, lastSec: 0, rewardTries: 0 }
       };
     }
+    if (ch.academy.math && ch.academy.math.rewardTries == null) ch.academy.math.rewardTries = Math.min(nz(ch.academy.math.tries, 0), QUIZ_REWARD_MAX);
+    if (ch.academy.words && ch.academy.words.rewardTries == null) ch.academy.words.rewardTries = Math.min(nz(ch.academy.words.tries, 0), QUIZ_REWARD_MAX);
     return ch.academy;
+  }
+
+  /* 오늘 받을 수 있는 보상이 몇 번 남았는지 */
+  function quizRewardLeft(k, type) {
+    var rec = academyRec(k);
+    var slot = rec[type] || { rewardTries: 0 };
+    return Math.max(0, QUIZ_REWARD_MAX - clamp(nz(slot.rewardTries, 0), 0, QUIZ_REWARD_MAX));
   }
 
   function quizMeta(type, k) {
@@ -2430,20 +2850,25 @@ label.btn{cursor:pointer}
       { type: 'words', slot: rec.words }
     ];
     return '<section class="section"><div class="section-head"><h2>🎯 오늘의 학습</h2>'
-      + '<span class="hint">10문제씩 · 하루 1번 보너스</span></div>'
+      + '<span class="hint">10문제씩 · 보상 하루 ' + QUIZ_REWARD_MAX + '번</span></div>'
       + '<div class="study">'
       + cards.map(function (c) {
         var m = quizMeta(c.type, k);
         var done = c.slot.tries > 0;
+        var used = clamp(nz(c.slot.rewardTries, 0), 0, QUIZ_REWARD_MAX);
+        var left = QUIZ_REWARD_MAX - used;
         return '<div class="study-card s-' + c.type + '">'
           + '<span class="sc-ico">' + m.icon + '</span>'
           + '<span class="sc-body"><span class="sc-title">' + m.label + '</span>'
           + '<span class="sc-desc">' + m.desc + '</span>'
           + '<span class="sc-rec">' + (done
             ? '오늘 최고 ' + c.slot.best + '/10 · ' + c.slot.tries + '번 도전'
-            : '아직 안 했어요 · 첫 도전 보너스!') + '</span></span>'
-          + '<button type="button" class="btn btn-sm btn-primary" data-quiz="' + c.type + '" data-k="' + k + '">'
-          + (done ? '다시' : '시작') + '</button>'
+            : (left > 0 ? '아직 안 했어요 · 첫 도전 보너스!' : '오늘 보상은 다 받았어요')) + '</span>'
+          + '<span class="sc-cap' + (left > 0 ? '' : ' full') + '">'
+          + (left > 0 ? '🎁 오늘 보상 ' + used + '/' + QUIZ_REWARD_MAX + '회 · ' + left + '번 남았어요'
+                      : '🎁 오늘 보상 ' + QUIZ_REWARD_MAX + '/' + QUIZ_REWARD_MAX + '회 · 연습으로 풀 수 있어요') + '</span></span>'
+          + '<button type="button" class="btn btn-sm ' + (left > 0 ? 'btn-primary' : 'btn-ghost') + '" data-quiz="' + c.type + '" data-k="' + k + '">'
+          + (done ? (left > 0 ? '다시' : '연습') : (left > 0 ? '시작' : '연습')) + '</button>'
           + '</div>';
       }).join('')
       + '</div></section>';
@@ -2464,10 +2889,11 @@ label.btn{cursor:pointer}
 
   function startQuiz(k, type) {
     state.active = k;
+    var left = quizRewardLeft(k, type);
     quiz = {
       k: k, type: type, items: buildQuiz(k, type), idx: 0, correct: 0,
       marks: [], wrong: [], startAt: Date.now(), chosen: null, answered: false,
-      done: false, gain: null, sec: 0
+      done: false, gain: null, sec: 0, rewardLeft: left
     };
     view = 'quiz';
     save();
@@ -2475,6 +2901,7 @@ label.btn{cursor:pointer}
     render();
     window.scrollTo({ top: 0, behavior: 'auto' });
     startQuizTimer();
+    if (left <= 0) setTimeout(function () { toast('오늘 보상은 다 받았어요 · 연습으로 풀어요 👏'); }, 260);
   }
 
   function answerQuiz(opt) {
@@ -2511,9 +2938,11 @@ label.btn{cursor:pointer}
     var sec = Math.max(1, Math.round((Date.now() - quiz.startAt) / 1000));
     var rec = academyRec(k);
     var slot = rec[quiz.type];
-    var firstToday = slot.tries === 0;
-    var xp = quiz.correct * 2;
-    var coins = quiz.correct;
+    var used = clamp(nz(slot.rewardTries, 0), 0, QUIZ_REWARD_MAX);
+    var canReward = used < QUIZ_REWARD_MAX;
+    var firstToday = canReward && used === 0;
+    var xp = canReward ? quiz.correct * 2 : 0;
+    var coins = canReward ? quiz.correct : 0;
     if (firstToday) { xp += 10; coins += 10; }
     slot.tries += 1;
     slot.lastSec = sec;
@@ -2521,29 +2950,43 @@ label.btn{cursor:pointer}
 
     var beforeLv = levelInfo(ch.xp).level;
     var beforeSt = stageForLevel(beforeLv);
-    ch.xp += xp;
-    ch.coins += coins;
-    ch.total += 1;
-    var afterLv = levelInfo(ch.xp).level;
-    var afterSt = stageForLevel(afterLv);
-    if (afterSt > beforeSt) ch.coins += 20;
+    var afterLv = beforeLv, afterSt = beforeSt;
+    if (canReward) {
+      slot.rewardTries = used + 1;
+      ch.xp += xp;
+      ch.coins += coins;
+      ch.total += 1;
+      afterLv = levelInfo(ch.xp).level;
+      afterSt = stageForLevel(afterLv);
+      if (afterSt > beforeSt) ch.coins += 20;
+    }
 
     quiz.done = true;
     quiz.sec = sec;
-    quiz.gain = { xp: xp, coins: coins, bonus: firstToday };
+    quiz.gain = {
+      xp: xp, coins: coins, bonus: firstToday, capped: !canReward,
+      used: clamp(nz(slot.rewardTries, 0), 0, QUIZ_REWARD_MAX), max: QUIZ_REWARD_MAX
+    };
     save();
     stopQuizTimer();
-    SFX.all();
-    burst(window.innerWidth / 2, window.innerHeight * 0.34, { count: 90 });
+    if (canReward) {
+      SFX.all();
+      burst(window.innerWidth / 2, window.innerHeight * 0.34, { count: 90 });
+    } else {
+      SFX.tap();
+    }
     render();
-    if (afterSt > beforeSt) setTimeout(function () { openEvolve(beforeSt, afterSt); }, 620);
-    else if (afterLv > beforeLv) setTimeout(function () { openLevelUp(afterLv); }, 620);
+    if (canReward && afterSt > beforeSt) setTimeout(function () { openEvolve(beforeSt, afterSt); }, 620);
+    else if (canReward && afterLv > beforeLv) setTimeout(function () { openLevelUp(afterLv); }, 620);
+    else if (!canReward) setTimeout(function () { toast('오늘 보상 ' + QUIZ_REWARD_MAX + '회를 모두 받았어요! 연습 완료 👏'); }, 220);
   }
 
   function exitQuiz() {
     if (!quiz || quiz.done) { var bk = quiz ? quiz.k : state.active; quiz = null; stopQuizTimer(); view = bk; render(); return; }
     var k = quiz.k;
-    askConfirm('그만 풀까요?', '지금까지 푼 문제는 기록되지 않아요.<br>계속 풀면 보상을 받을 수 있어요!', function () {
+    var canGet = quizRewardLeft(k, quiz.type) > 0;
+    askConfirm('그만 풀까요?', '지금까지 푼 문제는 기록되지 않아요.<br>'
+      + (canGet ? '계속 풀면 보상을 받을 수 있어요!' : '끝까지 풀면 연습 기록이 남아요.'), function () {
       stopQuizTimer();
       quiz = null;
       view = k;
@@ -2557,6 +3000,8 @@ label.btn{cursor:pointer}
     var ch = state.children[k];
     var m = quizMeta(quiz.type, k);
     if (quiz.done) return quizResultHTML();
+    var usedQ = clamp(nz(academyRec(k)[quiz.type].rewardTries, 0), 0, QUIZ_REWARD_MAX);
+    var leftQ = Math.max(0, QUIZ_REWARD_MAX - usedQ);
     var it = quiz.items[quiz.idx];
     var total = quiz.items.length;
     var dots = '';
@@ -2589,6 +3034,9 @@ label.btn{cursor:pointer}
       + '<div class="q-time" id="qTimer">⏱ 0:00</div>'
       + '</div>'
       + '<div class="q-dots" aria-label="문제 진행">' + dots + '</div>'
+      + '<div class="q-cap' + (leftQ > 0 ? '' : ' full') + '">'
+      + (leftQ > 0 ? '🎁 오늘 보상 ' + usedQ + '/' + QUIZ_REWARD_MAX + '회 · ' + leftQ + '번 더 받을 수 있어요'
+                   : '🎁 오늘 보상 ' + QUIZ_REWARD_MAX + '/' + QUIZ_REWARD_MAX + '회 완료 · 연습 모드') + '</div>'
       + '<div class="q-card">'
       + '<div class="q-num">' + (quiz.idx + 1) + '번째 문제</div>'
       + '<div class="q-text' + m.cls + '">' + esc(it.q) + '</div>'
@@ -2618,18 +3066,28 @@ label.btn{cursor:pointer}
         + '<h4 style="color:#0e8a5c;margin:0">모두 맞았어요! 완벽해요 ✨</h4></div>';
     }
     var g = quiz.gain || { xp: 0, coins: 0, bonus: false };
+    var leftR = quizRewardLeft(k, quiz.type);
+    var gainLine = g.capped
+      ? '<span>⚡ XP +0</span><span>🪙 코인 +0</span>'
+      : '<span>⚡ XP +' + g.xp + '</span><span>🪙 코인 +' + g.coins + '</span>'
+        + (g.bonus ? '<span class="b">첫 도전 보너스 +10 포함</span>' : '');
+    var capBox = g.capped
+      ? '<div class="qres-cap">오늘 보상 ' + QUIZ_REWARD_MAX + '회를 모두 받았어요! 연습 완료 👏<br>내일 또 보상을 받을 수 있어요.</div>'
+      : '<div class="qres-cap done">오늘 보상 ' + (g.used || 0) + ' / ' + QUIZ_REWARD_MAX + '회 사용'
+        + (leftR > 0 ? ' · ' + leftR + '번 더 받을 수 있어요' : ' · 오늘 보상 완료!') + '</div>';
     return '<section class="quiz">'
       + '<div class="qres">'
       + '<div class="qres-emoji">' + emoji + '</div>'
       + '<div class="qres-score">' + c + ' / ' + total + '</div>'
       + '<div class="qres-meta">' + esc(ch.name) + ' · ' + m.kicker + ' · 정답률 ' + pct + '%'
       + ' · ⏱ ' + Math.floor(quiz.sec / 60) + ':' + pad2(quiz.sec % 60) + '</div>'
-      + '<div class="qres-gain"><span>⚡ XP +' + g.xp + '</span><span>🪙 코인 +' + g.coins + '</span>'
-      + (g.bonus ? '<span class="b">첫 도전 보너스 +10 포함</span>' : '') + '</div>'
+      + '<div class="qres-gain">' + gainLine + '</div>'
+      + capBox
       + wrong
       + '<div class="qres-btns">'
       + '<button type="button" class="btn btn-ghost" data-quiz-exit="1">할 일로</button>'
-      + '<button type="button" class="btn btn-primary" data-quiz="' + quiz.type + '" data-k="' + k + '">다시 도전</button>'
+      + '<button type="button" class="btn btn-primary" data-quiz="' + quiz.type + '" data-k="' + k + '">'
+      + (leftR > 0 ? '다시 도전' : '한 번 더 연습') + '</button>'
       + '</div></div></section>';
   }
 
@@ -2899,12 +3357,13 @@ label.btn{cursor:pointer}
       var c = creatureById(id);
       if (!c) return;
       var p = crittPos[idx] || crittPos[0];
-      critters += '<div class="v-critter" style="left:' + p[0] + '%;top:' + p[1] + '%;animation-delay:' + (idx * 0.35) + 's">'
+      critters += '<div class="v-critter" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|')) + '" title="탭하면 울음소리" style="left:' + p[0] + '%;top:' + p[1] + '%;animation-delay:' + (idx * 0.35) + 's">'
         + creatureSVG(c) + '</div>';
     });
     var stage = stageForLevel(levelInfo(ch.xp).level);
-    critters += '<div class="v-critter" style="left:5%;top:66%;width:46px;height:46px;animation-delay:.2s">'
-      + creatureSVG(partnerSpec(k, stage)) + '</div>';
+    var pStage = partnerSpec(k, stage);
+    critters += '<div class="v-critter" data-cry="' + pStage.dex + '" data-cry-t="' + esc(pStage.types.join('|')) + '" title="탭하면 울음소리" style="left:5%;top:66%;width:46px;height:46px;animation-delay:.2s">'
+      + creatureSVG(pStage) + '</div>';
 
     var html = childSwitchHTML() + '<section class="section"><div class="section-head"><h2>🏡 ' + esc(ch.name) + '의 포켓몬 마을</h2>'
       + '<span class="hint">🪙 ' + ch.coins + ' 코인</span></div>'
@@ -3201,6 +3660,12 @@ label.btn{cursor:pointer}
         + '<p class="desc">' + esc(ch.name) + '의 파트너가 진화했어요!<br>' + esc(after.desc) + '</p>'
         + '<div class="new-tag">진화 기념 보너스 🪙 +20</div>'
         + '</div>',
+      onMount: function () {
+        setTimeout(function () {
+          playCry(after.dex, after.types);
+          pokeFX(document.querySelector('.modal .reveal-stage') || null, after.types);
+        }, 240);
+      },
       actions: [{ label: '와! 멋지다', cls: 'btn-primary', fn: function () { closeModal(); } }]
     });
   }
@@ -3232,13 +3697,14 @@ label.btn{cursor:pointer}
     save();
     SFX.gacha();
     burst(window.innerWidth / 2, window.innerHeight * 0.42, { count: 60 });
+    playCry(c.dex, c.types);
     render();
 
     var r = RARITY[c.rarity];
     openModal({
       title: '✨ 뽑기 결과',
       body: '<div class="reveal">'
-        + '<div class="reveal-stage"><div class="rays"></div><div class="disc"></div>' + creatureSVG(c) + '</div>'
+        + '<div class="reveal-stage" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|')) + '" title="탭하면 울음소리"><div class="rays"></div><div class="disc"></div>' + creatureSVG(c) + '</div>'
         + '<h3>' + esc(c.name) + '<span class="dex-no">No.' + pad3(c.dex) + '</span></h3>'
         + '<div class="ty-wrap">' + typeTags(c.types) + '</div>'
         + '<span class="rar-tag rar ' + r.cls + '">' + r.label + '</span>'
@@ -3246,7 +3712,13 @@ label.btn{cursor:pointer}
         + (isNew
           ? '<div class="new-tag">🎉 도감에 새로 등록!</div>'
           : '<div class="new-tag" style="color:#8a5a00;background:#fff7dd;border-color:#ffe09a">이미 만난 친구예요 · 코인 +' + refund + '</div>')
+        + '<div class="cry-hint">👆 포켓몬을 누르면 울음소리 + 이펙트</div>'
         + '</div>',
+      onMount: function () {
+        setTimeout(function () {
+          pokeFX(document.querySelector('.modal .reveal-stage') || null, c.types);
+        }, 180);
+      },
       actions: [
         {
           label: '한 번 더 (🪙' + GACHA_COST + ')', cls: 'btn-primary', fn: function () {
@@ -3723,23 +4195,54 @@ label.btn{cursor:pointer}
     reader.readAsText(file);
   }
 
-  function dexDetail(id) {
+  function dexDetail(id, opts) {
     var c = creatureById(id);
     if (!c) return;
+    opts = opts || {};
     var ch = activeChild();
     var owned = ch.dex.indexOf(id) !== -1;
     var r = RARITY[c.rarity];
+    var tys = c.types.join('|');
     openModal({
       title: owned ? '📖 도감 정보' : '🔮 아직 만나지 못한 친구',
       body: '<div class="reveal">'
-        + '<div class="reveal-stage" style="width:150px;height:150px">' + creatureSVG(c) + '</div>'
+        + (owned
+          ? '<button type="button" class="reveal-stage cry-btn" style="width:150px;height:150px" data-cry="' + c.dex + '" data-cry-t="' + esc(tys) + '" aria-label="' + esc(c.name) + ' 울음소리 듣기">' + creatureSVG(c) + '</button>'
+          : '<div class="reveal-stage" style="width:150px;height:150px">' + creatureSVG(c) + '</div>')
         + '<h3>' + (owned ? esc(c.name) : '???') + '<span class="dex-no">No.' + pad3(c.dex) + '</span></h3>'
         + '<div class="ty-wrap">' + (owned ? typeTags(c.types) : '') + '</div>'
         + '<span class="rar-tag rar ' + r.cls + '">' + r.label + '</span>'
         + '<p class="desc">' + (owned ? esc(c.desc) : '뽑기로 이 친구를 만나면 도감에 기록돼요.<br>어떤 친구일까요?') + '</p>'
+        + (owned ? '<div class="cry-hint">👆 포켓몬을 누르면 울음소리 + 이펙트</div>' : '<div class="cry-hint off">아직 울음소리를 들을 수 없어요</div>')
         + '</div>',
-      actions: [{ label: '닫기', cls: 'btn-ghost', fn: function () { closeModal(); } }]
+      onMount: function () {
+        if (!owned || opts.silent) return;
+        var stage = document.querySelector('.modal .reveal-stage');
+        setTimeout(function () { pokeFX(stage || null, c.types); }, 240);
+      },
+      actions: [
+        (owned ? { label: '🔊 울음소리 듣기', cls: 'btn-primary', fn: function () {
+          var st = document.querySelector('.modal .reveal-stage');
+          cryAndFX(st || null, c.dex, c.types);
+        } } : null),
+        { label: '닫기', cls: 'btn-ghost', fn: function () { closeModal(); } }
+      ].filter(Boolean)
     });
+  }
+
+  /* 울음소리 + 이펙트 한 번에 (소리가 꺼져 있으면 알려 줘요) */
+  function cryAndFX(el, dex, types) {
+    var ok = playCry(dex, types);
+    pokeFX(el, types);
+    if (!ok) toast('소리가 꺼져 있어요 · 위쪽 🔊 버튼으로 켤 수 있어요');
+    return ok;
+  }
+  /* 탭한 자리에서 바로 울음소리(사용자 제스처 안에서 재생해야 모바일이 막지 않아요) */
+  function cryTap(el, dex, types) {
+    var ok = playCry(dex, types);
+    popEl(el);
+    if (!ok) toast('소리가 꺼져 있어요 · 위쪽 🔊 버튼으로 켤 수 있어요');
+    return ok;
   }
 
   /* ============================================================
@@ -3773,6 +4276,16 @@ label.btn{cursor:pointer}
 
     var pin = closestEl(t, '[data-pin]');
     if (pin) { pinPress(pin.getAttribute('data-pin')); return; }
+
+    /* 포켓몬을 누르면 울음소리 + 타입 이펙트 (카드 이동보다 먼저 처리) */
+    var cryEl = closestEl(t, '[data-cry]');
+    if (cryEl) {
+      var cryDex = cryEl.getAttribute('data-cry');
+      var cryTypes = (cryEl.getAttribute('data-cry-t') || '').split('|');
+      cryAndFX(cryEl, cryDex, cryTypes);
+      e.preventDefault();
+      return;
+    }
 
     var navEl = closestEl(t, '[data-nav]');
     if (navEl) {
@@ -3839,7 +4352,12 @@ label.btn{cursor:pointer}
     if (tk) { markTicketUsed(tk.getAttribute('data-tk')); return; }
 
     var dx = closestEl(t, '[data-dex]');
-    if (dx) { dexDetail(dx.getAttribute('data-dex')); return; }
+    if (dx) {
+      var dc = creatureById(dx.getAttribute('data-dex'));
+      if (dc && activeChild().dex.indexOf(dc.id) !== -1) cryTap(dx, dc.dex, dc.types);
+      dexDetail(dx.getAttribute('data-dex'));
+      return;
+    }
 
     var bd = closestEl(t, '[data-build]');
     if (bd) { buildItem(bd.getAttribute('data-build')); return; }
@@ -4033,6 +4551,20 @@ label.btn{cursor:pointer}
   render();
   initSync();
 
+  /* 첫 터치에 울음소리를 미리 받아 둠 (데이터 거의 안 쓰고 첫 탭이 바로 들려요) */
+  document.addEventListener('pointerdown', function warm() {
+    document.removeEventListener('pointerdown', warm);
+    try {
+      var wk = state.active;
+      var wch = state.children[wk];
+      prefetchCry(partnerSpec(wk, stageForLevel(levelInfo(wch.xp).level)).dex);
+      wch.dex.slice(0, 6).forEach(function (id) {
+        var wc = creatureById(id);
+        if (wc) prefetchCry(wc.dex);
+      });
+    } catch (e) { /* noop */ }
+  }, { once: true });
+
   /* 테스트/디버그용 (앱 동작에는 영향 없음) */
   window.__pqd = {
     get state() { return state; },
@@ -4055,7 +4587,35 @@ label.btn{cursor:pointer}
     initSync: initSync,
     pushSync: pushSync,
     ntfySend: ntfySend,
-    ntfyCfg: ntfyCfg
+    ntfyCfg: ntfyCfg,
+    playCry: playCry,
+    pokeFX: pokeFX,
+    crySynth: crySynth,
+    typeFxOf: typeFxOf,
+    typeBurst: typeBurst,
+    fxParticles: function () { return fxParticles; },
+    prefetchCry: prefetchCry,
+    cryInfo: function () {
+      var keys = Object.keys(cryEls);
+      return { ogg: CRY_OGG_OK, cached: keys, current: cryNow ? cryNow.src : null };
+    },
+    cryState: function () {
+      var el = cryNow;
+      if (!el) return null;
+      return {
+        src: el.src, paused: el.paused, t: el.currentTime,
+        dur: el.duration, ready: el.readyState, vol: el.volume,
+        err: el.error ? el.error.code : null
+      };
+    },
+    quizMax: QUIZ_REWARD_MAX,
+    quizRewardLeft: quizRewardLeft,
+    academyRec: academyRec,
+    finishQuiz: finishQuiz,
+    dexDetail: dexDetail,
+    cryAndFX: cryAndFX,
+    normalize: normalize,
+    childForSend: childForSend
   };
 })();
 </script>
