@@ -258,6 +258,14 @@ body{
   font-size:11px;color:var(--muted);line-height:1.7;
 }
 .foot b{color:var(--ink2)}
+/* 헤드라인 획 보강: 어떤 기기에서도 진하게 보이도록 살짝 덧칠 */
+.mast-name,.top-head,.card-head,.sec-head h2,.sayit h2{
+  -webkit-text-stroke-color:currentColor;paint-order:stroke fill;
+}
+.mast-name{-webkit-text-stroke-width:1.1px}
+.top-head{-webkit-text-stroke-width:.9px}
+.card-head{-webkit-text-stroke-width:.55px}
+.sec-head h2,.sayit h2{-webkit-text-stroke-width:.55px}
 @media(max-width:400px){
   .top-body{padding:14px 13px 16px}
   .card-body{padding:12px 12px 14px}
