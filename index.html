@@ -472,6 +472,45 @@ ul{margin:0;padding:0;list-style:none}
 .row-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .import-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:8px}
 
+/* ---------- ⏰ 화면 사용 시간(5분) ---------- */
+.use-pill{
+  position:fixed;right:10px;bottom:calc(10px + var(--safe-b));z-index:70;
+  display:inline-flex;align-items:center;gap:3px;
+  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:-.02em;
+  background:rgba(255,255,255,.94);border:1.5px solid var(--line);color:var(--ink-2);
+  box-shadow:0 4px 12px rgba(30,42,68,.12);pointer-events:none;
+  font-variant-numeric:tabular-nums;transition:border-color .2s,color .2s,background .2s;
+}
+.use-pill.warn{border-color:#ffd98a;background:#fff8e8;color:#a06a00}
+.use-pill.hot{border-color:#ffb9c2;background:#fff1f3;color:#c02a3a;animation:useBeat 1.1s ease-in-out infinite}
+@keyframes useBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+.timeup{
+  position:fixed;inset:0;z-index:78;display:none;align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(160deg,#fff6dd 0%,#ffe1e6 55%,#e8f1ff 100%);
+}
+.timeup.show{display:flex}
+.timeup-card{
+  width:100%;max-width:400px;background:#fff;border:3px solid var(--ink);border-radius:30px;
+  padding:22px 20px 20px;text-align:center;box-shadow:0 18px 46px rgba(20,28,46,.28);
+  animation:tuPop .42s cubic-bezier(.2,.9,.25,1) both;
+}
+@keyframes tuPop{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.tu-clock{font-size:58px;line-height:1;display:inline-block;animation:tuRing 1.6s ease-in-out infinite}
+@keyframes tuRing{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.tu-title{margin:10px 0 0;font-size:23px;font-weight:900;letter-spacing:-.03em;color:var(--ink)}
+.tu-main{margin:10px 0 0;font-size:16.5px;font-weight:900;line-height:1.45;color:var(--ink-2)}
+.tu-sub{margin:10px 0 0;font-size:12.5px;font-weight:800;color:var(--muted);line-height:1.5}
+.tu-btn{
+  margin-top:18px;width:100%;min-height:56px;border-radius:18px;
+  background:linear-gradient(180deg,#ffe27a,#ffcf3f);border:2.5px solid var(--ink);
+  box-shadow:0 5px 0 rgba(30,42,68,.18);font-size:15.5px;font-weight:900;color:#5a3d00;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.tu-btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(30,42,68,.18)}
+.tu-note{margin-top:10px;font-size:11.5px;font-weight:800;color:var(--muted)}
+body.tu-open{overflow:hidden}
+
 /* 토스트 */
 #toast{
   position:fixed;left:50%;bottom:calc(22px + var(--safe-b));transform:translate(-50%,20px);
@@ -1010,6 +1049,17 @@ label.btn{cursor:pointer}
 <div class="sync-badge off" id="syncBadge" role="status" aria-live="polite">🟡 오프라인</div>
 <div id="modalRoot"></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div class="use-pill" id="usePill" role="status" aria-live="off" aria-label="화면 사용 시간">⏰ 5:00</div>
+<div class="timeup" id="timeup" aria-hidden="true">
+  <div class="timeup-card" role="alertdialog" aria-modal="true" aria-labelledby="tuTitle">
+    <span class="tu-clock" aria-hidden="true">⏰</span>
+    <h2 class="tu-title" id="tuTitle">5분이 지났어요!</h2>
+    <p class="tu-main">이제 대시보드에서 나가고<br>눈을 쉬어 주세요! 👀</p>
+    <p class="tu-sub">할 일과 퀴즈는 내일/다음에 또 만나요!</p>
+    <button class="tu-btn" id="timeupPin" type="button">🔒 보호자 PIN으로 연장하기</button>
+    <p class="tu-note">엄마·아빠에게 보여 주세요</p>
+  </div>
+</div>
 
 <!-- 가족 실시간 동기화 (Firebase Realtime Database) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
@@ -4277,6 +4327,10 @@ label.btn{cursor:pointer}
     var pin = closestEl(t, '[data-pin]');
     if (pin) { pinPress(pin.getAttribute('data-pin')); return; }
 
+    /* ⏰ 5분 경고창 — 보호자 PIN으로만 연장 */
+    var tuBtn = closestEl(t, '#timeupPin');
+    if (tuBtn) { askPin('보호자만 시간을 연장할 수 있어요', useExtend); return; }
+
     /* 포켓몬을 누르면 울음소리 + 타입 이펙트 (카드 이동보다 먼저 처리) */
     var cryEl = closestEl(t, '[data-cry]');
     if (cryEl) {
@@ -4530,6 +4584,182 @@ label.btn{cursor:pointer}
     }
   });
 
+  /* ============================================================
+     ⏰ 화면 사용 시간 제한 (5분)
+     - 화면이 보이는 동안에만 시간이 흘러요.
+     - 누적 시간은 localStorage에 저장되어 새로고침으로 초기화되지 않아요.
+     - 3분 이상 화면을 닫아 두었다가 돌아오면 푹 쉰 것으로 보고 새로 시작해요.
+     ============================================================ */
+  var USAGE_KEY = 'pokemon_quest_usage_v1';
+  var USE_LIMIT = 300;   /* 5분 */
+  var USE_BREAK = 180;   /* 3분 쉬면 리셋 */
+  var USE_WARN = 270;    /* 4분 30초에 살짝 알려 줌 */
+  var usage = { acc: 0, last: 0 };
+  var useStart = 0;      /* 지금 세션을 세기 시작한 시각(ms). 0이면 멈춤 */
+  var useWarned = false;
+  var useUp = false;
+  var useTick = null;
+
+  function useLoad() {
+    var raw = null;
+    try { raw = window.localStorage.getItem(USAGE_KEY); } catch (e) { raw = null; }
+    var acc = 0, last = 0;
+    if (raw) {
+      try {
+        var o = JSON.parse(raw);
+        acc = Number(o && o.acc);
+        last = Number(o && o.last);
+      } catch (e) { acc = 0; last = 0; }
+    }
+    if (!isFinite(acc) || acc < 0) acc = 0;
+    if (!isFinite(last) || last < 0) last = 0;
+    var now = Date.now();
+    if (!last || now - last >= USE_BREAK * 1000) acc = 0;   /* 충분히 쉬었으면 새로 */
+    usage.acc = Math.min(acc, USE_LIMIT + 120);
+    usage.last = last;
+  }
+
+  function useSave() {
+    try {
+      window.localStorage.setItem(USAGE_KEY, JSON.stringify({ acc: Math.round(usage.acc), last: usage.last }));
+    } catch (e) { /* 저장 불가 환경 */ }
+  }
+
+  function useElapsed() {
+    var e = usage.acc;
+    if (useStart) e += (Date.now() - useStart) / 1000;
+    return e;
+  }
+
+  /* 세션 시간을 누적에 접어 넣기 (저장용) */
+  function useFold() {
+    if (!useStart) return;
+    var now = Date.now();
+    usage.acc += (now - useStart) / 1000;
+    useStart = now;
+    usage.last = now;
+    useSave();
+  }
+
+  function usePaint() {
+    var pill = document.getElementById('usePill');
+    if (!pill) return;
+    var left = Math.max(0, Math.ceil(USE_LIMIT - useElapsed()));
+    var mm = Math.floor(left / 60);
+    var ss = left % 60;
+    pill.textContent = '⏰ ' + mm + ':' + (ss < 10 ? '0' : '') + ss;
+    pill.classList.toggle('warn', !useUp && left <= 60);
+    pill.classList.toggle('hot', !useUp && left <= 30);
+    pill.setAttribute('aria-label', '화면 사용 시간 ' + mm + '분 ' + ss + '초 남았어요');
+  }
+
+  function useResume() {
+    if (useUp || useStart) return;
+    var now = Date.now();
+    if (usage.last && now - usage.last >= USE_BREAK * 1000) {
+      usage.acc = 0;
+      useWarned = false;
+    }
+    useStart = now;
+    usage.last = now;
+    usePaint();
+  }
+
+  function usePause() {
+    if (!useStart) return;
+    usage.acc += (Date.now() - useStart) / 1000;
+    useStart = 0;
+    usage.last = Date.now();
+    useSave();
+    usePaint();
+  }
+
+  function useShowTimeUp() {
+    if (useUp) return;
+    useUp = true;
+    usePause();                       /* 경고창 뒤로는 더 세지 않음 */
+    usePaint();
+    var el = document.getElementById('timeup');
+    if (el) {
+      el.classList.add('show');
+      el.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('tu-open');
+      try {
+        tone(784, 0, 0.18, 'sine', 0.09);
+        tone(587, 0.16, 0.24, 'sine', 0.09);
+      } catch (e) { /* noop */ }
+      setTimeout(function () {
+        var b = document.getElementById('timeupPin');
+        if (b && b.focus) { try { b.focus({ preventScroll: true }); } catch (e) { b.focus(); } }
+      }, 80);
+    }
+  }
+
+  function useHideTimeUp() {
+    useUp = false;
+    var el = document.getElementById('timeup');
+    if (el) {
+      el.classList.remove('show');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    document.body.classList.remove('tu-open');
+  }
+
+  /* 보호자 PIN을 통과하면 5분 연장 (누적에서 5분을 덜어 냄) */
+  function useExtend() {
+    var e = useElapsed();
+    usage.acc = Math.max(0, e - USE_LIMIT);
+    useWarned = false;
+    useHideTimeUp();
+    useResume();
+    useSave();
+    toast('5분 더 이용할 수 있어요');
+  }
+
+  function useOnVisible() {
+    var now = Date.now();
+    var away = usage.last ? now - usage.last : 0;
+    if (useUp && away >= USE_BREAK * 1000) {
+      /* 경고창이 뜬 채로 3분 넘게 쉬었으면 처음부터 */
+      usage.acc = 0;
+      useWarned = false;
+      useHideTimeUp();
+    }
+    useResume();
+  }
+
+  function useStartTimer() {
+    if (useTick) return;
+    useTick = setInterval(function () {
+      if (!useStart) { usePaint(); return; }
+      var e = useElapsed();
+      if (!useWarned && e >= USE_WARN && e < USE_LIMIT) {
+        useWarned = true;
+        toast('⏰ 곧 5분이에요! 이번 것만 마무리해 볼까요?');
+      }
+      if (e >= USE_LIMIT) { useShowTimeUp(); return; }
+      if (Math.floor(e) % 5 === 0) useFold();
+      usePaint();
+    }, 1000);
+  }
+
+  function useBoot() {
+    useLoad();
+    usePaint();
+    useStartTimer();
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) usePause();
+      else useOnVisible();
+    });
+    window.addEventListener('pagehide', usePause);
+    window.addEventListener('beforeunload', usePause);
+    window.addEventListener('pageshow', function (e) {
+      if (e && e.persisted) useOnVisible();
+    });
+    if (useElapsed() >= USE_LIMIT) setTimeout(useShowTimeUp, 250);
+    else if (!document.hidden) useResume();
+  }
+
   /* 자정이 지나면 새 하루로 */
   setInterval(function () {
     if (ensureDay()) {
@@ -4550,6 +4780,7 @@ label.btn{cursor:pointer}
   initFx();
   render();
   initSync();
+  useBoot();
 
   /* 첫 터치에 울음소리를 미리 받아 둠 (데이터 거의 안 쓰고 첫 탭이 바로 들려요) */
   document.addEventListener('pointerdown', function warm() {
@@ -4615,7 +4846,23 @@ label.btn{cursor:pointer}
     dexDetail: dexDetail,
     cryAndFX: cryAndFX,
     normalize: normalize,
-    childForSend: childForSend
+    childForSend: childForSend,
+    usageState: function () {
+      return { elapsed: Math.round(useElapsed() * 10) / 10, limit: USE_LIMIT, up: useUp, running: !!useStart };
+    },
+    usageSet: function (sec) {
+      usage.acc = Math.max(0, Number(sec) || 0);
+      useWarned = false;
+      useStart = 0;
+      usage.last = Date.now();
+      useSave();
+      if (useElapsed() >= USE_LIMIT) { useShowTimeUp(); }
+      else { useHideTimeUp(); if (!document.hidden) useResume(); }
+      usePaint();
+      return this.usageState();
+    },
+    usageShow: useShowTimeUp,
+    usageExtend: useExtend
   };
 })();
 </script>
