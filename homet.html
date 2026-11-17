@@ -366,6 +366,8 @@ const CATS = [
   {key:"organize", label:"📦 정리마켓"}
 ];
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
+const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦"};
+const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기"};
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
 const KEY_TODO = "homet.todo.v1";
@@ -553,9 +555,9 @@ function renderList(){
         '</div>'+
       '</div>'+
       '<div class="card-bottom">'+
-        '<div class="reason"><span class="ic">'+(v.category==="jump"?"⚡":"🤫")+'</span><span>'+v.reason+'</span></div>'+
+        '<div class="reason"><span class="ic">'+(CAT_ICON[v.category]||"🤫")+'</span><span>'+v.reason+'</span></div>'+
         '<div class="actions">'+
-          '<button class="btn btn-go" data-act="play">▶ '+(v.cat_action||"운동 시작")+'</button>'+
+          '<button class="btn btn-go" data-act="play">▶ '+(CAT_ACTION[v.category]||"운동 시작")+'</button>'+
           '<button class="btn btn-done" data-act="done">'+(dn?'완료 취소':'✅ 완료!')+'</button>'+
         '</div>'+
       '</div>'+
