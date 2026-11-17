@@ -120,6 +120,24 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 .pill.n{background:#eaeaff;color:#3b3a94}
 .pill.o{background:#e4f6ee;color:#3f6b5c}
 .sheet .close{margin-top:16px;width:100%;border:none;background:#242257;color:#fff;font-family:inherit;font-size:14px;font-weight:800;padding:13px;border-radius:14px}
+.sheet .close.ghost{background:#f1f2f8;color:#5c6180;margin-top:8px}
+/* ---------- 새 근무표 업로드 ---------- */
+.badge-inbox{display:none;align-items:center;gap:6px;margin-top:13px;background:rgba(245,182,74,.16);border:1px solid rgba(245,182,74,.55);color:#ffe0a3;border-radius:100px;padding:6px 12px;font-size:11.5px;font-weight:800;width:max-content;max-width:100%}
+.badge-inbox.on{display:inline-flex}
+.up{padding:2px 20px 6px}
+.upbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:16px;padding:15px 14px;font-family:inherit;font-size:14.5px;font-weight:900;color:#fff;background:linear-gradient(150deg,#4a49b4 0%,#302e78 55%,#242257 100%);box-shadow:0 10px 22px rgba(43,41,112,.26);cursor:pointer;transition:transform .12s ease,opacity .15s}
+.upbtn:active{transform:scale(.985)}
+.upbtn[disabled]{opacity:.65;cursor:default}
+.upnote{margin-top:9px;font-size:11.5px;line-height:1.55;color:#9aa0b4}
+.upmsg{margin-top:11px;font-size:12.5px;line-height:1.55;border-radius:12px;padding:11px 13px;display:none;font-weight:500}
+.upmsg.on{display:block}
+.upmsg.ok{background:#e9f7ef;color:#2c6b4f;border:1px solid #cfeade}
+.upmsg.wait{background:#fff5e0;color:#8a5a12;border:1px solid #ffe2ad}
+.upmsg.err{background:#fdecec;color:#a33a3a;border:1px solid #f6cfcf}
+.upmsg button{margin-top:8px;border:none;background:#242257;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:8px 13px;border-radius:10px}
+.pin{width:100%;margin:4px 0 0;border:1.5px solid #dfe2ef;border-radius:14px;padding:14px;font-family:inherit;font-size:22px;font-weight:900;letter-spacing:.42em;text-align:center;color:#242257;background:#fbfbfe;outline:none}
+.pin:focus{border-color:#4a49b4;background:#fff}
+.pinerr{min-height:16px;margin:8px 0 2px;font-size:12px;font-weight:700;color:#d1495b;text-align:center}
 @media (max-width:400px){
   .cell{min-height:74px}
   .cell .mates{font-size:9.6px}
@@ -139,6 +157,7 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
         <div class="stat"><div class="n" id="sOff">–</div><div class="k">휴무</div></div>
         <div class="stat"><div class="n" id="sMates">–</div><div class="k">함께 선 동료</div></div>
       </div>
+      <div class="badge-inbox" id="inboxBadge">⏳ 새 근무표 분석 대기 중</div>
     </div>
 
     <div class="legend">
@@ -157,6 +176,14 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
       <div class="chips" id="chips"></div>
     </div>
 
+    <div class="sec up">
+      <h2><span class="bar"></span>다음 달 근무표</h2>
+      <button class="upbtn" id="upBtn" type="button">📤 새 근무표 사진 올리기</button>
+      <div class="upnote">사진을 올리면 호박이가 자동으로 읽어서 이 달력을 다음 달로 바꿔 드려요. (보호자 PIN 필요)</div>
+      <div class="upmsg" id="upMsg"></div>
+      <input type="file" id="upFile" accept="image/*" hidden>
+    </div>
+
     <div class="foot" id="foot"></div>
   </div>
 </div>
@@ -167,6 +194,17 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
     <div class="sm" id="shSub">나이트 근무</div>
     <div id="shRows"></div>
     <button class="close" onclick="closeSheet()">닫기</button>
+  </div>
+</div>
+
+<div class="sheet" id="pinSheet">
+  <div class="box">
+    <h3>보호자 확인</h3>
+    <div class="sm">새 근무표 사진을 올리려면 PIN 4자리를 입력해 주세요.</div>
+    <input class="pin" id="pinInput" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <div class="pinerr" id="pinErr"></div>
+    <button class="close" onclick="submitPin()">확인</button>
+    <button class="close ghost" onclick="closePin()">닫기</button>
   </div>
 </div>
 
@@ -241,6 +279,169 @@ function openSheet(day){
 }
 function closeSheet(){document.getElementById('sheet').classList.remove('on');}
 document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
+
+/* ============================================================
+   📤 새 근무표 사진 올리기 → Firebase shift_inbox (자동 분석 대기)
+   ============================================================ */
+const DB='https://pokemon-quest-lim-default-rtdb.asia-southeast1.firebasedatabase.app/family-lim-7660';
+const INBOX=DB+'/shift_inbox';
+const MAX_W=1800;              // 가로 최대 1800px
+const TARGET_BYTES=350*1024;   // ~350KB 이하
+let pinOK=false, uploading=false, firstMsgShown=false;
+
+const upMsgEl=document.getElementById('upMsg');
+function upMsg(html,kind){
+  upMsgEl.className='upmsg on '+(kind||'');
+  upMsgEl.innerHTML=html;
+  firstMsgShown=true;
+}
+
+/* 업로드 대기 상태 확인 */
+function setBadge(on){
+  document.getElementById('inboxBadge').classList.toggle('on',!!on);
+}
+async function refreshInbox(){
+  try{
+    const r=await fetch(INBOX+'/status.json',{cache:'no-store'});
+    if(!r.ok) return;
+    const st=await r.json();
+    const pending=st==='pending';
+    setBadge(pending||uploading);
+    if(pending){
+      if(!firstMsgShown) upMsg('⏳ 새 근무표 분석 대기 중','wait');
+    }else if(st==='done' && firstMsgShown && !uploading){
+      if(upMsgEl.classList.contains('wait')||upMsgEl.classList.contains('ok')){
+        upMsg('✅ 새 근무표 분석이 끝났어요! 새로고침하면 새 달 달력이 나와요.<br><button type="button" onclick="location.reload()">🔄 새로고침</button>','ok');
+      }
+    }
+  }catch(e){/* 오프라인 등은 무시 */}
+}
+
+/* PIN 확인 */
+async function pinMatches(value){
+  let pin='0000';
+  try{
+    const r=await fetch(DB+'/settings/pin.json',{cache:'no-store'});
+    if(r.ok){const p=await r.json(); if(typeof p==='string'&&p.trim()) pin=p.trim();}
+  }catch(e){/* 설정을 못 읽으면 기본 PIN */}
+  return String(value).trim()===pin;
+}
+function openPin(){
+  document.getElementById('pinErr').textContent='';
+  const i=document.getElementById('pinInput'); i.value='';
+  document.getElementById('pinSheet').classList.add('on');
+  setTimeout(()=>i.focus(),180);
+}
+function closePin(){document.getElementById('pinSheet').classList.remove('on');}
+async function submitPin(){
+  const input=document.getElementById('pinInput');
+  const v=input.value.trim();
+  if(v.length!==4){document.getElementById('pinErr').textContent='PIN 4자리를 입력해 주세요.';return;}
+  if(await pinMatches(v)){
+    pinOK=true; closePin();
+    setTimeout(()=>document.getElementById('upFile').click(),120);
+  }else{
+    document.getElementById('pinErr').textContent='PIN이 맞지 않아요.';
+    input.value=''; input.focus();
+  }
+}
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitPin();});
+document.getElementById('pinSheet').addEventListener('click',e=>{if(e.target.id==='pinSheet')closePin();});
+
+/* 버튼 → PIN → 파일 선택 */
+document.getElementById('upBtn').addEventListener('click',()=>{
+  if(uploading) return;
+  if(pinOK) document.getElementById('upFile').click();
+  else openPin();
+});
+
+/* 사진 리사이즈 (최대 1800px · JPEG 0.88 · ~350KB 이하) */
+function loadImage(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{URL.revokeObjectURL(url);res(img);};
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('사진을 열 수 없어요'));};
+    img.src=url;
+  });
+}
+function shrink(img){
+  const cv=document.createElement('canvas');
+  const scale=Math.min(1,MAX_W/img.naturalWidth);
+  let w=Math.max(1,Math.round(img.naturalWidth*scale));
+  let h=Math.max(1,Math.round(img.naturalHeight*scale));
+  let q=0.88;
+  const draw=()=>{
+    cv.width=w; cv.height=h;
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
+    ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+    ctx.drawImage(img,0,0,w,h);
+  };
+  draw();
+  return new Promise(resolve=>{
+    const step=()=>{
+      cv.toBlob(blob=>{
+        if(!blob||blob.size<=TARGET_BYTES||w<=700){resolve({blob:blob||new Blob(),w:w,h:h});return;}
+        if(q>0.62){q=Math.max(0.62,q-0.06);}
+        else{w=Math.round(w*0.86); h=Math.round(h*0.86); q=0.84; draw();}
+        step();
+      },'image/jpeg',q);
+    };
+    step();
+  });
+}
+function blobToDataURL(blob){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>res(fr.result);
+    fr.onerror=()=>rej(new Error('사진을 읽을 수 없어요'));
+    fr.readAsDataURL(blob);
+  });
+}
+
+/* 업로드 */
+async function uploadShift(file){
+  if(uploading) return;
+  uploading=true;
+  const btn=document.getElementById('upBtn');
+  const label=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='⏳ 사진 준비 중…';
+  setBadge(true);
+  try{
+    const img=await loadImage(file);
+    const out=await shrink(img);
+    const kb=Math.max(1,Math.round(out.blob.size/1024));
+    btn.innerHTML='📤 올리는 중… ('+kb+'KB)';
+    upMsg('📤 올리는 중… ('+kb+'KB · '+out.w+'×'+out.h+')','wait');
+    const dataUrl=await blobToDataURL(out.blob);
+    const body={
+      status:'pending',
+      uploaded_at:new Date().toISOString(),
+      filename:file.name||'shift.jpg',
+      bytes:out.blob.size,
+      width:out.w, height:out.h,
+      image_data:dataUrl
+    };
+    const r=await fetch(INBOX+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok) throw new Error('저장 실패 (HTTP '+r.status+')');
+    setBadge(true);
+    upMsg('✅ 업로드 완료! 호박이가 곧 자동 분석해서 달력을 새 달로 바꿔 드릴게요<br><span style="opacity:.75;font-size:11.5px">'+kb+'KB · '+out.w+'×'+out.h+'</span>','ok');
+  }catch(err){
+    setBadge(false);
+    upMsg('❗ 업로드를 마치지 못했어요. 사진을 다시 골라 주세요.<br><span style="opacity:.7;font-size:11.5px">'+String((err&&err.message)||err)+'</span>','err');
+  }finally{
+    uploading=false;
+    btn.disabled=false; btn.innerHTML=label;
+  }
+}
+document.getElementById('upFile').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0];
+  e.target.value='';
+  if(f) uploadShift(f);
+});
+
+refreshInbox();
+setInterval(refreshInbox,60000);
 </script>
 </body>
 </html>

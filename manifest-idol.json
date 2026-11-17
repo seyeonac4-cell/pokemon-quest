@@ -1,17 +1,33 @@
 {
+  "id": "/pokemon-quest/idol.html",
   "name": "윤진 트렌드 신문",
   "short_name": "트렌드 신문",
   "description": "윤진이의 매일 아이돌·트렌드 신문 — 오늘 뜨는 아이돌 영상과 똑똑해지는 영상",
-  "start_url": "./idol.html",
-  "scope": "./",
+  "start_url": "/pokemon-quest/idol.html",
+  "scope": "/pokemon-quest/idol.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F6F1E4",
   "theme_color": "#2A1140",
   "lang": "ko",
   "icons": [
-    { "src": "assets/idol/idol-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "assets/idol/idol-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "assets/idol/idol-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "assets/idol/idol-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/idol/idol-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/idol/idol-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

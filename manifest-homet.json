@@ -1,8 +1,9 @@
 {
+  "id": "/pokemon-quest/homet.html",
   "name": "세연 홈트&살림",
   "short_name": "홈트살림",
-  "start_url": "./homet.html",
-  "scope": "./",
+  "start_url": "/pokemon-quest/homet.html",
+  "scope": "/pokemon-quest/homet.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#121834",

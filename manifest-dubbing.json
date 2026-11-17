@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/dubbing.html",
+  "name": "영어 더빙 스튜디오",
+  "short_name": "더빙",
+  "description": "윤진·형원이 영어 동화를 직접 더빙하는 스튜디오",
+  "start_url": "/pokemon-quest/dubbing.html",
+  "scope": "/pokemon-quest/dubbing.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff4e6",
+  "theme_color": "#ff8a6b",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "assets/dubbing/dubbing-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/dubbing/dubbing-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/dubbing/dubbing-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
