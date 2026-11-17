@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>embed test</title>
+<style>
+body{font-family:sans-serif;margin:0;padding:10px;background:#fff}
+.row{margin-bottom:14px;border:2px solid #ccc;padding:6px}
+.lbl{font-weight:700;font-size:13px}
+iframe{width:100%;max-width:360px;aspect-ratio:16/9;border:0;display:block;margin-top:4px}
+</style></head><body>
+<div id="host"></div>
+<script>
+var IDS=[
+ ['s1-a','xg4_gWt8N_Q'],
+ ['s2-a','hhxltYxHlQ0'],
+ ['s2-b','V40xAHWUcCM'],
+ ['s3-a','Qp0OZvXj5ko'],
+ ['s3-b','bORaqCmIT7o'],
+ ['s4-a','5TH8bIFcu-w'],
+ ['s5-a','EeEch_XJrWc'],
+ ['x-sail','WQ4lSHOLNzA'],
+ ['x-red','B8Wf1EadpqE']
+];
+var host=document.getElementById('host');
+IDS.forEach(function(p){
+  var d=document.createElement('div'); d.className='row';
+  d.innerHTML='<div class="lbl">'+p[0]+' · '+p[1]+'</div>';
+  var f=document.createElement('iframe');
+  f.id='f_'+p[0];
+  f.src='https://www.youtube-nocookie.com/embed/'+p[1]+'?rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+  f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  f.setAttribute('allowfullscreen','');
+  f.addEventListener('load',function(){ window['__loaded_'+p[0]]=1; });
+  d.appendChild(f);
+  host.appendChild(d);
+});
+</script>
+</body></html>
