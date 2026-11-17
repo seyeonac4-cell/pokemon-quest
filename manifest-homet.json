@@ -1,6 +1,6 @@
 {
-  "name": "세연 홈트",
-  "short_name": "홈트",
+  "name": "세연 홈트&살림",
+  "short_name": "홈트살림",
   "start_url": "./homet.html",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +9,23 @@
   "theme_color": "#121834",
   "lang": "ko",
   "icons": [
-    { "src": "./assets/homet/homet-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "./assets/homet/homet-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "./assets/homet/homet-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "./assets/homet/homet-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/homet/homet-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/homet/homet-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
