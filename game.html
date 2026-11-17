@@ -511,6 +511,7 @@ function dayIdx(){
   return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-start)/86400000);
 }
 function ri(n){ return Math.floor(Math.random()*n); }
+function pick(arr){ return arr[ri(arr.length)]; }
 function shuffle(a){ var r=a.slice(); for(var i=r.length-1;i>0;i--){ var j=ri(i+1); var t=r[i]; r[i]=r[j]; r[j]=t; } return r; }
 
 /* 오늘 퍼즐: 두 아이가 같은 그림(가족이 같은 그림 이야기로 대화하기 좋게) */
