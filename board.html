@@ -144,7 +144,7 @@ img{image-rendering:auto}
 .mini-btn:active{transform:translateY(1px);box-shadow:none}
 
 /* ---------- 달력 ---------- */
-.cal-card{flex:1.62 1 0}
+.cal-card{flex:1.95 1 0}
 .cal-nav{display:flex;align-items:center;gap:4px}
 .cal-nav b{font-size:12.5px;font-weight:700;min-width:104px;text-align:center}
 .cal-wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:4px 6px 6px}
@@ -177,7 +177,7 @@ img{image-rendering:auto}
 .ev.more{background:#eef2f9;color:var(--ink2);border-style:dashed}
 
 /* ---------- 오늘 일정 ---------- */
-.today-card{flex:1 1 0}
+.today-card{flex:.85 1 0}
 .ev-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 8px;display:flex;flex-direction:column;gap:4px}
 .ev-row{display:flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 5px;border-radius:6px;background:#f7fbff;border:1px solid #e4eefb}
 .ev-row .dot{width:9px;height:9px;border-radius:3px;border:1.5px solid rgba(40,50,79,.4);flex:0 0 auto}
@@ -270,7 +270,7 @@ img{image-rendering:auto}
 .pk-off{font-size:11px;color:var(--muted);text-align:center;padding:12px 0;font-weight:700}
 
 /* ---------- D-day ---------- */
-.dd-card{flex:.72 1 0;min-height:104px}
+.dd-card{flex:0 0 auto;min-height:0;max-height:210px}
 .dd-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 7px;display:flex;flex-direction:column;gap:4px}
 .dd-row{display:flex;align-items:center;gap:6px;font-size:12px}
 .dd-row .ico{font-size:13px}
@@ -1171,11 +1171,11 @@ img{image-rendering:auto}
         if (!pending.length) {
           todoHtml = '<div class="pk-todo done">오늘 퀘스트 다 했어요! 🎉</div>';
         } else {
-          var chips = pending.slice(0, 2).map(function (q) {
+          var chips = pending.slice(0, 1).map(function (q) {
             return '<span class="chipq">' + esc((q.icon || '⭐') + ' ' + q.title) + '</span>';
           }).join('');
           todoHtml = '<div class="pk-todo"><span>남은</span>' + chips
-            + (pending.length > 2 ? '<span>외 ' + (pending.length - 2) + '</span>' : '') + '</div>';
+            + (pending.length > 1 ? '<span>외 ' + (pending.length - 1) + '</span>' : '') + '</div>';
         }
       }
       var nextNote = stage < 3 ? ('진화 Lv.' + EVOLVE_LEVELS[stage - 1]) : '최종 진화';
