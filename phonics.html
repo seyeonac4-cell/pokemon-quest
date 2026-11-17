@@ -1786,7 +1786,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   function renderQ(){
     var q = quiz.list[quiz.i];
     quiz.locked = false; quiz.tried = 0;
-    quizNextLocked = false; clearQTimers();
+    qGen++; quizNextLocked = false; clearQTimers();
     $('qProg').textContent = (quiz.i+1) + ' / ' + quiz.list.length;
     $('qBar').style.width = (quiz.i / quiz.list.length * 100) + '%';
     $('qStars').textContent = '⭐ ' + quiz.first;
@@ -1885,19 +1885,24 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       var r = btn.getBoundingClientRect();
       sparkles(r.left + r.width/2, r.top + 10, 6);
       var ruleShort = ruleOf(q.word);
+      var gen = ++qGen;
       minWaitDone = false; speechFinished = false;
       clearQTimers();
       saySeq([
         { text: q.word.w, rate:0.72, pause:300 },
         { text: q.word.w, rate:0.92, pause:240 },
         { text: ruleShort, lang:'ko-KR', rate:0.95 }
-      ], null, onSpeechDone);
+      ], null, function(){
+        if(gen !== qGen) return;
+        speechFinished = true;
+        if(minWaitDone) goNextQ();
+      });
       var opts = $('qAnswers').querySelectorAll('.opt');
       for(var i = 0; i < opts.length; i++) opts[i].disabled = true;
       $('qBar').style.width = ((quiz.i+1) / quiz.list.length * 100) + '%';
       /* 해설을 읽을 시간을 주고 넘어가요 (말이 끝나면 더 빨리) */
-      qAfter(2300, function(){ minWaitDone = true; if(speechFinished) goNextQ(); });
-      qAfter(7000, goNextQ);
+      qAfter(2300, function(){ if(gen !== qGen) return; minWaitDone = true; if(speechFinished) goNextQ(); });
+      qAfter(7000, function(){ if(gen !== qGen) return; goNextQ(); });
     } else {
       quiz.tried++; quiz.mistakes++;
       btn.classList.add('no');
@@ -1918,14 +1923,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     }
   }
   /* 다음 문제로 넘어가기 (해설 시간 · 말이 끝나면 바로) */
-  var minWaitDone = false, speechFinished = false, quizNextLocked = false;
+  var minWaitDone = false, speechFinished = false, quizNextLocked = false, qGen = 0;
   var qTimers = [];
   function qAfter(ms, fn){ qTimers.push(setTimeout(fn, ms)); }
   function clearQTimers(){ for(var i = 0; i < qTimers.length; i++) clearTimeout(qTimers[i]); qTimers = []; }
-  function onSpeechDone(){ speechFinished = true; if(minWaitDone) goNextQ(); }
   function goNextQ(){
     if(quizNextLocked) return;
     quizNextLocked = true;
+    minWaitDone = false; speechFinished = false;
     quiz.i++;
     if(quiz.i >= quiz.list.length) finishQ();
     else renderQ();
