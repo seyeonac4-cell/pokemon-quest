@@ -38,7 +38,7 @@ iframe{border:0;background:#fff;display:block}
       var w = b.contentWindow, d = b.contentDocument;
       var el = d && d.getElementById(target);
       if (el && w.scrollTo) {
-        var y = el.getBoundingClientRect().top + w.scrollY - 10;
+        var y = el.getBoundingClientRect().top + w.scrollY - 78;
         w.scrollTo(0, Math.max(0, y));
         clearInterval(t);
       }
