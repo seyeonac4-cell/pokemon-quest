@@ -171,21 +171,21 @@
       }
     },
     {
-      "kind": "요리 대결",
-      "headline": "12살 틸리의 정면승부! 램지 가족의 어린이 요리 서바이벌",
-      "source": "MasterChef Junior",
-      "summary": "고든 램지의 딸 틸리(12살)가 아빠가 낸 어려운 요리 미션에 도전하는 클립이에요. 아이들이 요리하면서 주고받는 영어 대화라서, 학교에서 쓰는 말투를 그대로 들을 수 있어요.",
-      "learn": "배움 한 줄: challenge는 '도전·대결'이라는 뜻. \"I don't mind~\", \"Are you ready?\" 같은 짧은 말이 계속 나와요.",
+      "kind": "스포츠 대결",
+      "headline": "프로 선수와 1대1 대결! 이기면 10만 달러",
+      "source": "MrBeast",
+      "summary": "미스터비스트가 프로 운동선수들과 1대1로 겨루는 챌린지예요. 이기면 10만 달러를 받아요. 경기 규칙과 응원 멘트가 전부 쉬운 영어라서, 운동이나 게임을 좋아하는 친구는 몇 분만 봐도 영어가 귀에 들어오기 시작해요.",
+      "learn": "배움 한 줄: beat는 '이기다'라는 뜻. \"Can he make this shot?\" 처럼 짧은 질문이 계속 나와서 듣기 연습이 돼요.",
       "words": [
-        {"en": "challenge", "ko": "도전"},
-        {"en": "ingredient", "ko": "재료"},
-        {"en": "delicious", "ko": "맛있는"}
+        {"en": "beat", "ko": "이기다"},
+        {"en": "pro", "ko": "프로"},
+        {"en": "challenge", "ko": "도전"}
       ],
       "video": {
-        "id": "wpFQalAE3XA",
-        "title": "Matilda Ramsay Judges | Season 3 Ep. 5 | MASTERCHEF JUNIOR",
-        "channel": "MasterChef On FOX",
-        "published": ""
+        "id": "_c2e1NcI3Sc",
+        "title": "Beat Professional Athlete, Win $100,000",
+        "channel": "MrBeast",
+        "published": "2026-10-31"
       }
     }
   ],
@@ -213,8 +213,7 @@
     "K-Pulso 2026 K-pop MV 순위 · kpop.lunaety.com 신곡 목록",
     "TED-Ed 「Can you solve the Billy Bonka riddle?」 (2026-11-03) · ed.ted.com",
     "Mark Rober 「I Solved Every Board Game」 (2026-10-24) · 확률·통계 실험",
-    "MrBeast 「I Survived The Most Extreme Places On Earth」 (2026-09-05)",
-    "MasterChef Junior 「Matilda Ramsay Judges」 (MasterChef On FOX)",
-    "각 영상 공식 유튜브 채널 (HYBE LABELS · STARSHIP · SMTOWN · BABYMONSTER · aespa · 사물궁이 잡학지식 · 에그박사 · Nat Geo Kids · TED-Ed · Mark Rober · MrBeast · MasterChef On FOX)"
+    "MrBeast 「I Survived The Most Extreme Places On Earth」 (2026-09-05) · 「Beat Professional Athlete, Win $100,000」 (2026-10-31)",
+    "각 영상 공식 유튜브 채널 (HYBE LABELS · STARSHIP · SMTOWN · BABYMONSTER · aespa · 사물궁이 잡학지식 · 에그박사 · Nat Geo Kids · TED-Ed · Mark Rober · MrBeast)"
   ]
 }
