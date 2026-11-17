@@ -1,0 +1,16 @@
+{
+  "name": "세연 나이트 근무표",
+  "short_name": "근무표",
+  "start_url": "./shift.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#161a3a",
+  "theme_color": "#161a3a",
+  "lang": "ko",
+  "icons": [
+    { "src": "./assets/shift/shift-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/shift/shift-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/shift/shift-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
