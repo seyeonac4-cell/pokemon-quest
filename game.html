@@ -553,6 +553,7 @@ function makeWordQ(pool, wantKo){
     fb:'"'+w.ko+'"은(는) 영어로 「'+w.en+'」!'
   };
 }
+function eubneun(n){ var d=n%10; return (d===1||d===3||d===6||d===7||d===8)?'은':'는'; }
 function mathOpts(ans, spread){
   var set = {}; set[ans]=1;
   while(Object.keys(set).length<4){
@@ -565,13 +566,13 @@ function makeMathYunjin(){
   var t = ri(3), a, b, ans, txt, sub, fb;
   if(t===0){
     a=12+ri(70); b=12+ri(70); ans=a+b;
-    txt=a+' + '+b+' = ?'; sub='받아올림 조심!'; fb=a+' 더하기 '+b+'는 '+ans+'!';
+    txt=a+' + '+b+' = ?'; sub='받아올림 조심!'; fb=a+' 더하기 '+b+eubneun(b)+' '+ans+'!';
   } else if(t===1){
     a=30+ri(60); b=10+ri(a-20); ans=a-b;
-    txt=a+' − '+b+' = ?'; sub='받아내림 조심!'; fb=a+' 빼기 '+b+'는 '+ans+'!';
+    txt=a+' − '+b+' = ?'; sub='받아내림 조심!'; fb=a+' 빼기 '+b+eubneun(b)+' '+ans+'!';
   } else {
     a=3+ri(8); b=12+ri(8); ans=a*b;
-    txt=a+' × '+b+' = ?'; sub='구구단 실력을 보여줘!'; fb=a+' 곱하기 '+b+'는 '+ans+'!';
+    txt=a+' × '+b+' = ?'; sub='구구단 실력을 보여줘!'; fb=a+' 곱하기 '+b+eubneun(b)+' '+ans+'!';
   }
   var opts = mathOpts(ans, Math.max(3, Math.round(ans*0.12)));
   return { kicker:'✏️ 암산', q:txt, sub:sub,
@@ -582,10 +583,10 @@ function makeMathHyungwon(){
   var t = ri(2), a, b, ans, txt, sub, fb;
   if(t===0){
     a=2+ri(9); b=1+ri(9); ans=a+b;
-    txt=a+' + '+b+' = ?'; sub='손가락으로 세어도 좋아요!'; fb=a+' 더하기 '+b+'는 '+ans+'!';
+    txt=a+' + '+b+' = ?'; sub='손가락으로 세어도 좋아요!'; fb=a+' 더하기 '+b+eubneun(b)+' '+ans+'!';
   } else {
     a=5+ri(12); b=1+ri(a-1); ans=a-b;
-    txt=a+' − '+b+' = ?'; sub='천천히 세어 보세요!'; fb=a+' 빼기 '+b+'는 '+ans+'!';
+    txt=a+' − '+b+' = ?'; sub='천천히 세어 보세요!'; fb=a+' 빼기 '+b+eubneun(b)+' '+ans+'!';
   }
   var opts = mathOpts(ans, 3);
   return { kicker:'✏️ 연산', q:txt, sub:sub,
