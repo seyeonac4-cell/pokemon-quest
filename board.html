@@ -183,6 +183,9 @@ img{image-rendering:auto}
 .ev-row .dot{width:9px;height:9px;border-radius:3px;border:1.5px solid rgba(40,50,79,.4);flex:0 0 auto}
 .ev-row .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 .ev-row .dday{font-size:10px;font-weight:700;color:var(--pink-d);flex:0 0 auto}
+.ev-row .when{font-size:10px;color:var(--muted);font-weight:700;flex:0 0 auto}
+.ev-row.next{background:#fffdf2;border-color:#f2e9cc}
+.ev-next-hd{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:4px;padding-top:5px;border-top:1.5px dashed var(--line)}
 .ev-row .x{border:none;background:none;font-size:12px;color:var(--muted);padding:0 2px;flex:0 0 auto}
 .ev-row .x:hover{color:var(--red)}
 .ev-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:10px 0}
@@ -1059,9 +1062,46 @@ img{image-rendering:auto}
         + (tag ? '<span class="dday">' + tag + '</span>' : '')
         + '<button class="x" data-del-ev="' + esc(x.id) + '" title="삭제">✕</button></div>';
     });
-    if (!evs.length) html = '<div class="ev-empty">이 날은 일정이 없어요. 아래에서 추가해 보세요 🌱</div>';
+    if (!evs.length) {
+      html = '<div class="ev-empty">이 날은 일정이 없어요. 아래에서 추가해 보세요 🌱</div>';
+      if (isToday) {
+        var up = upcoming(3);
+        if (up.length) {
+          html += '<div class="ev-next-hd">다음 일정</div>';
+          up.forEach(function (x) {
+            var cat = CATS[x.e.cat] || CATS.family;
+            html += '<div class="ev-row next"><span class="dot" style="background:' + cat.color + '"></span>'
+              + '<span class="t">' + esc(x.e.title) + '</span>'
+              + '<span class="when">' + (x.when.getMonth() + 1) + '/' + x.when.getDate() + '</span>'
+              + '<span class="dday">' + (x.dd === 0 ? '오늘' : 'D-' + x.dd) + '</span></div>';
+          });
+        }
+      }
+    }
     $('evList').innerHTML = html;
     if (isToday) $('evDate').value = ds;
+  }
+
+  /* 앞으로 다가오는 일정 (D-day 목록과 같은 규칙) */
+  function upcoming(limit) {
+    var today = parseYmd(S.date || todayStr());
+    var list = [];
+    objKeys(S.events).forEach(function (id) {
+      var e = S.events[id];
+      if (!e || !e.date) return;
+      var base = parseYmd(e.date);
+      var next = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+      if (e.yearly) {
+        next = new Date(today.getFullYear(), base.getMonth(), base.getDate());
+        if (dayDiff(today, next) < 0) next = new Date(today.getFullYear() + 1, base.getMonth(), base.getDate());
+      }
+      var dd = dayDiff(today, next);
+      if (dd <= 0) return;
+      if (dd > 200 && e.cat !== 'birthday') return;
+      list.push({ id: id, e: e, dd: dd, when: next });
+    });
+    list.sort(function (a, b) { return a.dd - b.dd; });
+    return limit ? list.slice(0, limit) : list;
   }
 
   function addEvent(date, title, cat) {
