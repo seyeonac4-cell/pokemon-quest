@@ -51,10 +51,10 @@ img{image-rendering:auto}
 .topbar{
   display:flex; align-items:center; gap:12px; flex:0 0 auto;
   padding:8px 12px; border:2px solid var(--ink); border-radius:10px;
-  background:linear-gradient(#d9f2ff, #eefaff 62%, #d7f0c8 62%, #c9ecb4);
+  background:linear-gradient(#e8f8ff, #d6efff 72%, #eaf9de);
   box-shadow:var(--shadow-lg); position:relative; overflow:hidden;
 }
-.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;
+.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;
   background:repeating-linear-gradient(90deg,#a9dc8a 0 10px,#b9e59b 10px 20px)}
 .brand{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .logo{width:40px;height:40px;display:grid;place-items:center;font-size:22px;
@@ -248,12 +248,13 @@ img{image-rendering:auto}
 .pk-top{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700}
 .pk-top .who{font-size:13px}
 .pk-top .lv{font-size:10px;background:var(--ink);color:#fff;border-radius:999px;padding:0 6px;font-weight:700}
-.pk-top .pname{font-size:11.5px;color:var(--ink2);font-weight:700;margin-left:auto;white-space:nowrap}
+.pk-top .pname{font-size:11.5px;color:var(--ink2);font-weight:700;margin-left:4px;white-space:nowrap}
 .pk-bar{height:9px;border:1.5px solid var(--ink);border-radius:999px;background:#eef3fc;overflow:hidden}
 .pk-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd93d,#ffb03a);border-right:1.5px solid rgba(40,50,79,.35)}
 .pk.k2 .pk-bar i{background:linear-gradient(90deg,#8fe3b0,#3fc78d)}
 .pk-meta{display:flex;gap:8px;font-size:10px;color:var(--ink2);font-weight:700;flex-wrap:wrap}
 .pk-meta b{color:var(--ink)}
+.pk-meta .pnext{margin-left:auto;color:var(--muted);font-size:9.5px}
 .pk-quest{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink2);font-weight:700;margin-top:1px}
 .pk-quest .qbar{flex:1 1 auto;height:7px;border:1.5px solid var(--ink);border-radius:999px;background:#eef3fc;overflow:hidden}
 .pk-quest .qbar i{display:block;height:100%;background:#7fb6ff}
@@ -730,7 +731,8 @@ img{image-rendering:auto}
     var i = function (t, e, opts) { return { text: t, icon: e, rain: !!(opts && opts.rain), snow: !!(opts && opts.snow), storm: !!(opts && opts.storm) }; };
     if (isDay === 0) {
       if (code === 0) return i('맑은 밤', '🌙');
-      if (code === 1 || code === 2) return i('구름 사이 달', '🌤️');
+      if (code === 1 || code === 2) return i('구름 사이 달', '🌙');
+      if (code === 3) return i('흐린 밤', '☁️');
     }
     if (code === 0) return i('맑음', '☀️');
     if (code === 1) return i('대체로 맑음', '🌤️');
@@ -1144,6 +1146,7 @@ img{image-rendering:auto}
       }
       var xp = Math.max(0, nz(raw.xp, 0));
       var li = levelInfo(xp);
+      var stage = stageFor(li.level);
       var pk = partnerOf(k.key, li.level);
       var dex = pk[0], pname = pk[1];
       var coins = nz(raw.coins, 0), streak = nz(raw.streak, 0);
@@ -1154,6 +1157,7 @@ img{image-rendering:auto}
       var doneCount = todays.filter(function (q) { return doneMap[q.id]; }).length;
       var total = todays.length;
       var qpct = total ? Math.round(doneCount / total * 100) : 0;
+      var nextNote = stage < 3 ? ('진화 Lv.' + EVOLVE_LEVELS[stage - 1]) : '최종 진화';
       html += '<div class="pk ' + k.cls + '">'
         + '<div class="pk-art"><img src="' + ART + dex + '.png" alt="' + esc(pname) + '" '
         + 'onerror="this.onerror=null;this.src=\'' + ART2 + dex + '.png\'"></div>'
@@ -1164,7 +1168,8 @@ img{image-rendering:auto}
         + '<div class="pk-bar"><i style="width:' + clamp(li.pct, 3, 100) + '%"></i></div>'
         + '<div class="pk-meta"><span>XP <b>' + li.cur + '/' + li.need + '</b></span>'
         + '<span>🪙 <b>' + coins + '</b></span>'
-        + '<span>🔥 <b>' + streak + '일</b></span></div>'
+        + '<span>🔥 <b>' + streak + '일</b></span>'
+        + '<span class="pnext">' + nextNote + '</span></div>'
         + '<div class="pk-quest' + (total && doneCount === total ? ' all' : '') + '">'
         + '<span>오늘 퀘스트</span><b>' + doneCount + '/' + total + '</b>'
         + '<span class="qbar"><i style="width:' + clamp(qpct, 2, 100) + '%"></i></span></div>'
