@@ -265,13 +265,14 @@ img{image-rendering:auto}
 .pk-quest .qbar i{display:block;height:100%;background:#7fb6ff}
 .pk-quest.all .qbar i{background:var(--mint-d)}
 .pk-todo{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ink2);font-weight:700;margin-top:2px;overflow:hidden}
-.pk-todo .chipq{border:1px solid var(--line);border-radius:999px;padding:0 5px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px}
+.pk-todo .chipq{border:1px solid var(--line);border-radius:999px;padding:0 5px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.pk-desc{font-size:10px;color:#7b89a8;font-weight:700;line-height:1.25;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pk-todo.done{color:var(--mint-d)}
 .pk-off{font-size:11px;color:var(--muted);text-align:center;padding:12px 0;font-weight:700}
 
 /* ---------- D-day ---------- */
-.dd-card{flex:0 0 auto;min-height:0;max-height:210px}
-.dd-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 7px;display:flex;flex-direction:column;gap:4px}
+.dd-card{flex:1 1 0;min-height:120px}
+.dd-list{flex:1 1 auto;min-height:0;overflow:auto;padding:5px 7px;display:flex;flex-direction:column;gap:4px;justify-content:space-around}
 .dd-row{display:flex;align-items:center;gap:6px;font-size:12px}
 .dd-row .ico{font-size:13px}
 .dd-row .t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
@@ -525,8 +526,12 @@ img{image-rendering:auto}
   ];
   /* 파트너 진화 단계 (index.html과 같은 규칙) */
   var PARTNERS = {
-    c1: [[4, '파이리'], [5, '리자드'], [6, '리자몽']],
-    c2: [[172, '피츄'], [25, '피카츄'], [26, '라이츄']]
+    c1: [[4, '파이리', '꼬리 끝에 작은 불꽃이 타요. 건강할수록 불꽃이 힘차게 타올라요.'],
+         [5, '리자드', '날카로운 발톱과 꼬리를 자유자재로 쓰는 진화형이에요.'],
+         [6, '리자몽', '입에서 뜨거운 불꽃을 뿜으며 하늘을 나는 불꽃 드래곤!']],
+    c2: [[172, '피츄', '뺨의 전기 주머니가 아직 작아서 불티만 톡톡 튀어요.'],
+         [25, '피카츄', '꼬리로 전기를 모아 볼에서 번쩍번쩍 내뿜어요.'],
+         [26, '라이츄', '긴 꼬리로 번개를 타고 달리는 전기 쥐의 최종 진화!']]
   };
   var EVOLVE_LEVELS = [4, 8];
   var CATS = {
@@ -1156,7 +1161,7 @@ img{image-rendering:auto}
       var li = levelInfo(xp);
       var stage = stageFor(li.level);
       var pk = partnerOf(k.key, li.level);
-      var dex = pk[0], pname = pk[1];
+      var dex = pk[0], pname = pk[1], pdesc = pk[2] || '';
       var coins = nz(raw.coins, 0), streak = nz(raw.streak, 0);
       var dayType = isWeekendNow() ? 'weekend' : 'daily';
       var quests = Array.isArray(raw.quests) ? raw.quests : [];
@@ -1195,6 +1200,7 @@ img{image-rendering:auto}
         + '<span>오늘 퀘스트</span><b>' + doneCount + '/' + total + '</b>'
         + '<span class="qbar"><i style="width:' + clamp(qpct, 2, 100) + '%"></i></span></div>'
         + todoHtml
+        + (pdesc ? '<div class="pk-desc">' + esc(pdesc) + '</div>' : '')
         + '</div></div>';
     });
     box.innerHTML = html;
