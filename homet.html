@@ -597,7 +597,7 @@ function openPlayer(id){
   document.getElementById("mSub").textContent = v.channel + " · " + v.duration + " · " + (v.level||"");
   document.getElementById("mNote").innerHTML = v.reason;
   const wrap = document.getElementById("mFrameWrap");
-  wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+v.id+
+  wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+v.id+
     '?rel=0&modestbranding=1&playsinline=1&autoplay=1&enablejsapi=1" title="'+esc(v.title)+
     '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
   document.getElementById("mYT").href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.id);

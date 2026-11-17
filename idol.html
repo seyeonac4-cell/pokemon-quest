@@ -656,7 +656,7 @@ body{
     if (!id) return;
     $('ovTitle').textContent = title || '영상';
     $('ovChan').textContent = chan || '';
-    ovFrame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id)
+    ovFrame.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id)
       + '?rel=0&modestbranding=1&playsinline=1&autoplay=1&fs=1';
     ov.classList.add('show');
     ov.setAttribute('aria-hidden', 'false');
