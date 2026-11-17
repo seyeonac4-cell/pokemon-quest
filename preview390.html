@@ -46,6 +46,13 @@ iframe{border:0;background:#fff;display:block}
     if (tries > 60) clearInterval(t);
   }, 300);
 })();
+
+(function(){
+  var t = Date.now();
+  var fa = document.getElementById('fa'), fb = document.getElementById('fb');
+  fa.src = './idol.html?p=a&t=' + t;
+  fb.src = './idol.html?p=b&t=' + t;
+})();
 </script>
 </body>
 </html>
