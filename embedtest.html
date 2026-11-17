@@ -11,7 +11,6 @@
 <h1>임베드 확인 (임시 페이지)</h1>
 <div id="out">loading…</div>
 <div id="players"></div>
-<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 var IDS = [
   ["teded_billy", "8EtdC9Bjubk"],
@@ -23,7 +22,7 @@ var IDS = [
   ["teded_magnet", "jG7ULeWUfDw"]
 ];
 var res = {};
-var players = [];
+var started = false;
 function done(name, msg){ res[name] = msg; render(); }
 function render(){
   var lines = [];
@@ -33,14 +32,16 @@ function render(){
   }
   document.getElementById('out').textContent = lines.join("\n");
 }
-function onYouTubeIframeAPIReady(){
+function start(){
+  if (started || !window.YT || !YT.Player) return;
+  started = true;
   IDS.forEach(function(pair){
     var n = pair[0], id = pair[1];
     var d = document.createElement('div');
     d.id = 'p_' + n;
     d.style.margin = '8px 0';
     document.getElementById('players').appendChild(d);
-    var p = new YT.Player('p_' + n, {
+    new YT.Player('p_' + n, {
       height: '146', width: '260', videoId: id,
       playerVars: { rel:0, modestbranding:1, playsinline:1, mute:1, autoplay:1, origin: location.origin },
       events: {
@@ -54,10 +55,18 @@ function onYouTubeIframeAPIReady(){
         onError: function(e){ done(n, 'ERROR ' + e.data); }
       }
     });
-    players.push(p);
   });
 }
-setTimeout(render, 500);
+window.onYouTubeIframeAPIReady = start;
+var tries = 0;
+var t = setInterval(function(){ tries++; start(); if (started || tries > 80) clearInterval(t); }, 250);
+if (!document.getElementById('ytapi')) {
+  var s = document.createElement('script');
+  s.id = 'ytapi';
+  s.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+}
+render();
 </script>
 </body>
 </html>
