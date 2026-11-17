@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>임베드 확인 (임시)</title>
+<style>body{font-family:sans-serif;margin:12px}iframe{width:260px;height:146px;border:1px solid #ccc}#out{white-space:pre-wrap;font-size:13px;background:#f5f5f5;padding:10px}</style>
+</head>
+<body>
+<h1>임베드 확인 (임시 페이지)</h1>
+<div id="out">loading…</div>
+<div id="players"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+var IDS = [
+  ["teded_billy", "8EtdC9Bjubk"],
+  ["markrober_board", "26P1KyvrmjI"],
+  ["mrbeast_extreme", "gTKS8SAwUzE"],
+  ["mchef_first", "Go5GTl6mt7g"],
+  ["mchef_matilda", "wpFQalAE3XA"],
+  ["mrbeast_hunger", "q6fgVVmdpgY"],
+  ["teded_magnet", "jG7ULeWUfDw"]
+];
+var res = {};
+var players = [];
+function done(name, msg){ res[name] = msg; render(); }
+function render(){
+  var lines = [];
+  for (var i=0;i<IDS.length;i++){
+    var n = IDS[i][0];
+    lines.push(n + " (" + IDS[i][1] + "): " + (res[n] || "…"));
+  }
+  document.getElementById('out').textContent = lines.join("\n");
+}
+function onYouTubeIframeAPIReady(){
+  IDS.forEach(function(pair){
+    var n = pair[0], id = pair[1];
+    var d = document.createElement('div');
+    d.id = 'p_' + n;
+    d.style.margin = '8px 0';
+    document.getElementById('players').appendChild(d);
+    var p = new YT.Player('p_' + n, {
+      height: '146', width: '260', videoId: id,
+      playerVars: { rel:0, modestbranding:1, playsinline:1, mute:1, autoplay:1, origin: location.origin },
+      events: {
+        onReady: function(e){ done(n, 'ready'); try{ e.target.mute(); e.target.playVideo(); }catch(err){} },
+        onStateChange: function(e){
+          var s = e.data;
+          var map = {-1:'unstarted',0:'ended',1:'PLAYING',2:'paused',3:'buffering',5:'cued'};
+          if (s === 1) done(n, 'PLAYING');
+          else if (!res[n] || res[n] === 'ready' || res[n] === 'cued') done(n, map[s] || String(s));
+        },
+        onError: function(e){ done(n, 'ERROR ' + e.data); }
+      }
+    });
+    players.push(p);
+  });
+}
+setTimeout(render, 500);
+</script>
+</body>
+</html>
