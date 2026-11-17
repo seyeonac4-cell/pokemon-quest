@@ -319,7 +319,20 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   background:#fff;font-size:15px;font-weight:900;
 }
 .vframe{position:relative;width:100%;aspect-ratio:16/9;background:#000}
-.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;z-index:1}
+/* 유튜브로 나가는 구멍(제목·다음에서 보기)을 덮어 둔다 */
+.vguard{position:absolute;z-index:3;background:transparent}
+.vguard.top{left:0;top:0;right:0;height:12%}
+.vguard.br{right:0;bottom:0;width:50%;height:18%}
+.vend{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,#eaf6ff,#ffffff);text-align:center;padding:14px}
+.vend[hidden]{display:none}
+.vend p{margin:0;font-size:16px;font-weight:900;color:var(--ink)}
+.vend .vrb{
+  min-height:52px;padding:10px 22px;border-radius:18px;border:3px solid var(--ink);
+  background:linear-gradient(180deg,#ffdce9,#ffb3d1);box-shadow:var(--shadow);
+  font-size:16px;font-weight:900;
+}
+.vend .vrb:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,49,79,.14)}
 .vtip{margin:0;padding:8px 11px 10px;font-size:11.5px;font-weight:900;color:var(--muted);text-align:center;line-height:1.4}
 
 /* ---------- 효과 ---------- */
@@ -516,8 +529,15 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       <span class="vtitle" id="vTitle">📺 알파블록스</span>
       <button class="vclose" id="vClose" type="button" aria-label="영상 닫기">✕</button>
     </div>
-    <div class="vframe" id="vFrame"></div>
-    <p class="vtip">공식 알파블록스 영어 영상이에요. 끝나면 다른 영상 없이 멈춰요.</p>
+    <div class="vframe" id="vFrame">
+      <div class="vguard top"></div>
+      <div class="vguard br"></div>
+      <div class="vend" id="vEnd" hidden>
+        <p>🎉 잘 봤어요!</p>
+        <button class="vrb" id="vReplay" type="button">🔁 다시 보기</button>
+      </div>
+    </div>
+    <p class="vtip">공식 알파블록스 영어 영상만 나와요. 끝나면 자동으로 멈춰요.</p>
   </div>
 </div>
 
@@ -1125,31 +1145,65 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   });
 
   /* ---------- 알파블록스 영상 (페이지 안에서만 재생) ---------- */
+  var vidNow = null;
+  function mountVideo(){
+    if(!vidNow) return;
+    var frame = $('vFrame');
+    var old = frame.querySelector('iframe');
+    if(old) old.remove();
+    $('vEnd').hidden = true;
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + vidNow.id +
+      '?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&fs=1&iv_load_policy=3';
+    f.setAttribute('title', '알파블록스 ' + vidNow.name);
+    f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    f.setAttribute('allowfullscreen', '');
+    f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    f.addEventListener('load', function(){
+      try{
+        f.contentWindow.postMessage(JSON.stringify({ event:'listening', id:'alphablocks' }), '*');
+      }catch(e){}
+    });
+    frame.appendChild(f);
+  }
   function openVideo(stage){
     if(!stage || !stage.video) return;
     sfxTap();
     stopSpeak();
-    var v = stage.video;
-    $('vTitle').textContent = '📺 알파블록스 · ' + v.name;
-    var frame = $('vFrame');
-    frame.innerHTML = '';
-    var f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + v.id + '?rel=0&modestbranding=1&playsinline=1';
-    f.setAttribute('title', '알파블록스 ' + v.name);
-    f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-    f.setAttribute('allowfullscreen', '');
-    f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-    frame.appendChild(f);
+    vidNow = stage.video;
+    $('vTitle').textContent = '📺 알파블록스 · ' + vidNow.name;
+    mountVideo();
     $('vModal').hidden = false;
     document.body.style.overflow = 'hidden';
   }
   function closeVideo(){
     var frame = $('vFrame');
-    if(frame) frame.innerHTML = '';
+    var f = frame ? frame.querySelector('iframe') : null;
+    if(f) f.remove();
+    if($('vEnd')) $('vEnd').hidden = true;
     $('vModal').hidden = true;
     document.body.style.overflow = '';
+    vidNow = null;
     stopSpeak();
   }
+  function videoEnded(){
+    var frame = $('vFrame');
+    var f = frame ? frame.querySelector('iframe') : null;
+    if(f) f.remove();
+    if($('vEnd')) $('vEnd').hidden = false;
+  }
+  window.addEventListener('message', function(e){
+    if($('vModal').hidden || !vidNow) return;
+    if(!e.origin || e.origin.indexOf('youtube') < 0) return;
+    var d = e.data, j = null;
+    if(typeof d === 'string'){ try{ j = JSON.parse(d); }catch(err){ j = null; } }
+    else if(d && typeof d === 'object'){ j = d; }
+    if(!j) return;
+    var ended = (j.event === 'onStateChange' && j.info === 0) ||
+                (j.event === 'infoDelivery' && j.info && j.info.playerState === 0);
+    if(ended) videoEnded();
+  });
+  $('vReplay').addEventListener('click', function(){ sfxTap(); mountVideo(); });
   $('vClose').addEventListener('click', function(){ sfxTap(); closeVideo(); });
   $('vBackdrop').addEventListener('click', function(){ closeVideo(); });
   document.addEventListener('keydown', function(e){
