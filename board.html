@@ -186,6 +186,7 @@ img{image-rendering:auto}
 .ev-row .when{font-size:10px;color:var(--muted);font-weight:700;flex:0 0 auto}
 .ev-row.next{background:#fffdf2;border-color:#f2e9cc}
 .ev-next-hd{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:4px;padding-top:5px;border-top:1.5px dashed var(--line)}
+.ev-next-hd.top{margin-top:0;padding-top:0;border-top:0;font-size:11px;color:var(--pink-d)}
 .ev-row .x{border:none;background:none;font-size:12px;color:var(--muted);padding:0 2px;flex:0 0 auto}
 .ev-row .x:hover{color:var(--red)}
 .ev-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:10px 0}
@@ -1064,19 +1065,18 @@ img{image-rendering:auto}
         + '<button class="x" data-del-ev="' + esc(x.id) + '" title="삭제">✕</button></div>';
     });
     if (!evs.length) {
-      html = '<div class="ev-empty sm">' + (isToday ? '오늘 일정은 없어요 🌱' : '이 날은 일정이 없어요 🌱') + '</div>';
-      if (isToday) {
-        var up = upcoming(2);
-        if (up.length) {
-          html += '<div class="ev-next-hd">다음 일정</div>';
-          up.forEach(function (x) {
-            var cat = CATS[x.e.cat] || CATS.family;
-            html += '<div class="ev-row next"><span class="dot" style="background:' + cat.color + '"></span>'
-              + '<span class="t">' + esc(x.e.title) + '</span>'
-              + '<span class="when">' + (x.when.getMonth() + 1) + '/' + x.when.getDate() + '</span>'
-              + '<span class="dday">' + (x.dd === 0 ? '오늘' : 'D-' + x.dd) + '</span></div>';
-          });
-        }
+      var up = isToday ? upcoming(2) : [];
+      if (up.length) {
+        html = '<div class="ev-next-hd top">다음 일정</div>';
+        up.forEach(function (x) {
+          var cat = CATS[x.e.cat] || CATS.family;
+          html += '<div class="ev-row next"><span class="dot" style="background:' + cat.color + '"></span>'
+            + '<span class="t">' + esc(x.e.title) + '</span>'
+            + '<span class="when">' + (x.when.getMonth() + 1) + '/' + x.when.getDate() + '</span>'
+            + '<span class="dday">' + (x.dd === 0 ? '오늘' : 'D-' + x.dd) + '</span></div>';
+        });
+      } else {
+        html = '<div class="ev-empty">' + (isToday ? '오늘은 일정이 없어요 🌱' : '이 날은 일정이 없어요 🌱') + '</div>';
       }
     }
     $('evList').innerHTML = html;
