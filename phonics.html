@@ -1149,7 +1149,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   $('stageQuiz').addEventListener('click', function(){
     sfxTap();
     var s = cur.stage;
-    startQuiz(s.allWords, s.n + '단계 전체', 'stage');
+    startQuiz(s.allWords, s.id === 's1' ? '1단계 알파벳' : s.n + '단계 전체', 'stage');
   });
 
   /* ---------- 알파블록스 영상 (페이지 안에서만 재생) ---------- */
@@ -1538,7 +1538,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       else { renderHome(); showView('home'); }
     };
     $('qSetTitle').textContent = '🎧 ' + title + ' 소리 퀴즈';
-    $('qSetDesc').innerHTML = '이 단원에서 배운 단어로 <b>10문제</b>를 풀어요.<br>소리를 듣고 알맞은 답을 고르면 돼요.';
+    $('qSetDesc').innerHTML = '이 단계에서 배운 단어로 <b>10문제</b>를 풀어요.<br>소리를 듣고 알맞은 답을 고르면 돼요.';
     $('qSetup').hidden = false;
     $('qPlay').hidden = true;
     $('qDone').hidden = true;
