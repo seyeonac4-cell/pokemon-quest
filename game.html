@@ -283,7 +283,7 @@ body{
       </button>
       <button class="modecard hyungwon" id="btnHyungwon">
         <div class="row">
-          <div class="face">👦</div>
+          <div class="face">👧</div>
           <div>
             <h2>형원 (7세)</h2>
             <p class="sub">기초 영단어 + 기초 연산</p>
@@ -657,7 +657,7 @@ function renderHomeShelf(){
     var col = collection(kid);
     var row=document.createElement('div'); row.className='kidrow';
     var lb=document.createElement('p'); lb.className='kidlb';
-    lb.textContent=(kid==='yunjin'?'👧 윤진':'👦 형원')+' · '+col.length+'개 완성';
+    lb.textContent=(kid==='yunjin'?'👧 윤진':'👧 형원')+' · '+col.length+'개 완성';
     row.appendChild(lb);
     var grid=document.createElement('div'); grid.className='shelf';
     var doneThemes={}; col.forEach(function(r){ doneThemes[r.theme]=r; });
@@ -674,7 +674,7 @@ function renderShelfScreen(){
   var col = collection(kid);
   var row=document.createElement('div'); row.className='kidrow';
   var lb=document.createElement('p'); lb.className='kidlb';
-  lb.textContent=(kid==='yunjin'?'👧 윤진':'👦 형원')+' · '+col.length+'개 완성';
+  lb.textContent=(kid==='yunjin'?'👧 윤진':'👧 형원')+' · '+col.length+'개 완성';
   row.appendChild(lb);
   var grid=document.createElement('div'); grid.className='shelf';
   var doneThemes={}; col.forEach(function(r){ doneThemes[r.theme]=r; });
@@ -698,7 +698,7 @@ function startGame(kid){
   G.puzzle = todaysPuzzle();
   G.questions = makeSix(kid);
   G.opened=0; G.firstTry=0; G.retried={}; G.answered=false;
-  $('pzAvatar').textContent = kid==='yunjin'?'👧':'👦';
+  $('pzAvatar').textContent = kid==='yunjin'?'👧':'👧';
   $('pzName').textContent = kid==='yunjin'?'윤진':'형원';
   $('pzTheme').textContent = '오늘의 퍼즐 · '+G.puzzle.title;
   buildBoard();

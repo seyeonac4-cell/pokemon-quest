@@ -517,7 +517,7 @@ img{image-rendering:auto}
   var BOARD = ROOT + '/board';
   var KIDS = [
     { slug: 'yunjin',   key: 'c1', name: '윤진', emoji: '🦊', cls: 'k1' },
-    { slug: 'hyungwon', key: 'c2', name: '형원', emoji: '🐣', cls: 'k2' }
+    { slug: 'hyungwon', key: 'c2', name: '형원', emoji: '👧', cls: 'k2' }
   ];
   /* 파트너 진화 단계 (index.html과 같은 규칙) */
   var PARTNERS = {
@@ -1082,7 +1082,7 @@ img{image-rendering:auto}
     KIDS.forEach(function (k) {
       var n = routineCount(k.slug);
       head += '<span class="rt-kid ' + (k.key === 'c1' ? 'yj' : 'hw') + (n >= ROUTINES.length ? ' full' : '') + '">'
-        + (k.key === 'c1' ? '🦊' : '🐣') + ' ' + k.name + '<span class="n">' + n + '/' + ROUTINES.length + '</span></span>';
+        + (k.key === 'c1' ? '🦊' : '👧') + ' ' + k.name + '<span class="n">' + n + '/' + ROUTINES.length + '</span></span>';
     });
     head += '</div>';
     var rows = '';
@@ -1179,7 +1179,7 @@ img{image-rendering:auto}
         + '<div class="pk-art"><img src="' + ART + dex + '.png" alt="' + esc(pname) + '" '
         + 'onerror="this.onerror=null;this.src=\'' + ART2 + dex + '.png\'"></div>'
         + '<div class="pk-info">'
-        + '<div class="pk-top"><span class="who">' + (k.key === 'c1' ? '🦊' : '🐣') + ' ' + k.name + '</span>'
+        + '<div class="pk-top"><span class="who">' + (k.key === 'c1' ? '🦊' : '👧') + ' ' + k.name + '</span>'
         + '<span class="lv">Lv.' + li.level + '</span>'
         + '<span class="pname">' + esc(pname) + '</span></div>'
         + '<div class="pk-bar"><i style="width:' + clamp(li.pct, 3, 100) + '%"></i></div>'
