@@ -2,8 +2,8 @@
   "issue": 1,
   "date": "2026-11-18",
   "dateLabel": "2026년 11월 18일 수요일",
-  "updated": "2026-11-18 03:40 KST",
-  "greeting": "윤진아, 좋은 아침! 오늘 친구들이 이야기할 거 5개랑 똑똑해지는 영상 3개를 신문으로 싸 왔어 📰",
+  "updated": "2026-11-18 03:55 KST",
+  "greeting": "윤진아, 좋은 아침! 오늘 친구들이 이야기할 거 5개랑 똑똑해지는 영상 7개(영어 도전 4개 포함!)를 신문으로 싸 왔어 📰",
   "top": {
     "eyebrow": "🔥 1면 톱기사 · 오늘의 핫이슈",
     "tag": "ILLIT",
@@ -115,6 +115,80 @@
       }
     }
   ],
+  "english": [
+    {
+      "headline": "영어 수수께끼에 도전! 초콜릿 공장에서 살아남을 수 있을까?",
+      "source": "TED-Ed",
+      "summary": "「찰리와 초콜릿 공장」을 닮은 빌리 본카(Billy Bonka)의 비밀 공장에 갇혔어요. 6분짜리 영어 애니메이션을 따라가며 조건과 규칙을 하나씩 따져 사탕 기계를 통과하는 퍼즐을 풀어요. 에밀리 원더랩보다 문장이 길고 단어가 어려운 진짜 영어 듣기예요!",
+      "learn": "배움 한 줄: 영어로 된 'if(~라면)'와 'rule(규칙)'을 하나씩 따라가면 퍼즐이 풀려요. 모르는 단어가 나와도 화면 그림을 보면 뜻을 짐작할 수 있어요.",
+      "words": [
+        {"en": "riddle", "ko": "수수께끼"},
+        {"en": "rule", "ko": "규칙"},
+        {"en": "factory", "ko": "공장"}
+      ],
+      "video": {
+        "id": "8EtdC9Bjubk",
+        "title": "Can you solve the Billy Bonka riddle? - Edwin F. Meyer | TED-Ed",
+        "channel": "TED-Ed",
+        "published": "2026-11-03"
+      }
+    },
+    {
+      "headline": "주사위·말·카드까지 '수학'으로 이긴다고? 보드게임을 푼 NASA 출신 유튜버",
+      "source": "Mark Rober",
+      "summary": "NASA 엔지니어 출신 마크 로버가 모노폴리 같은 보드게임을 확률과 통계로 하나하나 분석해서 '이기는 법'을 찾아내요. 영어로 빠르게 말하지만 실험 장면이 계속 나와서 눈을 뗄 수 없어요. 28분이라 한 번에 다 보지 말고 나눠 보면 좋아요.",
+      "learn": "배움 한 줄: 확률(probability)은 '어떤 일이 일어날 가능성'이에요. 주사위를 한 번 굴렸을 때 6이 나올 확률은 6분의 1!",
+      "words": [
+        {"en": "probability", "ko": "확률"},
+        {"en": "strategy", "ko": "전략"},
+        {"en": "experiment", "ko": "실험"}
+      ],
+      "video": {
+        "id": "26P1KyvrmjI",
+        "title": "I Solved Every Board Game",
+        "channel": "Mark Rober",
+        "published": "2026-10-24"
+      }
+    }
+  ],
+  "survival": [
+    {
+      "kind": "생존",
+      "headline": "지구에서 가장 뜨겁고 가장 추운 곳에서 살아남기!",
+      "source": "MrBeast",
+      "summary": "미스터비스트가 사막, 빙하, 아주 높은 산처럼 사람이 살기 힘든 '극한의 장소'로 직접 가서 살아남는 미션을 해요. 장면을 보면서 영어 설명을 들으면 지리·과학 단어가 저절로 귀에 붙어요.",
+      "learn": "배움 한 줄: extreme은 '극한'이라는 뜻. 사막(desert)에서는 물, 빙하(glacier)에서는 체온을 지키는 게 제일 중요해요.",
+      "words": [
+        {"en": "survive", "ko": "살아남다"},
+        {"en": "extreme", "ko": "극한의"},
+        {"en": "desert", "ko": "사막"}
+      ],
+      "video": {
+        "id": "gTKS8SAwUzE",
+        "title": "I Survived The Most Extreme Places On Earth",
+        "channel": "MrBeast",
+        "published": "2026-09-05"
+      }
+    },
+    {
+      "kind": "요리 대결",
+      "headline": "12살 틸리의 정면승부! 램지 가족의 어린이 요리 서바이벌",
+      "source": "MasterChef Junior",
+      "summary": "고든 램지의 딸 틸리(12살)가 아빠가 낸 어려운 요리 미션에 도전하는 클립이에요. 아이들이 요리하면서 주고받는 영어 대화라서, 학교에서 쓰는 말투를 그대로 들을 수 있어요.",
+      "learn": "배움 한 줄: challenge는 '도전·대결'이라는 뜻. \"I don't mind~\", \"Are you ready?\" 같은 짧은 말이 계속 나와요.",
+      "words": [
+        {"en": "challenge", "ko": "도전"},
+        {"en": "ingredient", "ko": "재료"},
+        {"en": "delicious", "ko": "맛있는"}
+      ],
+      "video": {
+        "id": "wpFQalAE3XA",
+        "title": "Matilda Ramsay Judges | Season 3 Ep. 5 | MASTERCHEF JUNIOR",
+        "channel": "MasterChef On FOX",
+        "published": ""
+      }
+    }
+  ],
   "sayit": {
     "title": "오늘 친구들한테 이 말 해봐!",
     "sub": "오늘의 유행어 3개 — 아는 척 성공 보장 🗣️",
@@ -137,6 +211,10 @@
     "KBS2 뮤직뱅크 · KPOP.link (2026-11-09 보도)",
     "KNOTE 주간 뮤직비디오 집계 (2026-11-16)",
     "K-Pulso 2026 K-pop MV 순위 · kpop.lunaety.com 신곡 목록",
-    "각 영상 공식 유튜브 채널 (HYBE LABELS · STARSHIP · SMTOWN · BABYMONSTER · aespa · 사물궁이 잡학지식 · 에그박사 · Nat Geo Kids)"
+    "TED-Ed 「Can you solve the Billy Bonka riddle?」 (2026-11-03) · ed.ted.com",
+    "Mark Rober 「I Solved Every Board Game」 (2026-10-24) · 확률·통계 실험",
+    "MrBeast 「I Survived The Most Extreme Places On Earth」 (2026-09-05)",
+    "MasterChef Junior 「Matilda Ramsay Judges」 (MasterChef On FOX)",
+    "각 영상 공식 유튜브 채널 (HYBE LABELS · STARSHIP · SMTOWN · BABYMONSTER · aespa · 사물궁이 잡학지식 · 에그박사 · Nat Geo Kids · TED-Ed · Mark Rober · MrBeast · MasterChef On FOX)"
   ]
 }

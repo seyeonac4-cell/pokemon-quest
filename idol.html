@@ -89,9 +89,9 @@ body{
   text-transform:uppercase;
 }
 .mast-name{
-  margin:6px 0 2px;
-  font-family:"Nanum Myeongjo",serif;font-weight:800;
-  font-size:clamp(30px,8.4vw,58px);line-height:1.08;letter-spacing:-.02em;
+  margin:8px 0 4px;
+  font-family:"Noto Sans KR","Pretendard",-apple-system,sans-serif;font-weight:900;
+  font-size:clamp(38px,10.4vw,74px);line-height:1.08;letter-spacing:-.045em;
   color:var(--ink);
 }
 .mast-name .em{color:var(--red)}
@@ -116,11 +116,13 @@ body{
 
 /* ---------- 섹션 머리 ---------- */
 .sec{margin-top:26px}
-.sec-head{display:flex;align-items:baseline;gap:10px;border-bottom:2.5px solid var(--ink);padding-bottom:6px}
+.sec-head{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;border-bottom:2.5px solid var(--ink);padding-bottom:7px}
 .sec-head h2{
-  margin:0;font-family:"Nanum Myeongjo",serif;font-size:20px;font-weight:800;letter-spacing:-.01em;
+  margin:0;flex:0 1 auto;min-width:0;
+  font-family:"Noto Sans KR","Pretendard",-apple-system,sans-serif;font-weight:900;
+  font-size:clamp(22px,5.4vw,26px);letter-spacing:-.045em;line-height:1.24;
 }
-.sec-head .sub{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.sec-head .sub{font-size:11.5px;color:var(--muted);letter-spacing:.04em;flex:0 1 auto;min-width:0}
 .sec-count{
   margin-left:auto;font-size:10.5px;color:#fff;background:var(--ink);border-radius:2px;
   padding:2px 6px;letter-spacing:.08em;
@@ -159,8 +161,9 @@ body{
 }
 .tag.trend{color:#8a5c00;border-color:#e6c079;background:#fff6e3}
 .top-head{
-  margin:9px 0 8px;font-family:"Nanum Myeongjo",serif;font-weight:800;
-  font-size:clamp(21px,4.6vw,29px);line-height:1.3;letter-spacing:-.025em;text-wrap:balance;
+  margin:10px 0 9px;
+  font-family:"Noto Sans KR","Pretendard",-apple-system,sans-serif;font-weight:900;
+  font-size:clamp(26px,6.3vw,38px);line-height:1.26;letter-spacing:-.045em;text-wrap:balance;
 }
 .top-lead{margin:0;font-size:14.5px;line-height:1.74;color:var(--ink2)}
 .facts{
@@ -207,14 +210,32 @@ body{
 }
 .card-body{padding:12px 13px 14px;display:flex;flex-direction:column;flex:1 1 auto}
 .card-head{
-  margin:7px 0 6px;font-family:"Nanum Myeongjo",serif;font-weight:800;
-  font-size:16.5px;line-height:1.36;letter-spacing:-.02em;
+  margin:8px 0 7px;
+  font-family:"Noto Sans KR","Pretendard",-apple-system,sans-serif;font-weight:900;
+  font-size:clamp(19px,4.9vw,21px);line-height:1.32;letter-spacing:-.045em;
 }
 .card-sum{margin:0;font-size:12.7px;line-height:1.68;color:var(--ink2)}
 .learn-line{
   margin:9px 0 0;font-size:12.3px;line-height:1.62;color:#3c5a38;
   background:#eef5ea;border-left:3px solid #93b487;padding:8px 10px;
 }
+/* ---------- 영어 영상 카드 ---------- */
+.en-tag{
+  font-size:11px;font-weight:900;letter-spacing:.10em;color:#fff;
+  background:#22467f;border-radius:999px;padding:2px 9px;
+}
+.words{
+  margin:10px 0 0;display:flex;flex-wrap:wrap;gap:6px;
+}
+.words .wc{
+  display:inline-flex;align-items:baseline;gap:4px;
+  font-size:11.5px;line-height:1.3;color:#22467f;background:#eef2fb;
+  border:1px solid #ccd8ef;border-radius:999px;padding:3px 9px;
+}
+.words .wc b{font-weight:900;letter-spacing:-.01em}
+.words .wc i{font-style:normal;color:#5b6b86;font-size:11px}
+.words .wl{font-size:10.5px;font-weight:900;letter-spacing:.12em;color:#8a8073;align-self:center}
+.sec-head.en h2{color:#1d3c6e}
 .card .src{margin-top:auto;padding-top:9px;font-size:11px;color:var(--muted);letter-spacing:.02em}
 
 /* ---------- 오늘의 한마디 ---------- */
@@ -222,7 +243,7 @@ body{
   margin-top:26px;background:linear-gradient(135deg,#2a1140,#4a1f74 55%,#6a2fa0);
   color:#fff;border-radius:14px;padding:18px 16px 16px;box-shadow:0 14px 32px rgba(58,26,96,.28);
 }
-.sayit h2{margin:0;font-family:"Nanum Myeongjo",serif;font-size:19px;letter-spacing:-.01em}
+.sayit h2{margin:0;font-family:"Noto Sans KR","Pretendard",-apple-system,sans-serif;font-weight:900;font-size:clamp(21px,5.2vw,23px);letter-spacing:-.04em}
 .sayit .sub{margin:5px 0 0;font-size:12px;color:#d9c8f2}
 .phrase{
   margin-top:10px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
@@ -237,6 +258,10 @@ body{
   font-size:11px;color:var(--muted);line-height:1.7;
 }
 .foot b{color:var(--ink2)}
+@media(max-width:400px){
+  .top-body{padding:14px 13px 16px}
+  .card-body{padding:12px 12px 14px}
+}
 .foot ul{margin:6px 0 0;padding-left:16px}
 .loading{
   margin:40px auto;max-width:520px;text-align:center;color:var(--muted);font-size:13.5px;
@@ -354,7 +379,7 @@ body{
 <div class="page">
   <header class="masthead">
     <div class="mast-kicker">DAILY TREND TIMES · FAMILY EDITION</div>
-    <h1 class="mast-name serif">📰 오늘의 <span class="em">트렌드</span> 신문</h1>
+    <h1 class="mast-name">📰 오늘의 <span class="em">트렌드</span> 신문</h1>
     <div class="mast-rule" aria-hidden="true"></div>
     <div class="mast-meta">
       <span><b id="mastDate">2026년 11월 18일 수요일</b></span>
@@ -375,7 +400,7 @@ body{
 
   <div class="foot">
     <b>📰 윤진이의 매일 아이돌·트렌드 신문</b> — 우리 가족만 보는 신문이에요.<br>
-    영상은 각 가수의 <b>공식 유튜브 채널</b> 영상이고, 신문 화면 안에서만 재생돼요.
+    영상은 각 가수·채널의 <b>공식 유튜브 채널</b> 영상이고, 신문 화면 안에서만 재생돼요.
     <div id="sources"></div>
     <div style="margin-top:6px">고친 날: <span id="updated">-</span></div>
   </div>
@@ -458,12 +483,22 @@ body{
     if (b) b.addEventListener('click', function () { $('paper').innerHTML = '<div class="loading"><div class="spin"></div>오늘의 신문을 불러오는 중이에요…</div>'; load().catch(function (e) { fail(e && e.message); }); });
   }
 
-  function videoButton(video, cls, label, imgCls) {
-    var body = '<img src="' + thumb(video.id) + '" alt="' + esc(video.title) + ' 영상 미리보기" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'' + thumbFallback(video.id) + '\'">'
+  function videoButton(video, cls, label, imgCls) {    var body = '<img src="' + thumb(video.id) + '" alt="' + esc(video.title) + ' 영상 미리보기" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'' + thumbFallback(video.id) + '\'">'
       + '<span class="' + (imgCls || 'play') + '"><span>▶</span></span>';
     return '<button class="' + cls + '" type="button" data-vid="' + esc(video.id) + '" '
       + 'data-title="' + esc(video.title) + '" data-chan="' + esc(video.channel || '') + '" '
       + 'aria-label="' + esc((label || '') + ' 영상 재생: ' + video.title) + '">' + body + '</button>';
+  }
+
+  function wordsHtml(words) {
+    if (!words || !words.length) return '';
+    return '<div class="words"><span class="wl">🔤 오늘의 영어 단어</span>'
+      + words.map(function (w) {
+        var en = typeof w === 'string' ? w : (w.en || '');
+        var ko = typeof w === 'string' ? '' : (w.ko || '');
+        return '<span class="wc"><b>' + esc(en) + '</b>' + (ko ? '<i>' + esc(ko) + '</i>' : '') + '</span>';
+      }).join('')
+      + '</div>';
   }
 
   function render(d) {
@@ -519,7 +554,7 @@ body{
             + (it.group ? '<span class="tag">' + esc(it.group) + '</span>' : '')
             + (it.tag ? '<span class="tag trend">' + esc(it.tag) + '</span>' : '')
             + '</div>'
-            + '<h3 class="card-head serif">' + esc(it.headline || '') + '</h3>'
+            + '<h3 class="card-head">' + esc(it.headline || '') + '</h3>'
             + '<p class="card-sum">' + esc(it.summary || '') + '</p>'
             + (it.tip ? '<div class="tipbox" style="margin-top:9px;padding:9px 11px"><p style="margin:0;font-size:12.2px">💡 ' + esc(it.tip) + '</p></div>' : '')
             + '<div class="src">' + esc(v.channel || '') + ' · 공식 영상</div>'
@@ -540,9 +575,56 @@ body{
             + videoButton(v, 'card-media', it.source || '지식')
             + '<div class="card-body">'
             + '<div class="tagline"><span class="tag">' + esc(it.source || '지식') + '</span><span class="tag trend">배움</span></div>'
-            + '<h3 class="card-head serif">' + esc(it.headline || '') + '</h3>'
+            + '<h3 class="card-head">' + esc(it.headline || '') + '</h3>'
             + '<p class="card-sum">' + esc(it.summary || '') + '</p>'
             + (it.learn ? '<p class="learn-line">' + esc(it.learn) + '</p>' : '')
+            + '<div class="src">' + esc(v.channel || '') + ' · 공식 영상</div>'
+            + '</div></article>';
+        }).join('')
+        + '</div></section>';
+    }
+
+    /* 영어로 배우는 유익 영상 */
+    if (d.english && d.english.length) {
+      html += '<section class="sec" aria-labelledby="enTitle">'
+        + '<div class="sec-head en"><h2 id="enTitle">🌍 영어로 배우는 유익 영상</h2>'
+        + '<span class="sub">에밀리 원더랩보다 한 단계 위 · 초3~중등</span><span class="sec-count">' + d.english.length + '편</span></div>'
+        + '<div class="cards">'
+        + d.english.map(function (it) {
+          var v = it.video || {};
+          return '<article class="card">'
+            + videoButton(v, 'card-media', it.source || '영어')
+            + '<div class="card-body">'
+            + '<div class="tagline"><span class="en-tag">ENGLISH</span>'
+            + (it.source ? '<span class="tag">' + esc(it.source) + '</span>' : '') + '</div>'
+            + '<h3 class="card-head">' + esc(it.headline || '') + '</h3>'
+            + '<p class="card-sum">' + esc(it.summary || '') + '</p>'
+            + (it.learn ? '<p class="learn-line">' + esc(it.learn) + '</p>' : '')
+            + wordsHtml(it.words)
+            + '<div class="src">' + esc(v.channel || '') + ' · 공식 영상</div>'
+            + '</div></article>';
+        }).join('')
+        + '</div></section>';
+    }
+
+    /* 영어 서바이벌 · 챌린지 */
+    if (d.survival && d.survival.length) {
+      html += '<section class="sec" aria-labelledby="survTitle">'
+        + '<div class="sec-head en"><h2 id="survTitle">🏆 영어 서바이벌 · 챌린지</h2>'
+        + '<span class="sub">몰입해서 듣게 되는 영어</span><span class="sec-count">' + d.survival.length + '편</span></div>'
+        + '<div class="cards">'
+        + d.survival.map(function (it) {
+          var v = it.video || {};
+          return '<article class="card">'
+            + videoButton(v, 'card-media', it.source || '영어 서바이벌')
+            + '<div class="card-body">'
+            + '<div class="tagline"><span class="en-tag">ENGLISH</span>'
+            + (it.source ? '<span class="tag">' + esc(it.source) + '</span>' : '')
+            + '<span class="tag trend">' + esc(it.kind || '서바이벌') + '</span></div>'
+            + '<h3 class="card-head">' + esc(it.headline || '') + '</h3>'
+            + '<p class="card-sum">' + esc(it.summary || '') + '</p>'
+            + (it.learn ? '<p class="learn-line">' + esc(it.learn) + '</p>' : '')
+            + wordsHtml(it.words)
             + '<div class="src">' + esc(v.channel || '') + ' · 공식 영상</div>'
             + '</div></article>';
         }).join('')
