@@ -320,13 +320,18 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 }
 .vframe{position:relative;width:100%;aspect-ratio:16/9;background:#000}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;z-index:1}
-/* 유튜브로 나가는 구멍(제목·다음에서 보기)을 덮어 둔다 */
-.vguard{position:absolute;z-index:3;background:transparent}
-.vguard.top{left:0;top:0;right:0;height:12%}
-.vguard.br{right:0;bottom:0;width:50%;height:18%}
+/* 유튜브 화면은 직접 만질 수 없게 덮고, 우리 버튼으로만 조작한다 */
+.vhit{position:absolute;inset:0;z-index:3;background:transparent}
+.vhit[hidden]{display:none}
 .vend{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,#eaf6ff,#ffffff);text-align:center;padding:14px}
 .vend[hidden]{display:none}
 .vend p{margin:0;font-size:16px;font-weight:900;color:var(--ink)}
+.vctl{display:flex;gap:8px;padding:0 11px 2px}
+.vctl button{
+  flex:1;min-height:46px;border-radius:14px;border:2.5px solid var(--ink);background:#fff;
+  font-size:13.5px;font-weight:900;box-shadow:var(--shadow-s);
+}
+.vctl button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,49,79,.12)}
 .vend .vrb{
   min-height:52px;padding:10px 22px;border-radius:18px;border:3px solid var(--ink);
   background:linear-gradient(180deg,#ffdce9,#ffb3d1);box-shadow:var(--shadow);
@@ -530,12 +535,15 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       <button class="vclose" id="vClose" type="button" aria-label="영상 닫기">✕</button>
     </div>
     <div class="vframe" id="vFrame">
-      <div class="vguard top"></div>
-      <div class="vguard br"></div>
+      <div class="vhit" id="vHit" hidden></div>
       <div class="vend" id="vEnd" hidden>
         <p>🎉 잘 봤어요!</p>
         <button class="vrb" id="vReplay" type="button">🔁 다시 보기</button>
       </div>
+    </div>
+    <div class="vctl">
+      <button id="vToggle" type="button">▶ 재생</button>
+      <button id="vRestart" type="button">🔁 처음부터</button>
     </div>
     <p class="vtip">공식 알파블록스 영어 영상만 나와요. 끝나면 자동으로 멈춰요.</p>
   </div>
@@ -1145,24 +1153,41 @@ button{font-family:inherit;color:inherit;cursor:pointer}
   });
 
   /* ---------- 알파블록스 영상 (페이지 안에서만 재생) ---------- */
-  var vidNow = null;
+  var vidNow = null, vState = -1, vReady = false;
+  function vIframe(){ return $('vFrame').querySelector('iframe'); }
+  function vCmd(func, args){
+    var f = vIframe();
+    if(!f) return;
+    try{
+      f.contentWindow.postMessage(JSON.stringify({ event:'command', func:func, args:args || [] }), '*');
+    }catch(e){}
+  }
+  function paintVToggle(){
+    var b = $('vToggle');
+    if(!b) return;
+    b.textContent = (vState === 1) ? '⏸ 잠깐 멈춤' : '▶ 재생';
+  }
   function mountVideo(){
     if(!vidNow) return;
     var frame = $('vFrame');
-    var old = frame.querySelector('iframe');
+    var old = vIframe();
     if(old) old.remove();
     $('vEnd').hidden = true;
+    $('vHit').hidden = false;
+    vState = -1; vReady = false;
+    paintVToggle();
     var f = document.createElement('iframe');
     f.src = 'https://www.youtube-nocookie.com/embed/' + vidNow.id +
-      '?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&fs=1&iv_load_policy=3';
+      '?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&autoplay=1&fs=0&iv_load_policy=3';
     f.setAttribute('title', '알파블록스 ' + vidNow.name);
-    f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    f.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; picture-in-picture');
     f.setAttribute('allowfullscreen', '');
     f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
     f.addEventListener('load', function(){
       try{
         f.contentWindow.postMessage(JSON.stringify({ event:'listening', id:'alphablocks' }), '*');
       }catch(e){}
+      after(400, function(){ vCmd('playVideo'); });
     });
     frame.appendChild(f);
   }
@@ -1177,20 +1202,21 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     document.body.style.overflow = 'hidden';
   }
   function closeVideo(){
-    var frame = $('vFrame');
-    var f = frame ? frame.querySelector('iframe') : null;
+    var f = vIframe();
     if(f) f.remove();
     if($('vEnd')) $('vEnd').hidden = true;
+    if($('vHit')) $('vHit').hidden = true;
     $('vModal').hidden = true;
     document.body.style.overflow = '';
-    vidNow = null;
+    vidNow = null; vState = -1;
     stopSpeak();
   }
   function videoEnded(){
-    var frame = $('vFrame');
-    var f = frame ? frame.querySelector('iframe') : null;
+    var f = vIframe();
     if(f) f.remove();
+    if($('vHit')) $('vHit').hidden = true;
     if($('vEnd')) $('vEnd').hidden = false;
+    vState = 0; paintVToggle();
   }
   window.addEventListener('message', function(e){
     if($('vModal').hidden || !vidNow) return;
@@ -1199,9 +1225,27 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     if(typeof d === 'string'){ try{ j = JSON.parse(d); }catch(err){ j = null; } }
     else if(d && typeof d === 'object'){ j = d; }
     if(!j) return;
-    var ended = (j.event === 'onStateChange' && j.info === 0) ||
-                (j.event === 'infoDelivery' && j.info && j.info.playerState === 0);
-    if(ended) videoEnded();
+    var st = null;
+    if(j.event === 'onStateChange') st = j.info;
+    else if(j.event === 'infoDelivery' && j.info && typeof j.info.playerState === 'number') st = j.info.playerState;
+    if(st === null) return;
+    if(st === 0){ videoEnded(); return; }
+    if(st === 1 || st === 2 || st === 3 || st === 5){ vState = st; paintVToggle(); }
+  });
+  $('vHit').addEventListener('click', function(){
+    if($('vEnd').hidden === false) return;
+    if(vState === 1) vCmd('pauseVideo');
+    else vCmd('playVideo');
+  });
+  $('vToggle').addEventListener('click', function(){
+    sfxTap();
+    if(vState === 1) vCmd('pauseVideo');
+    else vCmd('playVideo');
+  });
+  $('vRestart').addEventListener('click', function(){
+    sfxTap();
+    if($('vEnd').hidden === false) mountVideo();
+    else { vCmd('seekTo', [0, true]); vCmd('playVideo'); }
   });
   $('vReplay').addEventListener('click', function(){ sfxTap(); mountVideo(); });
   $('vClose').addEventListener('click', function(){ sfxTap(); closeVideo(); });
