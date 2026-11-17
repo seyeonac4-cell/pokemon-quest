@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/phonics.html",
+  "name": "형원이 파닉스",
+  "short_name": "파닉스",
+  "description": "단계별 목차로 익히는 형원이 파닉스 놀이",
+  "start_url": "/pokemon-quest/phonics.html",
+  "scope": "/pokemon-quest/phonics.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2FDE8",
+  "theme_color": "#6CC000",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/phonics/phonics-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/phonics/phonics-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/phonics/phonics-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

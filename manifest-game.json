@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/game.html",
+  "name": "지식 퍼즐",
+  "short_name": "지식 퍼즐",
+  "description": "상식 퀴즈로 즐기는 지식 퍼즐 어드벤처",
+  "start_url": "/pokemon-quest/game.html",
+  "scope": "/pokemon-quest/game.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EAFCF1",
+  "theme_color": "#0FA95C",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/game/game-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/game/game-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/game/game-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

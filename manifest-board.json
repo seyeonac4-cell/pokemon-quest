@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/board.html",
+  "name": "채씨네 가족게시판",
+  "short_name": "가족게시판",
+  "description": "우리 가족 일정·할일·메모를 한눈에 보는 채씨네 가족게시판",
+  "start_url": "/pokemon-quest/board.html",
+  "scope": "/pokemon-quest/board.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFEFE6",
+  "theme_color": "#F4603C",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/board/board-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/board/board-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/board/board-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
