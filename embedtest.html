@@ -1,72 +1,68 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>임베드 확인 (임시)</title>
-<style>body{font-family:sans-serif;margin:12px}iframe{width:260px;height:146px;border:1px solid #ccc}#out{white-space:pre-wrap;font-size:13px;background:#f5f5f5;padding:10px}</style>
-</head>
-<body>
-<h1>임베드 확인 (임시 페이지)</h1>
-<div id="out">loading…</div>
-<div id="players"></div>
+<html lang="ko"><head><meta charset="utf-8">
+<title>embed check</title>
+<style>body{font:13px/1.4 monospace;background:#0f1226;color:#cfe}div{width:1px;height:1px;overflow:hidden}</style>
+</head><body>
+<h3 id="st">loading…</h3>
+<pre id="log"></pre>
+<div id="stage"></div>
 <script>
-var IDS = [
-  ["teded_billy", "8EtdC9Bjubk"],
-  ["markrober_board", "26P1KyvrmjI"],
-  ["mrbeast_extreme", "gTKS8SAwUzE"],
-  ["mchef_first", "Go5GTl6mt7g"],
-  ["mchef_matilda", "wpFQalAE3XA"],
-  ["mrbeast_hunger", "q6fgVVmdpgY"],
-  ["teded_magnet", "jG7ULeWUfDw"]
+const IDS = [
+ "nvLfw-11tr0","0IWibGOf1jU","hJuO1AUqLUc","7TLk7pscICk",
+ "aTg4Kfoooi4","15xTlDR-l2U","qIU3WalVa3Q","r33kn-a56HI",
+ "myNjmnvI6x0","--MMq6I07b4","nOGT4lXlSHw","ojWHzxUzEVk",
+ "CIkuLF1D_ZQ","Nhl4nbIJw8k","kOYd2oFOojc"
 ];
-var res = {};
-var started = false;
-function done(name, msg){ res[name] = msg; render(); }
-function render(){
-  var lines = [];
-  for (var i=0;i<IDS.length;i++){
-    var n = IDS[i][0];
-    lines.push(n + " (" + IDS[i][1] + "): " + (res[n] || "…"));
-  }
-  document.getElementById('out').textContent = lines.join("\n");
-}
+const out = {};
+let apiReady = false, started = false;
+function log(){ document.getElementById("log").textContent = JSON.stringify(out, null, 1); }
 function start(){
-  if (started || !window.YT || !YT.Player) return;
-  started = true;
-  IDS.forEach(function(pair){
-    var n = pair[0], id = pair[1];
-    var d = document.createElement('div');
-    d.id = 'p_' + n;
-    d.style.margin = '8px 0';
-    document.getElementById('players').appendChild(d);
-    new YT.Player('p_' + n, {
-      height: '146', width: '260', videoId: id,
-      playerVars: { rel:0, modestbranding:1, playsinline:1, mute:1, autoplay:1, origin: location.origin },
+  if(!apiReady || started) return; started = true;
+  let i = 0;
+  const stage = document.getElementById("stage");
+  function next(){
+    if(i >= IDS.length){
+      document.getElementById("st").textContent = "DONE";
+      window.__RESULT__ = JSON.stringify(out);
+      log(); return;
+    }
+    const id = IDS[i++];
+    const holder = document.createElement("div");
+    holder.id = "h_" + i;
+    stage.appendChild(holder);
+    document.getElementById("st").textContent = "checking " + i + "/" + IDS.length + " " + id;
+    let done = false;
+    const finish = (rec) => {
+      if(done) return; done = true;
+      out[id] = rec; log();
+      try{ p && p.destroy(); }catch(e){}
+      setTimeout(next, 120);
+    };
+    const p = new YT.Player(holder.id, {
+      host: "https://www.youtube-nocookie.com",
+      videoId: id,
+      width: 320, height: 180,
+      playerVars: {rel:0, modestbranding:1, playsinline:1, enablejsapi:1, origin: location.origin},
       events: {
-        onReady: function(e){ done(n, 'ready'); try{ e.target.mute(); e.target.playVideo(); }catch(err){} },
-        onStateChange: function(e){
-          var s = e.data;
-          var map = {-1:'unstarted',0:'ended',1:'PLAYING',2:'paused',3:'buffering',5:'cued'};
-          if (s === 1) done(n, 'PLAYING');
-          else if (!res[n] || res[n] === 'ready' || res[n] === 'cued') done(n, map[s] || String(s));
+        onReady: (e) => {
+          const d = Math.round(e.target.getDuration() || 0);
+          let t = "";
+          try { t = e.target.getVideoData().title || ""; } catch(err){}
+          finish({dur: d, title: t});
         },
-        onError: function(e){ done(n, 'ERROR ' + e.data); }
+        onError: (e) => finish({err: e.data})
       }
     });
-  });
+    setTimeout(() => { if(!done) finish({err: "timeout"}); }, 15000);
+  }
+  next();
 }
-window.onYouTubeIframeAPIReady = start;
-var tries = 0;
-var t = setInterval(function(){ tries++; start(); if (started || tries > 80) clearInterval(t); }, 250);
-if (!document.getElementById('ytapi')) {
-  var s = document.createElement('script');
-  s.id = 'ytapi';
-  s.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(s);
-}
-render();
+window.onYouTubeIframeAPIReady = () => { apiReady = true; start(); };
+const s = document.createElement("script");
+s.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(s);
+setTimeout(() => {
+  if(!started){ document.getElementById("st").textContent = "API_NOT_LOADED"; }
+}, 20000);
 </script>
-</body>
-</html>
+</body></html>
