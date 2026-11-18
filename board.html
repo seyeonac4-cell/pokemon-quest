@@ -645,6 +645,10 @@ img{image-rendering:auto}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 <script>
+/* 콘솔 오류 확인용 기록(화면에는 보이지 않음) */
+window.__errs=[];addEventListener('error',function(e){try{__errs.push(String(e.message||(e.error&&e.error.message)||e.type))}catch(_){}});addEventListener('unhandledrejection',function(e){try{__errs.push('rejection: '+String(e.reason))}catch(_){}});
+</script>
+<script>
 /* ============================================================
    채씨네 가족게시판 — 하나의 파일로 동작하는 가로형 대시보드
    · Firebase RTDB /family-lim-7660
