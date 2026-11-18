@@ -212,6 +212,23 @@ h1 em{font-style:normal;color:var(--mint)}
 .t-kids{background:#fff2d9;color:#a97517}
 .t-clean{background:#e3f3fb;color:#12718f}
 .t-organize{background:#eeeaf7;color:#5b4b94}
+.t-buiknam{background:#e4edfd;color:#2450a8}
+.tag-date{background:#f1effe;color:#5b4b94;font-variant-numeric:tabular-nums}
+
+/* ---------------- 부읽남 코너 머리말 ---------------- */
+.sec{
+  background:linear-gradient(135deg,#1b2350,#121834);color:#fff;border-radius:18px;
+  padding:14px 15px 13px;box-shadow:0 14px 34px rgba(18,24,52,.2)
+}
+.sec-t{font-size:15px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:baseline;gap:7px}
+.sec-t span{font-size:11px;font-weight:700;color:#9fe9d1;background:rgba(127,227,196,.16);padding:3px 8px;border-radius:999px}
+.sec-s{font-size:11.5px;color:#b9c0ef;margin-top:5px;line-height:1.55;letter-spacing:-.01em;word-break:keep-all}
+.sec-s a{color:#9fe9d1;font-weight:700;text-decoration:none}
+.sec-n{
+  font-size:11px;line-height:1.6;color:#d6daf5;background:rgba(255,255,255,.08);
+  border-radius:11px;padding:9px 10px;margin-top:10px;letter-spacing:-.01em;word-break:keep-all
+}
+.sec-n a{color:#ffd9a8;font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .title{
   font-size:14px;font-weight:700;line-height:1.4;letter-spacing:-.02em;word-break:keep-all;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
@@ -293,7 +310,7 @@ h1 em{font-style:normal;color:var(--mint)}
       <div class="h-quiet">🤫 층간소음 0dB</div>
     </div>
     <h1>세연님의<br><em>홈트 &amp; 살림</em></h1>
-    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁까지 <b>한 페이지에</b></div>
+    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁 · <b>🏠 부읽남TV</b>까지 한 페이지에</div>
 
     <div class="stats">
       <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
@@ -368,6 +385,7 @@ h1 em{font-style:normal;color:var(--mint)}
    ============================================================ */
 const CATS = [
   {key:"all",      label:"전체"},
+  {key:"buiknam",  label:"🏠 부읽남"},
   {key:"cardio",   label:"🔥 전신 유산소"},
   {key:"jump",     label:"⚡ 점핑보드"},
   {key:"core",     label:"💪 복부·코어"},
@@ -378,8 +396,8 @@ const CATS = [
   {key:"organize", label:"📦 정리마켓"}
 ];
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
-const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦"};
-const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기"};
+const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦", buiknam:"🏠"};
+const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기", buiknam:"영상 보기"};
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
 const KEY_TODO = "homet.todo.v1";
@@ -550,7 +568,7 @@ function renderList(){
     el.innerHTML = '<div class="empty">이 카테고리에 담긴 영상이 아직 없어요.<br>다른 카테고리를 눌러보세요 🙂</div>';
     return;
   }
-  el.innerHTML = list.map(v=>{
+  el.innerHTML = (filter === "buiknam" ? buiknamHead() : "") + list.map(v=>{
     const dn = isDone(v.id);
     return '<article class="card'+(dn?' done':'')+'" data-id="'+v.id+'">'+
       (dn?'<div class="badge-done">오늘 완료 ✅</div>':'')+
@@ -562,6 +580,7 @@ function renderList(){
         '</div>'+
         '<div class="meta">'+
           '<span class="tag t-'+v.category+'">'+CAT_LABEL[v.category]+'</span>'+
+          (v.date?' <span class="tag tag-date">'+fmtDate(v.date)+'</span>':'')+
           '<div class="title">'+esc(v.title)+'</div>'+
           '<div class="ch">'+esc(v.channel)+' · <b style="color:#5a6080">'+esc(v.duration)+'</b> · '+esc(v.level||"")+'</div>'+
         '</div>'+
@@ -588,13 +607,35 @@ function renderList(){
   });
 }
 
+/* ---------- 부읽남 코너 ---------- */
+let BUI = {};
+function fmtDate(iso){
+  const p = String(iso).split("-");
+  return (p.length === 3) ? (Number(p[1]) + "/" + Number(p[2])) : String(iso);
+}
+function buiknamHead(){
+  const n = VIDEOS.filter(v=>v.category==="buiknam").length;
+  const ch = BUI.channelUrl || "https://www.youtube.com/@buiknam_tv/videos";
+  const only = Array.isArray(BUI.ytOnly) ? BUI.ytOnly : [];
+  const onlyHtml = only.length
+    ? '<div class="sec-n">ℹ️ ' + esc(BUI.note || "") + ' ' + only.map(o=>
+        '<a href="https://www.youtube.com/watch?v=' + encodeURIComponent(o.id) + '" target="_blank" rel="noopener noreferrer">' + esc(o.label) + ' ↗</a>'
+      ).join(" · ") + '</div>'
+    : "";
+  return '<section class="sec">'+
+    '<div class="sec-t">🏠 오늘의 부읽남<span>최신 ' + n + '편</span></div>'+
+    '<div class="sec-s">부읽남TV 최신 롱폼만 골라 담았어요. 매일 저녁 새 영상이 올라와요. <a href="' + ch + '" target="_blank" rel="noopener noreferrer">채널 열기 ↗</a></div>'+
+    onlyHtml +
+  '</section>';
+}
+
 /* ---------- 플레이어 ---------- */
 function openPlayer(id){
   const v = VIDEOS.find(x=>x.id===id);
   if(!v) return;
   current = v;
   document.getElementById("mTitle").textContent = v.title;
-  document.getElementById("mSub").textContent = v.channel + " · " + v.duration + " · " + (v.level||"");
+  document.getElementById("mSub").textContent = v.channel + " · " + (v.date ? fmtDate(v.date) + " · " : "") + v.duration + " · " + (v.level||"");
   document.getElementById("mNote").innerHTML = v.reason;
   const wrap = document.getElementById("mFrameWrap");
   wrap.innerHTML = '<iframe src="https://www.youtube.com/embed/'+v.id+
@@ -650,6 +691,7 @@ async function boot(){
     if(!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     VIDEOS = (data.videos || []).filter(v=>v && v.id);
+    BUI = data.buiknam || {};
     if(data.updated){
       const p = String(data.updated).split("-");
       document.getElementById("footDate").textContent = "영상 목록 업데이트 · " + p[0] + ". " + Number(p[1]) + ". " + Number(p[2]);
