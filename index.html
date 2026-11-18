@@ -2790,12 +2790,13 @@ label.btn{cursor:pointer}
       html += '</section>';
     });
     html += '<div class="bonus-note">🎁 오늘 몫 퀘스트를 모두 완료하면 <b>보너스 코인 +5</b>와 연속 기록이 올라가요!</div>';
+    html += gameLinkHTML();
     html += '<div style="margin-top:18px">' + partnerHTML(k) + '</div>';
     return html;
   }
 
   function kidPageHTML(k) {
-    return kidHeadHTML(k) + kidStudyHTML(k) + questListHTML(k) + gameLinkHTML();
+    return kidHeadHTML(k) + kidStudyHTML(k) + questListHTML(k);
   }
 
   /* 퀘스트 완성 버튼 바로 아래 — 지식 퍼즐 게임(별도 프로그램)으로 */
