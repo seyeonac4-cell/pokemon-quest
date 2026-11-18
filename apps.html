@@ -30,6 +30,7 @@ addEventListener('unhandledrejection',function(e){try{__errs.push('rejection: '+
   --shadow-lg:0 18px 44px rgba(35,38,58,.12);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0; color:var(--ink); word-break:keep-all; line-height:1.5;
@@ -466,6 +467,15 @@ footer a{color:#9AA0B4}
   var inApp = isAndroid && (/;\s*wv\)/i.test(ua) ||
       /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|Twitter/i.test(ua));
   var isChrome = isAndroid && /Chrome\/\d+/i.test(ua) && !/SamsungBrowser|EdgA|OPR\//i.test(ua) && !inApp;
+
+  /* 확인용: 주소 끝에 ?env=inapp|chrome|android|ios|pc 를 붙이면 그 환경인 것처럼 동작해요 (평소에는 영향 없음) */
+  var sim = (location.search.match(/[?&]env=(inapp|chrome|android|ios|pc)\b/) || [])[1];
+  if(sim){
+    isIOS = (sim === 'ios');
+    isAndroid = (sim !== 'ios' && sim !== 'pc');
+    inApp = (sim === 'inapp');
+    isChrome = (sim === 'chrome');
+  }
   var secure = /^https?:$/.test(location.protocol);
 
   var ROOT = location.origin + location.pathname.replace(/[^\/]*$/, '');
