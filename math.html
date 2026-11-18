@@ -975,6 +975,10 @@ select.sel{
   /* ============================================================
      시작
      ============================================================ */
+  /* 검증용(인쇄 레이아웃 미리보기) — 화면에는 영향 없음 */
+  window.__mathDebug = { buildNotebook: buildNotebook, printNotebook: printNotebook,
+                         picked: picked, sheets: function () { return allSheets(); } };
+
   loadSamples();
   document.body.setAttribute('data-tab', 'wrong');
   var py = $('printYear');
