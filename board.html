@@ -132,6 +132,46 @@ img{image-rendering:auto}
 .tipbar .tip-sep{color:var(--muted);font-size:14.5px}
 .tipbar .sp{flex:1 1 auto}
 
+/* ---------- 멜론 북카페 음악 바 ---------- */
+.musicbar{
+  flex:0 0 auto; display:flex; align-items:center; gap:7px; flex-wrap:wrap; row-gap:5px;
+  border:2px solid var(--ink); border-radius:10px;
+  background:linear-gradient(90deg,#fff7ec,#ffe8d5 65%,#fff1f5);
+  padding:4px 10px; box-shadow:var(--shadow);
+}
+.mb-play{
+  display:flex; align-items:center; gap:5px; text-decoration:none; color:#5a3708;
+  border:2px solid var(--ink); border-radius:9px;
+  background:linear-gradient(180deg,#ffeeb0,#ffbe4a);
+  font-size:15px; font-weight:800; letter-spacing:-.03em; line-height:1.1;
+  padding:4px 10px; white-space:nowrap; box-shadow:0 2px 0 rgba(40,50,79,.2);
+  transition:transform .1s, box-shadow .1s;
+}
+.mb-play .mb-ico{font-size:18px;line-height:1}
+.mb-play .mb-tri{font-size:11px;color:#a35c00;margin-left:1px}
+.mb-play:active{transform:translateY(2px);box-shadow:none}
+.mb-chips{display:flex;gap:4px;flex-wrap:wrap}
+.mb-chip{
+  border:1.5px solid var(--ink); border-radius:999px; background:#fff; color:var(--ink2);
+  font-size:13.5px; font-weight:700; padding:1px 9px; text-decoration:none; white-space:nowrap;
+  box-shadow:0 1.5px 0 rgba(40,50,79,.14);
+}
+.mb-chip:hover{background:#fff6e6;color:var(--ink)}
+.mb-chip.on{background:var(--peach);color:#6b3d0c}
+.mb-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.mb-hint{font-size:12.5px;color:#9a6b3c;font-weight:700;white-space:nowrap}
+.mb-hint b{color:#6b3d0c}
+.mb-search{display:flex;align-items:center;gap:4px;min-width:0}
+.mb-search input{
+  border:1.5px solid var(--ink); border-radius:7px; padding:3px 7px; font-size:14px;
+  background:#fff; width:165px; min-width:0;
+}
+.mb-search button{
+  border:1.5px solid var(--ink); border-radius:7px; background:var(--yellow); font-weight:700;
+  font-size:13.5px; padding:2px 8px; box-shadow:0 2px 0 rgba(40,50,79,.2); white-space:nowrap;
+}
+.mb-search button:active{transform:translateY(1px);box-shadow:none}
+
 /* ---------- 본문 그리드 ---------- */
 .grid{
   flex:1 1 auto; min-height:0;
@@ -372,6 +412,10 @@ img{image-rendering:auto}
   /* 생활 루틴 줄이 두 줄로 접히지 않게 버튼 칸을 좁힘 */
   .rt-head,.rt-row{grid-template-columns:1fr 86px 86px}
   .rt-label{font-size:15px}
+  /* 멜론 바: 검색칸을 오른쪽 줄로 내리고 안내문은 숨김 */
+  .mb-hint{display:none}
+  .mb-right{margin-left:0;flex:1 1 100%;justify-content:flex-end}
+  .mb-search input{width:auto;flex:1 1 120px}
 }
 @media (max-width:720px){
   .grid{grid-template-columns:1fr}
@@ -399,6 +443,12 @@ img{image-rendering:auto}
   .rt-label .sub{font-size:12px}
   .footbar{flex-wrap:wrap;row-gap:2px}
   .footbar .sp,.footbar .sep{display:none}
+  .musicbar{gap:5px}
+  .mb-play{font-size:14.5px;padding:6px 9px;flex:1 1 100%;justify-content:center}
+  .mb-chips{flex:1 1 100%}
+  .mb-chip{flex:1 1 auto;text-align:center}
+  .mb-right{flex:1 1 100%}
+  .mb-search{flex:1 1 100%}
 }
 </style>
 </head>
@@ -445,6 +495,28 @@ img{image-rendering:auto}
     <span id="tipText">오늘 날씨에 맞는 옷차림을 계산하고 있어요…</span>
     <span class="sp"></span>
     <span id="tipChips" style="display:flex;gap:4px;flex-wrap:wrap"></span>
+  </div>
+
+  <!-- ===== 멜론 북카페 음악 ===== -->
+  <div class="musicbar">
+    <a class="mb-play" id="mbPlay" target="melonCafe" rel="noopener"
+       title="멜론에서 북카페 DJ 플레이리스트 검색을 열고 '전체듣기'로 틀어 두세요"
+       href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">
+      <span class="mb-ico">☕</span>멜론 북카페 음악<span class="mb-tri">▶</span>
+    </a>
+    <span class="mb-chips" id="mbChips">
+      <a class="mb-chip on" data-q="북카페" href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">북카페</a>
+      <a class="mb-chip" data-q="재즈 카페" href="https://www.melon.com/search/dj/index.htm?q=%EC%9E%AC%EC%A6%88%20%EC%B9%B4%ED%8E%98">재즈 카페</a>
+      <a class="mb-chip" data-q="잔잔한 피아노" href="https://www.melon.com/search/dj/index.htm?q=%EC%9E%94%EC%9E%94%ED%95%9C%20%ED%94%BC%EC%95%84%EB%85%B8">잔잔한 피아노</a>
+      <a class="mb-chip" data-q="비오는 날 카페" href="https://www.melon.com/search/dj/index.htm?q=%EB%B9%84%EC%98%A4%EB%8A%94%20%EB%82%A0%20%EC%B9%B4%ED%8E%98">비오는 날 카페</a>
+    </span>
+    <div class="mb-right">
+      <span class="mb-hint">멜론이 열리면 <b>'전체듣기'</b>를 켜 두고 게시판을 보세요</span>
+      <form class="mb-search" id="mbForm">
+        <input type="text" id="mbInput" maxlength="30" placeholder="멜론에서 카페 음악 검색" aria-label="멜론 검색어" autocomplete="off">
+        <button type="submit">🔍 멜론 검색</button>
+      </form>
+    </div>
   </div>
 
   <!-- ===== 본문 ===== -->
@@ -1476,6 +1548,39 @@ img{image-rendering:auto}
       if (!del) return;
       var id = del.getAttribute('data-del-memo');
       delete S.memo[id]; removeAt('memo/' + id); renderNotes();
+    });
+
+    /* 멜론 북카페 음악 (전곡 스트리밍은 멜론 계정으로 → 검색만 열어 드린다) */
+    function melonUrl(q) {
+      return 'https://www.melon.com/search/dj/index.htm?q=' + encodeURIComponent(q || '북카페');
+    }
+    function melonMarkChip(q) {
+      var chips = document.querySelectorAll('#mbChips .mb-chip');
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].classList.toggle('on', chips[i].getAttribute('data-q') === q);
+      }
+    }
+    function melonOpen(q) {
+      q = (q || '북카페').trim();
+      var w = window.open(melonUrl(q), 'melonCafe');
+      if (w) { try { w.opener = null; } catch (e) {} }
+      else toast('새 창이 막혔어요 — 팝업을 허용해 주세요');
+      melonMarkChip(q);
+      $('mbInput').value = '';
+      toast('☕ 멜론에서 \'전체듣기\'를 눌러 주세요');
+    }
+    $('mbPlay').addEventListener('click', function (ev) {
+      ev.preventDefault(); melonOpen('북카페');
+    });
+    $('mbChips').addEventListener('click', function (ev) {
+      var a = ev.target.closest('.mb-chip'); if (!a) return;
+      ev.preventDefault(); melonOpen(a.getAttribute('data-q'));
+    });
+    $('mbForm').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var q = $('mbInput').value.trim();
+      if (!q) { $('mbInput').focus(); return; }
+      melonOpen(q);
     });
 
     /* 화면 유지 (Wake Lock) */
