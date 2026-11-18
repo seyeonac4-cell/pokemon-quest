@@ -592,7 +592,7 @@ select.sel{
           '<div class="wbody">' +
             '<div class="wt">' + esc(w.title || (w.unit || '수학 문제지')) + (w.sample ? ' <span class="q-tag sample">예시</span>' : '') + '</div>' +
             '<div class="wm">' + kid.icon + ' ' + esc(w.kid_name || kid.name) + ' · ' + fmtDay(w.date) + (w.unit ? ' · ' + esc(w.unit) : '') + '</div>' +
-            '<div class="wm">틀린 문제 ' + ((w.problems || []).length) + '개 · 문제 ' + (w.problem_count || '?') + '개</div>' +
+            '<div class="wm">틀린 문제 ' + ((w.problems || []).length) + '개' + (w.problem_count ? ' · 전체 ' + w.problem_count + '문제' : '') + '</div>' +
             '<div class="wb">' +
               '<button class="mini" data-view="' + esc(w.id) + '" type="button">👀 크게 보기</button>' +
               '<button class="mini pri" data-print="' + esc(w.id) + '" type="button">🖨️ A4 인쇄</button>' +
@@ -674,14 +674,27 @@ select.sel{
     return items.length;
   }
 
+  function waitImages(host) {
+    var imgs = Array.prototype.slice.call(host.querySelectorAll('img'));
+    return Promise.all(imgs.map(function (im) {
+      if (im.complete && im.naturalWidth) return Promise.resolve();
+      return new Promise(function (res) {
+        im.onload = res; im.onerror = res;
+        setTimeout(res, 2500);
+      });
+    }));
+  }
+
   function printNotebook() {
     var n = buildNotebook();
     if (!n) { toast('인쇄할 문제를 먼저 골라 주세요'); return; }
-    document.body.setAttribute('data-print', 'notebook');
-    setTimeout(function () {
-      window.print();
-      setTimeout(function () { document.body.removeAttribute('data-print'); }, 400);
-    }, 80);
+    waitImages($('printNotebook')).then(function () {
+      document.body.setAttribute('data-print', 'notebook');
+      setTimeout(function () {
+        window.print();
+        setTimeout(function () { document.body.removeAttribute('data-print'); }, 600);
+      }, 120);
+    });
   }
 
   function printWorksheet(id) {
@@ -693,11 +706,13 @@ select.sel{
       '<div class="pp-sub">' + esc(w.kid_name || kid.name || '') + ' · ' + fmtDay(w.date) +
         (w.unit ? ' · ' + esc(w.unit) : '') + ' · 연필 흔적 지운 새 문제지</div>' +
       '<img alt="" src="' + esc(w.page) + '">';
-    document.body.setAttribute('data-print', 'worksheet');
-    setTimeout(function () {
-      window.print();
-      setTimeout(function () { document.body.removeAttribute('data-print'); }, 400);
-    }, 120);
+    waitImages($('printPage')).then(function () {
+      document.body.setAttribute('data-print', 'worksheet');
+      setTimeout(function () {
+        window.print();
+        setTimeout(function () { document.body.removeAttribute('data-print'); }, 600);
+      }, 120);
+    });
   }
 
   /* ============================================================
