@@ -511,9 +511,10 @@ select.sel{
   function updateStats() {
     $('sWrong').textContent = countWrong();
     $('sTodo').textContent = countTodo();
-    $('sSheets').textContent = SHEETS.length;
+    var sheetCount = SHEETS.length || SAMPLES.length;
+    $('sSheets').textContent = sheetCount;
     $('cntWrong').textContent = countWrong();
-    $('cntSheets').textContent = SHEETS.length;
+    $('cntSheets').textContent = sheetCount;
   }
 
   function fillUnits() {
@@ -577,23 +578,25 @@ select.sel{
 
   function renderSheets() {
     var host = $('wlist');
-    if (!SHEETS.length) {
+    var list = SHEETS.length ? SHEETS : SAMPLES;
+    if (!list.length) {
       host.innerHTML = '<div class="empty"><span class="big">📄</span>아직 깨끗한 문제지가 없어요.<br>문제지 사진을 올리면 여기에 쌓여요.</div>';
       return;
     }
     var html = [];
-    SHEETS.forEach(function (w) {
+    list.forEach(function (w) {
       var kid = KID[w.kid] || { icon: '🧒', name: w.kid_name || '아이' };
       html.push(
         '<div class="wcard">' +
           '<div class="thumb" data-view="' + esc(w.id) + '"><img loading="lazy" alt="' + esc(w.title || '문제지') + '" src="' + esc(w.thumb || w.page) + '"></div>' +
           '<div class="wbody">' +
-            '<div class="wt">' + esc(w.title || (w.unit || '수학 문제지')) + '</div>' +
+            '<div class="wt">' + esc(w.title || (w.unit || '수학 문제지')) + (w.sample ? ' <span class="q-tag sample">예시</span>' : '') + '</div>' +
             '<div class="wm">' + kid.icon + ' ' + esc(w.kid_name || kid.name) + ' · ' + fmtDay(w.date) + (w.unit ? ' · ' + esc(w.unit) : '') + '</div>' +
             '<div class="wm">틀린 문제 ' + ((w.problems || []).length) + '개 · 문제 ' + (w.problem_count || '?') + '개</div>' +
             '<div class="wb">' +
               '<button class="mini" data-view="' + esc(w.id) + '" type="button">👀 크게 보기</button>' +
               '<button class="mini pri" data-print="' + esc(w.id) + '" type="button">🖨️ A4 인쇄</button>' +
+              (w.sample ? '' : '') +
               (w.page_pdf ? '<a class="mini" style="text-decoration:none" href="' + esc(w.page_pdf) + '" target="_blank" rel="noopener">PDF</a>' : '') +
             '</div>' +
           '</div>' +
@@ -682,7 +685,7 @@ select.sel{
   }
 
   function printWorksheet(id) {
-    var w = SHEETS.filter(function (x) { return x.id === id; })[0];
+    var w = allSheets().filter(function (x) { return x.id === id; })[0];
     if (!w) { toast('문제지를 찾지 못했어요'); return; }
     var kid = KID[w.kid] || {};
     $('printPage').innerHTML =
@@ -927,7 +930,7 @@ select.sel{
   });
 
   function openView(id) {
-    var w = SHEETS.filter(function (x) { return x.id === id; })[0];
+    var w = allSheets().filter(function (x) { return x.id === id; })[0];
     if (!w) return;
     printTarget = w.id;
     $('vTitle').textContent = w.title || '깨끗한 새 문제지';
