@@ -233,11 +233,12 @@ body{
 .wrongbox{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px;margin-top:12px}
 .wrongbox h3{margin:0 0 10px;font-size:13.5px;font-weight:900;display:flex;align-items:center;gap:6px;color:var(--coral-d)}
 .wrongbox h3 span{background:var(--coral-l);border-radius:100px;padding:1px 9px;font-size:11.5px}
-.wrong-item{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:9px 0;border-top:1px dashed #E3F1EA;font-size:13px}
+.wrong-item{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px dashed #E3F1EA;font-size:13px}
 .wrong-item:first-of-type{border-top:none}
-.wrong-item .wen{font-family:"Nunito",sans-serif;font-weight:900;font-size:15px;color:var(--ink)}
-.wrong-item .wko{font-size:12.5px;color:var(--ink2);font-weight:700}
-.wrong-item .my{font-size:11.5px;color:var(--coral-d);font-weight:800;text-align:right;grid-row:1}
+.wrong-item .wtop{min-width:0;flex:1 1 auto}
+.wrong-item .wen{font-family:"Nunito",sans-serif;font-weight:900;font-size:15px;color:var(--ink);word-break:break-word}
+.wrong-item .wko{font-size:12.5px;color:var(--ink2);font-weight:700;word-break:keep-all}
+.wrong-item .my{flex:0 0 auto;max-width:46%;font-size:11.5px;color:var(--coral-d);font-weight:800;text-align:right;word-break:break-word}
 .wrong-item .my small{display:block;color:var(--muted);font-weight:700}
 .res-btns{display:flex;flex-direction:column;gap:7px;margin-top:13px}
 
@@ -1116,6 +1117,7 @@ body{
       var row = document.createElement('div');
       row.className = 'wrong-item';
       var le = document.createElement('div');
+      le.className = 'wtop';
       le.innerHTML = '<div class="wen"></div><div class="wko"></div>';
       le.querySelector('.wen').textContent = it.w.en;
       le.querySelector('.wko').textContent = (it.w.pos ? it.w.pos + ' ' : '') + koClean(it.w.ko);
