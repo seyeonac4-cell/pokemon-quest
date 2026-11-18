@@ -296,7 +296,7 @@ select.sel{
         <button class="chipbtn on" data-kid="all" type="button">전체</button>
         <button class="chipbtn" data-kid="yunjin" type="button">👧 윤진(초3)</button>
         <button class="chipbtn" data-kid="hyungwon" type="button">🧒 형원(7세)</button>
-        <select class="sel" id="unitSel" aria-label="단원·문제지 선택"><option value="all">모든 단원</option></select>
+        <select class="sel" id="unitSel" aria-label="날짜·단원 선택"><option value="all">모든 날짜 · 단원</option></select>
       </div>
       <div id="qlist"></div>
 
@@ -398,7 +398,7 @@ select.sel{
   var PROG = {};            // {sheetId: {no: {done, memo}}}
   var SAMPLES = [];         // 예시 카드(데이터 없을 때만)
   var picked = {};          // {sheetId: {no: true}}
-  var filterKid = 'all', filterUnit = 'all';
+  var filterKid = 'all', filterSheet = 'all';
   var uploading = false, pinOK = false, whoKid = 'yunjin';
   var printTarget = null;
 
@@ -519,15 +519,18 @@ select.sel{
 
   function fillUnits() {
     var sel = $('unitSel');
-    var seen = {}, opts = ['<option value="all">모든 단원</option>'];
+    var opts = ['<option value="all">모든 날짜 · 단원</option>'];
+    var ids = {};
     allSheets().forEach(function (w) {
-      var key = (w.unit || w.title || '').trim();
-      if (!key || seen[key]) return;
-      seen[key] = 1;
-      opts.push('<option value="' + esc(key) + '">' + esc(key) + '</option>');
+      if (ids[w.id]) return;
+      ids[w.id] = 1;
+      var label = fmtDay(w.date) + (w.unit ? ' · ' + w.unit : (w.title ? ' · ' + w.title : ''));
+      if (filterKid !== 'all' && w.kid !== filterKid) return;
+      opts.push('<option value="' + esc(w.id) + '">' + esc(label) + '</option>');
     });
     sel.innerHTML = opts.join('');
-    sel.value = filterUnit;
+    if (filterSheet !== 'all' && !ids[filterSheet]) filterSheet = 'all';
+    sel.value = filterSheet;
   }
 
   function renderProblems() {
@@ -535,8 +538,7 @@ select.sel{
     var list = [];
     allSheets().forEach(function (w) {
       if (filterKid !== 'all' && w.kid !== filterKid) return;
-      var ukey = (w.unit || w.title || '').trim();
-      if (filterUnit !== 'all' && ukey !== filterUnit) return;
+      if (filterSheet !== 'all' && w.id !== filterSheet) return;
       (w.problems || []).forEach(function (p) { list.push({ w: w, p: p }); });
     });
 
@@ -761,6 +763,7 @@ select.sel{
     pinMatches(v).then(function (ok) {
       if (ok) {
         pinOK = true;
+        $('pinErr').textContent = '';
         closeSheetEl($('pinSheet'));
         setTimeout(function () { openSheetEl($('whoSheet')); }, 140);
       } else {
@@ -887,13 +890,15 @@ select.sel{
     var b = e.target.closest('.chipbtn');
     if (!b) return;
     filterKid = b.getAttribute('data-kid');
+    filterSheet = 'all';
     Array.prototype.forEach.call($('filters').querySelectorAll('.chipbtn'), function (x) {
       x.classList.toggle('on', x === b);
     });
+    fillUnits();
     renderProblems();
   });
   $('unitSel').addEventListener('change', function (e) {
-    filterUnit = e.target.value;
+    filterSheet = e.target.value;
     renderProblems();
   });
 
