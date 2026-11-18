@@ -973,6 +973,7 @@ label.btn{cursor:pointer}
   position:relative;z-index:1;margin-top:10px;font-size:40px;font-weight:900;letter-spacing:-.045em;
   line-height:1.12;word-break:keep-all;
 }
+.q-text.long{font-size:25px;line-height:1.3;letter-spacing:-.03em;word-break:keep-all}
 .q-text.word{font-family:Georgia,"Times New Roman",serif;font-size:33px;letter-spacing:-.01em;word-break:break-word}
 .q-ask{position:relative;z-index:1;margin-top:10px;font-size:12.5px;font-weight:800;color:var(--muted)}
 .q-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
@@ -2819,49 +2820,229 @@ label.btn{cursor:pointer}
   }
   function rndInt(n) { return Math.floor(Math.random() * n); }
 
-  function mathItem(k, t) {
-    var a, b, ans, text;
-    if (k === 'c1') {
-      if (t === 0) { a = 13 + rndInt(66); b = 12 + rndInt(48); ans = a + b; text = a + ' + ' + b; }
-      else if (t === 1) { a = 45 + rndInt(53); b = 12 + rndInt(30); ans = a - b; text = a + ' − ' + b; }
-      else if (t === 2) { a = 12 + rndInt(24); b = 2 + rndInt(8); ans = a * b; text = a + ' × ' + b; }
-      else { b = 3 + rndInt(7); ans = 4 + rndInt(9); a = b * ans; text = a + ' ÷ ' + b; }
-    } else {
-      if (t === 0) { a = 1 + rndInt(8); b = 1 + rndInt(10 - a); ans = a + b; text = a + ' + ' + b; }
-      else if (t === 1) { a = 3 + rndInt(7); b = 1 + rndInt(a - 1); ans = a - b; text = a + ' − ' + b; }
-      else { a = 1 + rndInt(9); ans = 10 - a; text = a + ' + □ = 10'; }
-    }
-    return { text: text, ans: ans };
+  function gcdInt(a, b) {
+    a = Math.abs(a); b = Math.abs(b);
+    while (b) { var t = a % b; a = b; b = t; }
+    return a;
   }
 
-  function numChoices(ans, k) {
-    var pool = k === 'c1'
-      ? [-20, -11, -10, -5, -3, -2, -1, 1, 2, 3, 5, 10, 11, 20]
-      : [-3, -2, -1, 1, 2, 3, 4];
-    var out = [], guard = 0;
-    while (out.length < 3 && guard++ < 80) {
-      var d = pool[rndInt(pool.length)];
-      var v = ans + d;
-      if (v < 0 || v === ans || out.indexOf(v) !== -1) continue;
-      out.push(v);
+  /* 소수 자리를 정수로 올린 값 → "4.25" (부동소수 오차 없이) */
+  function decStr(v, places) {
+    var neg = v < 0, u = Math.abs(v), s = String(u);
+    if (places === 2) {
+      while (s.length < 3) s = '0' + s;
+      s = s.slice(0, -2) + '.' + s.slice(-2);
+    } else {
+      while (s.length < 2) s = '0' + s;
+      s = s.slice(0, -1) + '.' + s.slice(-1);
     }
-    while (out.length < 3) out.push(ans + out.length + 1);
-    return out;
+    if (s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+    return (neg ? '-' : '') + s;
+  }
+
+  /* 오답 3개: 실제 계산 실수로 자주 나오는 값(cands)을 먼저, 모자라면 정답 근처 값(deltas)으로 */
+  function numOpts(base, fmt, cands, deltas) {
+    var out = [], i;
+    function add(x) {
+      if (typeof x !== 'number' || isNaN(x) || x < 0 || x === base) return;
+      var s = fmt(x);
+      if (out.indexOf(s) !== -1) return;
+      out.push(s);
+    }
+    cands = cands || [];
+    for (i = 0; i < cands.length && out.length < 3; i++) add(cands[i]);
+    var pool = shuffleArr(deltas || [-10, 10, -1, 1, -9, 9, -2, 2, -11, 11, -20, 20]);
+    for (i = 0; i < pool.length && out.length < 3; i++) add(base + pool[i]);
+    var step = 3;
+    while (out.length < 3) { add(base + step); step += 3; }
+    return out.slice(0, 3);
+  }
+
+  /* 분모가 같은 분수 문제의 오답 3개 (분모끼리 더한 값·분자 ±1 등 헷갈리는 값) */
+  function fracOpts(pn, pd) {
+    function same(n1, d1, n2, d2) { return n1 * d2 === n2 * d1; }
+    var out = [], i, pr;
+    var cand = [[pn, pd * 2], [pn + 1, pd], [pn - 1, pd], [pn + 2, pd], [pn - 2, pd],
+                [pn + 1, pd * 2], [pn - 1, pd * 2], [pn, pd + 2]];
+    function push(n, d) {
+      if (n < 1 || n >= d) return;
+      if (same(n, d, pn, pd)) return;
+      for (var j = 0; j < out.length; j++) {
+        pr = out[j].split('/');
+        if (same(n, d, pr[0] * 1, pr[1] * 1)) return;
+      }
+      out.push(n + '/' + d);
+    }
+    for (i = 0; i < cand.length && out.length < 3; i++) push(cand[i][0], cand[i][1]);
+    for (i = 1; i < pd && out.length < 3; i++) push(i, pd);
+    return out.slice(0, 3);
+  }
+
+  /* 숫자 뒤에 붙는 조사 와/과 (팔·이·사·오·구는 '와') */
+  function waGwa(n) {
+    var d = Math.abs(n) % 10;
+    return (d === 2 || d === 4 || d === 5 || d === 9) ? '와' : '과';
+  }
+
+  /* 수학 문제
+     형원(c2): 받아올림이 있는 덧셈 · 받아내림이 있는 뺄셈
+     윤진(c1): 초4~6 — 두 자리 곱셈, 세 자리÷두 자리, 괄호 혼합계산, 분수·소수, 최대공약수·최소공배수, 도형·단위 */
+  function mathItem(k, t) {
+    var a, b, ans, text, opts;
+
+    if (k === 'c2') {
+      if (t === 0) {                     /* 두 자리 + 한 자리 (받아올림) */
+        b = 3 + rndInt(7);                       /* 3~9 */
+        a = (1 + rndInt(8)) * 10 + (10 - b) + rndInt(b);   /* 일의 자리 합이 10 이상, 18~98 */
+        ans = a + b; text = a + ' + ' + b;
+        opts = numOpts(ans, String, [ans - 10, ans + 10, ans - 1], [-10, 10, -1, 1, -9, 9, -2, 2]);
+      } else if (t === 1) {              /* 두 자리 + 두 자리 (받아올림) */
+        var b1 = 1 + rndInt(9);                  /* b 일의 자리 1~9 */
+        b = (1 + rndInt(3)) * 10 + b1;           /* 11~39 */
+        a = (1 + rndInt(8)) * 10 + (10 - b1) + rndInt(b1);  /* 18~98 */
+        ans = a + b; text = a + ' + ' + b;
+        opts = numOpts(ans, String, [ans - 10, ans + 10, ans - 1], [-10, 10, -1, 1, -20, 20, -2, 2]);
+      } else if (t === 2) {              /* 두 자리 − 한 자리 (받아내림) */
+        b = 2 + rndInt(8);                       /* 2~9 */
+        a = (1 + rndInt(8)) * 10 + rndInt(b);    /* 일의 자리가 b보다 작아 빌려와야 함, 10~89 */
+        ans = a - b; text = a + ' − ' + b;
+        opts = numOpts(ans, String, [ans + 10, ans - 10, ans + 1], [-10, 10, -1, 1, -9, 9, -2, 2]);
+      } else {                           /* 두 자리 − 두 자리 (받아내림) */
+        var f1 = 1 + rndInt(9);                  /* b 일의 자리 1~9 */
+        b = (1 + rndInt(2)) * 10 + f1;           /* 11~29 */
+        a = ((b - b % 10) / 10 + 1 + rndInt(3)) * 10 + rndInt(f1);   /* 20~59, 일의 자리에서 받아내림 */
+        ans = a - b; text = a + ' − ' + b;
+        opts = numOpts(ans, String, [ans + 10, ans - 10, ans + 1], [-10, 10, -1, 1, -20, 20, -2, 2]);
+      }
+    } else {
+      if (t === 0) {                     /* 두 자리 × 두 자리 */
+        a = 12 + rndInt(78);                     /* 12~89 */
+        b = 11 + rndInt(19);                     /* 11~29 */
+        ans = a * b; text = a + ' × ' + b;
+        opts = numOpts(ans, String, [ans - a, ans + a, ans - b, ans + b], [-10, 10, -1, 1, -a, a]);
+      } else if (t === 1) {              /* 세 자리 ÷ 두 자리 (딱 떨어지게) */
+        b = 11 + rndInt(15);                     /* 11~25 */
+        var qt = Math.max(4, Math.ceil(100 / b)) + rndInt(10);
+        a = b * qt;
+        while (a > 999 && qt > 4) { qt -= 1; a = b * qt; }
+        ans = qt; text = a + ' ÷ ' + b;
+        opts = numOpts(ans, String, [qt + 1, qt - 1, qt + 2, qt + 10], [-1, 1, -2, 2, -10, 10]);
+      } else if (t === 2) {              /* 괄호가 있는 혼합 계산 */
+        var v = rndInt(3);
+        if (v === 0) {
+          var x = 6 + rndInt(15), y = 4 + rndInt(15), z = 2 + rndInt(6);
+          var base1 = (x + y) * z, w2 = 2 + rndInt(Math.max(1, base1 - 8));
+          ans = base1 - w2;
+          text = '(' + x + ' + ' + y + ') × ' + z + ' − ' + w2;
+          opts = numOpts(ans, String, [x + y * z - w2, base1, base1 - w2 + z], [-10, 10, -1, 1, -z, z]);
+        } else if (v === 1) {
+          var b2 = 2 + rndInt(4), c2n = 2 + rndInt(4), qq = 3 + rndInt(10), d2 = 2 + rndInt(29);
+          a = b2 * c2n * qq;
+          ans = qq + d2;
+          text = a + ' ÷ (' + b2 + ' × ' + c2n + ') + ' + d2;
+          opts = numOpts(ans, String, [a / b2 + d2, qq * d2, ans + 10], [-10, 10, -1, 1, -2, 2]);
+        } else {
+          var m1 = 3 + rndInt(10), p1 = 2 + rndInt(8), p2 = 2 + rndInt(8);
+          var base2 = m1 * (p1 + p2), s2 = 2 + rndInt(Math.max(1, base2 - 10));
+          ans = base2 - s2;
+          text = m1 + ' × (' + p1 + ' + ' + p2 + ') − ' + s2;
+          opts = numOpts(ans, String, [m1 * p1 + p2 - s2, base2, base2 - s2 + m1], [-10, 10, -1, 1, -m1, m1]);
+        }
+      } else if (t === 3) {              /* 소수 덧셈·뺄셈 (소수 둘째 자리까지) */
+        var decFmt = function (v) { return decStr(v, 2); };
+        if (rndInt(2) === 0) {
+          var A1 = (1 + rndInt(9)) * 10 + (1 + rndInt(9));        /* 1.1~9.9 (소수 한 자리) */
+          var B1 = (2 + rndInt(48)) * 10 + (1 + rndInt(9));       /* 0.21~4.99 (소수 두 자리) */
+          var s1 = A1 * 10 + B1;                 /* 100분의 1 단위 정수 */
+          ans = decStr(s1, 2);
+          text = decStr(A1 * 10, 2) + ' + ' + decStr(B1, 2);
+          opts = numOpts(s1, decFmt, [s1 + 10, s1 - 10, s1 + 100, s1 - 1], [1, -1, 10, -10, 100, -100]);
+        } else {
+          var A2 = (35 + rndInt(64)) * 10 + (1 + rndInt(9));      /* 3.51~9.89 */
+          var B2 = (2 + rndInt(Math.floor(A2 / 100) - 3)) * 10 + (1 + rndInt(9));   /* 답이 양수 */
+          var s3 = A2 - B2;
+          ans = decStr(s3, 2);
+          text = decStr(A2, 2) + ' − ' + decStr(B2, 2);
+          opts = numOpts(s3, decFmt, [s3 + 10, s3 - 10, s3 + 100, s3 - 1], [1, -1, 10, -10, 100, -100]);
+        }
+      } else if (t === 4) {              /* 분수 덧셈·뺄셈 (같은 분모) */
+        var dens = [5, 6, 7, 8, 9, 10, 12], dd = 6, n1 = 1, n2 = 1, pp = 1, isAdd = true, guard4 = 0;
+        do {
+          dd = dens[rndInt(dens.length)];
+          isAdd = rndInt(2) === 0;
+          if (isAdd) {
+            n1 = 1 + rndInt(dd - 3);
+            n2 = 1 + rndInt(dd - 1 - n1);
+            pp = n1 + n2;
+          } else {
+            n1 = 2 + rndInt(dd - 2);
+            n2 = 1 + rndInt(n1 - 1);
+            pp = n1 - n2;
+          }
+          guard4++;
+        } while (guard4 < 80 && (pp < 1 || gcdInt(pp, dd) !== 1));
+        ans = pp + '/' + dd;
+        text = n1 + '/' + dd + (isAdd ? ' + ' : ' − ') + n2 + '/' + dd;
+        opts = fracOpts(pp, dd);
+      } else if (t === 5) {              /* 최대공약수 · 최소공배수 */
+        if (rndInt(2) === 0) {
+          var gPair = [[2, 3], [2, 5], [3, 4], [3, 5], [4, 5], [2, 7], [3, 7], [5, 6], [4, 9], [5, 8], [6, 7], [7, 9]][rndInt(12)];
+          var gg = 2 + rndInt(9);
+          a = gg * gPair[0]; b = gg * gPair[1];
+          ans = gg; text = a + waGwa(a) + ' ' + b + '의 최대공약수는?';
+          opts = numOpts(ans, String, [gg + 1, gg - 1, gg * 2, gg * gPair[0]], [-1, 1, 2, -2, 3, -3]);
+        } else {
+          var lPair = [[4, 6], [6, 8], [6, 9], [8, 12], [9, 12], [10, 15], [12, 18], [8, 10], [4, 10], [6, 10], [10, 12], [12, 16]][rndInt(12)];
+          a = lPair[0]; b = lPair[1];
+          var lc = a * b / gcdInt(a, b);
+          ans = lc; text = a + waGwa(a) + ' ' + b + '의 최소공배수는?';
+          opts = numOpts(ans, String, [a * b, lc + a, lc - b, lc + b], [-a, a, -b, b, -1, 1, -2, 2]);
+        }
+      } else {                           /* 도형 · 단위 */
+        if (rndInt(2) === 0) {
+          var angP = [[40, 75], [35, 85], [60, 70], [45, 60], [30, 80], [55, 65], [25, 95], [40, 55], [50, 75], [30, 65], [70, 80], [50, 60]][rndInt(12)];
+          a = angP[0]; b = angP[1];
+          ans = 180 - a - b;
+          text = '삼각형의 두 각이 ' + a + '°, ' + b + '°일 때 나머지 한 각은?';
+          opts = numOpts(ans, String, [180 - a, 180 - b, ans + 10, ans - 10], [-10, 10, -5, 5, -1, 1]);
+        } else {
+          var u = rndInt(3);
+          if (u === 0) {
+            var km = 1 + rndInt(8), mh = 1 + rndInt(9);
+            ans = km * 1000 + mh * 100;
+            text = km + 'km ' + (mh * 100) + 'm는 몇 m일까요?';
+            opts = numOpts(ans, String, [km * 1000, km * 100 + mh * 100, ans + 1000, ans - 100], [100, -100, 1000, -1000]);
+          } else if (u === 1) {
+            var lt = 1 + rndInt(5), ml = 1 + rndInt(9);
+            ans = lt * 1000 + ml * 100;
+            text = lt + 'L ' + (ml * 100) + 'mL는 몇 mL일까요?';
+            opts = numOpts(ans, String, [lt * 1000, lt * 100 + ml * 100, ans + 1000, ans - 100], [100, -100, 1000, -1000]);
+          } else {
+            var hh = 1 + rndInt(3), mm = 5 + rndInt(55);
+            ans = hh * 60 + mm;
+            text = hh + '시간 ' + mm + '분은 몇 분일까요?';
+            opts = numOpts(ans, String, [hh * 100 + mm, hh * 60, ans - 60, ans + 10], [-60, 60, -10, 10, -1, 1]);
+          }
+        }
+      }
+    }
+    return { text: text, ans: String(ans), opts: opts };
   }
 
   function buildQuiz(k, type) {
     var items = [], i;
     if (type === 'math') {
       var seen = {};
+      /* 윤진: 곱셈·나눗셈·괄호·소수·분수·약수배수·도형단위를 골고루 / 형원: 받아올림·받아내림 */
       var plan = shuffleArr(k === 'c1'
-        ? [0, 0, 0, 1, 1, 1, 2, 2, 3, 3]
-        : [0, 0, 0, 0, 1, 1, 1, 2, 2, 2]);
+        ? [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
+        : [0, 0, 0, 1, 1, 2, 2, 2, 3, 3]);
       plan.forEach(function (t) {
         var raw = mathItem(k, t), guard = 0;
         while (seen[raw.text] && guard++ < 40) raw = mathItem(k, t);
         seen[raw.text] = 1;
-        var opts = numChoices(raw.ans, k).map(String);
-        opts.push(String(raw.ans));
+        var opts = raw.opts.slice();
+        if (opts.indexOf(String(raw.ans)) === -1) opts.push(String(raw.ans));
         items.push({ q: raw.text, a: String(raw.ans), opts: shuffleArr(opts) });
       });
     } else {
@@ -2910,8 +3091,8 @@ label.btn{cursor:pointer}
   function quizMeta(type, k) {
     if (type === 'math') {
       return {
-        icon: '⚡', label: '빠른 암산 10문제', kicker: '빠른 암산',
-        desc: k === 'c1' ? '두 자리 덧셈·뺄셈, 곱셈, 나눗셈' : '한 자리 덧셈·뺄셈, 10 만들기',
+        icon: '⚡', label: '수학 10문제', kicker: '수학 문제',
+        desc: k === 'c1' ? '초4~6: 곱셈·나눗셈, 괄호 계산, 분수·소수, 약수·배수' : '받아올림 덧셈 · 받아내림 뺄셈',
         ask: '정답을 골라요', cls: ''
       };
     }
@@ -3118,7 +3299,7 @@ label.btn{cursor:pointer}
                    : '🎁 오늘 보상 ' + QUIZ_REWARD_MAX + '/' + QUIZ_REWARD_MAX + '회 완료 · 연습 모드') + '</div>'
       + '<div class="q-card">'
       + '<div class="q-num">' + (quiz.idx + 1) + '번째 문제</div>'
-      + '<div class="q-text' + m.cls + '">' + esc(it.q) + '</div>'
+      + '<div class="q-text' + m.cls + (it.q.length > 12 ? ' long' : '') + '">' + esc(it.q) + '</div>'
       + '<div class="q-ask">' + m.ask + '</div>'
       + '</div>'
       + '<div class="q-opts">' + opts + '</div>'
