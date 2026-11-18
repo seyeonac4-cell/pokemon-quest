@@ -92,14 +92,14 @@ body{
 
 /* ---------- 형광펜 집중 바 ---------- */
 .focusbar{
-  width:100%;display:none;align-items:center;gap:8px;text-align:left;font-family:inherit;cursor:pointer;
+  width:100%;display:none;align-items:center;gap:8px;text-align:left;font-family:inherit;font-weight:900;cursor:pointer;
   background:linear-gradient(100deg,#FFF9C4,#FFE94D);border:2.5px solid #E6C41C;border-radius:16px;
   padding:11px 13px;box-shadow:0 3px 0 rgba(180,150,10,.22);margin-bottom:10px;color:#5E4700;
 }
 .focusbar.on{display:flex}
-.focusbar b{font-size:19px;font-weight:900;line-height:1}
-.focusbar span{font-size:12.5px;font-weight:900;letter-spacing:-.02em;flex:1}
-.focusbar .arrow{font-size:15px}
+.focusbar .fb-t{font-size:13px;font-weight:900;letter-spacing:-.02em;flex:1}
+.focusbar .fb-t b{font-size:18px;font-weight:900;line-height:1;margin:0 1px}
+.focusbar .arrow{font-size:15px;font-weight:900}
 
 /* ---------- 암기 카드 ---------- */
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:11px}
@@ -185,7 +185,8 @@ body{
 .opt.hlopt{background:var(--hl-l);border:1.5px solid #EFE29A;border-radius:12px;padding:9px 11px;margin-bottom:8px}
 .opt.hlopt input{accent-color:#D9B21B}
 
-.q-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;color:var(--muted)}
+.q-top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:900;color:var(--muted)}
+.quit{font-family:inherit;font-size:11px;font-weight:800;color:var(--muted);background:#fff;border:1.5px solid var(--line);border-radius:100px;padding:4px 9px;cursor:pointer;flex:0 0 auto}
 .q-mode{background:var(--mint2);color:var(--em-d);border-radius:100px;padding:4px 11px;font-size:11.5px}
 .q-mode.hlmode{background:linear-gradient(90deg,#FFF9C4,#FFE94D);color:#5E4700}
 .q-num b{font-size:16px;color:var(--em-d)}
@@ -283,21 +284,22 @@ body{
 }
 #printRoot{font-family:"Noto Sans KR",sans-serif;color:#000}
 .ppage{padding:0 0 2mm}
-.phead{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2.5pt solid #111;padding-bottom:2.2mm;margin-bottom:3.4mm}
-.ptitle{font-size:15pt;font-weight:900;letter-spacing:-.01em}
-.ptitle small{display:block;font-size:8.6pt;font-weight:700;color:#444;letter-spacing:0}
-.pmeta{font-size:9pt;font-weight:700;text-align:right;line-height:1.7;white-space:nowrap}
+.phead{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2.5pt solid #111;padding-bottom:1.8mm;margin-bottom:2.6mm}
+.ptitle{font-size:14pt;font-weight:900;letter-spacing:-.01em;color:#000}
+.ptitle small{display:block;font-size:8.4pt;font-weight:700;color:#333;letter-spacing:0}
+.pmeta{font-size:9pt;font-weight:700;text-align:right;line-height:1.6;white-space:nowrap;color:#000}
 .pmeta span{display:inline-block;margin-left:5mm;border-bottom:.6pt solid #999;min-width:20mm;padding-bottom:.6mm}
 .pcols{column-count:2;column-gap:9mm;column-fill:balance}
 .pitem{break-inside:avoid;page-break-inside:avoid;display:grid;grid-template-columns:7mm 1fr;
-  gap:0 2mm;align-items:baseline;padding:1.9mm 0;border-bottom:.4pt dotted #C9C9C9}
-.pitem .pn{font-family:"Nunito",sans-serif;font-size:10.5pt;font-weight:900;color:#111;text-align:right}
-.pitem .pq{font-size:11pt;font-weight:700;line-height:1.25;word-break:break-word}
-.pitem.en .pq{font-family:"Nunito","Noto Sans KR",sans-serif;font-size:11.5pt;font-weight:800}
-.pitem .panswer{display:block;border-bottom:.7pt solid #BBB;height:5.6mm;margin-top:1.4mm}
-.pitem.hl .pq{background:linear-gradient(transparent 14%,#FFF176 14%,#FFF176 86%,transparent 86%);padding:0 .8mm;border-radius:.6mm}
-.pitem.hl .pn::after{content:"✎";font-size:6pt;vertical-align:super;color:#B58B00}
-.pfoot{margin-top:3mm;border-top:.6pt solid #999;padding-top:1.4mm;font-size:7.6pt;color:#555;display:flex;justify-content:space-between}
+  gap:0 2mm;align-items:baseline;padding:1.3mm 0;border-bottom:.4pt dotted #C9C9C9}
+.pitem .pn{font-family:"Nunito",sans-serif;font-size:10pt;font-weight:900;color:#000;text-align:right}
+.pitem .pq{font-size:10.6pt;font-weight:800;line-height:1.22;word-break:break-word;color:#000}
+.pitem.en .pq{font-family:"Nunito","Noto Sans KR",sans-serif;font-size:11.2pt;font-weight:900}
+.pitem .panswer{display:block;border-bottom:.7pt solid #BBB;height:4.9mm;margin-top:1mm}
+.pitem.hl{padding-left:1.6mm;border-left:2.2pt solid #E8C31D}
+.pitem.hl .pq{background-color:#FFF176;padding:0 .8mm;border-radius:.6mm}
+.pitem.hl .pn::after{content:"✎";font-size:6pt;vertical-align:super;color:#8A6E00}
+.pfoot{margin-top:2mm;border-top:.6pt solid #999;padding-top:1.2mm;font-size:7.4pt;color:#444;display:flex;justify-content:space-between}
 .pkeys{column-count:2;column-gap:9mm}
 .pkrow{break-inside:avoid;display:grid;grid-template-columns:7mm 1fr;gap:0 2mm;padding:1.5mm 0;border-bottom:.4pt dotted #D5D5D5;font-size:9pt;line-height:1.3}
 .pkrow .pn{font-family:"Nunito",sans-serif;font-weight:900;text-align:right;color:#111}
@@ -336,7 +338,7 @@ body{
     <!-- ① 암기 카드 -->
     <section class="pane" id="pane-card">
       <button type="button" class="focusbar" id="focusBtn">
-        <b id="fbCount">0</b><span>🖍️ 형광펜 단어만 집중 암기</span><span class="arrow">→</span>
+        <span class="fb-t">🖍️ 형광펜 단어 <b id="fbCount">0</b>개만 집중 암기</span><span class="arrow">→</span>
       </button>
 
       <div class="filters">
@@ -415,6 +417,7 @@ body{
         <div class="q-top">
           <span class="q-mode" id="qModeLabel">영어 → 한국어</span>
           <span class="q-num"><b id="qIdx">1</b> / <span id="qTotal">0</span></span>
+          <button type="button" class="quit" id="qQuit">그만두기</button>
         </div>
         <div class="q-bar"><i id="qBar"></i></div>
         <div class="q-card" id="qCard">
@@ -792,8 +795,6 @@ body{
     fl.classList.toggle('hl', isHl);
     $('#fcKnown').classList.toggle('good', m === 'known');
     $('#fcUnsure').classList.toggle('bad', m === 'unsure');
-    $('#fcKnown').style.filter = m === 'known' ? '' : 'saturate(.35)';
-    $('#fcUnsure').style.filter = m === 'unsure' ? '' : 'saturate(.35)';
     var hb = $('#fcHl');
     hb.classList.toggle('on', isHl);
     hb.textContent = isHl ? '🖍️ 형광펜 켜짐' : '🖍️ 형광펜';
@@ -1060,6 +1061,10 @@ body{
   }
 
   $('#qNext').addEventListener('click', nextQuestion);
+  $('#qQuit').addEventListener('click', function () {
+    if (!quiz) return;
+    if (window.confirm('시험을 그만둘까요? 지금까지 푼 것은 저장되지 않아요.')) resetQuizSetup();
+  });
   $('#qSubmit').addEventListener('click', submitSpell);
   $('#qSpeak').addEventListener('click', function () {
     if (!quiz) return;
@@ -1192,7 +1197,7 @@ body{
         '<div class="phead"><div class="ptitle">' + esc(title) + '<small>' + esc(sub) + '</small></div>' +
         '<div class="pmeta">' + (useName ? meta : '<span>점수 ______ / ' + total + '</span>') + '</div></div>' +
         '<div class="pcols">' + items + '</div>' +
-        '<div class="pfoot"><span>' + esc((SET.label || SET.id) + tag) + ' · 윤진 영단어</span><span>' + pno + ' / ' + totalPages + '</span></div>' +
+        '<div class="pfoot"><span>' + esc((SET.label || SET.id) + tag) + ' · 윤진 영단어' + (markHl ? ' · ✎ 노란 표시 = 다시 외울 단어' : '') + '</span><span>' + pno + ' / ' + totalPages + '</span></div>' +
         '</div>';
     }
 
