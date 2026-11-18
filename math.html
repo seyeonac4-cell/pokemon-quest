@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF6E4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="수학 오답노트">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>🧮 수학 오답노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/math/math-icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/math/math-icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/math/math-icon-180.png">
+<link rel="manifest" href="./manifest-math.json">
+<script>
+/* 페이지 오류 수집(검증용) — 콘솔을 어지럽히지 않도록 조용히 모으기만 한다 */
+window.__errs = [];
+window.addEventListener('error', function (e) { try { window.__errs.push(String(e.message)); } catch (x) {} });
+window.addEventListener('unhandledrejection', function (e) { try { window.__errs.push('reject: ' + String(e.reason)); } catch (x) {} });
+</script>
+<style>
+/* ============================================================
+   🧮 수학 오답노트 — 연필 지운 새 문제지 + 틀린 문제 모아보기
+   · 데이터: math-data.json (문제지·오답 이미지 목록)
+   · 진행(다시 풀기·정답 메모): Firebase math_progress
+   · 사진 올리기: Firebase math_inbox → 자동 반영
+   ============================================================ */
+:root{
+  --amber:#F59E0B;
+  --amber-d:#C2410C;
+  --amber-l:#FDE68A;
+  --cream:#FFF8EC;
+  --ink:#3A2410;
+  --ink-2:#6B4B2A;
+  --muted:#9A7B55;
+  --line:#F0E0C8;
+  --card:#FFFFFF;
+  --red:#D93A3A;
+  --blue:#2E63C8;
+  --green:#0F7A55;
+  --shadow:0 16px 40px rgba(146,64,14,.13);
+  --safe-b:env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:var(--ink);background:var(--cream);
+  background-image:
+    radial-gradient(900px 420px at 50% -8%, #FFEFC9 0%, #FFF8EC 55%, #FFF6E0 100%);
+  min-height:100vh;display:flex;justify-content:center;
+  padding:20px 12px calc(96px + var(--safe-b));
+}
+.wrap{width:100%;max-width:480px}
+.card{background:var(--card);border-radius:26px;box-shadow:var(--shadow);overflow:hidden;border:1px solid #FFF}
+
+/* ---------------- 헤더 ---------------- */
+.head{
+  position:relative;overflow:hidden;color:#fff;padding:20px 20px 18px;
+  background:linear-gradient(150deg,#FBBF24 0%,#F59E0B 45%,#EA7A0C 100%);
+}
+.head::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 70%)}
+.h-top{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;color:#FFF3D6}
+.h-top .dot{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.9)}
+h1{margin:8px 0 4px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-height:1.22;text-shadow:0 2px 10px rgba(146,64,14,.22)}
+.h-sub{font-size:12.5px;color:#FFF1D8;line-height:1.5;font-weight:500;word-break:keep-all}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:rgba(255,255,255,.19);border:1px solid rgba(255,255,255,.34);border-radius:14px;padding:9px 6px;text-align:center;backdrop-filter:blur(4px)}
+.stat .n{font-size:19px;font-weight:900;line-height:1.1}
+.stat .k{font-size:10.5px;color:#FFF3D6;margin-top:3px;font-weight:700}
+.badge-inbox{display:none;align-items:center;gap:6px;margin-top:12px;background:rgba(58,36,16,.30);
+  border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:100px;padding:6px 12px;font-size:11.5px;font-weight:800;width:max-content;max-width:100%}
+.badge-inbox.on{display:inline-flex}
+
+/* ---------------- 탭 ---------------- */
+.tabs{display:flex;gap:6px;padding:12px 12px 0;background:#fff}
+.tab{
+  flex:1;border:none;font-family:inherit;font-size:13.5px;font-weight:900;letter-spacing:-.02em;
+  padding:12px 6px;border-radius:16px 16px 0 0;background:#FFF6E4;color:#A9805A;cursor:pointer;
+  border-bottom:3px solid transparent;transition:background .15s,color .15s;
+}
+.tab.on{background:#fff;color:var(--amber-d);border-bottom-color:var(--amber)}
+.tab .cnt{display:inline-block;margin-left:4px;font-size:11px;background:#FFEDC8;color:#B45309;border-radius:100px;padding:1px 7px;font-weight:900}
+.tab.on .cnt{background:#FEF3C7;color:#B45309}
+
+/* ---------------- 공통 카드/배너 ---------------- */
+.pane{display:none;padding:14px 14px 18px}
+.pane.on{display:block}
+.banner{
+  display:flex;gap:10px;align-items:flex-start;background:#FFFBEB;border:1.5px dashed #F6C86A;
+  border-radius:18px;padding:13px 14px;margin-bottom:12px;font-size:12.5px;line-height:1.6;color:#8A5B12;font-weight:600;word-break:keep-all;
+}
+.banner .em{font-size:19px;line-height:1.2}
+.banner b{color:#7C2D12}
+.filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:11px}
+.chipbtn{
+  border:1.5px solid var(--line);background:#fff;color:#8A6A45;font-family:inherit;font-size:12.5px;font-weight:800;
+  padding:7px 13px;border-radius:100px;cursor:pointer;transition:all .14s;
+}
+.chipbtn.on{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.28)}
+select.sel{
+  font-family:inherit;font-size:12.5px;font-weight:700;color:#7C4A12;background:#fff;
+  border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;max-width:100%;
+}
+.sec-title{display:flex;align-items:center;gap:7px;margin:14px 2px 9px;font-size:13px;font-weight:900;color:#5B3A18}
+.sec-title .bar{width:3px;height:14px;border-radius:2px;background:linear-gradient(#FBBF24,#EA7A0C)}
+.sec-title .right{margin-left:auto;font-size:11.5px;font-weight:800;color:var(--muted)}
+
+/* ---------------- 오답 카드 ---------------- */
+.qcard{
+  position:relative;background:#fff;border:2px solid var(--line);border-radius:20px;padding:11px 12px 12px;
+  margin-bottom:11px;box-shadow:0 6px 16px rgba(146,64,14,.07);transition:border-color .15s,box-shadow .15s;
+}
+.qcard.picked{border-color:var(--amber);box-shadow:0 8px 20px rgba(245,158,11,.22)}
+.qcard.sample{border-style:dashed;background:#FFFDF7}
+.q-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px}
+.q-no{font-size:12.5px;font-weight:900;color:#fff;background:linear-gradient(140deg,#FBBF24,#EA7A0C);
+  border-radius:9px;padding:3px 9px;letter-spacing:-.01em}
+.q-who{font-size:12px;font-weight:900;color:#7C4A12}
+.q-meta{font-size:11.5px;color:var(--muted);font-weight:700}
+.q-tag{font-size:10.5px;font-weight:900;border-radius:100px;padding:2px 8px;background:#FEE2E2;color:#B91C1C}
+.q-tag.sample{background:#FEF3C7;color:#92400E}
+.q-tag.done{background:#DCFCE7;color:#15803D}
+.q-img{width:100%;border:1px solid #F1E3CC;border-radius:12px;background:#fff;display:block}
+.q-actions{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.q-act{
+  display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:#fff;
+  color:#8A6A45;font-family:inherit;font-size:12px;font-weight:800;padding:7px 11px;border-radius:11px;cursor:pointer;
+}
+.q-act.on{background:#E9F9F0;border-color:#A7E6C4;color:#116B45}
+.q-memo{margin-top:9px;display:none}
+.q-memo.on{display:block}
+.q-memo textarea{
+  width:100%;min-height:62px;border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;
+  font-family:inherit;font-size:12.5px;line-height:1.55;color:#4A3017;background:#FFFDF6;resize:vertical;outline:none;
+}
+.q-memo textarea:focus{border-color:var(--amber);background:#fff}
+.q-memo .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:var(--muted)}
+.q-memo .save{border:none;background:var(--amber);color:#fff;font-family:inherit;font-size:11.5px;font-weight:900;padding:6px 12px;border-radius:9px;cursor:pointer}
+.pick{
+  position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:9px;border:2px solid #EAD9BE;
+  background:#fff;display:grid;place-items:center;font-size:14px;color:transparent;cursor:pointer;line-height:1;
+}
+.pick.on{background:var(--amber);border-color:var(--amber);color:#fff}
+.empty{
+  text-align:center;padding:26px 12px;color:var(--muted);font-size:13px;line-height:1.7;font-weight:600;word-break:keep-all;
+}
+.empty .big{font-size:34px;display:block;margin-bottom:8px}
+
+/* ---------------- 문제지 카드 ---------------- */
+.wcard{display:flex;gap:11px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:10px;margin-bottom:10px}
+.wcard .thumb{width:86px;height:118px;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid #F1E3CC;background:#FFFDF6;cursor:pointer}
+.wcard .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.wcard .wbody{flex:1;min-width:0;display:flex;flex-direction:column}
+.wcard .wt{font-size:13.5px;font-weight:900;color:#4A3017;line-height:1.35;word-break:keep-all}
+.wcard .wm{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:3px}
+.wcard .wb{display:flex;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap}
+.mini{
+  border:1.5px solid var(--line);background:#fff;color:#8A6A45;font-family:inherit;font-size:11.5px;font-weight:900;
+  padding:6px 10px;border-radius:10px;cursor:pointer;
+}
+.mini.pri{background:var(--amber);border-color:var(--amber);color:#fff}
+
+/* ---------------- 사진 올리기 ---------------- */
+.up{margin-top:4px;padding:2px 2px 0}
+.upbtn{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;border-radius:16px;
+  padding:15px 14px;font-family:inherit;font-size:14.5px;font-weight:900;color:#fff;cursor:pointer;
+  background:linear-gradient(150deg,#FBBF24 0%,#F59E0B 45%,#EA7A0C 100%);
+  box-shadow:0 10px 22px rgba(234,122,12,.28);transition:transform .12s ease,opacity .15s;
+}
+.upbtn:active{transform:scale(.985)}
+.upbtn[disabled]{opacity:.7;cursor:default}
+.upnote{margin-top:9px;font-size:11.5px;line-height:1.6;color:var(--muted);word-break:keep-all}
+.upmsg{margin-top:10px;font-size:12.5px;line-height:1.55;border-radius:12px;padding:11px 13px;display:none;font-weight:600;word-break:keep-all}
+.upmsg.on{display:block}
+.upmsg.ok{background:#E9F7EF;color:#2C6B4F;border:1px solid #CFEADE}
+.upmsg.wait{background:#FFF5E0;color:#8A5A12;border:1px solid #FFE2AD}
+.upmsg.err{background:#FDECEC;color:#A33A3A;border:1px solid #F6CFCF}
+.upmsg button{margin-top:8px;border:none;background:#8A4B12;color:#fff;font-family:inherit;font-size:12px;font-weight:800;padding:8px 13px;border-radius:10px;cursor:pointer}
+
+/* ---------------- 시트(모달) ---------------- */
+.sheet{position:fixed;inset:0;background:rgba(58,36,16,.45);opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:flex-end;justify-content:center;z-index:60}
+.sheet.on{opacity:1;pointer-events:auto}
+.sheet .box{width:100%;max-width:500px;background:#fff;border-radius:24px 24px 0 0;padding:18px 18px 24px;transform:translateY(16px);transition:transform .22s ease;max-height:92vh;overflow:auto}
+.sheet.on .box{transform:translateY(0)}
+.sheet h3{margin:0 0 4px;font-size:17px;font-weight:900}
+.sheet .sm{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5;word-break:keep-all}
+.sheet .close{margin-top:12px;width:100%;border:none;background:#8A4B12;color:#fff;font-family:inherit;font-size:14px;font-weight:800;padding:13px;border-radius:14px;cursor:pointer}
+.sheet .close.ghost{background:#F6EDDF;color:#8A6A45;margin-top:8px}
+.pin{width:100%;margin:4px 0 0;border:1.5px solid #EAD9BE;border-radius:14px;padding:14px;font-family:inherit;font-size:22px;font-weight:900;letter-spacing:.42em;text-align:center;color:#8A4B12;background:#FFFDF6;outline:none}
+.pin:focus{border-color:var(--amber);background:#fff}
+.pinerr{min-height:16px;margin:8px 0 2px;font-size:12px;font-weight:700;color:#D1495B;text-align:center}
+.kidpick{display:flex;gap:8px;margin:6px 0 10px}
+.kidpick button{flex:1;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:13px;font-weight:900;color:#8A6A45;padding:11px;border-radius:12px;cursor:pointer}
+.kidpick button.on{background:var(--amber-l);border-color:var(--amber);color:#8A4B12}
+.in-txt{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-family:inherit;font-size:13px;color:#4A3017;background:#FFFDF6;outline:none;margin-bottom:4px}
+.in-txt:focus{border-color:var(--amber);background:#fff}
+.viewimg{width:100%;border-radius:12px;border:1px solid #F1E3CC;background:#fff}
+
+/* ---------------- 선택 인쇄 바 ---------------- */
+.printbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;
+  padding:10px 12px calc(10px + var(--safe-b));background:linear-gradient(180deg,rgba(255,248,236,0),rgba(255,248,236,.96) 38%);
+  pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;
+}
+.printbar.on{opacity:1;transform:translateY(0);pointer-events:auto}
+.printbar .in{
+  width:100%;max-width:480px;background:#fff;border:2px solid var(--amber);border-radius:18px;
+  padding:9px 10px;display:flex;align-items:center;gap:9px;box-shadow:0 12px 30px rgba(146,64,14,.20);
+}
+.printbar .cnt{font-size:12.5px;font-weight:900;color:#7C4A12;line-height:1.3}
+.printbar .cnt small{display:block;font-size:10.5px;color:var(--muted);font-weight:700}
+.printbar .go{margin-left:auto;border:none;background:linear-gradient(150deg,#FBBF24,#EA7A0C);color:#fff;font-family:inherit;
+  font-size:13px;font-weight:900;padding:11px 15px;border-radius:12px;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(234,122,12,.28)}
+
+.toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translate(-50%,10px);opacity:0;pointer-events:none;
+  background:rgba(58,36,16,.94);color:#fff;font-size:12.5px;font-weight:700;padding:10px 16px;border-radius:100px;z-index:80;transition:opacity .2s,transform .2s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.backlink{display:block;text-align:center;font-size:11.5px;color:#B08A5E;font-weight:700;text-decoration:none;margin:14px 0 0}
+
+/* ============================================================
+   🖨️ 인쇄 — 오답노트(고른 문제) / 새 문제지(A4 1장)
+   ============================================================ */
+#printNotebook,#printPage{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm 10mm}
+  html,body{background:#fff!important;background-image:none!important;margin:0!important;padding:0!important;
+    display:block!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap,.printbar,.sheet,.toast,.backlink{display:none!important}
+  body[data-print="notebook"] #printNotebook{display:block!important}
+  body[data-print="worksheet"] #printPage{display:block!important}
+  #printNotebook .pn-head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid #2B2118;padding-bottom:2.5mm;margin-bottom:5mm}
+  #printNotebook .pn-head h2{margin:0;font-size:15pt;font-weight:900;letter-spacing:-.02em}
+  #printNotebook .pn-head .meta{font-size:8.5pt;color:#6B4B2A;font-weight:700}
+  .pn-card{
+    border:0.45mm solid #D8CBB6;border-radius:3mm;padding:4mm 4.5mm 3.5mm;margin-bottom:5mm;
+    break-inside:avoid;page-break-inside:avoid;
+  }
+  .pn-top{display:flex;align-items:center;gap:2.5mm;margin-bottom:2.5mm}
+  .pn-no{font-size:10.5pt;font-weight:900;color:#7C2D12;background:#FDECC8;border-radius:2mm;padding:1mm 2.5mm}
+  .pn-who{font-size:8.5pt;color:#6B4B2A;font-weight:800}
+  .pn-tag{font-size:8pt;color:#9A7B55;margin-left:auto}
+  .pn-card img{max-width:100%;max-height:62mm;display:block;margin:0 auto}
+  .pn-lines{margin-top:3mm}
+  .pn-lines i{display:block;border-bottom:0.3mm solid #EDE4D4;height:7mm}
+  .pn-answer{margin-top:2.5mm;border:0.35mm solid #D8CBB6;border-radius:2mm;height:14mm;padding:1.5mm 2mm;font-size:8pt;color:#9A7B55}
+  .pn-answer b{font-weight:800;color:#7C2D12;font-size:7.5pt}
+  .pn-foot{
+    position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    font-size:7.5pt;color:#9A7B55;border-top:0.3mm solid #EDE4D4;padding-top:1.5mm;
+  }
+  #printPage .pp-title{font-size:11pt;font-weight:900;margin:0 0 1.5mm}
+  #printPage .pp-sub{font-size:8pt;color:#6B4B2A;margin-bottom:3mm;font-weight:700}
+  #printPage img{max-width:100%;max-height:262mm;display:block;margin:0 auto}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card" id="card">
+    <!-- 헤더 -->
+    <div class="head">
+      <div class="h-top"><span class="dot"></span>MATH · 오답노트<span id="printYear"></span></div>
+      <h1>🧮 수학 오답노트</h1>
+      <div class="h-sub">틀린 문제는 모아서 다시 풀고, 연필 자국은 지워서 <b>새 문제지</b>로 다시 프린트해요</div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sWrong">–</div><div class="k">모은 오답</div></div>
+        <div class="stat"><div class="n" id="sTodo">–</div><div class="k">다시 풀 문제</div></div>
+        <div class="stat"><div class="n" id="sSheets">–</div><div class="k">깨끗한 문제지</div></div>
+      </div>
+      <div class="badge-inbox" id="inboxBadge">⏳ 새 문제지 정리 중…</div>
+    </div>
+
+    <!-- 탭 -->
+    <div class="tabs" role="tablist">
+      <button class="tab on" id="tabWrong" role="tab" aria-selected="true" type="button">📕 오답노트 <span class="cnt" id="cntWrong">0</span></button>
+      <button class="tab" id="tabClean" role="tab" aria-selected="false" type="button">📄 새 문제지 <span class="cnt" id="cntSheets">0</span></button>
+    </div>
+
+    <!-- 탭 1: 오답노트 -->
+    <div class="pane on" id="paneWrong">
+      <div class="banner" id="banner">
+        <span class="em">📸</span>
+        <span>아직 올린 사진이 없어요. <b>「문제지 사진 올리기」</b>로 사진을 보내면, 연필 흔적을 지운 <b>새 문제지</b>와 <b>틀린 문제 오답노트</b>가 여기에 차곡차곡 쌓여요.<br>아래는 어떻게 보이는지 보여 주는 <b>예시 카드</b>예요.</span>
+      </div>
+      <div class="filters" id="filters">
+        <button class="chipbtn on" data-kid="all" type="button">전체</button>
+        <button class="chipbtn" data-kid="yunjin" type="button">👧 윤진(초3)</button>
+        <button class="chipbtn" data-kid="hyungwon" type="button">🧒 형원(7세)</button>
+        <select class="sel" id="unitSel" aria-label="단원·문제지 선택"><option value="all">모든 단원</option></select>
+      </div>
+      <div id="qlist"></div>
+
+      <!-- 사진 올리기 -->
+      <div class="up">
+        <div class="sec-title"><span class="bar"></span>문제지 사진 올리기</div>
+        <button class="upbtn" id="upBtn" type="button">📤 문제지 사진 올리기</button>
+        <div class="upnote">채팅으로 보내도 되고, 여기서 바로 올려도 돼요. 올리면 호박이가 연필·채점 흔적을 지우고 틀린 문제를 모아 10분 안에 여기에 올려 드려요. (보호자 PIN 필요)</div>
+        <div class="upmsg" id="upMsg"></div>
+        <input type="file" id="upFile" accept="image/*" hidden>
+      </div>
+    </div>
+
+    <!-- 탭 2: 새 문제지 -->
+    <div class="pane" id="paneClean">
+      <div class="banner" id="bannerClean">
+        <span class="em">🖨️</span>
+        <span>연필로 쓴 답·지우개 자국·빨간펜 채점을 모두 지운 <b>깨끗한 문제지</b>예요. 그대로 A4로 인쇄하면 처음 받은 문제지처럼 다시 풀 수 있어요.</span>
+      </div>
+      <div id="wlist"></div>
+    </div>
+
+    <a class="backlink" href="./index.html">← 포켓몬 대시보드</a>
+  </div>
+</div>
+
+<!-- 선택 인쇄 바 -->
+<div class="printbar" id="printbar">
+  <div class="in">
+    <div class="cnt"><span id="pickCnt">0</span>문제 고름<small>고른 문제만 A4로 인쇄해요</small></div>
+    <button class="go" id="printPick" type="button">🖨️ 선택한 오답 인쇄</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 시트: PIN -->
+<div class="sheet" id="pinSheet">
+  <div class="box">
+    <h3>보호자 확인</h3>
+    <div class="sm">문제지 사진을 올리려면 PIN 4자리를 입력해 주세요.</div>
+    <input class="pin" id="pinInput" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <div class="pinerr" id="pinErr"></div>
+    <button class="close" id="pinOk" type="button">확인</button>
+    <button class="close ghost" id="pinCancel" type="button">닫기</button>
+  </div>
+</div>
+
+<!-- 시트: 누구 문제지인지 -->
+<div class="sheet" id="whoSheet">
+  <div class="box">
+    <h3>누구 문제지예요?</h3>
+    <div class="sm">아이를 고르고, 단원을 적어 주세요. (안 적어도 돼요)</div>
+    <div class="kidpick" id="kidPick">
+      <button data-kid="yunjin" class="on" type="button">👧 윤진(초3)</button>
+      <button data-kid="hyungwon" type="button">🧒 형원(7세)</button>
+    </div>
+    <input class="in-txt" id="unitInput" maxlength="24" placeholder="단원 (예: 4단원 분수)">
+    <input class="in-txt" id="titleInput" maxlength="40" placeholder="문제지 이름 (예: 3학년 2학기 수학)">
+    <button class="close" id="whoNext" type="button">📷 사진 고르기</button>
+    <button class="close ghost" id="whoCancel" type="button">닫기</button>
+  </div>
+</div>
+
+<!-- 시트: 문제지 보기 -->
+<div class="sheet" id="viewSheet">
+  <div class="box">
+    <h3 id="vTitle">깨끗한 새 문제지</h3>
+    <div class="sm" id="vSub"></div>
+    <img class="viewimg" id="vImg" alt="깨끗한 문제지">
+    <button class="close" id="vPrint" type="button">🖨️ 이 문제지 A4로 인쇄</button>
+    <button class="close ghost" id="vClose" type="button">닫기</button>
+  </div>
+</div>
+
+<!-- 인쇄 전용: 오답노트 -->
+<div id="printNotebook"></div>
+<!-- 인쇄 전용: 새 문제지 -->
+<div id="printPage"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     설정
+     ============================================================ */
+  var DB = 'https://pokemon-quest-lim-default-rtdb.asia-southeast1.firebasedatabase.app/family-lim-7660';
+  var INBOX = DB + '/math_inbox';
+  var PROGRESS = DB + '/math_progress';
+  var MAX_W = 2000;
+  var TARGET_BYTES = 420 * 1024;
+  var KID = {
+    yunjin:  { name: '윤진', icon: '👧', tag: '초3' },
+    hyungwon:{ name: '형원', icon: '🧒', tag: '7세' }
+  };
+  var DATA = null;          // math-data.json
+  var SHEETS = [];          // 실제 문제지
+  var PROG = {};            // {sheetId: {no: {done, memo}}}
+  var SAMPLES = [];         // 예시 카드(데이터 없을 때만)
+  var picked = {};          // {sheetId: {no: true}}
+  var filterKid = 'all', filterUnit = 'all';
+  var uploading = false, pinOK = false, whoKid = 'yunjin';
+  var printTarget = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg; t.classList.add('on');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.classList.remove('on'); }, 2200);
+  }
+  function fmtDay(iso) {
+    if (!iso) return '';
+    var p = String(iso).split('-');
+    if (p.length < 3) return iso;
+    return Number(p[1]) + '/' + Number(p[2]);
+  }
+
+  /* ============================================================
+     데이터 불러오기
+     ============================================================ */
+  function loadSamples() {
+    SAMPLES = [
+      {
+        id: 'sample-yunjin', sample: true, date: '2026-11-18',
+        kid: 'yunjin', kid_name: '윤진', unit: '4단원 분수', title: '3학년 2학기 수학',
+        page: 'assets/math/sample-yunjin/clean-page.png',
+        thumb: 'assets/math/sample-yunjin/clean-thumb.jpg',
+        problems: [
+          { no: 2, image: 'assets/math/sample-yunjin/wrong-2.png', mark_name: '빨간펜 X', shape: 'x' },
+          { no: 5, image: 'assets/math/sample-yunjin/wrong-5.png', mark_name: '빨간펜 X', shape: 'x' },
+          { no: 6, image: 'assets/math/sample-yunjin/wrong-6.png', mark_name: '빨간펜 빗금', shape: 'slash' }
+        ]
+      },
+      {
+        id: 'sample-hyungwon', sample: true, date: '2026-11-18',
+        kid: 'hyungwon', kid_name: '형원', unit: '10까지의 수', title: '7세 수학',
+        page: 'assets/math/sample-hyungwon/clean-page.png',
+        thumb: 'assets/math/sample-hyungwon/clean-thumb.jpg',
+        problems: [
+          { no: 3, image: 'assets/math/sample-hyungwon/wrong-3.png', mark_name: '빨간펜 X', shape: 'x' },
+          { no: 5, image: 'assets/math/sample-hyungwon/wrong-5.png', mark_name: '빨간펜 X', shape: 'x' }
+        ]
+      }
+    ];
+  }
+
+  function fetchData() {
+    return fetch('./math-data.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : { worksheets: [] }; })
+      .then(function (d) {
+        DATA = d || {};
+        SHEETS = (DATA.worksheets || []).filter(function (w) { return w && w.id; });
+      })
+      .catch(function () { DATA = { worksheets: [] }; SHEETS = []; });
+  }
+
+  function fetchProgress() {
+    return fetch(PROGRESS + '.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (p) { PROG = p || {}; })
+      .catch(function () {
+        try { PROG = JSON.parse(localStorage.getItem('math_progress') || '{}'); } catch (e) { PROG = {}; }
+      });
+  }
+
+  function saveProgress(sheetId, no) {
+    var bucket = PROG[sheetId] || (PROG[sheetId] = {});
+    var item = bucket[no] || (bucket[no] = {});
+    try { localStorage.setItem('math_progress', JSON.stringify(PROG)); } catch (e) {}
+    var body = {};
+    body[no] = item;
+    return fetch(PROGRESS + '/' + encodeURIComponent(sheetId) + '.json', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).catch(function () { /* 오프라인이면 다음에 다시 */ });
+  }
+  function progOf(sheetId, no) {
+    var b = PROG[sheetId]; var i = b && b[no];
+    return i || {};
+  }
+
+  /* ============================================================
+     렌더
+     ============================================================ */
+  function allSheets() {
+    return SHEETS.length ? SHEETS : SAMPLES;
+  }
+
+  function countWrong() {
+    var n = 0;
+    allSheets().forEach(function (w) { n += (w.problems || []).length; });
+    return n;
+  }
+  function countTodo() {
+    var n = 0;
+    allSheets().forEach(function (w) {
+      (w.problems || []).forEach(function (p) {
+        if (!progOf(w.id, p.no).done) n++;
+      });
+    });
+    return n;
+  }
+
+  function updateStats() {
+    $('sWrong').textContent = countWrong();
+    $('sTodo').textContent = countTodo();
+    $('sSheets').textContent = SHEETS.length;
+    $('cntWrong').textContent = countWrong();
+    $('cntSheets').textContent = SHEETS.length;
+  }
+
+  function fillUnits() {
+    var sel = $('unitSel');
+    var seen = {}, opts = ['<option value="all">모든 단원</option>'];
+    allSheets().forEach(function (w) {
+      var key = (w.unit || w.title || '').trim();
+      if (!key || seen[key]) return;
+      seen[key] = 1;
+      opts.push('<option value="' + esc(key) + '">' + esc(key) + '</option>');
+    });
+    sel.innerHTML = opts.join('');
+    sel.value = filterUnit;
+  }
+
+  function renderProblems() {
+    var host = $('qlist');
+    var list = [];
+    allSheets().forEach(function (w) {
+      if (filterKid !== 'all' && w.kid !== filterKid) return;
+      var ukey = (w.unit || w.title || '').trim();
+      if (filterUnit !== 'all' && ukey !== filterUnit) return;
+      (w.problems || []).forEach(function (p) { list.push({ w: w, p: p }); });
+    });
+
+    if (!list.length) {
+      host.innerHTML = '<div class="empty"><span class="big">🫧</span>이 조건에 맞는 오답이 아직 없어요.<br>다른 아이를 골라 보거나, 문제지 사진을 올려 주세요.</div>';
+      return;
+    }
+    var html = [];
+    list.forEach(function (it) {
+      var w = it.w, p = it.p;
+      var pr = progOf(w.id, p.no);
+      var isPicked = !!(picked[w.id] && picked[w.id][p.no]);
+      var kid = KID[w.kid] || { icon: '🧒', name: w.kid_name || '아이' };
+      html.push(
+        '<div class="qcard' + (isPicked ? ' picked' : '') + (w.sample ? ' sample' : '') + '" data-sheet="' + esc(w.id) + '" data-no="' + p.no + '">' +
+          '<div class="q-top">' +
+            '<span class="q-no">' + p.no + '번</span>' +
+            '<span class="q-who">' + kid.icon + ' ' + esc(w.kid_name || kid.name) + '</span>' +
+            '<span class="q-meta">' + fmtDay(w.date) + (w.unit ? ' · ' + esc(w.unit) : '') + '</span>' +
+            (w.sample ? '<span class="q-tag sample">예시</span>' : '') +
+            (pr.done ? '<span class="q-tag done">다시 풀기 완료</span>' : '') +
+          '</div>' +
+          '<img class="q-img" loading="lazy" alt="' + esc(w.kid_name || '') + ' ' + p.no + '번 문제" src="' + esc(p.image) + '">' +
+          '<div class="q-actions">' +
+            '<button class="q-act' + (pr.done ? ' on' : '') + '" data-act="done" type="button">' + (pr.done ? '✅ 다시 풀기 완료' : '☑️ 다시 풀기 완료') + '</button>' +
+            '<button class="q-act" data-act="memo" type="button">📝 정답 메모' + (pr.memo ? ' ·' : '') + '</button>' +
+            '<button class="q-act" data-act="pick" type="button">' + (isPicked ? '✓ 인쇄에 넣음' : '＋ 인쇄에 넣기') + '</button>' +
+          '</div>' +
+          '<div class="q-memo' + (pr.memo ? ' on' : '') + '">' +
+            '<textarea data-memo placeholder="정답·풀이를 적어 두면 인쇄할 때 함께 나와요">' + esc(pr.memo || '') + '</textarea>' +
+            '<div class="row"><span>이 기기와 가족 계정에 저장돼요</span><button class="save" data-save type="button">저장</button></div>' +
+          '</div>' +
+          '<div class="pick' + (isPicked ? ' on' : '') + '" data-act="pick" role="checkbox" aria-checked="' + isPicked + '" aria-label="인쇄 목록에 넣기">✓</div>' +
+        '</div>'
+      );
+    });
+    host.innerHTML = html.join('');
+  }
+
+  function renderSheets() {
+    var host = $('wlist');
+    if (!SHEETS.length) {
+      host.innerHTML = '<div class="empty"><span class="big">📄</span>아직 깨끗한 문제지가 없어요.<br>문제지 사진을 올리면 여기에 쌓여요.</div>';
+      return;
+    }
+    var html = [];
+    SHEETS.forEach(function (w) {
+      var kid = KID[w.kid] || { icon: '🧒', name: w.kid_name || '아이' };
+      html.push(
+        '<div class="wcard">' +
+          '<div class="thumb" data-view="' + esc(w.id) + '"><img loading="lazy" alt="' + esc(w.title || '문제지') + '" src="' + esc(w.thumb || w.page) + '"></div>' +
+          '<div class="wbody">' +
+            '<div class="wt">' + esc(w.title || (w.unit || '수학 문제지')) + '</div>' +
+            '<div class="wm">' + kid.icon + ' ' + esc(w.kid_name || kid.name) + ' · ' + fmtDay(w.date) + (w.unit ? ' · ' + esc(w.unit) : '') + '</div>' +
+            '<div class="wm">틀린 문제 ' + ((w.problems || []).length) + '개 · 문제 ' + (w.problem_count || '?') + '개</div>' +
+            '<div class="wb">' +
+              '<button class="mini" data-view="' + esc(w.id) + '" type="button">👀 크게 보기</button>' +
+              '<button class="mini pri" data-print="' + esc(w.id) + '" type="button">🖨️ A4 인쇄</button>' +
+              (w.page_pdf ? '<a class="mini" style="text-decoration:none" href="' + esc(w.page_pdf) + '" target="_blank" rel="noopener">PDF</a>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    });
+    host.innerHTML = html.join('');
+  }
+
+  function renderAll() {
+    updateStats();
+    fillUnits();
+    renderProblems();
+    renderSheets();
+    $('banner').style.display = SHEETS.length ? 'none' : 'flex';
+    $('bannerClean').style.display = SHEETS.length ? 'none' : 'flex';
+    updatePrintBar();
+  }
+
+  /* ============================================================
+     선택 → 인쇄
+     ============================================================ */
+  function pickedCount() {
+    var n = 0;
+    Object.keys(picked).forEach(function (k) {
+      Object.keys(picked[k]).forEach(function (no) { if (picked[k][no]) n++; });
+    });
+    return n;
+  }
+  function updatePrintBar() {
+    var n = pickedCount();
+    $('pickCnt').textContent = n;
+    $('printbar').classList.toggle('on', n > 0 && document.body.getAttribute('data-tab') !== 'clean');
+  }
+  function togglePick(sheetId, no) {
+    picked[sheetId] = picked[sheetId] || {};
+    picked[sheetId][no] = !picked[sheetId][no];
+    renderProblems();
+    updatePrintBar();
+  }
+
+  function buildNotebook() {
+    var host = $('printNotebook');
+    var items = [];
+    allSheets().forEach(function (w) {
+      var bucket = picked[w.id] || {};
+      (w.problems || []).forEach(function (p) {
+        if (bucket[p.no]) items.push({ w: w, p: p });
+      });
+    });
+    if (!items.length) {
+      host.innerHTML = '';
+      return 0;
+    }
+    var today = new Date();
+    var head = '<div class="pn-head"><h2>🧮 오답노트</h2><div class="meta">' +
+      today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 · ' +
+      items.length + '문제</div></div>';
+    var cards = items.map(function (it) {
+      var w = it.w, p = it.p;
+      var pr = progOf(w.id, p.no);
+      var memo = pr.memo ? '<div class="pn-answer"><b>정답·메모</b><br>' + esc(pr.memo) + '</div>'
+                         : '<div class="pn-answer"><b>정답·메모</b></div>';
+      return '<div class="pn-card">' +
+        '<div class="pn-top"><span class="pn-no">' + p.no + '번</span>' +
+        '<span class="pn-who">' + esc((w.kid_name || '')) + (w.unit ? ' · ' + esc(w.unit) : '') + '</span>' +
+        '<span class="pn-tag">' + esc(p.mark_name || '') + ' · ' + fmtDay(w.date) + '</span></div>' +
+        '<img alt="" src="' + esc(p.image) + '">' +
+        '<div class="pn-lines"><i></i><i></i><i></i><i></i></div>' +
+        memo +
+      '</div>';
+    });
+    host.innerHTML = head + cards.join('') +
+      '<div class="pn-foot"><span>연필로 다시 풀어 보세요</span><span>pokemon-quest · 수학 오답노트</span></div>';
+    return items.length;
+  }
+
+  function printNotebook() {
+    var n = buildNotebook();
+    if (!n) { toast('인쇄할 문제를 먼저 골라 주세요'); return; }
+    document.body.setAttribute('data-print', 'notebook');
+    setTimeout(function () {
+      window.print();
+      setTimeout(function () { document.body.removeAttribute('data-print'); }, 400);
+    }, 80);
+  }
+
+  function printWorksheet(id) {
+    var w = SHEETS.filter(function (x) { return x.id === id; })[0];
+    if (!w) { toast('문제지를 찾지 못했어요'); return; }
+    var kid = KID[w.kid] || {};
+    $('printPage').innerHTML =
+      '<div class="pp-title">' + esc(w.title || '수학 문제지') + '</div>' +
+      '<div class="pp-sub">' + esc(w.kid_name || kid.name || '') + ' · ' + fmtDay(w.date) +
+        (w.unit ? ' · ' + esc(w.unit) : '') + ' · 연필 흔적 지운 새 문제지</div>' +
+      '<img alt="" src="' + esc(w.page) + '">';
+    document.body.setAttribute('data-print', 'worksheet');
+    setTimeout(function () {
+      window.print();
+      setTimeout(function () { document.body.removeAttribute('data-print'); }, 400);
+    }, 120);
+  }
+
+  /* ============================================================
+     사진 올리기 (PIN → 아이/단원 → 파일 → Firebase)
+     ============================================================ */
+  var upMsgEl = $('upMsg');
+  function upMsg(html, kind) {
+    upMsgEl.className = 'upmsg on ' + (kind || '');
+    upMsgEl.innerHTML = html;
+  }
+  function setBadge(on) { $('inboxBadge').classList.toggle('on', !!on); }
+
+  function refreshInbox() {
+    fetch(INBOX + '/status.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (st) {
+        var pending = st === 'pending' || st === 'analyzing';
+        setBadge(pending || uploading);
+      })
+      .catch(function () {});
+  }
+
+  function pinMatches(value) {
+    return fetch(DB + '/settings/pin.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (p) {
+        var pin = (typeof p === 'string' && p.trim()) ? p.trim() : '0000';
+        return String(value).trim() === pin;
+      })
+      .catch(function () { return String(value).trim() === '0000'; });
+  }
+
+  function openSheetEl(el) { el.classList.add('on'); }
+  function closeSheetEl(el) { el.classList.remove('on'); }
+
+  function askPin() {
+    $('pinErr').textContent = '';
+    $('pinInput').value = '';
+    openSheetEl($('pinSheet'));
+    setTimeout(function () { $('pinInput').focus(); }, 180);
+  }
+
+  function submitPin() {
+    var v = $('pinInput').value.trim();
+    if (v.length !== 4) { $('pinErr').textContent = 'PIN 4자리를 입력해 주세요.'; return; }
+    pinMatches(v).then(function (ok) {
+      if (ok) {
+        pinOK = true;
+        closeSheetEl($('pinSheet'));
+        setTimeout(function () { openSheetEl($('whoSheet')); }, 140);
+      } else {
+        $('pinErr').textContent = 'PIN이 맞지 않아요.';
+        $('pinInput').value = '';
+        $('pinInput').focus();
+      }
+    });
+  }
+
+  function loadImage(file) {
+    return new Promise(function (res, rej) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () { URL.revokeObjectURL(url); res(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('사진을 열 수 없어요')); };
+      img.src = url;
+    });
+  }
+
+  function shrink(img) {
+    var cv = document.createElement('canvas');
+    var scale = Math.min(1, MAX_W / img.naturalWidth);
+    var w = Math.max(1, Math.round(img.naturalWidth * scale));
+    var h = Math.max(1, Math.round(img.naturalHeight * scale));
+    var q = 0.9;
+    function draw() {
+      cv.width = w; cv.height = h;
+      var ctx = cv.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, w, h);
+    }
+    draw();
+    return new Promise(function (resolve) {
+      function step() {
+        cv.toBlob(function (blob) {
+          if (!blob || blob.size <= TARGET_BYTES || w <= 900) { resolve({ blob: blob || new Blob(), w: w, h: h }); return; }
+          if (q > 0.6) { q = Math.max(0.6, q - 0.07); }
+          else { w = Math.round(w * 0.85); h = Math.round(h * 0.85); q = 0.86; draw(); }
+          step();
+        }, 'image/jpeg', q);
+      }
+      step();
+    });
+  }
+
+  function blobToDataURL(blob) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onload = function () { res(fr.result); };
+      fr.onerror = function () { rej(new Error('사진을 읽을 수 없어요')); };
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  function uploadSheet(file) {
+    if (uploading) return;
+    uploading = true;
+    var btn = $('upBtn');
+    var label = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = '⏳ 사진 준비 중…';
+    setBadge(true);
+    loadImage(file).then(function (img) {
+      return shrink(img).then(function (out) {
+        var kb = Math.max(1, Math.round(out.blob.size / 1024));
+        btn.innerHTML = '📤 올리는 중… (' + kb + 'KB)';
+        upMsg('📤 올리는 중… (' + kb + 'KB · ' + out.w + '×' + out.h + ')', 'wait');
+        return blobToDataURL(out.blob).then(function (dataUrl) {
+          var kidName = (KID[whoKid] || {}).name || '';
+          var body = {
+            status: 'pending',
+            uploaded_at: new Date().toISOString(),
+            filename: file.name || 'worksheet.jpg',
+            bytes: out.blob.size,
+            width: out.w, height: out.h,
+            kid: whoKid,
+            kid_name: kidName,
+            unit: ($('unitInput').value || '').trim(),
+            title: ($('titleInput').value || '').trim(),
+            image_data: dataUrl
+          };
+          return fetch(INBOX + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          }).then(function (r) {
+            if (!r.ok) throw new Error('저장 실패 (HTTP ' + r.status + ')');
+            upMsg('✅ 올렸어요! 호박이가 연필·채점 흔적을 지우고 오답을 모아 <b>10분 안에</b> 여기에 올려 드릴게요.<br>' +
+                  '<span style="opacity:.75;font-size:11.5px">' + esc(kidName) + (body.unit ? ' · ' + esc(body.unit) : '') + ' · ' + kb + 'KB</span>' +
+                  '<br><button type="button" onclick="location.reload()">🔄 새로고침</button>', 'ok');
+            setBadge(true);
+            toast('문제지 사진을 올렸어요');
+          });
+        });
+      });
+    }).catch(function (err) {
+      setBadge(false);
+      upMsg('❗ 올리지 못했어요. 사진을 다시 골라 주세요.<br><span style="opacity:.7;font-size:11.5px">' +
+            esc((err && err.message) || err) + '</span>', 'err');
+    }).then(function () {
+      uploading = false;
+      btn.disabled = false;
+      btn.innerHTML = label;
+    });
+  }
+
+  /* ============================================================
+     이벤트
+     ============================================================ */
+  $('tabWrong').addEventListener('click', function () { switchTab('wrong'); });
+  $('tabClean').addEventListener('click', function () { switchTab('clean'); });
+  function switchTab(which) {
+    document.body.setAttribute('data-tab', which);
+    $('tabWrong').classList.toggle('on', which === 'wrong');
+    $('tabClean').classList.toggle('on', which === 'clean');
+    $('tabWrong').setAttribute('aria-selected', which === 'wrong');
+    $('tabClean').setAttribute('aria-selected', which === 'clean');
+    $('paneWrong').classList.toggle('on', which === 'wrong');
+    $('paneClean').classList.toggle('on', which === 'clean');
+    updatePrintBar();
+  }
+
+  $('filters').addEventListener('click', function (e) {
+    var b = e.target.closest('.chipbtn');
+    if (!b) return;
+    filterKid = b.getAttribute('data-kid');
+    Array.prototype.forEach.call($('filters').querySelectorAll('.chipbtn'), function (x) {
+      x.classList.toggle('on', x === b);
+    });
+    renderProblems();
+  });
+  $('unitSel').addEventListener('change', function (e) {
+    filterUnit = e.target.value;
+    renderProblems();
+  });
+
+  $('qlist').addEventListener('click', function (e) {
+    var card = e.target.closest('.qcard');
+    if (!card) return;
+    var sheetId = card.getAttribute('data-sheet');
+    var no = Number(card.getAttribute('data-no'));
+    var actEl = e.target.closest('[data-act]');
+    var act = actEl && actEl.getAttribute('data-act');
+
+    if (act === 'pick') { togglePick(sheetId, no); return; }
+    if (act === 'done') {
+      var pr = progOf(sheetId, no);
+      pr.done = !pr.done;
+      PROG[sheetId] = PROG[sheetId] || {};
+      PROG[sheetId][no] = pr;
+      saveProgress(sheetId, no);
+      renderProblems(); updateStats();
+      toast(pr.done ? '다시 풀기 완료로 표시했어요' : '다시 풀 문제로 되돌렸어요');
+      return;
+    }
+    if (act === 'memo') {
+      var box = card.querySelector('.q-memo');
+      box.classList.toggle('on');
+      if (box.classList.contains('on')) {
+        var ta = box.querySelector('textarea');
+        ta.focus();
+      }
+      return;
+    }
+    if (act === 'save') {
+      var t = card.querySelector('textarea');
+      var bucket = PROG[sheetId] || (PROG[sheetId] = {});
+      bucket[no] = bucket[no] || {};
+      bucket[no].memo = t.value.trim();
+      saveProgress(sheetId, no);
+      toast('메모를 저장했어요');
+      return;
+    }
+    if (!act) { togglePick(sheetId, no); }
+  });
+
+  $('wlist').addEventListener('click', function (e) {
+    var v = e.target.closest('[data-view]');
+    var p = e.target.closest('[data-print]');
+    if (p) { printWorksheet(p.getAttribute('data-print')); return; }
+    if (v) { openView(v.getAttribute('data-view')); }
+  });
+
+  function openView(id) {
+    var w = SHEETS.filter(function (x) { return x.id === id; })[0];
+    if (!w) return;
+    printTarget = w.id;
+    $('vTitle').textContent = w.title || '깨끗한 새 문제지';
+    $('vSub').textContent = (w.kid_name || '') + ' · ' + fmtDay(w.date) + (w.unit ? ' · ' + w.unit : '') + ' · 연필 흔적 지운 인쇄본';
+    $('vImg').src = w.page || w.thumb;
+    openSheetEl($('viewSheet'));
+  }
+  $('vClose').addEventListener('click', function () { closeSheetEl($('viewSheet')); });
+  $('vPrint').addEventListener('click', function () {
+    closeSheetEl($('viewSheet'));
+    if (printTarget) printWorksheet(printTarget);
+  });
+  $('viewSheet').addEventListener('click', function (e) {
+    if (e.target.id === 'viewSheet') closeSheetEl($('viewSheet'));
+  });
+
+  $('printPick').addEventListener('click', printNotebook);
+
+  $('upBtn').addEventListener('click', function () { if (!uploading) askPin(); });
+  $('pinOk').addEventListener('click', submitPin);
+  $('pinCancel').addEventListener('click', function () { closeSheetEl($('pinSheet')); });
+  $('pinInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') submitPin(); });
+  $('pinSheet').addEventListener('click', function (e) { if (e.target.id === 'pinSheet') closeSheetEl($('pinSheet')); });
+
+  $('kidPick').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-kid]');
+    if (!b) return;
+    whoKid = b.getAttribute('data-kid');
+    Array.prototype.forEach.call($('kidPick').querySelectorAll('button'), function (x) {
+      x.classList.toggle('on', x === b);
+    });
+  });
+  $('whoNext').addEventListener('click', function () {
+    closeSheetEl($('whoSheet'));
+    setTimeout(function () { $('upFile').click(); }, 120);
+  });
+  $('whoCancel').addEventListener('click', function () { closeSheetEl($('whoSheet')); });
+  $('whoSheet').addEventListener('click', function (e) { if (e.target.id === 'whoSheet') closeSheetEl($('whoSheet')); });
+  $('upFile').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (f) uploadSheet(f);
+  });
+
+  /* ============================================================
+     시작
+     ============================================================ */
+  loadSamples();
+  document.body.setAttribute('data-tab', 'wrong');
+  var py = $('printYear');
+  if (py) py.textContent = ' · 2026';
+  fetchData().then(fetchProgress).then(function () {
+    if (!pinOK && SHEETS.length === 0) {
+      // 첫 방문: 예시 카드로 UI 모양을 보여 준다
+      renderAll();
+    } else {
+      renderAll();
+    }
+    refreshInbox();
+    setInterval(refreshInbox, 60000);
+  });
+})();
+</script>
+</body>
+</html>
