@@ -143,10 +143,10 @@ ul{margin:0;padding:0;list-style:none}
   border:1.5px solid #fff;
 }
 
-/* ---------- 바로 가기 (퍼즐 게임 · 가족게시판) ---------- */
+/* ---------- 바로 가기 (가족게시판) ---------- */
 .qlinks{
   width:100%;max-width:560px;margin:0 auto;padding:12px 14px 0;
-  display:grid;grid-template-columns:1fr 1fr;gap:9px;
+  display:grid;grid-template-columns:1fr;gap:9px;
 }
 .qlink{
   display:flex;align-items:center;justify-content:center;gap:6px;
@@ -159,8 +159,8 @@ ul{margin:0;padding:0;list-style:none}
 .qlink:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(30,42,68,.14)}
 .qlink.puzzle{background:linear-gradient(180deg,#fff8d8,#ffe292)}
 .qlink.board{background:linear-gradient(180deg,#e6fdf0,#c3f2d6)}
-.qlink.gugu{background:linear-gradient(180deg,#fff0f6,#ffc9dd)}
-.qlink.phonics{background:linear-gradient(180deg,#e9f5ff,#bcdfff)}
+/* 퀘스트 목록 아래 '지식 퍼즐 게임' 바로가기 */
+.qlink.gamelink{margin-top:12px}
 
 /* ---------- 아이 프로필 카드 ---------- */
 .kids{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1061,10 +1061,7 @@ label.btn{cursor:pointer}
     <div class="nav-in" id="nav"></div>
   </nav>
   <nav class="qlinks" aria-label="바로 가기">
-    <a class="qlink puzzle" href="./game.html"><span class="qi" aria-hidden="true">🧩</span><span>지식 퍼즐 게임</span></a>
     <a class="qlink board" href="./board.html"><span class="qi" aria-hidden="true">🏡</span><span>채씨네 가족게시판</span></a>
-    <a class="qlink gugu" href="./gugudan.html"><span class="qi" aria-hidden="true">🔢</span><span>구구단 놀이</span></a>
-    <a class="qlink phonics" href="./phonics.html"><span class="qi" aria-hidden="true">🔤</span><span>파닉스 놀이</span></a>
   </nav>
 </header>
 
@@ -2798,7 +2795,13 @@ label.btn{cursor:pointer}
   }
 
   function kidPageHTML(k) {
-    return kidHeadHTML(k) + kidStudyHTML(k) + questListHTML(k);
+    return kidHeadHTML(k) + kidStudyHTML(k) + questListHTML(k) + gameLinkHTML();
+  }
+
+  /* 퀘스트 완성 버튼 바로 아래 — 지식 퍼즐 게임(별도 프로그램)으로 */
+  function gameLinkHTML() {
+    return '<a class="qlink puzzle gamelink" href="./game.html">'
+      + '<span class="qi" aria-hidden="true">🧩</span><span>지식 퍼즐 게임 하러 가기</span></a>';
   }
 
   /* ============ 오늘의 학습 — 암산 / 영단어 ============ */
