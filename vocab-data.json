@@ -1,0 +1,46 @@
+{
+  "updated": "2026-11-18",
+  "sets": [
+    {
+      "id": "2026-11-17",
+      "label": "11월 17일 · 32단어",
+      "date": "2026-11-17",
+      "unit": "1차 단어장",
+      "title": "Vocabulary Test",
+      "words": [
+        {"en": "stressed out", "pos": "adj.", "ko": "스트레스가 쌓인", "forms": null},
+        {"en": "homework", "pos": "n.", "ko": "숙제, 과제", "forms": null},
+        {"en": "finish", "pos": "v.", "ko": "마치다, 끝내다", "forms": "finish – finished – finished"},
+        {"en": "pack", "pos": "v.", "ko": "짐을 싸다", "forms": "pack – packed – packed"},
+        {"en": "move", "pos": "v.", "ko": "움직이다; *이사하다", "forms": "move – moved – moved"},
+        {"en": "awesome", "pos": "adj.", "ko": "멋진", "forms": null},
+        {"en": "definitely", "pos": "adv.", "ko": "분명히", "forms": null},
+        {"en": "jog", "pos": "n.", "ko": "조깅", "forms": null},
+        {"en": "remodel", "pos": "v.", "ko": "(건축물을) 개조하다", "forms": "remodel – remodeled – remodeled"},
+        {"en": "replace", "pos": "v.", "ko": "대체하다; *바꾸다", "forms": "replace – replaced – replaced"},
+        {"en": "decide", "pos": "v.", "ko": "결정하다", "forms": "decide – decided – decided"},
+        {"en": "repaint", "pos": "v.", "ko": "다시 칠하다", "forms": "repaint – repainted – repainted"},
+        {"en": "cabinet", "pos": "n.", "ko": "보관장, 캐비닛", "forms": null},
+        {"en": "handy", "pos": "adj.", "ko": "유용한; *손재주가 있는", "forms": null},
+        {"en": "fix", "pos": "v.", "ko": "고치다", "forms": "fix – fixed – fixed"},
+        {"en": "broken", "pos": "adj.", "ko": "깨진; *고장 난", "forms": null},
+        {"en": "screwdriver", "pos": "n.", "ko": "나사돌리개, 드라이버", "forms": null},
+        {"en": "hammer", "pos": "n.", "ko": "망치", "forms": null},
+        {"en": "sunlight", "pos": "n.", "ko": "햇빛", "forms": null},
+        {"en": "stream", "pos": "v.", "ko": "계속 흐르다", "forms": "stream – streamed – streamed"},
+        {"en": "sunset", "pos": "n.", "ko": "일몰", "forms": null},
+        {"en": "brand-new", "pos": "adj.", "ko": "완전히 새로운", "forms": null},
+        {"en": "appliance", "pos": "n.", "ko": "기기", "forms": null},
+        {"en": "state-of-the-art", "pos": "adj.", "ko": "최신의", "forms": null},
+        {"en": "refrigerator", "pos": "n.", "ko": "냉장고", "forms": null},
+        {"en": "bathtub", "pos": "n.", "ko": "욕조", "forms": null},
+        {"en": "electronic", "pos": "adj.", "ko": "전자(기)의", "forms": null},
+        {"en": "plenty of", "pos": "adj.", "ko": "많은", "forms": null},
+        {"en": "notice", "pos": "v.", "ko": "알아채다", "forms": "notice – noticed – noticed"},
+        {"en": "clear", "pos": "adj.", "ko": "분명한; *훤히 뚫린", "forms": null},
+        {"en": "view", "pos": "n.", "ko": "경관, 전망", "forms": null},
+        {"en": "charming", "pos": "adj.", "ko": "매력적인", "forms": null}
+      ]
+    }
+  ]
+}
