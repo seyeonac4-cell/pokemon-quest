@@ -1573,11 +1573,11 @@ img{image-rendering:auto}
     }
     function melonOpen(q) {
       q = (q || '북카페').trim();
+      // 한 번 연 'melonCafe' 탭을 다시 쓰고, 처음이면 새 탭을 연다
       var w = window.open(melonUrl(q), 'melonCafe');
-      if (w) { try { w.opener = null; } catch (e) {} }
-      else toast('새 창이 막혔어요 — 팝업을 허용해 주세요');
       melonMarkChip(q);
       $('mbInput').value = '';
+      if (!w) { toast('새 창이 막혔어요 — 팝업을 허용해 주세요'); return; }
       toast('☕ 멜론에서 \'전체듣기\'를 눌러 주세요');
     }
     $('mbPlay').addEventListener('click', function (ev) {
