@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF7EF">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="앱 모음">
+<meta name="description" content="채씨네 13개 가족·학습·생활 웹앱을 한 화면에서 Chrome으로 열고 홈 화면에 설치하는 런처">
+<title>📱 채씨네 앱 모음 · 13개</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/apps/apps-icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/apps/apps-icon-180.png">
+<link rel="manifest" href="./manifest-apps.json">
+<style>
+:root{
+  --ink:#23263A; --ink2:#565C74; --muted:#7F869D; --line:#E8E9F3; --paper:#FFFFFF;
+  --shadow:0 10px 26px rgba(35,38,58,.07), 0 2px 5px rgba(35,38,58,.05);
+  --shadow-lg:0 18px 44px rgba(35,38,58,.12);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); word-break:keep-all; line-height:1.5;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,
+    "Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(900px 520px at 6% -8%, #FFE9D8 0%, rgba(255,233,216,0) 62%),
+    radial-gradient(900px 560px at 100% -4%, #E1EAFF 0%, rgba(225,234,255,0) 58%),
+    linear-gradient(180deg,#FFF9F3 0%,#F3F6FF 62%,#F7F3FF 100%);
+  background-attachment:fixed;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(48px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:1080px;margin:0 auto}
+
+/* ---------- 히어로 ---------- */
+.hero{
+  background:linear-gradient(160deg,#FFFFFF 0%,#FFF7EF 46%,#F0F5FF 100%);
+  border:1px solid #fff; border-radius:28px; padding:clamp(18px,3.4vw,30px);
+  box-shadow:var(--shadow-lg); position:relative; overflow:hidden;
+}
+.hero::after{
+  content:""; position:absolute; right:-70px; top:-70px; width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, rgba(255,190,140,.55), rgba(255,190,140,0) 70%);
+  pointer-events:none;
+}
+.kicker{
+  display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:900; letter-spacing:.01em;
+  color:#8A4B12; background:#FFEDD8; border:1px solid #FFDDBB; border-radius:999px; padding:6px 12px;
+}
+h1{
+  margin:12px 0 8px; font-size:clamp(25px,4.9vw,38px); font-weight:900; letter-spacing:-.035em; line-height:1.22;
+}
+h1 em{font-style:normal; background:linear-gradient(180deg,transparent 62%, #FFE08A 62%); padding:0 2px}
+.lead{margin:0; color:var(--ink2); font-size:clamp(14px,1.9vw,16px); max-width:46em}
+.lead b{color:var(--ink)}
+
+.hero-actions{display:flex; flex-wrap:wrap; gap:9px; margin-top:16px}
+
+.banner{
+  margin-top:14px; padding:12px 14px; border-radius:16px; font-size:14.5px; font-weight:700;
+  display:flex; gap:9px; align-items:flex-start; line-height:1.45;
+}
+.banner .bi{font-size:18px; line-height:1.2; flex:0 0 auto}
+.banner.warn{background:#FFF4E0; border:1px solid #FFDDA6; color:#7A4A00}
+.banner.ok{background:#E9FBF1; border:1px solid #B9EFD5; color:#0B6344}
+.banner.info{background:#EFF3FF; border:1px solid #CEDBFF; color:#243B7A}
+.banner small{display:block; font-weight:600; font-size:13px; opacity:.9; margin-top:2px}
+
+/* ---------- 버튼 ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  border:0; border-radius:14px; font:inherit; font-weight:800; font-size:15px;
+  padding:12px 16px; min-height:48px; cursor:pointer; text-decoration:none; text-align:center;
+  transition:transform .11s ease, filter .12s ease, background .12s ease;
+  user-select:none;
+}
+.btn:active{transform:scale(.985)}
+.btn.big{min-height:56px; padding:14px 20px; font-size:16.5px; border-radius:16px}
+.btn-hero{
+  color:#fff; background:linear-gradient(135deg,#5A57F2 0%,#8B5CF6 58%,#A855F7 100%);
+  box-shadow:0 8px 18px rgba(99,74,235,.28);
+}
+.btn-ghost{background:#fff; color:#3A3F58; border:1.5px solid #E2E4F1; box-shadow:0 2px 6px rgba(35,38,58,.05)}
+.btn-ghost:active{background:#F7F8FE}
+.btn[disabled], .btn.done{opacity:.62; pointer-events:none; box-shadow:none}
+
+/* ---------- 공유 바 ---------- */
+.sharebar{
+  margin-top:14px; background:#23263A; color:#fff; border-radius:22px; padding:14px 16px;
+  display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+  box-shadow:0 12px 28px rgba(35,38,58,.22);
+}
+.sharebar .sb-txt b{display:block; font-size:15.5px; font-weight:900; letter-spacing:-.01em}
+.sharebar .sb-txt span{font-size:13px; color:#B9BFD8}
+.sharebar .sb-row{display:flex; gap:8px; flex-wrap:wrap}
+.btn-share{background:#FFD84D; color:#3A2B00; box-shadow:0 4px 0 #D9B21F}
+.btn-share:active{box-shadow:0 1px 0 #D9B21F}
+.btn-soft{background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.22)}
+
+/* ---------- 그룹 ---------- */
+.group{margin-top:26px}
+.group h2{
+  display:flex; align-items:center; gap:9px; margin:0 0 12px; font-size:clamp(17px,2.4vw,20px);
+  font-weight:900; letter-spacing:-.02em;
+}
+.group h2 .cnt{
+  font-size:12.5px; font-weight:900; color:#5B627C; background:#fff; border:1px solid var(--line);
+  border-radius:999px; padding:2px 9px;
+}
+.grid{display:grid; gap:13px; grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+@media (max-width:400px){ .grid{grid-template-columns:1fr} }
+
+/* ---------- 카드 ---------- */
+.card{
+  position:relative; display:flex; flex-direction:column; gap:11px;
+  background:linear-gradient(180deg,var(--soft) 0%, #fff 74%);
+  border:1px solid var(--line); border-radius:22px; padding:15px 14px 14px;
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.card::before{content:""; position:absolute; left:0; right:0; top:0; height:5px; background:var(--c)}
+.card-main{display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; border-radius:14px}
+.card-main:active{opacity:.75}
+.ico{
+  flex:0 0 auto; width:66px; height:66px; border-radius:19px; background:#fff;
+  display:grid; place-items:center; box-shadow:0 3px 10px rgba(35,38,58,.10), inset 0 0 0 1px rgba(35,38,58,.05);
+}
+.ico img{width:56px; height:56px; border-radius:14px; display:block}
+.ico.bad img{display:none}
+.ico.bad::before{content:attr(data-emoji); font-size:30px; line-height:1}
+.txt{min-width:0}
+.name{display:block; font-size:18.5px; font-weight:900; letter-spacing:-.025em; line-height:1.3}
+.desc{display:block; margin-top:3px; font-size:13.5px; color:var(--muted); line-height:1.4}
+.actions{display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:auto}
+.btn-open{
+  background:var(--cb); color:var(--on); font-size:15px; font-weight:900; border-radius:13px; min-height:47px;
+  box-shadow:0 4px 12px rgba(35,38,58,.14);
+}
+.btn-open:active{filter:brightness(.94)}
+.btn-copy{background:#F2F3FA; color:#3D445F; border:1px solid #E4E6F2; font-size:14px; min-height:47px; border-radius:13px; padding:12px 13px}
+
+/* ---------- 설치 안내 ---------- */
+.guide{
+  margin-top:28px; background:#fff; border:1px solid var(--line); border-radius:26px;
+  padding:clamp(16px,3vw,26px); box-shadow:var(--shadow);
+}
+.guide h2{margin:0; font-size:clamp(18px,2.6vw,22px); font-weight:900; letter-spacing:-.025em}
+.guide .sub{margin:6px 0 16px; color:var(--muted); font-size:14px}
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.steps li{background:#F7F9FF; border:1px solid #E7EBF8; border-radius:18px; padding:14px; display:flex; gap:11px; align-items:flex-start}
+.steps .num{
+  flex:0 0 auto; width:30px; height:30px; border-radius:10px; display:grid; place-items:center;
+  background:#23263A; color:#fff; font-weight:900; font-size:15px;
+}
+.steps b{display:block; font-size:15px; font-weight:900; letter-spacing:-.01em}
+.steps span{display:block; font-size:13.5px; color:var(--ink2); margin-top:3px}
+.notes{margin:16px 0 0; padding:14px 16px; background:#FFFBF0; border:1px solid #FFE9B8; border-radius:18px; font-size:13.8px; color:#6B5410}
+.notes ul{margin:0; padding-left:18px}
+.notes li+li{margin-top:6px}
+.notes b{color:#4A3900}
+
+footer{margin:26px 0 0; text-align:center; color:#9AA0B4; font-size:12.5px; line-height:1.7}
+footer a{color:#9AA0B4}
+
+/* ---------- 토스트 / 모달 ---------- */
+.toast{
+  position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom)); transform:translate(-50%,18px);
+  background:#23263A; color:#fff; font-weight:800; font-size:14.5px; line-height:1.4;
+  padding:13px 18px; border-radius:15px; box-shadow:0 14px 34px rgba(0,0,0,.28);
+  opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;
+  max-width:min(92vw,520px); text-align:center; z-index:60;
+}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+
+.modal{position:fixed; inset:0; background:rgba(22,24,38,.55); display:none; place-items:center; padding:18px; z-index:70}
+.modal.show{display:grid}
+.modal .box{background:#fff; border-radius:22px; padding:18px; width:100%; max-width:540px; box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.modal h3{margin:0 0 6px; font-size:17px; font-weight:900}
+.modal p{margin:0 0 10px; font-size:13.5px; color:var(--ink2)}
+.modal textarea{
+  width:100%; height:180px; border:1px solid var(--line); border-radius:14px; padding:11px;
+  font:inherit; font-size:13px; line-height:1.55; color:var(--ink); resize:vertical; background:#FBFCFE;
+}
+.modal .mbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:12px}
+
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="kicker">📱 채씨네 앱 모음 · 13개</span>
+    <h1>우리 집 앱 <em>13개</em>,<br>한 화면에서 열고 설치하기</h1>
+    <p class="lead">아이들 태블릿·폰에 <b>홈 화면 앱</b>처럼 깔아 두고 쓰는 페이지예요. 아래 카드의 <b>🌐 Chrome으로 열기</b>로 앱을 열고, 오른쪽 위 <b>⋮ → 홈 화면에 추가</b>를 누르면 끝이에요.</p>
+    <div class="hero-actions">
+      <a class="btn btn-hero big" id="chromeNow" href="https://seyeonac4-cell.github.io/pokemon-quest/apps.html" hidden>🌐 현재 페이지 Chrome으로 열기</a>
+      <button class="btn btn-ghost big" id="copyPage" type="button">📋 이 모음 페이지 링크 복사</button>
+    </div>
+    <div class="banner info" id="envBanner">
+      <span class="bi" id="envIcon">💡</span>
+      <span id="envText">아래 카드에서 앱을 열고 Chrome 오른쪽 위 ⋮ → <b>홈 화면에 추가</b>를 누르면 앱처럼 설치돼요.</span>
+    </div>
+  </header>
+
+  <section class="sharebar">
+    <div class="sb-txt">
+      <b>카톡·문자로 한 번에 보내기</b>
+      <span>13개 앱 주소를 이름과 함께 한 덩어리로 복사해요</span>
+    </div>
+    <div class="sb-row">
+      <button class="btn btn-share" id="copyAll" type="button">📋 전체 링크 한 번에 복사</button>
+      <button class="btn btn-soft" id="shareAll" type="button" hidden>📤 공유하기</button>
+    </div>
+  </section>
+
+    <section class="group" data-plain="가족 공용">
+      <h2>🏡 세연님 · 가족 공용 <span class="cnt">4개</span></h2>
+      <div class="grid">
+      <article class="card" style="--c:#F4603C;--cb:#C44F30;--soft:#FFF2EC;--on:#FFFFFF">
+        <a class="card-main" href="./board.html" data-open="board.html">
+          <span class="ico" data-emoji="🏡"><img src="./assets/board/board-icon-192.png" alt="채씨네 가족게시판 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">채씨네 가족게시판</span>
+            <span class="desc">가족 일정·할일·메모·날씨를 한눈에</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./board.html" data-open="board.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="board.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#E4A500;--cb:#E4A500;--soft:#FFF8E0;--on:#2B1C00">
+        <a class="card-main" href="./index.html" data-open="index.html">
+          <span class="ico" data-emoji="⚡"><img src="./icon-192.png" alt="포켓몬 퀘스트 대시보드 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">포켓몬 퀘스트 대시보드</span>
+            <span class="desc">윤진·형원 퀘스트와 포켓몬 성장 기록</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./index.html" data-open="index.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="index.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#0FA97B;--cb:#12855F;--soft:#E9FBF4;--on:#FFFFFF">
+        <a class="card-main" href="./shift.html" data-open="shift.html">
+          <span class="ico" data-emoji="🌙"><img src="./assets/shift/shift-icon-192.png" alt="11월 나이트 근무표 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">11월 나이트 근무표</span>
+            <span class="desc">내 근무·나이트 동료·A4 인쇄</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./shift.html" data-open="shift.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="shift.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#E80D5B;--cb:#E40D59;--soft:#FFEDF3;--on:#FFFFFF">
+        <a class="card-main" href="./homet.html" data-open="homet.html">
+          <span class="ico" data-emoji="🧘‍♀️"><img src="./assets/homet/homet-icon-192.png" alt="홈트 · 살림 스튜디오 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">홈트 · 살림 스튜디오</span>
+            <span class="desc">노점핑 홈트·청소 노동요·집안일 투두</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./homet.html" data-open="homet.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="homet.html">📋 링크 복사</button>
+        </div>
+      </article>
+      </div>
+    </section>
+    <section class="group" data-plain="윤진(초3)">
+      <h2>👧 윤진 (초3) 이용 <span class="cnt">5개</span></h2>
+      <div class="grid">
+      <article class="card" style="--c:#0C9E63;--cb:#0F8552;--soft:#E9FAF2;--on:#FFFFFF">
+        <a class="card-main" href="./vocab.html" data-open="vocab.html">
+          <span class="ico" data-emoji="📚"><img src="./assets/vocab/vocab-icon-192.png" alt="영단어 암기 · 시험 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">영단어 암기 · 시험</span>
+            <span class="desc">단어장 사진 → 암기 카드·한영/영한 시험지</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./vocab.html" data-open="vocab.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="vocab.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#D97706;--cb:#AF6106;--soft:#FFF5E6;--on:#FFFFFF">
+        <a class="card-main" href="./math.html" data-open="math.html">
+          <span class="ico" data-emoji="✏️"><img src="./assets/math/math-icon-192.png" alt="수학 오답노트 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">수학 오답노트</span>
+            <span class="desc">연필 자국 지운 문제지·틀린 문제 모아 인쇄</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./math.html" data-open="math.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="math.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#9B4DEF;--cb:#984CEA;--soft:#F6EEFF;--on:#FFFFFF">
+        <a class="card-main" href="./idol.html" data-open="idol.html">
+          <span class="ico" data-emoji="📰"><img src="./assets/idol/idol-icon-192.png" alt="아이돌 · 트렌드 신문 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">아이돌 · 트렌드 신문</span>
+            <span class="desc">매일 아침 새로 나오는 아이돌·트렌드 신문</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./idol.html" data-open="idol.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="idol.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#1B6EF3;--cb:#1B6CEE;--soft:#EAF2FF;--on:#FFFFFF">
+        <a class="card-main" href="./dubbing.html" data-open="dubbing.html">
+          <span class="ico" data-emoji="🎙️"><img src="./assets/dubbing/dubbing-icon-192.png" alt="영어 동화 더빙 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">영어 동화 더빙</span>
+            <span class="desc">동화에 내 목소리로 더빙하고 영상 만들기</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./dubbing.html" data-open="dubbing.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="dubbing.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#0E9440;--cb:#0F873A;--soft:#EAF9EF;--on:#FFFFFF">
+        <a class="card-main" href="./game.html" data-open="game.html">
+          <span class="ico" data-emoji="🧩"><img src="./assets/game/game-icon-192.png" alt="지식 퍼즐 어드벤처 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">지식 퍼즐 어드벤처</span>
+            <span class="desc">문제 풀어 그림 맞추는 하루 1판 퍼즐</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./game.html" data-open="game.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="game.html">📋 링크 복사</button>
+        </div>
+      </article>
+      </div>
+    </section>
+    <section class="group" data-plain="형원(7세)">
+      <h2>👧 형원 (7세) 이용 <span class="cnt">4개</span></h2>
+      <div class="grid">
+      <article class="card" style="--c:#EE5CA0;--cb:#BF4C7E;--soft:#FFF0F7;--on:#FFFFFF">
+        <a class="card-main" href="./teenieping.html" data-open="teenieping.html">
+          <span class="ico" data-emoji="🧚‍♀️"><img src="./assets/teenieping/teenieping-icon-192.png" alt="형원이 티니핑 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">형원이 티니핑</span>
+            <span class="desc">형원이 전용 놀이터 (15분 제한)</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./teenieping.html" data-open="teenieping.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="teenieping.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#2740CF;--cb:#2740CF;--soft:#EDEFFF;--on:#FFFFFF">
+        <a class="card-main" href="./gugudan.html" data-open="gugudan.html">
+          <span class="ico" data-emoji="🔢"><img src="./assets/gugudan/gugudan-icon-192.png" alt="형원이 구구단 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">형원이 구구단</span>
+            <span class="desc">묶음 그림으로 익히는 구구단 10문제</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./gugudan.html" data-open="gugudan.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="gugudan.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#6FA800;--cb:#577E02;--soft:#F4FBE6;--on:#FFFFFF">
+        <a class="card-main" href="./phonics.html" data-open="phonics.html">
+          <span class="ico" data-emoji="🔤"><img src="./assets/phonics/phonics-icon-192.png" alt="형원이 파닉스 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">형원이 파닉스</span>
+            <span class="desc">A~Z 음가부터 5단계 목차까지</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./phonics.html" data-open="phonics.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="phonics.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#6C5CE7;--cb:#6C5CE7;--soft:#F0EEFF;--on:#FFFFFF">
+        <a class="card-main" href="./sightwords.html" data-open="sightwords.html">
+          <span class="ico" data-emoji="📖"><img src="./assets/sightwords/sightwords-icon-192.png" alt="형원이 사이트워드 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">형원이 사이트워드</span>
+            <span class="desc">기초 사이트워드 48개 소리 퀴즈</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./sightwords.html" data-open="sightwords.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="sightwords.html">📋 링크 복사</button>
+        </div>
+      </article>
+      </div>
+    </section>
+
+  <section class="guide">
+    <h2>📲 홈 화면에 앱 설치하는 법</h2>
+    <p class="sub">앱마다 따로 설치해요. 한 번만 해 두면 다음부터는 아이콘만 누르면 바로 열려요.</p>
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <div><b>앱을 Chrome으로 열기</b><span>카드의 🌐 Chrome으로 열기 버튼을 누르거나, 주소를 Chrome 주소창에 붙여넣어요.</span></div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div><b>오른쪽 위 ⋮ 누르기</b><span>Chrome 오른쪽 위 점 3개 메뉴를 열고 ‘홈 화면에 추가’를 찾아요.</span></div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div><b>‘설치’ 누르기</b><span>‘홈 화면에 추가’ → ‘설치’를 누르면 홈 화면에 아이콘이 생겨요.</span></div>
+      </li>
+    </ol>
+    <div class="notes">
+      <ul>
+        <li><b>카톡·네이버 앱 안에서는 설치 메뉴가 안 보여요.</b> 꼭 Chrome(또는 삼성 인터넷)에서 열어 주세요. 위의 🌐 버튼이 Chrome으로 넘겨 줘요.</li>
+        <li><b>유튜브 영상 광고가 나올 때</b> — Chrome에 유튜브 프리미엄 계정으로 로그인돼 있으면 광고가 사라져요.</li>
+        <li><b>아이콘이 예전 모양이면</b> 홈 화면의 기존 아이콘을 지우고 다시 ‘홈 화면에 추가’를 해 주세요.</li>
+        <li><b>아이폰·아이패드</b>는 Chrome 대신 사파리의 <b>공유 → 홈 화면에 추가</b>로 설치해요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    채씨네 가족 앱 모음 · 13개<br>
+    <a href="https://seyeonac4-cell.github.io/pokemon-quest/apps.html">seyeonac4-cell.github.io/pokemon-quest/apps.html</a>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="box">
+    <h3 id="modalTitle">링크를 직접 복사해 주세요</h3>
+    <p id="modalDesc">이 앱 안에서는 자동 복사가 막혀 있어요. 아래 글을 길게 눌러 전체 선택 → 복사 해 주세요.</p>
+    <textarea id="modalText" readonly spellcheck="false"></textarea>
+    <div class="mbtns">
+      <button class="btn btn-ghost" id="modalCopyAgain" type="button">📋 다시 복사</button>
+      <button class="btn btn-hero" id="modalClose" type="button">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  var inApp = isAndroid && (/;\s*wv\)/i.test(ua) ||
+      /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|Twitter/i.test(ua));
+  var isChrome = isAndroid && /Chrome\/\d+/i.test(ua) && !/SamsungBrowser|EdgA|OPR\//i.test(ua) && !inApp;
+  var secure = /^https?:$/.test(location.protocol);
+
+  var ROOT = location.origin + location.pathname.replace(/[^\/]*$/, '');
+
+  function abs(file){ return ROOT + file; }
+
+  function intentUrl(httpsUrl){
+    var m = String(httpsUrl).match(/^https:\/\/(.+)$/);
+    if(!m) return httpsUrl;
+    return 'intent://' + m[1] + '#Intent;scheme=https;package=com.android.chrome;' +
+           'S.browser_fallback_url=' + encodeURIComponent(httpsUrl) + ';end';
+  }
+
+  /* ---------- 토스트 ---------- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+  }
+
+  /* ---------- 복사 (클립보드 API → execCommand → 직접 복사 창) ---------- */
+  var modal = document.getElementById('modal');
+  var modalText = document.getElementById('modalText');
+  function legacyCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    var ok = false;
+    try{
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      ok = document.execCommand('copy');
+    }catch(e){ ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function openModal(text, isLink){
+    modalText.value = text;
+    document.getElementById('modalTitle').textContent = isLink ? '링크를 직접 복사해 주세요' : '아래 글을 직접 복사해 주세요';
+    document.getElementById('modalDesc').textContent =
+      '이 앱 안에서는 자동 복사가 막혀 있어요. 아래 글을 길게 눌러 전체 선택 → 복사 해 주세요.';
+    modal.classList.add('show');
+    setTimeout(function(){ modalText.focus(); modalText.select(); }, 60);
+  }
+  function copyText(text, okMsg, linkOnly){
+    var done = function(ok){
+      if(ok){ toast(okMsg); }
+      else { openModal(text, linkOnly); }
+    };
+    if(navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); },
+        function(){ done(legacyCopy(text)); });
+    }else{
+      done(legacyCopy(text));
+    }
+  }
+  document.getElementById('modalClose').addEventListener('click', function(){ modal.classList.remove('show'); });
+  document.getElementById('modalCopyAgain').addEventListener('click', function(){
+    var ok = legacyCopy(modalText.value);
+    if(ok){ modal.classList.remove('show'); toast('복사됐어요!'); }
+  });
+  modal.addEventListener('click', function(e){ if(e.target === modal) modal.classList.remove('show'); });
+
+  /* ---------- 앱 열기 링크 (인앱브라우저에서만 intent://) ---------- */
+  var openLinks = document.querySelectorAll('a[data-open]');
+  for(var i=0;i<openLinks.length;i++){
+    var a = openLinks[i];
+    var url = abs(a.getAttribute('data-open'));
+    if(inApp && secure){
+      a.setAttribute('href', intentUrl(url));
+    }else{
+      a.setAttribute('href', url);
+      if(!isIOS && a.classList.contains('btn-open')) a.target = '_blank';
+      a.setAttribute('rel','noopener');
+    }
+  }
+
+  /* ---------- 상단: 현재 페이지 Chrome으로 열기 ---------- */
+  var selfBtn = document.getElementById('chromeNow');
+  var banner = document.getElementById('envBanner');
+  var bannerIcon = document.getElementById('envIcon');
+  var bannerText = document.getElementById('envText');
+  function setBanner(kind, icon, html){
+    banner.className = 'banner ' + kind;
+    bannerIcon.textContent = icon;
+    bannerText.innerHTML = html;
+  }
+  if(inApp){
+    selfBtn.setAttribute('href', intentUrl(location.href.split('#')[0]));
+    selfBtn.hidden = false;
+    setBanner('warn', '⚠️',
+      '지금 카톡·네이버 같은 <b>앱 안의 브라우저</b>에서 보고 있어요.' +
+      '<small>여기서는 ‘홈 화면에 추가’가 안 보여요. 아래 노란 테두리 버튼으로 Chrome에 열고 설치하세요.</small>');
+  }else if(isChrome){
+    selfBtn.hidden = true;
+    setBanner('ok', '✅',
+      '지금 <b>Chrome</b>에서 열려 있어요. 아래 앱을 열고 <b>⋮ → 홈 화면에 추가</b>를 누르면 앱처럼 설치돼요.' +
+      '<small>이미 설치한 앱이 있다면 한 번씩 지우고 다시 추가하면 아이콘이 새로 바뀌어요.</small>');
+  }else if(isIOS){
+    selfBtn.hidden = true;
+    setBanner('info', '🍎',
+      '아이폰·아이패드예요. <b>공유 → 홈 화면에 추가</b>로 설치할 수 있어요.' +
+      '<small>유튜브 영상 광고가 나오면 사파리 대신 Chrome으로 열어 보세요.</small>');
+  }else if(isAndroid){
+    selfBtn.hidden = true;
+    setBanner('info', '📱',
+      '안드로이드 브라우저예요. 메뉴(⋮ 또는 하단 ≡)에서 <b>홈 화면에 추가</b>를 찾으면 돼요.' +
+      '<small>Chrome으로 열면 설치 안내가 더 정확해요.</small>');
+  }else{
+    selfBtn.hidden = true;
+    setBanner('info', '💻',
+      'PC 브라우저예요. 폰·태블릿 Chrome에서 이 주소를 열면 <b>홈 화면 앱</b>으로 설치할 수 있어요.' +
+      '<small>아래 ‘전체 링크 한 번에 복사’로 카톡에 붙여넣어 보내면 편해요.</small>');
+  }
+
+  /* ---------- 주소 만들기 ---------- */
+  document.getElementById('copyPage').addEventListener('click', function(){
+    copyText(location.href.split('#')[0], '모음 페이지 주소를 복사했어요! Chrome 주소창에 붙여넣으세요.', true);
+  });
+
+  function shareText(){
+    var out = '📱 채씨네 앱 모음 (' + document.querySelectorAll('.card').length + '개)\n' + location.href.split('#')[0] + '\n';
+    var groups = document.querySelectorAll('.group');
+    for(var g=0; g<groups.length; g++){
+      out += '\n[' + groups[g].getAttribute('data-plain') + ']\n';
+      var mains = groups[g].querySelectorAll('.card-main');
+      for(var k=0;k<mains.length;k++){
+        out += '· ' + mains[k].querySelector('.name').textContent + ' : ' + abs(mains[k].getAttribute('data-open')) + '\n';
+      }
+    }
+    out += '\nChrome에서 열고 오른쪽 위 ⋮ → 홈 화면에 추가 하면 앱처럼 쓸 수 있어요.';
+    return out;
+  }
+
+  var copyAllBtn = document.getElementById('copyAll');
+  copyAllBtn.addEventListener('click', function(){
+    copyText(shareText(), '13개 링크를 한 번에 복사했어요! 카톡에 붙여넣으세요.');
+  });
+
+  var shareBtn = document.getElementById('shareAll');
+  if(navigator.share){
+    shareBtn.hidden = false;
+    shareBtn.addEventListener('click', function(){
+      navigator.share({ title: '채씨네 앱 모음', text: shareText() }).catch(function(){});
+    });
+  }
+
+  /* ---------- 카드별 링크 복사 ---------- */
+  var copyBtns = document.querySelectorAll('[data-copy]');
+  for(var j=0;j<copyBtns.length;j++){
+    copyBtns[j].addEventListener('click', function(){
+      var url = abs(this.getAttribute('data-copy'));
+      var name = this.closest('.card').querySelector('.name').textContent;
+      copyText(url, '[' + name + '] 주소를 복사했어요! Chrome 주소창에 붙여넣으세요.', true);
+    });
+  }
+
+  /* ---------- 아이콘 로드 실패 시 이모지로 ---------- */
+  var imgs = document.querySelectorAll('.ico img');
+  for(var m=0;m<imgs.length;m++){
+    (function(img){
+      img.addEventListener('error', function(){ img.parentNode.classList.add('bad'); });
+      if(img.complete && img.naturalWidth === 0) img.parentNode.classList.add('bad');
+    })(imgs[m]);
+  }
+})();
+</script>
+
+</body>
+</html>
