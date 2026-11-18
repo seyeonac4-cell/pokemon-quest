@@ -101,6 +101,18 @@ img{image-rendering:auto}
 .btn.on{background:var(--mint);}
 .btn.warn{background:var(--yellow)}
 
+/* ---------- 포켓몬 대시보드로 (큰 버튼) ---------- */
+.go-dash{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  border:2.5px solid var(--ink);border-radius:10px;text-decoration:none;
+  background:linear-gradient(180deg,#fff5b8,#ffcf3f);color:#4a3000;
+  font-size:16px;font-weight:800;letter-spacing:-.03em;line-height:1.1;
+  padding:8px 14px;white-space:nowrap;box-shadow:0 3px 0 rgba(40,50,79,.22);
+  transition:transform .1s, box-shadow .1s;
+}
+.go-dash .gd-ico{font-size:22px;line-height:1}
+.go-dash:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(40,50,79,.22)}
+
 /* ---------- 옷차림 배너 ---------- */
 .tipbar{
   flex:0 0 auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
@@ -327,6 +339,12 @@ img{image-rendering:auto}
 .footbar .back{color:var(--ink2);font-weight:700;text-decoration:none;white-space:nowrap;
   border-bottom:1.5px dashed var(--line);padding-bottom:1px}
 .footbar .back:hover{color:var(--ink)}
+.footbar .back-home{
+  color:#4a3000;font-size:15px;font-weight:800;border-bottom:0;
+  background:linear-gradient(180deg,#fff5b8,#ffd75e);border:2px solid var(--ink);
+  border-radius:8px;padding:3px 10px;box-shadow:0 2px 0 rgba(40,50,79,.18);
+}
+.footbar .back-home:hover{color:#4a3000}
 .toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
   background:var(--ink);color:#fff;border-radius:999px;padding:7px 16px;font-size:15.5px;font-weight:700;
@@ -348,7 +366,8 @@ img{image-rendering:auto}
   .dd-card{min-height:140px}
   /* 상단 바: 날씨가 찌그러지지 않게 한 줄 더 쓴다 */
   .topbar{flex-wrap:wrap;gap:8px}
-  .top-actions{flex-direction:row;margin-left:auto}
+  .top-actions{flex-direction:row;margin-left:auto;flex-wrap:wrap}
+  .go-dash{flex:0 0 auto}
   .wx{order:3;flex:1 1 100%;height:auto}
   /* 생활 루틴 줄이 두 줄로 접히지 않게 버튼 칸을 좁힘 */
   .rt-head,.rt-row{grid-template-columns:1fr 86px 86px}
@@ -364,7 +383,8 @@ img{image-rendering:auto}
   .wx-meta{grid-template-columns:auto auto;gap:1px 12px}
   .wx-desc{white-space:normal}
   .wx-hours{display:none}
-  .top-actions{flex-direction:row}
+  .top-actions{flex-direction:row;flex-wrap:wrap}
+  .go-dash{flex:1 1 100%;font-size:17px;padding:11px 12px}
   .cal-card{min-height:0}
   .cal-wrap{padding-bottom:8px}
   .cal-grid{grid-auto-rows:minmax(54px,auto)}
@@ -413,6 +433,7 @@ img{image-rendering:auto}
     </div>
 
     <div class="top-actions">
+      <a class="go-dash" href="./"><span class="gd-ico" aria-hidden="true">⚡</span> 포켓몬 대시보드</a>
       <button class="btn" id="btnWake">💡 화면 유지</button>
       <button class="btn" id="btnFull">⛶ 전체화면</button>
     </div>
@@ -527,11 +548,7 @@ img{image-rendering:auto}
     <span class="sep">·</span>
     <span id="wxUpdated">날씨 대기</span>
     <span class="sp"></span>
-    <a class="back" href="./vocab.html">📚 영단어 시험</a>
-    <span class="sep">·</span>
-    <a class="back" href="./math.html">🧮 수학 오답노트</a>
-    <span class="sep">·</span>
-    <a class="back" href="./">← 포켓몬 대시보드</a>
+    <a class="back back-home" href="./">⚡ 포켓몬 대시보드</a>
     <span class="sep">·</span>
     <span>임세연 님 가족 전용 · 검색에 나오지 않아요</span>
   </footer>
