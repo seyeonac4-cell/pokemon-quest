@@ -585,10 +585,11 @@ body{
     fetch(PROG + '/' + encodeURIComponent(SET.id) + '.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (rem) {
-        if (!rem || typeof rem !== 'object' || !rem.hl) return;
+        if (!rem || typeof rem !== 'object' || typeof rem.updatedAt !== 'number') return;
         var b = bucket();
-        if ((rem.updatedAt || 0) > (b.updatedAt || 0)) {
-          b.hl = rem.hl; b.updatedAt = rem.updatedAt;
+        if (rem.updatedAt > (b.updatedAt || 0)) {
+          b.hl = (rem.hl && typeof rem.hl === 'object') ? rem.hl : {};
+          b.updatedAt = rem.updatedAt;
           saveLS(LS_PROG, prog);
           refreshCounts(); renderCard(false);
         }
@@ -769,6 +770,14 @@ body{
   function renderCard(resetFlip) {
     var list = cardList();
     var fl = $('#flash');
+    // 보던 필터의 단어가 하나도 남지 않았으면 전체로 돌아간다
+    if (!list.length && cardFilter !== 'all') {
+      cardFilter = 'all';
+      document.querySelectorAll('.chip').forEach(function (b) { b.classList.toggle('on', b.dataset.filter === 'all'); });
+      list = cardList();
+      resetFlip = true;
+    }
+    $('#fcTotal').textContent = list.length;
     if (resetFlip) fl.classList.remove('flip');
     if (!list.length) {
       $('#fWord').textContent = '없음';
@@ -779,6 +788,7 @@ body{
       $('#fcIdx').textContent = '0';
       fl.classList.remove('hl');
       $('#fcHl').classList.remove('on');
+      $('#fcHl').textContent = '🖍️ 형광펜';
       return;
     }
     if (cardIdx >= list.length) cardIdx = 0;
