@@ -1578,6 +1578,16 @@ img{image-rendering:auto}
       melonMarkChip(q);
       $('mbInput').value = '';
       if (!w) { toast('새 창이 막혔어요 — 팝업을 허용해 주세요'); return; }
+      // 휴대폰은 멜론이 모바일웹을 앱으로 넘겨서, 검색어를 복사해 두고 안내만 띄운다
+      if (window.matchMedia && window.matchMedia('(max-width: 720px)').matches) {
+        var done = function () { toast('📱 「' + q + '」 복사됨 — 멜론 앱에 붙여넣어 검색해 보세요'); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(q).then(done, function () {
+            toast('📱 멜론 앱에서 「' + q + '」를 검색해 보세요');
+          });
+        } else toast('📱 멜론 앱에서 「' + q + '」를 검색해 보세요');
+        return;
+      }
       toast('☕ 멜론에서 \'전체듣기\'를 눌러 주세요');
     }
     $('mbPlay').addEventListener('click', function (ev) {
