@@ -166,11 +166,13 @@ nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
   <section id="s-sentence" class="card">
     <div class="top"><span>문장 만들기</span><span><b id="sIdx">1</b> / <span id="sTotal">12</span></span></div>
     <div class="bar"><i id="sBar"></i></div>
-    <p class="title">블록을 차례로 눌러 문장을 만들어 봐!</p>
-    <div class="slots" id="slots"></div>
-    <div class="pool" id="pool"></div>
-    <button class="btn main" id="sCheck">확인했어!</button>
-    <div class="row"><button class="btn sm" id="sUndo">↩︎ 하나 지우기</button></div>
+    <div id="build">
+      <p class="title">블록을 차례로 눌러 문장을 만들어 봐!</p>
+      <div class="slots" id="slots"></div>
+      <div class="pool" id="pool"></div>
+      <button class="btn main" id="sCheck">확인했어!</button>
+      <div class="row"><button class="btn sm" id="sUndo">↩︎ 하나 지우기</button></div>
+    </div>
     <div class="fb" id="sFb"></div>
     <div class="done hide" id="sDone">
       <div class="line" id="sFinal"></div>
@@ -499,7 +501,7 @@ function renderSentence(){
   document.getElementById('sTotal').textContent = SENTENCES.length;
   document.getElementById('sBar').style.width = Math.round((sIdx / SENTENCES.length) * 100) + '%';
   picked = []; tries = 0; poolKeys = shuffle(keys());
-  document.getElementById('slots').style.display = '';
+  document.getElementById('build').classList.remove('hide');
   document.getElementById('sFb').className = 'fb';
   document.getElementById('sDone').classList.add('hide');
   document.getElementById('sCheck').classList.remove('hide');
@@ -552,9 +554,7 @@ document.getElementById('sCheck').onclick = () => {
   document.getElementById('sFinal').textContent = full();
   document.getElementById('sDone').classList.remove('hide');
   document.getElementById('sCheck').classList.add('hide');
-  document.getElementById('pool').innerHTML = '';
-  document.getElementById('slots').innerHTML = '';
-  document.getElementById('slots').style.display = 'none';
+  document.getElementById('build').classList.add('hide');
   document.getElementById('sDone').scrollIntoView({block:'nearest'});
   speak(full(), slow ? 0.75 : 1);
 };
