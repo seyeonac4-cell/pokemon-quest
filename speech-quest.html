@@ -499,6 +499,7 @@ function renderSentence(){
   document.getElementById('sTotal').textContent = SENTENCES.length;
   document.getElementById('sBar').style.width = Math.round((sIdx / SENTENCES.length) * 100) + '%';
   picked = []; tries = 0; poolKeys = shuffle(keys());
+  document.getElementById('slots').style.display = '';
   document.getElementById('sFb').className = 'fb';
   document.getElementById('sDone').classList.add('hide');
   document.getElementById('sCheck').classList.remove('hide');
@@ -553,6 +554,8 @@ document.getElementById('sCheck').onclick = () => {
   document.getElementById('sCheck').classList.add('hide');
   document.getElementById('pool').innerHTML = '';
   document.getElementById('slots').innerHTML = '';
+  document.getElementById('slots').style.display = 'none';
+  document.getElementById('sDone').scrollIntoView({block:'nearest'});
   speak(full(), slow ? 0.75 : 1);
 };
 document.getElementById('sPlay').onclick = () => speak(full(), slow ? 0.75 : 1);
