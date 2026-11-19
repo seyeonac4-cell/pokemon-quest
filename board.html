@@ -163,6 +163,7 @@ img{image-rendering:auto}
 .mb-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
 .mb-hint{font-size:12px;color:#9a6b3c;font-weight:700;white-space:nowrap}
 .mb-hint b{color:#6b3d0c}
+.mb-hint-m{display:none;font-size:12px;color:#8a5f33;font-weight:700;line-height:1.3}
 .mb-search{display:flex;align-items:center;gap:4px;min-width:0}
 .mb-search input{
   border:1.5px solid var(--ink); border-radius:7px; padding:2px 6px; font-size:13.5px;
@@ -418,6 +419,8 @@ img{image-rendering:auto}
   .rt-label{font-size:15px}
   /* 멜론 바: 검색칸을 오른쪽 줄로 내리고 안내문은 숨김 */
   .mb-hint{display:none}
+  /* 휴대폰(멜론 앱으로 여는 기기)에서만 앱 열기 + 붙여넣기 안내를 한 줄 보여 준다 */
+  body.melon-app .mb-hint-m{display:block;flex:1 1 100%;text-align:center;padding:1px 0 0}
   .mb-right{margin-left:0;flex:1 1 100%;justify-content:flex-end}
   .mb-search input{width:auto;flex:1 1 120px}
 }
@@ -513,7 +516,7 @@ img{image-rendering:auto}
   <!-- ===== 멜론 북카페 음악 ===== -->
   <div class="musicbar">
     <a class="mb-play" id="mbPlay" target="melonCafe" rel="noopener"
-       title="멜론에서 북카페 DJ 플레이리스트 검색을 열고 '전체듣기'로 틀어 두세요 (멜론 로그인돼 있으면 전고 재생)"
+       title="휴대폰은 멜론 앱이 바로 열리고 검색어가 복사돼요 (PC는 멜론 DJ 검색을 새 탭에서)"
        href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">
       <span class="mb-ico">☕</span>멜론 북카페 음악<span class="mb-tri">▶</span>
     </a>
@@ -525,6 +528,7 @@ img{image-rendering:auto}
     </span>
     <div class="mb-right">
       <span class="mb-hint">멜론이 열리면 <b>'전체듣기'</b>를 켜 두고 게시판을 보세요</span>
+      <span class="mb-hint-m">☕ 멜론 앱이 열리면 검색창을 길게 눌러 붙여넣기 — 검색어는 자동 복사돼요</span>
       <form class="mb-search" id="mbForm">
         <input type="text" id="mbInput" maxlength="30" placeholder="카페 음악 검색" aria-label="멜론 검색어" autocomplete="off">
         <button type="submit">🔍 멜론 검색</button>
@@ -1567,9 +1571,26 @@ window.__errs=[];addEventListener('error',function(e){try{__errs.push(String(e.m
       delete S.memo[id]; removeAt('memo/' + id); renderNotes();
     });
 
-    /* 멜론 북카페 음악 (전곡 스트리밍은 멜론 계정으로 → 검색만 열어 드린다) */
-    function melonUrl(q) {
+    /* 멜론 북카페 음악
+       - 안드로이드: intent:// 로 멜론 앱(com.iloen.melon)을 바로 열고 검색어를 클립보드에 복사
+       - 아이폰: melonapp://home 으로 멜론 앱을 열고 검색어를 복사
+       - PC: 멜론 DJ 검색을 새 탭에서 연다 (전곡 재생은 멜론 계정으로) */
+    var MB_PKG = 'com.iloen.melon';
+    function isAndroid() { return /Android/i.test(navigator.userAgent || ''); }
+    function isIOS() { return /iPhone|iPad|iPod/i.test(navigator.userAgent || ''); }
+    function isMobileMelon() { return isAndroid() || isIOS(); }
+    function melonWebUrl(q) {
       return 'https://www.melon.com/search/dj/index.htm?q=' + encodeURIComponent(q || '북카페');
+    }
+    // 안드로이드 크롬/삼성인터넷이 그대로 처리하는 intent URL (앱이 없으면 멜론 웹 검색으로)
+    function melonIntentUrl(q) {
+      return 'intent://home#Intent;scheme=melonapp;package=' + MB_PKG +
+             ';S.browser_fallback_url=' + encodeURIComponent(melonWebUrl(q)) + ';end';
+    }
+    function melonHref(q) {
+      if (isAndroid()) return melonIntentUrl(q);
+      if (isIOS()) return 'melonapp://home';
+      return melonWebUrl(q);
     }
     function melonMarkChip(q) {
       var chips = document.querySelectorAll('#mbChips .mb-chip');
@@ -1577,37 +1598,78 @@ window.__errs=[];addEventListener('error',function(e){try{__errs.push(String(e.m
         chips[i].classList.toggle('on', chips[i].getAttribute('data-q') === q);
       }
     }
-    function melonOpen(q) {
-      q = (q || '북카페').trim();
-      // 한 번 연 'melonCafe' 탭을 다시 쓰고, 처음이면 새 탭을 연다
-      var w = window.open(melonUrl(q), 'melonCafe');
-      melonMarkChip(q);
-      $('mbInput').value = '';
-      if (!w) { toast('새 창이 막혔어요 — 팝업을 허용해 주세요'); return; }
-      // 휴대폰은 멜론이 모바일웹을 앱으로 넘겨서, 검색어를 복사해 두고 안내만 띄운다
-      if (window.matchMedia && window.matchMedia('(max-width: 720px)').matches) {
-        var done = function () { toast('📱 「' + q + '」 복사됨 — 멜론 앱에 붙여넣어 검색해 보세요'); };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(q).then(done, function () {
-            toast('📱 멜론 앱에서 「' + q + '」를 검색해 보세요');
-          });
-        } else toast('📱 멜론 앱에서 「' + q + '」를 검색해 보세요');
-        return;
+    // 앱이 열리자마자 붙여넣을 수 있게 검색어를 복사 (동기 복사 우선)
+    function melonCopy(q) {
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = q; ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+        document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, q.length);
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(q).catch(function () {});
       }
+      return ok;
+    }
+    // 바로가기 링크를 기기에 맞게 바꿔 둔다 (JS 없이 눌러도 앱이 열리게)
+    function melonPrepareLinks() {
+      var play = $('mbPlay');
+      var chips = document.querySelectorAll('#mbChips .mb-chip'), i;
+      if (isMobileMelon()) document.body.classList.add('melon-app');
+      if (play) {
+        play.setAttribute('href', melonHref('북카페'));
+        if (isMobileMelon()) play.removeAttribute('target');
+      }
+      for (i = 0; i < chips.length; i++) {
+        chips[i].setAttribute('href', melonHref(chips[i].getAttribute('data-q')));
+        if (isMobileMelon()) chips[i].removeAttribute('target');
+      }
+    }
+    function melonOpenWeb(q) {
+      // 한 번 연 'melonCafe' 탭을 다시 쓰고, 처음이면 새 탭을 연다
+      var w = window.open(melonWebUrl(q), 'melonCafe');
+      if (!w) { toast('새 창이 막혔어요 — 팝업을 허용해 주세요'); return; }
       toast('☕ 멜론에서 \'전체듣기\'를 눌러 주세요');
     }
+    var mbPending = '';
+    function melonTap(q) {
+      q = (q || '북카페').trim();
+      melonMarkChip(q);
+      $('mbInput').value = '';
+      if (!isMobileMelon()) { melonOpenWeb(q); return; }
+      // 휴대폰: 복사부터 하고(동기), 링크의 기본 동작(intent:// 또는 melonapp://)이 앱을 연다
+      melonCopy(q);
+      mbPending = q;
+    }
+    // 멜론 앱에서 돌아오면 붙여넣기 안내를 띄운다
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden || !mbPending) return;
+      var q = mbPending; mbPending = '';
+      toast('☕ 멜론 앱 검색창에 「' + q + '」를 붙여넣어 보세요');
+    });
+    melonPrepareLinks();
     $('mbPlay').addEventListener('click', function (ev) {
-      ev.preventDefault(); melonOpen('북카페');
+      if (!isMobileMelon()) ev.preventDefault();
+      melonTap('북카페');
     });
     $('mbChips').addEventListener('click', function (ev) {
       var a = ev.target.closest('.mb-chip'); if (!a) return;
-      ev.preventDefault(); melonOpen(a.getAttribute('data-q'));
+      if (!isMobileMelon()) ev.preventDefault();
+      melonTap(a.getAttribute('data-q'));
     });
     $('mbForm').addEventListener('submit', function (ev) {
       ev.preventDefault();
       var q = $('mbInput').value.trim();
       if (!q) { $('mbInput').focus(); return; }
-      melonOpen(q);
+      melonMarkChip(q);
+      $('mbInput').value = '';
+      if (!isMobileMelon()) { melonOpenWeb(q); return; }
+      melonCopy(q); mbPending = q;
+      window.location.href = melonHref(q);
     });
 
     /* 화면 유지 (Wake Lock) */
