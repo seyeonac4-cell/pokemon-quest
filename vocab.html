@@ -1440,5 +1440,13 @@ body{
   window.addEventListener('beforeprint', function () { if (SET && !$('#printRoot').innerHTML) buildPrint({}); });
 })();
 </script>
+<!-- 홈 화면 '앱 설치'(크롬 배지 없는 WebAPK) 조건: 매니페스트 + 등록된 서비스 워커 -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {});
+    });
+  }
+</script>
 </body>
 </html>

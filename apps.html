@@ -205,14 +205,14 @@ footer a{color:#9AA0B4}
   <header class="hero">
     <span class="kicker">📱 채씨네 앱 모음 · 13개</span>
     <h1>우리 집 앱 <em>13개</em>,<br>한 화면에서 열고 설치하기</h1>
-    <p class="lead">아이들 태블릿·폰에 <b>홈 화면 앱</b>처럼 깔아 두고 쓰는 페이지예요. 아래 카드의 <b>🌐 Chrome으로 열기</b>로 앱을 열고, 오른쪽 위 <b>⋮ → 홈 화면에 추가</b>를 누르면 끝이에요.</p>
+    <p class="lead">아이들 태블릿·폰에 <b>홈 화면 앱</b>처럼 깔아 두고 쓰는 페이지예요. 아래 카드의 <b>🌐 Chrome으로 열기</b>로 앱을 열고, 오른쪽 위 <b>⋮ → 앱 설치</b>(또는 <b>홈 화면에 추가 → 설치</b>)를 누르면 끝이에요.</p>
     <div class="hero-actions">
       <a class="btn btn-hero big" id="chromeNow" href="https://seyeonac4-cell.github.io/pokemon-quest/apps.html" hidden>🌐 현재 페이지 Chrome으로 열기</a>
       <button class="btn btn-ghost big" id="copyPage" type="button">📋 이 모음 페이지 링크 복사</button>
     </div>
     <div class="banner info" id="envBanner">
       <span class="bi" id="envIcon">💡</span>
-      <span id="envText">아래 카드에서 앱을 열고 Chrome 오른쪽 위 ⋮ → <b>홈 화면에 추가</b>를 누르면 앱처럼 설치돼요.</span>
+      <span id="envText">아래 카드에서 앱을 열고 Chrome 오른쪽 위 ⋮ → <b>앱 설치</b>를 누르면 크롬 로고 없는 진짜 앱으로 설치돼요.</span>
     </div>
   </header>
 
@@ -422,18 +422,19 @@ footer a{color:#9AA0B4}
       </li>
       <li>
         <span class="num">2</span>
-        <div><b>오른쪽 위 ⋮ 누르기</b><span>Chrome 오른쪽 위 점 3개 메뉴를 열고 ‘홈 화면에 추가’를 찾아요.</span></div>
+        <div><b>오른쪽 위 ⋮ 누르기</b><span>Chrome 오른쪽 위 점 3개 메뉴에서 ‘앱 설치’를 찾아요. ‘홈 화면에 추가’만 보이면 그 안의 ‘설치’를 고르면 돼요.</span></div>
       </li>
       <li>
         <span class="num">3</span>
-        <div><b>‘설치’ 누르기</b><span>‘홈 화면에 추가’ → ‘설치’를 누르면 홈 화면에 아이콘이 생겨요.</span></div>
+        <div><b>‘설치’ 누르기</b><span>‘설치’를 누르면 홈 화면에 진짜 앱 아이콘이 생겨요. ‘바로가기 만들기’는 크롬 로고가 붙은 바로가기라서 꼭 ‘설치’를 골라 주세요!</span></div>
       </li>
     </ol>
     <div class="notes">
       <ul>
         <li><b>카톡·네이버 앱 안에서는 설치 메뉴가 안 보여요.</b> 꼭 Chrome(또는 삼성 인터넷)에서 열어 주세요. 위의 🌐 버튼이 Chrome으로 넘겨 줘요.</li>
         <li><b>유튜브 영상 광고가 나올 때</b> — Chrome에 유튜브 프리미엄 계정으로 로그인돼 있으면 광고가 사라져요.</li>
-        <li><b>아이콘이 예전 모양이면</b> 홈 화면의 기존 아이콘을 지우고 다시 ‘홈 화면에 추가’를 해 주세요.</li>
+        <li><b>아이콘에 작은 크롬 로고가 붙어 있다면</b> ‘바로가기’로 만들어진 거예요. 그 아이콘을 지우고 다시 <b>‘설치’</b>로 만들면 크롬 로고 없는 앱 아이콘이 돼요. (크롬 로고 없는 진짜 앱 설치는 구글 플레이 서비스가 있는 안드로이드 폰에서만 돼요.)</li>
+        <li><b>아이콘이 예전 모양이면</b> 홈 화면의 기존 아이콘을 지우고 다시 ‘앱 설치’를 해 주세요.</li>
         <li><b>아이폰·아이패드</b>는 Chrome 대신 사파리의 <b>공유 → 홈 화면에 추가</b>로 설치해요.</li>
       </ul>
     </div>
@@ -581,7 +582,7 @@ footer a{color:#9AA0B4}
   }else if(isChrome){
     selfBtn.hidden = true;
     setBanner('ok', '✅',
-      '지금 <b>Chrome</b>에서 열려 있어요. 아래 앱을 열고 <b>⋮ → 홈 화면에 추가</b>를 누르면 앱처럼 설치돼요.' +
+      '지금 <b>Chrome</b>에서 열려 있어요. 아래 앱을 열고 <b>⋮ → 앱 설치</b>를 누르면 크롬 로고 없는 진짜 앱으로 설치돼요.' +
       '<small>이미 설치한 앱이 있다면 한 번씩 지우고 다시 추가하면 아이콘이 새로 바뀌어요.</small>');
   }else if(isIOS){
     selfBtn.hidden = true;
@@ -653,5 +654,13 @@ footer a{color:#9AA0B4}
 })();
 </script>
 
+<!-- 홈 화면 '앱 설치'(크롬 배지 없는 WebAPK) 조건: 매니페스트 + 등록된 서비스 워커 -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {});
+    });
+  }
+</script>
 </body>
 </html>
