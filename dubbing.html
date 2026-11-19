@@ -288,7 +288,7 @@ select.vfx{
   </div>
 
   <section class="card">
-    <div class="sec-head"><span class="num">1</span><h2>어떤 장면으로 놀까?</h2><span class="hint" id="pickHint">6편</span></div>
+    <div class="sec-head"><span class="num">1</span><h2>어떤 장면으로 놀까?</h2><span class="hint" id="pickHint">7편</span></div>
     <div class="filters" id="filters"></div>
     <div class="picker" id="picker"></div>
   </section>
@@ -379,13 +379,37 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const fmt = s => { s = Math.max(0, s || 0); const m = Math.floor(s / 60); const r = Math.round(s % 60); return m + ':' + String(r).padStart(2, '0'); };
 
 /* ============================================================
-   1. 장면 6편 (기초 3 + 도전·꿀잼 3)
+   1. 장면 7편 (기초 3 + 도전·꿀잼 4)
    ------------------------------------------------------------
    mood.e / mood.t : 연기 가이드 (이모지 + 한글 지시)
    mood.mv         : 캔버스 연출 (shake 흔들림 / flash 섬광 / zoom / spot 조명 / pulse / party)
    chars[].voice   : 그 역할의 기본 목소리 변조
    ============================================================ */
 const STORIES = [
+  {
+    id: 'sock',
+    group: 'pro', isNew: true,
+    imgSrc: './assets/dubbing/sock-detective.webp',
+    title: 'The Case of the Burping Vacuum',
+    koTitle: '양말을 삼킨 로봇청소기 사건',
+    level: 3, levelText: 'Lv.3 코믹 추리',
+    tip: '중급 회화', genre: '미스터리 코믹',
+    chars: {
+      cat: { name: 'Whiskers', ko: '고양이 탐정', emoji: '🐱', side: 'left',  ax: 0.255, ay: 0.300, voice: 'none',  pitch: 0.95 },
+      pup: { name: 'Biscuit',  ko: '강아지 조수', emoji: '🐶', side: 'right', ax: 0.545, ay: 0.560, voice: 'cute',  pitch: 1.35 },
+      vac: { name: 'Robo',     ko: '로봇청소기',  emoji: '🤖', side: 'right', ax: 0.800, ay: 0.800, voice: 'radio', pitch: 0.60 }
+    },
+    lines: [
+      { who: 'cat', en: 'Good evening. Detective Whiskers, on the case.', ko: '좋은 저녁이야. 탐정 위스커스, 사건 접수.', mood: { e: '😼', t: '차분하게', mv: 'spot' } },
+      { who: 'pup', en: "And I'm Biscuit! I can sniff anything, anywhere!", ko: '그리고 나는 비스킷! 어디에 있든 냄새로 다 찾아낼 수 있어!', mood: { e: '🐶', t: '신나서', mv: 'shake' } },
+      { who: 'cat', en: 'Then tell me, Biscuit. Who took the purple sock?', ko: '그럼 말해 봐, 비스킷. 누가 보라색 양말을 가져갔지?', mood: { e: '🔍', t: '의미심장하게' } },
+      { who: 'pup', en: "I checked the couch, the garden, and even Dad's shoe!", ko: '소파도 뒤졌고, 정원도, 아빠 신발 속까지 뒤졌어!', mood: { e: '👃', t: '들이마시며' } },
+      { who: 'cat', en: "Interesting. There's a trail of crumbs... and it's moving.", ko: '흥미롭군. 부스러기 흔적이 있어... 그리고 움직이고 있어.', mood: { e: '🧐', t: '낮게 속삭이며', mv: 'zoom' } },
+      { who: 'vac', en: 'BEEP. SOCK DETECTED. NOM NOM NOM.', ko: '삐. 양말 감지. 냠냠냠.', mood: { e: '🤖', t: '감정 없이 기계적으로', mv: 'flash' } },
+      { who: 'pup', en: 'Wait... the vacuum is burping my sock!', ko: '잠깐... 청소기가 내 양말을 트림하고 있어!', mood: { e: '😱', t: '경악하며', mv: 'shake' } },
+      { who: 'cat', en: 'Case closed. And that is why socks never sleep on the floor.', ko: '사건 종결. 그래서 양말은 절대 바닥에서 자면 안 되는 거야.', mood: { e: '😌', t: '능글맞게', mv: 'party' } }
+    ]
+  },
   {
     id: 'backpack',
     group: 'pro', isNew: true,
