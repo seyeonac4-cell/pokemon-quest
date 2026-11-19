@@ -213,9 +213,10 @@ h1 em{font-style:normal;color:var(--mint)}
 .t-clean{background:#e3f3fb;color:#12718f}
 .t-organize{background:#eeeaf7;color:#5b4b94}
 .t-buiknam{background:#e4edfd;color:#2450a8}
+.t-univclass{background:#e5dcff;color:#4a2ea8}
 .tag-date{background:#f1effe;color:#5b4b94;font-variant-numeric:tabular-nums}
 
-/* ---------------- 부읽남 코너 머리말 ---------------- */
+/* ---------------- 부읽남·유니브클래스 코너 머리말 ---------------- */
 .sec{
   background:linear-gradient(135deg,#1b2350,#121834);color:#fff;border-radius:18px;
   padding:14px 15px 13px;box-shadow:0 14px 34px rgba(18,24,52,.2)
@@ -310,7 +311,7 @@ h1 em{font-style:normal;color:var(--mint)}
       <div class="h-quiet">🤫 층간소음 0dB</div>
     </div>
     <h1>세연님의<br><em>홈트 &amp; 살림</em></h1>
-    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁 · <b>🏠 부읽남TV</b>까지 한 페이지에</div>
+    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁 · <b>🏠 부읽남TV</b> · <b>🎓 유니브클래스</b>까지 한 페이지에</div>
 
     <div class="stats">
       <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
@@ -386,6 +387,7 @@ h1 em{font-style:normal;color:var(--mint)}
 const CATS = [
   {key:"all",      label:"전체"},
   {key:"buiknam",  label:"🏠 부읽남"},
+  {key:"univclass",label:"🎓 유니브클래스"},
   {key:"cardio",   label:"🔥 전신 유산소"},
   {key:"jump",     label:"⚡ 점핑보드"},
   {key:"core",     label:"💪 복부·코어"},
@@ -396,8 +398,8 @@ const CATS = [
   {key:"organize", label:"📦 정리마켓"}
 ];
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
-const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦", buiknam:"🏠"};
-const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기", buiknam:"영상 보기"};
+const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦", buiknam:"🏠", univclass:"🎓"};
+const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기", buiknam:"영상 보기", univclass:"영상 보기"};
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
 const KEY_TODO = "homet.todo.v1";
@@ -568,7 +570,7 @@ function renderList(){
     el.innerHTML = '<div class="empty">이 카테고리에 담긴 영상이 아직 없어요.<br>다른 카테고리를 눌러보세요 🙂</div>';
     return;
   }
-  el.innerHTML = (filter === "buiknam" ? buiknamHead() : "") + list.map(v=>{
+  el.innerHTML = (CORNER[filter] ? cornerHead(filter) : "") + list.map(v=>{
     const dn = isDone(v.id);
     return '<article class="card'+(dn?' done':'')+'" data-id="'+v.id+'">'+
       (dn?'<div class="badge-done">오늘 완료 ✅</div>':'')+
@@ -607,24 +609,41 @@ function renderList(){
   });
 }
 
-/* ---------- 부읽남 코너 ---------- */
+/* ---------- 부읽남 · 유니브클래스 코너 ---------- */
 let BUI = {};
+let UNIV = {};
 function fmtDate(iso){
   const p = String(iso).split("-");
   return (p.length === 3) ? (Number(p[1]) + "/" + Number(p[2])) : String(iso);
 }
-function buiknamHead(){
-  const n = VIDEOS.filter(v=>v.category==="buiknam").length;
-  const ch = BUI.channelUrl || "https://www.youtube.com/@buiknam_tv/videos";
-  const only = Array.isArray(BUI.ytOnly) ? BUI.ytOnly : [];
+/* 코너(카테고리)별 머리말 정보 — 채널 메타는 homet-data.json의 같은 이름 키에서 읽어요 */
+const CORNER = {
+  buiknam: {
+    icon: "🏠", label: "오늘의 부읽남", fallback: "https://www.youtube.com/@buiknam_tv/videos",
+    desc: "부읽남TV 최신 롱폼만 골라 담았어요. 매일 저녁 새 영상이 올라와요.",
+    meta: ()=>BUI
+  },
+  univclass: {
+    icon: "🎓", label: "유니브클래스 입시", fallback: "https://www.youtube.com/@%EC%9C%A0%EB%8B%88%EB%B8%8C%ED%81%B4%EB%9E%98%EC%8A%A4/videos",
+    desc: "유니브클래스 최신 롱폼만 골라 담았어요. 수능·정시·수시 새 영상이 올라오면 여기에 담겨요.",
+    meta: ()=>UNIV
+  }
+};
+function cornerHead(cat){
+  const c = CORNER[cat];
+  if(!c) return "";
+  const m = c.meta() || {};
+  const n = VIDEOS.filter(v=>v.category===cat).length;
+  const ch = m.channelUrl || c.fallback;
+  const only = Array.isArray(m.ytOnly) ? m.ytOnly : [];
   const onlyHtml = only.length
-    ? '<div class="sec-n">ℹ️ ' + esc(BUI.note || "") + ' ' + only.map(o=>
+    ? '<div class="sec-n">ℹ️ ' + esc(m.note || "") + ' ' + only.map(o=>
         '<a href="https://www.youtube.com/watch?v=' + encodeURIComponent(o.id) + '" target="_blank" rel="noopener noreferrer">' + esc(o.label) + ' ↗</a>'
       ).join(" · ") + '</div>'
     : "";
   return '<section class="sec">'+
-    '<div class="sec-t">🏠 오늘의 부읽남<span>최신 ' + n + '편</span></div>'+
-    '<div class="sec-s">부읽남TV 최신 롱폼만 골라 담았어요. 매일 저녁 새 영상이 올라와요. <a href="' + ch + '" target="_blank" rel="noopener noreferrer">채널 열기 ↗</a></div>'+
+    '<div class="sec-t">' + c.icon + ' ' + c.label + '<span>최신 ' + n + '편</span></div>'+
+    '<div class="sec-s">' + c.desc + ' <a href="' + ch + '" target="_blank" rel="noopener noreferrer">채널 열기 ↗</a></div>'+
     onlyHtml +
   '</section>';
 }
@@ -692,6 +711,7 @@ async function boot(){
     const data = await res.json();
     VIDEOS = (data.videos || []).filter(v=>v && v.id);
     BUI = data.buiknam || {};
+    UNIV = data.univclass || {};
     if(data.updated){
       const p = String(data.updated).split("-");
       document.getElementById("footDate").textContent = "영상 목록 업데이트 · " + p[0] + ". " + Number(p[1]) + ". " + Number(p[2]);
