@@ -124,7 +124,13 @@ ul{margin:0;padding:0;list-style:none}
 .nav{border-top:1.5px solid rgba(30,42,68,.06)}
 .nav-in{
   max-width:560px;margin:0 auto;padding:5px 8px 6px;
-  display:grid;grid-template-columns:repeat(6,1fr);gap:4px;
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+@media (max-width:402px){
+  .nav-in{gap:3px;padding:5px 5px 6px}
+  .nav-b{padding:3px 0;border-radius:11px}
+  .nav-b .ni{font-size:15px}
+  .nav-b .nl{font-size:8.8px}
 }
 .nav-b{
   position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
@@ -692,22 +698,44 @@ body.modal-open #toast.on{transform:translate(-50%,0)}
 
 /* ---------- 마을 ---------- */
 .village{
-  position:relative;max-width:520px;margin:0 auto;border-radius:24px;overflow:hidden;border:2.5px solid var(--ink);
+  position:relative;width:100%;margin:0 auto;border-radius:24px;overflow:hidden;border:2.5px solid var(--ink);
   box-shadow:var(--shadow-pop);
-  background:linear-gradient(180deg,#cdeeff 0%,#e9f8ff 13%,#dcf5c6 14%,#c2ecaa 100%);
+  background:linear-gradient(180deg,#cdeeff 0%,#e9f8ff 9%,#dcf5c6 10%,#c9f0b0 52%,#b7e79d 100%);
+  --crit:64px;--crit-p:78px;--yard:118px;
+  padding-bottom:var(--yard);
 }
+@media (min-width:430px){.village{--crit:68px;--crit-p:84px;--yard:128px}}
+@media (min-width:620px){.village{--crit:72px;--crit-p:90px;--yard:144px}}
+/* 태블릿에서는 마을을 화면 폭에 맞춰 크게 */
+@media (min-width:760px){.village{width:min(94vw,620px);margin-left:50%;transform:translateX(-50%)}}
 .village .v-sun{position:absolute;top:4px;right:12px;font-size:19px;z-index:1;animation:spin 24s linear infinite;transform-origin:50% 50%}
 .village .v-cloud{position:absolute;top:5px;left:8px;font-size:17px;opacity:.9;z-index:1;animation:drift 30s linear infinite}
 .village .v-cloud.b{top:2px;left:46%;font-size:14px;animation-duration:40s;animation-delay:-8s}
 @keyframes drift{from{transform:translateX(-20px)}to{transform:translateX(180px)}}
-.v-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:2px;aspect-ratio:1/1;padding:8px}
+/* 마을 풍경(연못·꽃·울타리) — 격자 뒤, 터치 방해 없음 */
+.v-scene{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.v-spr{position:absolute;font-size:13.5px;line-height:1;opacity:.9;filter:drop-shadow(0 1px 1px rgba(30,42,68,.14))}
+.village .v-pond{
+  position:absolute;left:2%;bottom:6px;width:30%;height:calc(var(--yard) - 16px);max-height:96px;border-radius:50%;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at 38% 30%,#f0fbff,#a9dcf7 58%,#79c6ee);
+  border:2px solid rgba(255,255,255,.7);box-shadow:inset 0 4px 10px rgba(23,105,150,.18);opacity:.92;
+}
+.village .v-path{
+  position:absolute;left:34%;bottom:var(--yard);width:13%;height:calc(100% - var(--yard));z-index:1;pointer-events:none;opacity:.5;
+  background:linear-gradient(180deg,rgba(255,249,225,0),rgba(255,247,214,.85) 22%,rgba(250,238,197,.95));
+  border-left:2px dashed rgba(255,255,255,.55);border-right:2px dashed rgba(255,255,255,.55);
+}
+.v-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:3px;aspect-ratio:1/1;padding:8px}
 .cell{position:relative;display:grid;place-items:center;border-radius:14px;transition:.15s}
-.cell.empty{border:1.5px dashed rgba(30,42,68,.14);background:rgba(255,255,255,.20)}
-.cell.empty::after{content:"빈 터";font-size:8px;font-weight:800;color:rgba(30,42,68,.28)}
-.cell .bld{font-size:31px;line-height:1;filter:drop-shadow(0 4px 3px rgba(30,42,68,.22));animation:buildIn .55s cubic-bezier(.2,1.3,.4,1)}
+.cell.empty{border:1.5px dashed rgba(30,42,68,.13);background:rgba(255,255,255,.18)}
+.cell.empty::after{content:"빈 터";font-size:8.5px;font-weight:800;color:rgba(30,42,68,.26)}
+.cell .bld{font-size:50px;line-height:1;filter:drop-shadow(0 5px 4px rgba(30,42,68,.24));animation:buildIn .55s cubic-bezier(.2,1.3,.4,1)}
+@media (min-width:560px){.cell .bld{font-size:58px}}
+@media (min-width:760px){.cell .bld{font-size:74px}}
 @keyframes buildIn{from{transform:scale(.2) translateY(12px);opacity:0}to{transform:none;opacity:1}}
-.cell .bld-name{position:absolute;bottom:0;font-size:7.5px;font-weight:900;color:#2c4a2a;background:rgba(255,255,255,.78);padding:0 4px;border-radius:5px;white-space:nowrap}
-.v-critter{position:absolute;width:38px;height:38px;z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:hop 3.2s ease-in-out infinite;filter:drop-shadow(0 3px 2px rgba(30,42,68,.18))}
+.cell .bld-name{position:absolute;bottom:-1px;font-size:8.5px;font-weight:900;color:#2c4a2a;background:rgba(255,255,255,.86);padding:1px 5px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 2px rgba(30,42,68,.10)}
+.v-critter{position:absolute;width:var(--crit);height:var(--crit);z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:hop 3.2s ease-in-out infinite;filter:drop-shadow(0 4px 3px rgba(30,42,68,.20))}
+.v-critter.v-partner{width:var(--crit-p);height:var(--crit-p);z-index:4;filter:drop-shadow(0 5px 4px rgba(30,42,68,.26))}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .build-list{display:grid;gap:8px}
 @media (min-width:700px){.build-list{grid-template-columns:1fr 1fr}}
@@ -1022,6 +1050,127 @@ label.btn{cursor:pointer}
 .sync-badge.on{border-color:#b6ecca;color:#0f7a55}
 .sync-badge.off{border-color:#f0dfb0;color:#8a6b18}
 
+/* ---------- 📊 통계 ---------- */
+.stat-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}
+.stat-sum .ss{
+  background:linear-gradient(180deg,#fff,#f6fbff);border:2px solid var(--line);border-radius:16px;
+  padding:9px 5px;text-align:center;box-shadow:0 2px 0 rgba(30,42,68,.05);
+}
+.stat-sum .ss b{display:block;font-size:17px;font-weight:900;letter-spacing:-.045em;line-height:1.1;color:var(--ink)}
+.stat-sum .ss b.g{color:#0e8a5c}
+.stat-sum .ss small{display:block;font-size:9.5px;font-weight:800;color:var(--muted);margin-top:3px;letter-spacing:-.02em;line-height:1.2}
+.wnav{display:flex;align-items:center;gap:7px;margin:1px 0 10px}
+.wnav .wn-l{flex:1;min-width:0;text-align:center;font-size:13.5px;font-weight:900;letter-spacing:-.02em;line-height:1.2}
+.wnav .wn-l small{display:block;font-size:10.5px;font-weight:800;color:var(--muted);margin-top:2px;letter-spacing:-.01em}
+.wnav .wn-btn{
+  width:37px;height:37px;flex:0 0 auto;border-radius:12px;background:#fff;border:2px solid var(--line);
+  box-shadow:0 2px 0 rgba(30,42,68,.07);font-size:14px;font-weight:900;color:var(--ink-2);display:grid;place-items:center;
+}
+.wnav .wn-btn:active{transform:translateY(1px)}
+.wnav .wn-btn:disabled{opacity:.28;box-shadow:none}
+.wt-head{display:flex;align-items:center;gap:6px;padding:0 0 6px;border-bottom:1.5px dashed #e7eefa;margin-bottom:5px}
+.wt-ql{flex:1;min-width:0;font-size:10.5px;font-weight:900;color:var(--muted);letter-spacing:-.02em}
+.wt-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f4f8ff}
+.wt-row:last-child{border-bottom:0}
+.wt-qi{width:19px;flex:0 0 auto;text-align:center;font-size:13.5px;line-height:1}
+.wt-qt{flex:1;min-width:0;font-size:11.5px;font-weight:900;letter-spacing:-.03em;line-height:1.25;color:var(--ink-2)}
+.wt-qt em{display:block;font-style:normal;font-size:9.5px;font-weight:800;color:#a9b6cd;letter-spacing:-.01em}
+.wt-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;width:168px;flex:0 0 auto}
+@media (max-width:360px){.wt-days{width:150px;gap:2px}}
+.wt-hd{display:grid;place-items:center;font-size:10px;font-weight:900;color:var(--muted);line-height:1.1;padding:3px 0;border-radius:8px}
+.wt-hd span{font-size:8.5px;font-weight:800;color:#b0bcd2;margin-top:1px}
+.wt-hd.on{background:#e8f4ff;color:#1d4ed8}
+.wt-hd.on span{color:#4a80cf}
+.wt-hd.wk{color:#e2516a}
+.wt-hd.wk span{color:#eda0ae}
+.wt-c{height:23px;border-radius:7px;display:grid;place-items:center;font-size:11.5px;font-weight:900;line-height:1;color:transparent}
+.wt-c.ok{background:linear-gradient(180deg,#7ef0bd,#2fc98a);color:#fff;box-shadow:0 2px 0 rgba(14,138,92,.22)}
+.wt-c.plan{border:2px solid #dfe8f7;background:#fff}
+.wt-c.none{color:#ccd7e9;font-size:10.5px}
+.wt-c.notyet{border:2px dashed #e6eefa;background:#fbfdff}
+.wt-c.tod{box-shadow:0 0 0 2px rgba(63,169,255,.20)}
+.wt-c.ok.tod{box-shadow:0 0 0 2px rgba(63,169,255,.45)}
+.wt-today-line{font-size:11px;font-weight:800;color:var(--muted);margin-top:9px;text-align:right}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:11px;padding-top:9px;border-top:1.5px dashed #e7eefa}
+.legend span{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:var(--muted)}
+.lg{width:15px;height:15px;border-radius:5px;display:grid;place-items:center;font-size:9.5px;font-weight:900;flex:0 0 auto}
+.lg.ok{background:linear-gradient(180deg,#7ef0bd,#2fc98a);color:#fff}
+.lg.plan{border:2px solid #dfe8f7;background:#fff}
+.lg.none{color:#ccd7e9}
+.lg.nr{color:#dbe3f1}
+/* 월간 달력 */
+.mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.mc-w{text-align:center;font-size:10px;font-weight:900;color:var(--muted);padding:0 0 4px}
+.mc-w.sun{color:#e2516a}
+.mc-w.sat{color:#2a6fd7}
+.mc-day{
+  position:relative;aspect-ratio:1/1;min-width:0;width:100%;padding:0;border-radius:11px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;background:#f8fbff;border:1.5px solid #eef4fd;overflow:hidden;
+}
+.mc-day .n{font-size:10px;font-weight:900;color:#8b9ab6;line-height:1}
+.mc-day .r{font-size:9.5px;font-weight:900;line-height:1;color:#b9c6da}
+.mc-day.all{background:linear-gradient(180deg,#eafff4,#c9f6de);border-color:#a2e9c6}
+.mc-day.all .n{color:#0e7a52}
+.mc-day.all .r{color:#0e8a5c}
+.mc-day.part{background:linear-gradient(180deg,#fffdf0,#fdf1cd);border-color:#f3dfa2}
+.mc-day.part .n{color:#96700f}
+.mc-day.part .r{color:#a1700a}
+.mc-day.zero{background:#fff;border-color:#f3e5e8}
+.mc-day.zero .r{color:#d08a92}
+.mc-day.nr{opacity:.55}
+.mc-day.today{box-shadow:0 0 0 2.5px rgba(63,169,255,.5)}
+.mc-day.future{opacity:.38}
+.mc-day.empty{background:transparent;border:0}
+.mc-day .pf{position:absolute;top:1px;right:1px;font-size:7.5px;line-height:1}
+.dstat-list{display:grid;gap:6px;margin-top:2px}
+.dstat-row{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:12px;background:#fbfdff;border:1.5px solid #eef4fd;font-size:12.5px;font-weight:800;color:var(--ink-2)}
+.dstat-row .m{margin-left:auto;font-size:11px;font-weight:900}
+.dstat-row.ok .m{color:#0e8a5c}
+.dstat-row.no .m{color:#c02a3a}
+.dstat-row .i{font-size:14px}
+
+/* ---------- 📸 퀘스트 인증 사진 ---------- */
+.proof-file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.proof-open{
+  display:block;width:100%;margin:12px 0 0;padding:20px 14px;border-radius:20px;border:3px dashed #9fd3ff;
+  background:linear-gradient(180deg,#f5fbff,#e7f4ff);text-align:center;transition:transform .12s;
+}
+.proof-open:active{transform:translateY(2px)}
+.proof-open .po-ico{display:block;font-size:42px;line-height:1}
+.proof-open .po-t{display:block;font-size:15px;font-weight:900;margin-top:7px;color:#1d4ed8;letter-spacing:-.03em}
+.proof-open .po-s{display:block;font-size:11.5px;font-weight:800;color:#5b7fae;margin-top:4px;line-height:1.45}
+.proof-open.album{border-color:#ffd98a;background:linear-gradient(180deg,#fffdf5,#fff5dd)}
+.proof-open.album .po-t{color:#8a5a00}
+.proof-open.album .po-s{color:#a5854b}
+.proof-who{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:16px;background:linear-gradient(180deg,#fffdf6,#fff6e3);border:2px solid #ffe3b0;margin-bottom:2px}
+.proof-who .pw-i{font-size:22px;line-height:1}
+.proof-who .pw-t{font-size:14px;font-weight:900;letter-spacing:-.02em;line-height:1.3}
+.proof-who .pw-s{display:block;font-size:11px;font-weight:800;color:#a5854b;margin-top:2px}
+.proof-stat{text-align:center;font-size:12.5px;font-weight:900;color:#1d4ed8;padding:14px 6px;line-height:1.5}
+.proof-shot{display:block;width:100%;max-height:60vh;object-fit:contain;border-radius:16px;border:2px solid var(--line);background:#f7fbff}
+.proof-meta{text-align:center;font-size:11.5px;font-weight:800;color:var(--muted);margin-top:7px;line-height:1.5}
+.quest .proof-badge{
+  display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:8px;
+  background:#eaf4ff;border:1.5px solid #bcdcff;font-size:12px;line-height:1;margin-left:6px;vertical-align:middle;
+  cursor:pointer;box-shadow:0 1px 0 rgba(30,42,68,.08);
+}
+.quest.is-done .proof-badge{background:#fff;border-color:#ffd98a}
+.quest .proof-badge:active{transform:scale(.92)}
+.btn-pen{background:linear-gradient(180deg,#ff7c88,#ef3d4f);border-color:#a01f2c;color:#fff;box-shadow:0 4px 0 #b82936}
+
+/* ------------- 오늘만 보이는 거짓말 경고 ---------------- */
+.warn-lie{
+  position:relative;margin-top:12px;padding:13px 14px 13px 46px;border-radius:20px;border:3px solid #ff4d5e;
+  background:linear-gradient(135deg,#fff6f7,#ffe1e5);
+  box-shadow:0 4px 0 rgba(224,57,74,.22), 0 0 0 6px rgba(255,95,109,.09);
+  font-size:13.5px;font-weight:900;color:#9c1020;line-height:1.5;word-break:keep-all;
+  animation:warnPulse 2.4s ease-in-out infinite;
+}
+.warn-lie .w-ico{position:absolute;left:11px;top:11px;font-size:24px;line-height:1;animation:warnShake 2.4s ease-in-out infinite}
+.warn-lie b{color:#7d0a18;text-decoration:underline}
+@keyframes warnPulse{0%,100%{box-shadow:0 4px 0 rgba(224,57,74,.22), 0 0 0 6px rgba(255,95,109,.09)}50%{box-shadow:0 4px 0 rgba(224,57,74,.22), 0 0 0 11px rgba(255,95,109,.16)}}
+@keyframes warnShake{0%,88%,100%{transform:none}91%{transform:rotate(-12deg)}94%{transform:rotate(10deg)}97%{transform:rotate(-6deg)}}
+
 /* 접근성 / 모션 */
 :focus-visible{outline:3px solid #3fa9ff;outline-offset:2px;border-radius:14px}
 @media (prefers-reduced-motion: reduce){
@@ -1100,6 +1249,18 @@ label.btn{cursor:pointer}
   var EVOLVE_LEVELS = [4, 8];
   /* 암산·영단어 퀴즈는 하루에 이만큼만 XP·코인을 줘요 (그 뒤는 연습) */
   var QUIZ_REWARD_MAX = 3;
+
+  /* 📸 퀘스트 인증 사진 — 형원(c2)만, '오늘 것만' 보관해서 용량을 아껴요 */
+  var PROOF_KID = 'c2';
+  var PROOF_MAX_PX = 480;        /* 긴 변 최대 480px */
+  var PROOF_QUALITY = 0.65;      /* JPEG 품질 */
+  var PROOF_MAX_LEN = 400000;    /* data URL 문자열 상한(넘으면 잘라서 저장 안 함) */
+
+  /* 🚨 거짓말 경고 배너는 이 날에만 보여요 */
+  var LIE_WARN_DAY = '2026-11-20';
+
+  /* 📊 통계 — 날짜별 완료 기록은 이만큼만 보관 */
+  var HIST_KEEP_DAYS = 200;
 
   /* ============================================================
      가족 실시간 동기화 / 알림 설정
@@ -1316,18 +1477,26 @@ label.btn{cursor:pointer}
     }
   };
 
-  /* 마을에 지을 수 있는 건물/장식 */
+  /* 마을에 지을 수 있는 건물/장식 — 4x4 = 16칸 */
   var VILLAGE_ITEMS = [
     { id: 'tree', name: '벚나무', icon: '🌳', cost: 90, cell: 0, desc: '봄이면 분홍 꽃잎이 흩날려요' },
     { id: 'gym', name: '체육관', icon: '🏟️', cost: 180, cell: 1, desc: '포켓몬들이 힘을 겨루는 곳' },
-    { id: 'pond', name: '별빛 연못', icon: '🌌', cost: 130, cell: 2, desc: '밤에 별이 비치는 연못' },
-    { id: 'trophy', name: '트로피 동상', icon: '🏆', cost: 200, cell: 3, desc: '노력의 증표를 세워요' },
-    { id: 'center', name: '포켓몬 센터', icon: '🏥', cost: 120, cell: 4, desc: '지친 친구를 치료하는 집' },
-    { id: 'play', name: '놀이터', icon: '🎠', cost: 160, cell: 5, desc: '미끄럼틀과 회전목마' },
-    { id: 'garden', name: '꽃밭', icon: '🌷', cost: 60, cell: 6, desc: '계절마다 꽃이 피어요' },
-    { id: 'fountain', name: '분수대', icon: '⛲', cost: 140, cell: 7, desc: '시원한 물줄기가 솟아요' },
-    { id: 'camp', name: '캠프파이어', icon: '🔥', cost: 110, cell: 8, desc: '밤에 모여 노래해요' }
+    { id: 'windmill', name: '풍차', icon: '🌬️', cost: 210, cell: 2, desc: '바람이 불면 천천히 돌아가요' },
+    { id: 'pond', name: '별빛 연못', icon: '🌌', cost: 130, cell: 3, desc: '밤에 별이 비치는 연못' },
+    { id: 'lib', name: '도서관', icon: '📚', cost: 150, cell: 4, desc: '포켓몬 도감이 가득한 집' },
+    { id: 'trophy', name: '트로피 동상', icon: '🏆', cost: 200, cell: 5, desc: '노력의 증표를 세워요' },
+    { id: 'center', name: '포켓몬 센터', icon: '🏥', cost: 120, cell: 6, desc: '지친 친구를 치료하는 집' },
+    { id: 'aqua', name: '수족관', icon: '🐠', cost: 170, cell: 7, desc: '물 포켓몬이 헤엄치는 곳' },
+    { id: 'play', name: '놀이터', icon: '🎠', cost: 160, cell: 8, desc: '미끄럼틀과 회전목마' },
+    { id: 'garden', name: '꽃밭', icon: '🌷', cost: 60, cell: 9, desc: '계절마다 꽃이 피어요' },
+    { id: 'fountain', name: '분수대', icon: '⛲', cost: 140, cell: 10, desc: '시원한 물줄기가 솟아요' },
+    { id: 'ferris', name: '관람차', icon: '🎡', cost: 230, cell: 11, desc: '마을이 한눈에 보여요' },
+    { id: 'camp', name: '캠프파이어', icon: '🔥', cost: 110, cell: 13, desc: '밤에 모여 노래해요' },
+    { id: 'rainbow', name: '무지개 다리', icon: '🌈', cost: 190, cell: 12, desc: '지나가면 기분이 좋아져요' },
+    { id: 'castle', name: '마을 성', icon: '🏰', cost: 260, cell: 14, desc: '마을에서 제일 큰 건물' },
+    { id: 'lighthouse', name: '등대', icon: '🗼', cost: 220, cell: 15, desc: '밤에 마을을 환하게 비춰요' }
   ];
+  var VILLAGE_CELLS = 16;
 
   /* 기본 퀘스트 (아이별) */
   function defaultQuests(k) {
@@ -1369,6 +1538,8 @@ label.btn{cursor:pointer}
     return [];
   }
 
+  function emptyProofs() { return { date: '', items: {} }; }
+
   function newChild(k) {
     return {
       name: k === 'c1' ? '윤진' : '형원',
@@ -1377,7 +1548,9 @@ label.btn{cursor:pointer}
       xp: 0, coins: 0, streak: 0, lastAll: null, lastAllPrev: null, bonus90: null,
       done: {}, dex: [], tickets: [], total: 0, academy: null,
       quests: defaultQuests(k),
-      village: []
+      village: [],
+      history: {},          /* { 'YYYY-MM-DD': ['퀘스트ID', ...] } */
+      proofs: emptyProofs() /* { date: 'YYYY-MM-DD', items: { 퀘스트ID: 'data:image/jpeg;...' } } — 오늘 것만 */
     };
   }
   /* 보호자 모드 — 아이 '성장'만 0으로 되돌려요 (퀘스트 목록·보상·쿠폰·이름은 유지) */
@@ -1395,6 +1568,8 @@ label.btn{cursor:pointer}
     ch.lastAllPrev = null;
     ch.bonus90 = null;
     ch.academy = null;
+    ch.history = {};
+    ch.proofs = emptyProofs();
     /* ch.quests · ch.tickets · 이름/학년/아바타는 그대로 둡니다 */
   }
 
@@ -1632,6 +1807,10 @@ label.btn{cursor:pointer}
   var state = null;
   var celebrateId = null;
   var view = 'home';
+  var statsMode = 'week';     /* week | month */
+  var statsWeek = 0;          /* 0 = 이번 주, -1 = 지난 주 */
+  var statsMonth = 0;         /* 0 = 이번 달 */
+  var lieWarnShown = false;   /* 오늘의 경고 팝업은 한 번만 */
   var parentUnlocked = false;
   var editChild = 'c1';
   var chatFrom = '엄마';
@@ -1704,14 +1883,21 @@ label.btn{cursor:pointer}
         src.dex.forEach(function (id) { if (creatureById(id) && dex.indexOf(id) === -1) dex.push(id); });
       }
       var village = [];
+      var takenCell = {};
       if (Array.isArray(src.village)) {
         var used = {};
         src.village.forEach(function (v) {
           var item = v && villageItemById(v.id);
           if (!item || used[item.id]) return;
           var cell = nz(v.cell, item.cell);
-          if (cell < 0 || cell > 8) cell = item.cell;
+          if (cell < 0 || cell >= VILLAGE_CELLS) cell = item.cell;
+          if (takenCell[cell]) {
+            var free = -1;
+            for (var ci = 0; ci < VILLAGE_CELLS; ci++) { if (!takenCell[ci]) { free = ci; break; } }
+            cell = free < 0 ? item.cell : free;
+          }
           used[item.id] = 1;
+          takenCell[cell] = 1;
           village.push({ id: item.id, cell: cell });
         });
       }
@@ -1744,7 +1930,9 @@ label.btn{cursor:pointer}
         } : null,
         bonus90: typeof src.bonus90 === 'string' ? src.bonus90 : null,
         quests: normalizeQuestList(src.quests, k),
-        village: village
+        village: village,
+        history: normalizeHistory(src.history),
+        proofs: normalizeProofs(src.proofs)
       };
     });
     if (Array.isArray(s.rewards)) {
@@ -1935,6 +2123,7 @@ label.btn{cursor:pointer}
     state.cheers = next.cheers;
     sync.applying = false;
     remember();
+    try { if (syncHistoryAll()) pushSoon(); } catch (e) { /* noop */ }
     renderSafe();
   }
 
@@ -2048,6 +2237,8 @@ label.btn{cursor:pointer}
       ch.done = {};
       ch.lastAllPrev = null;
       ch.academy = null;
+      /* 📸 인증 사진은 '오늘 것만' — 날이 바뀌면 어제 사진은 지워요 (저장 용량) */
+      ch.proofs = emptyProofs();
     });
     state.date = t;
     save();
@@ -2074,6 +2265,316 @@ label.btn{cursor:pointer}
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
     return null;
   }
+
+  /* ============================================================
+     📊 날짜별 기록(history) — 통계 화면의 바탕자료
+     기록 모양: { 'YYYY-MM-DD': ['퀘스트ID', ...] }  (그 날 완료한 퀘스트만)
+     ============================================================ */
+  function normalizeHistory(src) {
+    var out = {};
+    if (!src || typeof src !== 'object' || Array.isArray(src)) return out;
+    var today = todayStr();
+    var oldest = new Date();
+    oldest.setDate(oldest.getDate() - HIST_KEEP_DAYS);
+    var minKey = ymd(oldest);
+    Object.keys(src).forEach(function (key) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
+      if (key < minKey || key > today) return;
+      var list = src[key];
+      if (!Array.isArray(list)) return;
+      var ids = [];
+      list.forEach(function (id) {
+        if (typeof id === 'string' && id && ids.indexOf(id) === -1 && ids.length < 60) ids.push(id);
+      });
+      if (ids.length) out[key] = ids;
+    });
+    return out;
+  }
+
+  /* 📸 인증 사진 — 오늘 것만 남겨요 (용량 때문에 어제 것은 바로 지움) */
+  function normalizeProofs(src) {
+    var out = emptyProofs();
+    if (!src || typeof src !== 'object') return out;
+    if (src.date !== todayStr()) return out;
+    var items = src.items;
+    if (!items || typeof items !== 'object') return out;
+    Object.keys(items).forEach(function (qid) {
+      var v = items[qid];
+      if (typeof v !== 'string' || v.indexOf('data:image/') !== 0) return;
+      if (v.length > PROOF_MAX_LEN) return;
+      out.items[qid] = v;
+    });
+    out.date = todayStr();
+    return out;
+  }
+
+  function histFor(k) {
+    var ch = state.children[k];
+    if (!ch.history || typeof ch.history !== 'object') ch.history = {};
+    return ch.history;
+  }
+  function doneQuestIds(ch) {
+    var ids = [];
+    (ch.quests || []).forEach(function (q) { if (ch.done[q.id]) ids.push(q.id); });
+    return ids;
+  }
+  /* 오늘 완료 상태를 history[오늘] 에 맞춰 줌 (바뀌면 true) */
+  function syncHistoryToday(k) {
+    var ch = state.children[k];
+    if (!ch) return false;
+    var day = todayStr();
+    if (state.date && state.date !== day) return false;
+    var ids = doneQuestIds(ch);
+    var h = histFor(k);
+    var prev = h[day] || [];
+    var same = prev.length === ids.length;
+    if (same) {
+      for (var i = 0; i < ids.length; i++) if (prev[i] !== ids[i]) { same = false; break; }
+    }
+    if (same) return false;
+    if (!ids.length) {
+      if (h[day]) { delete h[day]; return true; }
+      return false;
+    }
+    h[day] = ids;
+    return true;
+  }
+  function syncHistoryAll() {
+    var changed = false;
+    ['c1', 'c2'].forEach(function (k) { if (syncHistoryToday(k)) changed = true; });
+    return changed;
+  }
+  function pruneHistory(k) {
+    var h = histFor(k);
+    var oldest = new Date();
+    oldest.setDate(oldest.getDate() - HIST_KEEP_DAYS);
+    var minKey = ymd(oldest);
+    var today = todayStr();
+    var changed = false;
+    var keep = {};
+    Object.keys(h).forEach(function (key) {
+      if (key >= minKey && key <= today) keep[key] = h[key];
+      else changed = true;
+    });
+    if (changed) state.children[k].history = keep;
+    return changed;
+  }
+
+  /* ============================================================
+     📸 퀘스트 인증 사진 (형원)
+     ============================================================ */
+  function todayProofs(k) {
+    var ch = state.children[k];
+    if (!ch.proofs || typeof ch.proofs !== 'object' || ch.proofs.date !== todayStr() || !ch.proofs.items) {
+      ch.proofs = emptyProofs();
+    }
+    ch.proofs.date = todayStr();
+    return ch.proofs.items;
+  }
+  function proofOf(k, qid) {
+    var ch = state.children[k];
+    if (!ch.proofs || ch.proofs.date !== todayStr() || !ch.proofs.items) return null;
+    return ch.proofs.items[qid] || null;
+  }
+  function setProof(k, qid, dataUrl) {
+    var items = todayProofs(k);
+    if (dataUrl) items[qid] = dataUrl;
+    else delete items[qid];
+  }
+  function clearProofs(k) {
+    if (state.children[k]) state.children[k].proofs = emptyProofs();
+  }
+  function proofCount(ch) {
+    if (!ch.proofs || ch.proofs.date !== todayStr() || !ch.proofs.items) return 0;
+    return Object.keys(ch.proofs.items).length;
+  }
+
+  /* 고른 사진을 480px·JPEG 0.65로 줄여서 data URL로 */
+  function proofFromFile(file, cb) {
+    if (!file) { cb(null, 'nofile'); return; }
+    var fr = null;
+    try { fr = new FileReader(); } catch (e) { cb(null, 'reader'); return; }
+    fr.onerror = function () { cb(null, 'read'); };
+    fr.onload = function () {
+      var src = String(fr.result || '');
+      if (!src) { cb(null, 'read'); return; }
+      var img = new Image();
+      img.onerror = function () { cb(null, 'decode'); };
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+          if (!w || !h) { cb(null, 'decode'); return; }
+          var sc = Math.min(1, PROOF_MAX_PX / Math.max(w, h));
+          var cw = Math.max(1, Math.round(w * sc)), chh = Math.max(1, Math.round(h * sc));
+          var cv = document.createElement('canvas');
+          cv.width = cw; cv.height = chh;
+          var cx = cv.getContext('2d');
+          if (!cx) { cb(null, 'canvas'); return; }
+          cx.fillStyle = '#ffffff';
+          cx.fillRect(0, 0, cw, chh);
+          cx.drawImage(img, 0, 0, cw, chh);
+          var out = cv.toDataURL('image/jpeg', PROOF_QUALITY);
+          if (!out || out.indexOf('data:image/') !== 0) { cb(null, 'encode'); return; }
+          if (out.length > PROOF_MAX_LEN) out = cv.toDataURL('image/jpeg', 0.45);
+          if (out.length > PROOF_MAX_LEN) { cb(null, 'big'); return; }
+          cb(out, null);
+        } catch (e) { cb(null, 'canvas'); }
+      };
+      img.src = src;
+    };
+    try { fr.readAsDataURL(file); } catch (e) { cb(null, 'read'); }
+  }
+
+  /* 사진 인증 모달 */
+  function openProofModal(qid) {
+    var q = findQuest(PROOF_KID, qid);
+    if (!q) return;
+    openModal({
+      title: '📸 다 한 숙제 사진 올리기',
+      body: function () {
+        return '<div class="proof-who"><span class="pw-i">' + esc(q.icon) + '</span>'
+          + '<span class="pw-t">' + esc(q.title) + '<span class="pw-s">' + esc(state.children[PROOF_KID].name) + ' — 다 한 문제집·책 사진을 찍어 올려 주세요</span></span></div>'
+          + '<label class="proof-open" for="proofCam"><span class="po-ico">📷</span>'
+          + '<span class="po-t">지금 사진 찍기</span>'
+          + '<span class="po-s">다 한 숙제·책을 찍으면 엄마가 바로 확인할 수 있어요</span></label>'
+          + '<input class="proof-file" type="file" id="proofCam" accept="image/*" capture="environment" data-proof-input="' + esc(qid) + '">'
+          + '<label class="proof-open album" for="proofPick"><span class="po-ico">🖼️</span>'
+          + '<span class="po-t">앨범에서 고르기</span>'
+          + '<span class="po-s">이미 찍어 둔 사진으로 올려도 돼요</span></label>'
+          + '<input class="proof-file" type="file" id="proofPick" accept="image/*" data-proof-input="' + esc(qid) + '">'
+          + '<div class="row-btns" style="margin-top:12px">'
+          + '<button type="button" class="btn btn-sm btn-ghost btn-block" data-proof-pin="' + esc(qid) + '">🔒 엄마 PIN으로 사진 없이 통과</button>'
+          + '</div>'
+          + '<p class="proof-meta">사진은 오늘만 보관되고, 내일이 되면 자동으로 지워져요</p>';
+      }
+    });
+  }
+
+  /* 저장된 인증 사진 보기 (라이트박스) */
+  function openProofView(k, qid) {
+    var q = findQuest(k, qid);
+    var src = proofOf(k, qid);
+    var title = q ? q.title : '인증 사진';
+    var penBtn = (k === PROOF_KID && state.children[k].done[qid])
+      ? '<div class="row-btns" style="margin-top:12px">'
+        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
+        + '</div><p class="proof-meta">사진이 실제로 다 한 숙제가 아니면 눌러 주세요 · 엄마 PIN 필요</p>'
+      : '';
+    openModal({
+      title: '📸 ' + esc(title),
+      body: (src
+        ? '<img class="proof-shot" alt="' + esc(title) + ' 인증 사진" src="' + src + '">'
+          + '<div class="proof-meta">' + esc(state.children[k].name) + '의 오늘 인증 사진 · 저장된 사진은 내일 지워져요</div>'
+        : '<div class="proof-stat">저장된 사진이 없어요.</div>')
+        + penBtn,
+      actions: [{ label: '닫기', cls: 'btn-ghost', fn: function () { closeModal(); } }]
+    });
+  }
+
+  /* 완료 취소 선택 (형원) — 실수 취소 / 거짓말 취소를 구분 */
+  function openCancelChoice(qid) {
+    var q = findQuest(PROOF_KID, qid);
+    if (!q) return;
+    var hasPhoto = !!proofOf(PROOF_KID, qid);
+    openModal({
+      title: '↩️ 완료 취소',
+      body: '<p style="font-weight:800;line-height:1.5">' + esc(q.title) + '<br><span class="muted" style="font-size:12px">어떻게 취소할까요?</span></p>'
+        + (hasPhoto
+          ? '<div class="row-btns"><button type="button" class="btn btn-sm btn-ghost btn-block" data-proof="' + esc(qid) + '">📸 올린 사진 보기</button></div>'
+          : '')
+        + '<div class="row-btns" style="flex-direction:column;gap:8px;margin-top:10px">'
+        + '<button type="button" class="btn btn-ghost btn-block" data-undo="' + esc(qid) + '">↩️ 그냥 취소 (실수였어요)</button>'
+        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
+        + '</div><p class="proof-meta">거짓말 취소는 엄마 PIN이 있어야 해요</p>'
+    });
+  }
+
+  /* 🚨 거짓말 취소 — 코인 2배 차감 + XP 회수 + 사진 삭제 */
+  function penaltyCancel(k, qid) {
+    var ch = state.children[k];
+    var q = findQuest(k, qid);
+    if (!ch || !q) return;
+    if (!ch.done[qid]) { toast('이미 취소된 퀘스트예요'); return; }
+    var today = todayStr();
+    var beforeCoins = ch.coins;
+    delete ch.done[qid];
+    ch.total = Math.max(0, ch.total - 1);
+    ch.xp = Math.max(0, ch.xp - q.xp);
+    ch.coins = Math.max(0, ch.coins - (q.coins * 2));
+    if (ch.lastAll === today) {
+      if (ch.lastAllPrev) {
+        ch.lastAll = ch.lastAllPrev.lastAll || null;
+        ch.streak = ch.lastAllPrev.streak || 0;
+      } else {
+        ch.lastAll = null;
+        ch.streak = Math.max(0, ch.streak - 1);
+      }
+      ch.lastAllPrev = null;
+    }
+    if (ch.bonus90 === today && todayPct(k) < 90) {
+      ch.bonus90 = null;
+      ch.xp = Math.max(0, ch.xp - 15);
+      ch.coins = Math.max(0, ch.coins - 15);
+    }
+    setProof(k, qid, null);
+    syncHistoryToday(k);
+    save();
+    closeAllModals();
+    SFX.nope();
+    render();
+    var cut = beforeCoins - ch.coins;
+    toast('🚨 거짓말 페널티! 코인 ' + cut + '개가 차감되었어요.');
+    ntfySend('🚨 ' + ch.name + ' 거짓말 페널티',
+      "'" + q.title + "' 퀘스트가 취소되고 코인 " + cut + '개가 차감됐어요.');
+  }
+
+  /* ============================================================
+     📊 통계 계산
+     ============================================================ */
+  function parseYmd(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || ''));
+    if (!m) return null;
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+  function dayTypeOf(d) { return (d.getDay() === 0 || d.getDay() === 6) ? 'weekend' : 'daily'; }
+  function plannedQuestsFor(k, dateStr) {
+    var d = parseYmd(dateStr);
+    if (!d) return [];
+    var t = dayTypeOf(d);
+    return state.children[k].quests.filter(function (q) { return q.day === t; });
+  }
+  function dayRecord(k, dateStr) {
+    var rec = histFor(k)[dateStr];
+    var done = Array.isArray(rec) ? rec : null;
+    var planned = plannedQuestsFor(k, dateStr);
+    var total = Math.max(planned.length, done ? done.length : 0);
+    var cnt = done ? done.length : 0;
+    return {
+      date: dateStr,
+      planned: planned,
+      done: done,
+      rec: !!done,
+      total: total,
+      count: cnt,
+      pct: total ? Math.round((cnt / total) * 100) : 0,
+      all: !!done && total > 0 && cnt >= total,
+      today: dateStr === todayStr(),
+      future: dateStr > todayStr()
+    };
+  }
+  function startOfWeek(offset) {
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    var wd = d.getDay();
+    d.setDate(d.getDate() + (wd === 0 ? -6 : 1 - wd) + (offset || 0) * 7);
+    return d;
+  }
+  function addDays(d, n) {
+    var x = new Date(d.getTime());
+    x.setDate(x.getDate() + n);
+    return x;
+  }
+  function mdLabel(d) { return (d.getMonth() + 1) + '.' + d.getDate(); }
 
   /* ============================================================
      사운드 / 이펙트
@@ -2400,6 +2901,17 @@ label.btn{cursor:pointer}
       return !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"'));
     } catch (e) { return false; }
   })();
+  /* 도감에 나오는 모든 포켓몬(수집·파트너 진화 포함)에 영어 이름이 다 있는지 스스로 점검 */
+  function cryCoverage() {
+    var seen = {};
+    CREATURES.forEach(function (c) { if (c && c.dex) seen[c.dex] = 1; });
+    Object.keys(PARTNERS).forEach(function (k) {
+      PARTNERS[k].stages.forEach(function (s) { if (s && s.dex) seen[s.dex] = 1; });
+    });
+    var dexes = Object.keys(seen).map(Number).sort(function (a, b) { return a - b; });
+    var missing = dexes.filter(function (d) { return !CRY_EN[d]; });
+    return { total: dexes.length, mapped: dexes.length - missing.length, missing: missing, dexes: dexes };
+  }
   var cryEls = {};
   var cryNow = null;
   var cryToken = 0;
@@ -2755,11 +3267,14 @@ label.btn{cursor:pointer}
   function questRowHTML(k, q, other) {
     var ch = state.children[k];
     var isDone = !!ch.done[q.id];
+    var pf = isDone ? proofOf(k, q.id) : null;
     return '<button type="button" class="quest' + (isDone ? ' is-done' : '') + (other ? ' other' : '')
       + (celebrateId === q.id ? ' pop' : '') + '" data-quest="' + esc(q.id) + '" aria-pressed="' + isDone + '"'
       + ' aria-label="' + esc(q.title) + (isDone ? ' 완료됨, 누르면 취소' : ' 완료하기') + '">'
       + '<span class="q-ico">' + esc(q.icon) + '</span>'
-      + '<span class="q-body"><span class="q-title">' + esc(q.title) + '</span>'
+      + '<span class="q-body"><span class="q-title">' + esc(q.title)
+      + (pf ? '<span class="proof-badge" data-proof="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + esc(q.title) + ' 인증 사진 보기">📸</span>' : '')
+      + '</span>'
       + '<span class="q-rewards"><span class="r">⚡ +' + q.xp + '</span><span class="r c">🪙 +' + q.coins + '</span></span></span>'
       + '<span class="check" aria-hidden="true">✓</span></button>';
   }
@@ -2797,7 +3312,15 @@ label.btn{cursor:pointer}
   }
 
   function kidPageHTML(k) {
-    return kidHeadHTML(k) + kidStudyHTML(k) + questListHTML(k);
+    return kidHeadHTML(k) + lieWarnHTML(k) + kidStudyHTML(k) + questListHTML(k);
+  }
+
+  /* 🚨 거짓말 경고 — 정해둔 날(LIE_WARN_DAY)에만 형원이 화면에 보임 */
+  function lieWarnHTML(k) {
+    if (k !== PROOF_KID || todayStr() !== LIE_WARN_DAY) return '';
+    return '<div class="warn-lie" role="alert"><span class="w-ico" aria-hidden="true">🚨</span>'
+      + '형원아! 숙제 안 하고 거짓말로 누르면 엄마가 취소할 때 <b>코인이 2배로 깎여요!</b><br>'
+      + '꼭 다 한 다음 사진 찍고 누르자! 📸</div>';
   }
 
   /* 퀘스트 완성 버튼 바로 아래 — 지식 퍼즐 게임(별도 프로그램)으로 */
@@ -3597,9 +4120,9 @@ label.btn{cursor:pointer}
     var k = state.active;
     var ch = activeChild();
     var placed = {};
-    ch.village.forEach(function (v) { placed[v.cell] = v; });
+    ch.village.forEach(function (v) { if (v.cell >= 0 && v.cell < VILLAGE_CELLS) placed[v.cell] = v; });
     var cells = [];
-    for (var i = 0; i < 9; i++) {
+    for (var i = 0; i < VILLAGE_CELLS; i++) {
       var v = placed[i];
       if (v) {
         var item = villageItemById(v.id);
@@ -3610,30 +4133,43 @@ label.btn{cursor:pointer}
       }
     }
 
-    var crittPos = [[7, 54], [76, 50], [44, 80], [86, 76], [26, 84]];
+    /* 터치 방해 없는 풍경 — 산책로·꽃 */
+    var spr = [
+      ['🌼', 36, 4], ['🌸', 52, 2], ['🍀', 66, 5], ['🌱', 88, 3], ['🌷', 93, 12]
+    ].map(function (s) {
+      return '<span class="v-spr" style="left:' + s[1] + '%;bottom:' + s[2] + 'px">' + s[0] + '</span>';
+    }).join('');
+    var scene = '<div class="v-scene" aria-hidden="true">'
+      + '<span class="v-pond"></span><span class="v-path"></span>' + spr + '</div>';
+
+    /* 마을 앞 잔디마당에서 놀고 있는 친구들 (최대 8마리 + 파트너) */
+    var yardA = [[0, 50], [19, 50], [38, 50], [57, 50], [76, 50]];
+    var yardB = [[8, 4], [30, 4], [52, 4]];
     var critters = '';
-    var show = ch.dex.slice(0, 4);
+    var show = ch.dex.slice(0, 8);
     show.forEach(function (id, idx) {
       var c = creatureById(id);
       if (!c) return;
-      var p = crittPos[idx] || crittPos[0];
-      critters += '<div class="v-critter" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|')) + '" title="탭하면 울음소리" style="left:' + p[0] + '%;top:' + p[1] + '%;animation-delay:' + (idx * 0.35) + 's">'
+      var p = idx < yardA.length ? yardA[idx] : yardB[idx - yardA.length];
+      if (!p) return;
+      critters += '<div class="v-critter" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|')) + '" title="탭하면 울음소리" style="left:' + p[0] + '%;bottom:' + p[1] + 'px;animation-delay:' + (idx * 0.35) + 's">'
         + creatureSVG(c) + '</div>';
     });
     var stage = stageForLevel(levelInfo(ch.xp).level);
     var pStage = partnerSpec(k, stage);
-    critters += '<div class="v-critter" data-cry="' + pStage.dex + '" data-cry-t="' + esc(pStage.types.join('|')) + '" title="탭하면 울음소리" style="left:5%;top:66%;width:46px;height:46px;animation-delay:.2s">'
+    critters += '<div class="v-critter v-partner" data-cry="' + pStage.dex + '" data-cry-t="' + esc(pStage.types.join('|')) + '" title="탭하면 울음소리" style="left:74%;bottom:4px;animation-delay:.2s">'
       + creatureSVG(pStage) + '</div>';
 
     var html = childSwitchHTML() + '<section class="section"><div class="section-head"><h2>🏡 ' + esc(ch.name) + '의 포켓몬 마을</h2>'
       + '<span class="hint">🪙 ' + ch.coins + ' 코인</span></div>'
       + '<div class="village">'
       + '<span class="v-sun">☀️</span><span class="v-cloud">☁️</span><span class="v-cloud b">☁️</span>'
+      + scene
       + '<div class="v-grid">' + cells.join('') + '</div>'
       + critters
       + '</div>'
-      + '<div class="bonus-note" style="margin-top:10px">💚 마을에 지은 건물 ' + ch.village.length + '채 · 수집한 포켓몬 '
-      + ch.dex.length + '마리가 함께 놀고 있어요. 빈 터를 하나씩 채워 보세요!</div>'
+      + '<div class="bonus-note" style="margin-top:10px">💚 마을에 지은 건물 ' + ch.village.length + '/' + VILLAGE_CELLS + '채 · 수집한 포켓몬 '
+      + ch.dex.length + '마리 중 ' + Math.min(8, ch.dex.length) + '마리가 함께 놀고 있어요. 빈 터를 하나씩 채워 보세요!</div>'
       + '</section>';
 
     html += '<section class="section"><div class="section-head"><h2>🏗️ 마을 건설</h2>'
@@ -3656,7 +4192,7 @@ label.btn{cursor:pointer}
         + (own ? '' : '<span class="bd-cost">🪙 ' + it.cost + '</span>') + '</span>'
         + btn + '</div>';
     }).join('');
-    html += '</div><div class="note" style="margin-top:10px">건물을 지으면 마을 9칸 중 빈 터에 자동으로 놓여요. <b>옮기기</b>로 자리를 바꿀 수 있어요.</div></section>';
+    html += '</div><div class="note" style="margin-top:10px">건물을 지으면 마을 ' + VILLAGE_CELLS + '칸 중 빈 터에 자동으로 놓여요. <b>옮기기</b>로 자리를 바꿀 수 있어요.</div></section>';
     return html;
   }
 
@@ -3674,6 +4210,206 @@ label.btn{cursor:pointer}
     return Number(m[2]) + '월 ' + Number(m[3]) + '일';
   }
 
+  /* ============================================================
+     📊 통계 화면
+     ============================================================ */
+  function statSumHTML(items) {
+    return '<div class="stat-sum">' + items.map(function (it) {
+      return '<div class="ss"><b class="' + (it.cls || '') + '">' + it.v + '</b><small>' + it.label + '</small></div>';
+    }).join('') + '</div>';
+  }
+  function statLegendHTML() {
+    return '<div class="legend">'
+      + '<span><i class="lg ok">✓</i>완료</span>'
+      + '<span><i class="lg plan"></i>계획일</span>'
+      + '<span><i class="lg none">–</i>계획 없음</span>'
+      + '<span><i class="lg nr">·</i>기록 없음</span></div>';
+  }
+
+  function statsHTML() {
+    var k = state.active;
+    var ch = state.children[k];
+    var html = childSwitchHTML();
+    html += '<section class="section"><div class="section-head"><h2>📊 ' + esc(ch.name) + ' 퀘스트 기록</h2>'
+      + '<span class="hint">' + (k === PROOF_KID ? '📸 사진 인증' : '완료 기록') + '</span></div>'
+      + '<div class="seg" role="group" aria-label="통계 종류">'
+      + [['week', '주간 흐름'], ['month', '월간 기록']].map(function (m) {
+        return '<button type="button" data-stat-mode="' + m[0] + '" class="' + (statsMode === m[0] ? 'on' : '') + '" aria-pressed="' + (statsMode === m[0]) + '">' + m[1] + '</button>';
+      }).join('') + '</div>'
+      + '<div class="card" style="padding:13px 11px 12px">'
+      + (statsMode === 'week' ? statsWeekHTML(k) : statsMonthHTML(k))
+      + '</div>'
+      + '<div class="note" style="margin-top:10px">기록은 체크한 날부터 쌓여요. 오늘 누른 완료는 바로 반영되고, 매일 자동으로 정리돼요.</div>'
+      + '</section>';
+    return html;
+  }
+
+  function weekCellHTML(q, d, rec) {
+    var planned = q.day === dayTypeOf(d);
+    var isDone = !!(rec.done && rec.done.indexOf(q.id) !== -1);
+    var cls = 'wt-c', txt = '';
+    if (isDone) { cls += ' ok'; txt = '✓'; }
+    else if (!planned) { cls += ' none'; txt = '–'; }
+    else if (rec.future) { cls += ' notyet'; }
+    else if (!rec.rec && !rec.today) { cls += ' none'; txt = '·'; }
+    else { cls += ' plan'; }
+    if (rec.today) cls += ' tod';
+    return '<span class="' + cls + '">' + txt + '</span>';
+  }
+
+  function statsWeekHTML(k) {
+    var ch = state.children[k];
+    var ws = startOfWeek(statsWeek);
+    var days = [], dayStrs = [], recs = [];
+    for (var i = 0; i < 7; i++) {
+      var d = addDays(ws, i);
+      days.push(d);
+      dayStrs.push(ymd(d));
+      recs.push(dayRecord(k, ymd(d)));
+    }
+    var todayKey = todayStr();
+    var label = statsWeek === 0 ? '이번 주' : (statsWeek === -1 ? '지난 주' : Math.abs(statsWeek) + '주 전');
+    var html = '<div class="wnav">'
+      + '<button type="button" class="wn-btn" data-stat-week="prev" aria-label="이전 주">‹</button>'
+      + '<div class="wn-l">' + label + '<small>' + mdLabel(days[0]) + '(' + WEEK[days[0].getDay()] + ') ~ '
+      + mdLabel(days[6]) + '(' + WEEK[days[6].getDay()] + ')</small></div>'
+      + '<button type="button" class="wn-btn" data-stat-week="next" aria-label="다음 주"' + (statsWeek >= 0 ? ' disabled' : '') + '>›</button>'
+      + '</div>';
+
+    html += '<div class="wt-head"><span class="wt-ql" style="padding-left:25px">퀘스트</span><div class="wt-days">'
+      + days.map(function (d, i2) {
+        var cls = 'wt-hd' + (dayStrs[i2] === todayKey ? ' on' : '') + (d.getDay() === 0 ? ' wk' : '');
+        return '<button type="button" class="' + cls + '" data-stat-day="' + dayStrs[i2] + '"'
+          + ' aria-label="' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 기록 보기">'
+          + '<b>' + WEEK[d.getDay()] + '</b><span>' + d.getDate() + '</span></button>';
+      }).join('') + '</div></div>';
+
+    var list = ch.quests.slice().sort(function (a, b) {
+      if (a.day === b.day) return 0;
+      return a.day === 'daily' ? -1 : 1;
+    });
+    if (!list.length) {
+      html += '<div class="empty">퀘스트가 없어요. 보호자 모드에서 추가해 주세요.</div>';
+    } else {
+      list.forEach(function (q) {
+        html += '<div class="wt-row"><span class="wt-qi">' + esc(q.icon) + '</span>'
+          + '<span class="wt-qt" title="' + esc(q.title) + '">' + esc(q.title)
+          + '<em>' + (q.day === 'weekend' ? '주말 퀘스트' : '매일 퀘스트') + '</em></span>'
+          + '<div class="wt-days">' + days.map(function (d, i3) {
+            return weekCellHTML(q, d, recs[i3]);
+          }).join('') + '</div></div>';
+      });
+    }
+
+    var covC = 0, covT = 0, allDays = 0, cnt = 0;
+    recs.forEach(function (r) {
+      if (r.rec || r.today) { covC += r.count; covT += r.total; }
+      if (r.rec) cnt += r.count;
+      if (r.all) allDays++;
+    });
+    var rate = covT ? Math.round((covC / covT) * 100) : 0;
+    html += statSumHTML([
+      { v: cnt + '개', label: '완료한 퀘스트' },
+      { v: allDays + '일', label: '올클리어' },
+      { v: rate + '%', label: '완료율', cls: rate >= 90 ? 'g' : '' }
+    ]);
+    html += statLegendHTML();
+    return html;
+  }
+
+  function statsMonthHTML(k) {
+    var ch = state.children[k];
+    var base = new Date();
+    base.setDate(1);
+    base.setHours(0, 0, 0, 0);
+    base.setMonth(base.getMonth() + statsMonth);
+    var y = base.getFullYear(), m = base.getMonth();
+    var lead = (new Date(y, m, 1).getDay() + 6) % 7;
+    var dim = new Date(y, m + 1, 0).getDate();
+    var label = y + '년 ' + (m + 1) + '월';
+    var html = '<div class="wnav">'
+      + '<button type="button" class="wn-btn" data-stat-month="prev" aria-label="이전 달">‹</button>'
+      + '<div class="wn-l">' + label + '<small>' + (statsMonth === 0 ? '이번 달' : '지난 달') + ' · 날짜를 누르면 자세히</small></div>'
+      + '<button type="button" class="wn-btn" data-stat-month="next" aria-label="다음 달"' + (statsMonth >= 0 ? ' disabled' : '') + '>›</button>'
+      + '</div>';
+
+    html += '<div class="mcal">';
+    ['월', '화', '수', '목', '금', '토', '일'].forEach(function (w, i4) {
+      html += '<div class="mc-w' + (i4 === 5 ? ' sat' : (i4 === 6 ? ' sun' : '')) + '">' + w + '</div>';
+    });
+    for (var b = 0; b < lead; b++) html += '<div class="mc-day empty"></div>';
+
+    var sumC = 0, sumT = 0, allDays = 0, best = 0, cur = 0;
+    var hasProof = k === PROOF_KID && ch.proofs && ch.proofs.items && Object.keys(ch.proofs.items).length;
+    for (var dd = 1; dd <= dim; dd++) {
+      var ds = y + '-' + pad2(m + 1) + '-' + pad2(dd);
+      var rec = dayRecord(k, ds);
+      var cls = 'mc-day', txt = '';
+      if (rec.future && !rec.today) cls += ' future';
+      if (rec.rec) {
+        sumC += rec.count;
+        sumT += rec.total;
+        if (rec.all) { allDays++; cur++; if (cur > best) best = cur; cls += ' all'; txt = '✓'; }
+        else if (rec.count > 0) { cur = 0; cls += ' part'; txt = rec.pct + '%'; }
+        else { cur = 0; cls += ' zero'; txt = '0%'; }
+      } else if (!rec.today && !rec.future) {
+        cur = 0;
+        cls += ' nr';
+      }
+      if (rec.today) cls += ' today';
+      var pf = (hasProof && ch.proofs.date === ds) ? '<span class="pf">📸</span>' : '';
+      html += '<button type="button" class="' + cls + '" data-stat-day="' + ds + '"'
+        + ' aria-label="' + (m + 1) + '월 ' + dd + '일 기록 보기">'
+        + pf + '<span class="n">' + dd + '</span><span class="r">' + txt + '</span></button>';
+    }
+    html += '</div>';
+
+    var rate = sumT ? Math.round((sumC / sumT) * 100) : 0;
+    html += statSumHTML([
+      { v: rate + '%', label: '이달 완료율', cls: rate >= 90 ? 'g' : '' },
+      { v: allDays + '일', label: '올클리어 일수' },
+      { v: best + '일', label: '최장 연속 기록' }
+    ]);
+    html += statLegendHTML();
+    html += '<div class="wt-today-line">📸 사진은 그날 하루만 보관돼요</div>';
+    return html;
+  }
+
+  /* 날짜 하나 자세히 보기 */
+  function openDayStats(k, ds) {
+    var d = parseYmd(ds);
+    if (!d) return;
+    var rec = dayRecord(k, ds);
+    var rows = '';
+    if (rec.planned.length) {
+      rows = rec.planned.map(function (q) {
+        var ok = !!(rec.done && rec.done.indexOf(q.id) !== -1);
+        var has = ok && !!proofOf(k, q.id);
+        return '<div class="dstat-row ' + (ok ? 'ok' : 'no') + '"><span class="i">' + esc(q.icon) + '</span>'
+          + '<span>' + esc(q.title)
+          + (has ? ' <span class="proof-badge" data-proof="' + esc(q.id) + '" role="button" tabindex="0" aria-label="인증 사진 보기">📸</span>' : '')
+          + '</span><span class="m">' + (ok ? '✓' : '–') + '</span></div>';
+      }).join('');
+    } else {
+      rows = '<div class="empty">이 날은 해당하는 퀘스트가 없어요.</div>';
+    }
+    var extra = (rec.done || []).filter(function (id) {
+      return !rec.planned.some(function (q) { return q.id === id; });
+    });
+    if (extra.length) {
+      rows += '<p class="proof-meta">다른 날 퀘스트로 미리 완료한 기록 ' + extra.length + '개가 있어요</p>';
+    }
+    openModal({
+      title: '📊 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + WEEK[d.getDay()] + ')',
+      body: '<div class="stat-sum" style="margin-top:0">'
+        + '<div class="ss"><b>' + rec.count + '/' + rec.total + '</b><small>완료</small></div>'
+        + '<div class="ss"><b class="' + (rec.pct >= 90 ? 'g' : '') + '">' + rec.pct + '%</b><small>달성률</small></div>'
+        + '<div class="ss"><b>' + (rec.all ? '올클리어' : (rec.rec ? '진행 중' : '기록 없음')) + '</b><small>상태</small></div>'
+        + '</div><div class="dstat-list" style="margin-top:11px">' + rows + '</div>',
+      actions: [{ label: '닫기', cls: 'btn-ghost', fn: function () { closeModal(); } }]
+    });
+  }
+
   function renderNav() {
     var remain1 = applicableQuests('c1').length - doneCount('c1');
     var remain2 = applicableQuests('c2').length - doneCount('c2');
@@ -3689,7 +4425,8 @@ label.btn{cursor:pointer}
       { id: 'c2', icon: state.children.c2.avatar, label: state.children.c2.name, badge: remain2 > 0 ? remain2 : 0 },
       { id: 'village', icon: '🏡', label: '마을', badge: buildable },
       { id: 'shop', icon: '🎁', label: '상점', badge: pending },
-      { id: 'dex', icon: '📖', label: '도감', badge: 0 }
+      { id: 'dex', icon: '📖', label: '도감', badge: 0 },
+      { id: 'stats', icon: '📊', label: '통계', badge: 0 }
     ];
     document.getElementById('nav').innerHTML = items.map(function (t) {
       var on = view === t.id || (view === 'quiz' && quiz && quiz.k === t.id);
@@ -3717,11 +4454,27 @@ label.btn{cursor:pointer}
     else if (view === 'shop') html = shopHTML();
     else if (view === 'village') html = villageHTML();
     else if (view === 'dex') html = dexHTML();
+    else if (view === 'stats') html = statsHTML();
     else html = homeHTML();
     html += '<div class="sr" aria-live="polite">' + esc(ch.name) + ' Lv.' + levelInfo(ch.xp).level
       + ', 코인 ' + ch.coins + '개, 오늘 완료 ' + doneCount(state.active) + '개</div>';
     app.innerHTML = html;
     renderNav();
+    if ((view === 'c1' || view === 'c2') && view === PROOF_KID && todayStr() === LIE_WARN_DAY && !lieWarnShown) {
+      lieWarnShown = true;
+      setTimeout(function () {
+        if (modalStack.length) return;
+        openModal({
+          title: '🚨 형원아, 꼭 읽어 줘!',
+          body: '<div class="warn-lie" style="margin-top:0">'
+            + '<span class="w-ico" aria-hidden="true">🚨</span>'
+            + '숙제 안 하고 거짓말로 누르면 엄마가 취소할 때 <b>코인이 2배로 깎여요!</b><br>'
+            + '꼭 다 한 다음 사진 찍고 누르자! 📸</div>'
+            + '<p class="proof-meta">이 안내는 오늘만 보여요</p>',
+          actions: [{ label: '알겠어! 📸', cls: 'btn-primary', fn: function () { closeModal(); } }]
+        });
+      }, 520);
+    }
     if (celebrateId) {
       setTimeout(function () { celebrateId = null; }, 600);
     }
@@ -3789,35 +4542,57 @@ label.btn{cursor:pointer}
     var ch = activeChild();
     var q = findQuest(k, id);
     if (!q) return;
-    var today = todayStr();
 
     if (ch.done[id]) {
-      delete ch.done[id];
-      ch.xp = Math.max(0, ch.xp - q.xp);
-      ch.coins = Math.max(0, ch.coins - q.coins);
-      ch.total = Math.max(0, ch.total - 1);
-      if (ch.lastAll === today) {
-        ch.coins = Math.max(0, ch.coins - 5);
-        if (ch.lastAllPrev) {
-          ch.lastAll = ch.lastAllPrev.lastAll || null;
-          ch.streak = ch.lastAllPrev.streak || 0;
-        } else {
-          ch.lastAll = null;
-          ch.streak = Math.max(0, ch.streak - 1);
-        }
-        ch.lastAllPrev = null;
-      }
-      if (ch.bonus90 === today && todayPct(k) < 90) {
-        ch.bonus90 = null;
-        ch.xp = Math.max(0, ch.xp - 15);
-        ch.coins = Math.max(0, ch.coins - 15);
-      }
-      save();
-      SFX.undo();
-      render();
-      toast('퀘스트를 취소했어요');
+      /* 형원이는 '그냥 취소'와 '거짓말 취소(페널티)'를 골라서 */
+      if (k === PROOF_KID) { openCancelChoice(id); return; }
+      undoQuest(k, id);
       return;
     }
+    /* 형원이는 완료 전에 사진 인증을 먼저 받아요 */
+    if (k === PROOF_KID) { openProofModal(id); return; }
+    completeQuest(id, el);
+  }
+
+  /* 그냥 취소 (실수) */
+  function undoQuest(k, id) {
+    var ch = state.children[k];
+    var q = findQuest(k, id);
+    if (!ch || !q || !ch.done[id]) return;
+    var today = todayStr();
+    delete ch.done[id];
+    ch.xp = Math.max(0, ch.xp - q.xp);
+    ch.coins = Math.max(0, ch.coins - q.coins);
+    ch.total = Math.max(0, ch.total - 1);
+    if (ch.lastAll === today) {
+      ch.coins = Math.max(0, ch.coins - 5);
+      if (ch.lastAllPrev) {
+        ch.lastAll = ch.lastAllPrev.lastAll || null;
+        ch.streak = ch.lastAllPrev.streak || 0;
+      } else {
+        ch.lastAll = null;
+        ch.streak = Math.max(0, ch.streak - 1);
+      }
+      ch.lastAllPrev = null;
+    }
+    if (ch.bonus90 === today && todayPct(k) < 90) {
+      ch.bonus90 = null;
+      ch.xp = Math.max(0, ch.xp - 15);
+      ch.coins = Math.max(0, ch.coins - 15);
+    }
+    syncHistoryToday(k);
+    save();
+    SFX.undo();
+    render();
+    toast('퀘스트를 취소했어요');
+  }
+
+  function completeQuest(id, el) {
+    var k = state.active;
+    var ch = state.children[k];
+    var q = findQuest(k, id);
+    if (!q || ch.done[id]) return;
+    var today = todayStr();
 
     var beforeLevel = levelInfo(ch.xp).level;
     var beforeStage = stageForLevel(beforeLevel);
@@ -3825,6 +4600,7 @@ label.btn{cursor:pointer}
     ch.total += 1;
     ch.xp += q.xp;
     ch.coins += q.coins;
+    syncHistoryToday(k);
     var afterLevel = levelInfo(ch.xp).level;
     var afterStage = stageForLevel(afterLevel);
     if (afterStage > beforeStage) {
@@ -4093,7 +4869,7 @@ label.btn{cursor:pointer}
       var cell = -1;
       if (!used[item.cell]) cell = item.cell;
       else {
-        for (var i = 0; i < 9; i++) if (!used[i]) { cell = i; break; }
+        for (var i = 0; i < VILLAGE_CELLS; i++) if (!used[i]) { cell = i; break; }
       }
       if (cell < 0) { toast('마을 터가 가득 찼어요'); return; }
       c.coins -= item.cost;
@@ -4115,8 +4891,8 @@ label.btn{cursor:pointer}
     var used = {};
     ch.village.forEach(function (v) { if (v.id !== id) used[v.cell] = 1; });
     var next = -1;
-    for (var step = 1; step <= 9; step++) {
-      var cand = (entry.cell + step) % 9;
+    for (var step = 1; step <= VILLAGE_CELLS; step++) {
+      var cand = (entry.cell + step) % VILLAGE_CELLS;
       if (!used[cand]) { next = cand; break; }
     }
     if (next < 0) { toast('옮길 빈 터가 없어요'); return; }
@@ -4554,7 +5330,7 @@ label.btn{cursor:pointer}
     var navEl = closestEl(t, '[data-nav]');
     if (navEl) {
       var nv = navEl.getAttribute('data-nav');
-      if (nv !== 'home' && nv !== 'c1' && nv !== 'c2' && nv !== 'shop' && nv !== 'village' && nv !== 'dex') nv = 'home';
+      if (nv !== 'home' && nv !== 'c1' && nv !== 'c2' && nv !== 'shop' && nv !== 'village' && nv !== 'dex' && nv !== 'stats') nv = 'home';
       if (nv === 'c1' || nv === 'c2') state.active = nv;
       if (quiz && view === 'quiz') { stopQuizTimer(); quiz = null; }
       view = nv;
@@ -4563,6 +5339,71 @@ label.btn{cursor:pointer}
       SFX.tap();
       render();
       window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
+
+    /* 📊 통계 — 주/월 이동과 날짜 자세히 */
+    var sm = closestEl(t, '[data-stat-mode]');
+    if (sm) {
+      var mode = sm.getAttribute('data-stat-mode');
+      statsMode = mode === 'month' ? 'month' : 'week';
+      SFX.tap();
+      render();
+      return;
+    }
+    var sw = closestEl(t, '[data-stat-week]');
+    if (sw) {
+      if (sw.getAttribute('data-stat-week') === 'prev') statsWeek -= 1;
+      else if (statsWeek < 0) statsWeek += 1;
+      if (statsWeek > 0) statsWeek = 0;
+      SFX.tap();
+      render();
+      return;
+    }
+    var smo = closestEl(t, '[data-stat-month]');
+    if (smo) {
+      if (smo.getAttribute('data-stat-month') === 'prev') statsMonth -= 1;
+      else if (statsMonth < 0) statsMonth += 1;
+      if (statsMonth > 0) statsMonth = 0;
+      SFX.tap();
+      render();
+      return;
+    }
+    var sd = closestEl(t, '[data-stat-day]');
+    if (sd) { openDayStats(state.active, sd.getAttribute('data-stat-day')); return; }
+
+    /* 📸 인증 사진 보기 / 사진 없이 통과 */
+    var pv = closestEl(t, '[data-proof]');
+    if (pv) {
+      openProofView(state.active, pv.getAttribute('data-proof'));
+      e.preventDefault();
+      return;
+    }
+    var pp = closestEl(t, '[data-proof-pin]');
+    if (pp) {
+      var pqid = pp.getAttribute('data-proof-pin');
+      askPin('엄마 확인이면 사진 없이 통과할 수 있어요', function () {
+        closeAllModals();
+        completeQuest(pqid, null);
+        toast('🔓 엄마 확인으로 완료했어요');
+      });
+      return;
+    }
+
+    /* ↩️ 그냥 취소 / 🚨 거짓말 취소 */
+    var un = closestEl(t, '[data-undo]');
+    if (un) {
+      var uqid = un.getAttribute('data-undo');
+      closeAllModals();
+      undoQuest(state.active, uqid);
+      return;
+    }
+    var pen = closestEl(t, '[data-penalty]');
+    if (pen) {
+      var penQid = pen.getAttribute('data-penalty');
+      askPin('거짓말 취소는 엄마만 할 수 있어요 (코인 2배 차감)', function () {
+        penaltyCancel(state.active, penQid);
+      });
       return;
     }
 
@@ -4669,6 +5510,8 @@ label.btn{cursor:pointer}
             state.children[ck].done = {};
             state.children[ck].lastAllPrev = null;
             state.children[ck].bonus90 = null;
+            state.children[ck].proofs = emptyProofs();
+            if (state.children[ck].history) delete state.children[ck].history[todayStr()];
           });
           save(); render(); renderModal(); toast('오늘 기록을 지웠어요');
         }, '초기화');
@@ -4985,8 +5828,35 @@ label.btn{cursor:pointer}
   /* ============================================================
      시작
      ============================================================ */
+  /* 📸 사진을 고르면 → 줄이고 → 인증으로 저장 → 퀘스트 완료 */
+  document.addEventListener('change', function (e) {
+    var inp = e.target;
+    if (!inp || !inp.getAttribute) return;
+    var qid = inp.getAttribute('data-proof-input');
+    if (!qid) return;
+    var file = inp.files && inp.files[0];
+    if (!file) return;
+    var body = document.querySelector('#modalRoot .modal-body');
+    if (body) body.innerHTML = '<div class="proof-stat">📸 사진을 올리는 중이에요…<br><small>잠깐만 기다려 주세요</small></div>';
+    proofFromFile(file, function (dataUrl) {
+      if (!dataUrl) {
+        if (body) {
+          body.innerHTML = '<div class="proof-stat" style="color:#c02a3a">사진을 읽지 못했어요.<br><small>다른 사진으로 다시 시도해 주세요</small></div>';
+        }
+        setTimeout(function () { try { renderModal(); } catch (e2) { /* noop */ } }, 1500);
+        return;
+      }
+      state.active = PROOF_KID;
+      setProof(PROOF_KID, qid, dataUrl);
+      closeAllModals();
+      completeQuest(qid, null);
+      toast('📸 사진 인증 완료! 퀘스트를 완료했어요');
+    });
+  });
+
   state = load();
   ensureDay();
+  try { syncHistoryAll(); pruneHistory('c1'); pruneHistory('c2'); } catch (e) { /* noop */ }
   initFx();
   render();
   initSync();
@@ -5011,6 +5881,26 @@ label.btn{cursor:pointer}
     get state() { return state; },
     render: render,
     toggleQuest: toggleQuest,
+    completeQuest: completeQuest,
+    undoQuest: undoQuest,
+    penaltyCancel: penaltyCancel,
+    openProofModal: openProofModal,
+    openProofView: openProofView,
+    openCancelChoice: openCancelChoice,
+    proofOf: proofOf,
+    setProof: setProof,
+    proofFromFile: proofFromFile,
+    histFor: histFor,
+    syncHistoryToday: syncHistoryToday,
+    dayRecord: dayRecord,
+    statsHTML: statsHTML,
+    openDayStats: openDayStats,
+    lieWarnHTML: lieWarnHTML,
+    get statsMode() { return statsMode; },
+    get lieWarnShown() { return lieWarnShown; },
+    proofKid: PROOF_KID,
+    lieWarnDay: LIE_WARN_DAY,
+    get today() { return todayStr(); },
     doGacha: doGacha,
     buildItem: buildItem,
     sendChat: sendChat,
@@ -5038,8 +5928,9 @@ label.btn{cursor:pointer}
     prefetchCry: prefetchCry,
     cryInfo: function () {
       var keys = Object.keys(cryEls);
-      return { ogg: CRY_OGG_OK, cached: keys, current: cryNow ? cryNow.src : null };
+      return { ogg: CRY_OGG_OK, cached: keys, current: cryNow ? cryNow.src : null, coverage: cryCoverage() };
     },
+    cryCoverage: cryCoverage,
     cryState: function () {
       var el = cryNow;
       if (!el) return null;
