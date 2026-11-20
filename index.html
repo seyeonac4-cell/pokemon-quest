@@ -745,7 +745,7 @@ body.modal-open #toast.on{transform:translate(-50%,0)}
 .cell[data-bld]{cursor:pointer}
 .cell[data-bld]:focus-visible{outline:3px solid #ffb300;outline-offset:2px}
 .bld .b-anim{display:inline-block;font-style:normal;line-height:1}
-.cell.called{box-shadow:0 0 0 3px rgba(255,210,63,.9) inset,0 0 20px rgba(255,210,63,.6);border-radius:14px}
+.cell.called{background:radial-gradient(circle at 50% 58%,rgba(255,226,120,.62),rgba(255,226,120,0) 72%);border-radius:14px}
 .cell.called .bld{filter:drop-shadow(0 0 10px rgba(255,210,63,.9)) drop-shadow(0 5px 4px rgba(30,42,68,.24))}
 .b-ferris{animation:bldSpin 20s linear infinite;transform-origin:50% 55%}
 .b-windmill{animation:bldSway 2.8s ease-in-out infinite;transform-origin:50% 80%}
@@ -5099,8 +5099,10 @@ label.btn{cursor:pointer}
   }
 
   /* 말풍선 + 하트·음표 반짝이 */
-  function vBubble(c, text) {
+  function vBubble(c, text, force) {
     if (!c || !c.el) return;
+    /* 저절로 생기는 재잘거림은 두 개까지만 — 마을이 말풍선으로 가득 차지 않게 */
+    if (!force && vRoam.map && vRoam.map.querySelectorAll('.v-bubble').length >= 2) return;
     var old = c.el.querySelector('.v-bubble');
     if (old && old.parentNode) old.parentNode.removeChild(old);
     var b = document.createElement('div');
@@ -5253,7 +5255,7 @@ label.btn{cursor:pointer}
       c.moving = false;
       if (c.el) c.el.classList.remove('walking');
       if (opts.arrive) opts.arrive();
-      else if (Math.random() < 0.25) vBubble(c, vPick(V_TAP_LINE));
+      else if (Math.random() < 0.15) vBubble(c, vPick(V_TAP_LINE));
       c.nextAt = Date.now() + 1600 + Math.random() * 2600;
     }, dur + 80);
   }
@@ -5291,7 +5293,7 @@ label.btn{cursor:pointer}
         c.nextAt = c.pinnedUntil + 400;
         c.el.classList.add('playing');
         setTimeout(function () { if (c.el) c.el.classList.remove('playing'); }, 2100);
-        vBubble(c, vLine(id));
+        vBubble(c, vLine(id), true);
         pokeFX(c.el, c.types, { noPop: true, scale: 0.9 });
       }
     });
@@ -5309,7 +5311,7 @@ label.btn{cursor:pointer}
     c.el.classList.add('jumping');
     setTimeout(function () { if (c.el) c.el.classList.remove('jumping'); }, 720);
     pokeFX(c.el, c.types, { noPop: true });
-    vBubble(c, vPick(V_TAP_LINE));
+    vBubble(c, vPick(V_TAP_LINE), true);
     c.pinnedUntil = Math.max(c.pinnedUntil, Date.now() + 2500);
     c.nextAt = Date.now() + 3200;
   }
@@ -5373,13 +5375,13 @@ label.btn{cursor:pointer}
       vWalk(d.c, { x: b.x, y: b.y }, {
         dur: 420, force: true,
         arrive: function () {
-          vBubble(d.c, vLine(b.id));
+          vBubble(d.c, vLine(b.id), true);
           d.c.el.classList.add('playing');
           setTimeout(function () { if (d.c.el) d.c.el.classList.remove('playing'); }, 2000);
         }
       });
     } else {
-      vBubble(d.c, vPick(V_DROP_LINE));
+      vBubble(d.c, vPick(V_DROP_LINE), true);
     }
     /* 아이가 놓은 자리에 12초는 그대로 있어요 */
     d.c.pinnedUntil = Date.now() + 12000;
