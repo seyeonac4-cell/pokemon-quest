@@ -706,11 +706,13 @@ body.modal-open #toast.on{transform:translate(-50%,0)}
   position:relative;width:100%;margin:0 auto;border-radius:24px;overflow:hidden;border:2.5px solid var(--ink);
   box-shadow:var(--shadow-pop);
   background:linear-gradient(180deg,#cdeeff 0%,#e9f8ff 9%,#dcf5c6 10%,#c9f0b0 52%,#b7e79d 100%);
-  --crit:64px;--crit-p:78px;--yard:118px;
+  touch-action:manipulation;
+  --crit:48px;--crit-p:56px;--yard:118px;
   padding-bottom:var(--yard);
 }
-@media (min-width:430px){.village{--crit:68px;--crit-p:84px;--yard:128px}}
-@media (min-width:620px){.village{--crit:72px;--crit-p:90px;--yard:144px}}
+@media (min-width:430px){.village{--crit:50px;--crit-p:58px;--yard:128px}}
+@media (min-width:620px){.village{--crit:54px;--crit-p:62px;--yard:144px}}
+@media (min-width:760px){.village{--crit:60px;--crit-p:70px}}
 /* 태블릿에서는 마을을 화면 폭에 맞춰 크게 */
 @media (min-width:760px){.village{width:min(94vw,620px);margin-left:50%;transform:translateX(-50%)}}
 .village .v-sun{position:absolute;top:4px;right:12px;font-size:19px;z-index:1;animation:spin 24s linear infinite;transform-origin:50% 50%}
@@ -739,9 +741,66 @@ body.modal-open #toast.on{transform:translate(-50%,0)}
 @media (min-width:760px){.cell .bld{font-size:74px}}
 @keyframes buildIn{from{transform:scale(.2) translateY(12px);opacity:0}to{transform:none;opacity:1}}
 .cell .bld-name{position:absolute;bottom:-1px;font-size:8.5px;font-weight:900;color:#2c4a2a;background:rgba(255,255,255,.86);padding:1px 5px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 2px rgba(30,42,68,.10)}
-.v-critter{position:absolute;width:var(--crit);height:var(--crit);z-index:3;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:hop 3.2s ease-in-out infinite;filter:drop-shadow(0 4px 3px rgba(30,42,68,.20))}
-.v-critter.v-partner{width:var(--crit-p);height:var(--crit-p);z-index:4;filter:drop-shadow(0 5px 4px rgba(30,42,68,.26))}
-@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* 건물이 살아 움직이도록 — 안쪽 <i>만 움직여서 buildIn 애니메이션과 겹치지 않아요 */
+.cell[data-bld]{cursor:pointer}
+.cell[data-bld]:focus-visible{outline:3px solid #ffb300;outline-offset:2px}
+.bld .b-anim{display:inline-block;font-style:normal;line-height:1}
+.cell.called{box-shadow:0 0 0 3px rgba(255,210,63,.9) inset,0 0 20px rgba(255,210,63,.6);border-radius:14px}
+.cell.called .bld{filter:drop-shadow(0 0 10px rgba(255,210,63,.9)) drop-shadow(0 5px 4px rgba(30,42,68,.24))}
+.b-ferris{animation:bldSpin 20s linear infinite;transform-origin:50% 55%}
+.b-windmill{animation:bldSway 2.8s ease-in-out infinite;transform-origin:50% 80%}
+.b-play{animation:bldSway 3.4s ease-in-out infinite;transform-origin:50% 80%}
+.b-tree,.b-garden{animation:bldSway 4.6s ease-in-out infinite;transform-origin:50% 90%}
+.b-camp{animation:bldFlicker .95s ease-in-out infinite alternate;transform-origin:50% 95%}
+.b-fountain{animation:bldFount 2.9s ease-in-out infinite}
+.b-pond{animation:bldTwinkle 3.4s ease-in-out infinite}
+.b-rainbow{animation:bldShimmer 6s ease-in-out infinite}
+.b-lighthouse{animation:bldBeam 4.2s ease-in-out infinite}
+.b-center{animation:bldThump 2.6s ease-in-out infinite}
+.b-aqua,.b-lib{animation:bldFloat 3.6s ease-in-out infinite}
+.b-castle,.b-gym,.b-trophy{animation:bldFloat 4.4s ease-in-out infinite}
+@keyframes bldSpin{to{transform:rotate(360deg)}}
+@keyframes bldSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes bldFlicker{0%{opacity:.84;transform:scale(.95,.99)}100%{opacity:1;transform:scale(1.06,1.03)}}
+@keyframes bldFount{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.05)}}
+@keyframes bldTwinkle{0%,100%{filter:brightness(1)}50%{filter:brightness(1.38) drop-shadow(0 0 9px rgba(150,195,255,.95))}}
+@keyframes bldShimmer{0%,100%{filter:hue-rotate(0) brightness(1)}50%{filter:hue-rotate(28deg) brightness(1.14)}}
+@keyframes bldBeam{0%,100%{filter:brightness(1)}45%{filter:brightness(1.55) drop-shadow(0 0 10px rgba(255,235,150,.95))}}
+@keyframes bldThump{0%,100%{transform:scale(1)}12%{transform:scale(1.09)}24%{transform:scale(1)}36%{transform:scale(1.05)}48%{transform:scale(1)}}
+@keyframes bldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* 마을을 돌아다니는 친구들 */
+.v-roam{position:absolute;inset:0;z-index:5;pointer-events:none}
+.v-critter{
+  position:absolute;left:50%;bottom:10%;width:var(--crit);height:var(--crit);
+  z-index:5;pointer-events:auto;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;transform:translateX(-50%);transform-origin:50% 100%;
+  transition:left var(--walk,1.8s) linear,bottom var(--walk,1.8s) linear,transform .18s ease;will-change:left,bottom;
+}
+.v-critter.v-partner{width:var(--crit-p);height:var(--crit-p);z-index:6}
+.v-critter .pk-art{pointer-events:none;-webkit-user-drag:none}
+.v-critter .v-hop{width:100%;height:100%;animation:hop 3.2s ease-in-out infinite}
+.v-critter .v-face{width:100%;height:100%;transform:scaleX(var(--flip,1));transition:transform .2s ease;filter:drop-shadow(0 4px 3px rgba(30,42,68,.22))}
+.v-critter.v-partner .v-face{filter:drop-shadow(0 5px 4px rgba(30,42,68,.26))}
+.v-critter.walking .v-hop{animation-duration:.66s}
+.v-critter.jumping .v-hop{animation:vJump .62s cubic-bezier(.2,1.5,.4,1)}
+.v-critter.playing .v-hop{animation:vGiggle .5s ease-in-out 4}
+.v-critter.dragging{transition:none;z-index:40;cursor:grabbing;transform:translateX(-50%) scale(1.14)}
+.v-critter.dragging .v-face{filter:drop-shadow(0 10px 9px rgba(30,42,68,.32))}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes vJump{0%{transform:translateY(0) scale(1,1)}24%{transform:translateY(-24%) scale(1.06,.94)}54%{transform:translateY(0) scale(.94,1.06)}70%{transform:translateY(-10%) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes vGiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+/* 말풍선 — 가장자리에서는 --bx로 살짝 밀어 잘리지 않게 */
+.v-bubble{
+  position:absolute;left:50%;bottom:calc(100% - 1px);z-index:70;max-width:220px;white-space:nowrap;padding:2px 7px;border-radius:11px;
+  background:#fff;border:2px solid #22314d;color:#22314d;font-size:10.5px;font-weight:900;line-height:1.25;letter-spacing:-.03em;
+  text-align:center;pointer-events:none;box-shadow:0 3px 10px rgba(30,42,68,.2);
+  transform:translateX(calc(-50% + var(--bx,0px)));animation:vBub .3s cubic-bezier(.2,1.5,.4,1) both;
+}
+.v-bubble::after{content:"";position:absolute;left:calc(50% - var(--bx,0px));bottom:-6px;width:7px;height:7px;margin-left:-3.5px;background:#fff;border-right:2px solid #22314d;border-bottom:2px solid #22314d;transform:rotate(45deg)}
+@keyframes vBub{from{opacity:0;transform:translateX(calc(-50% + var(--bx,0px))) scale(.55) translateY(5px)}to{opacity:1;transform:translateX(calc(-50% + var(--bx,0px))) scale(1) translateY(0)}}
+.v-spk{position:absolute;left:50%;bottom:84%;z-index:72;font-size:13px;line-height:1;pointer-events:none;transform:translate(-50%,0);animation:vSpk 1.15s ease-out forwards}
+@keyframes vSpk{0%{opacity:0;transform:translate(-50%,4px) scale(.4)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),-38px) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.bld .b-anim,.v-critter .v-hop,.v-critter .v-face{animation:none!important}}
 .build-list{display:grid;gap:8px}
 @media (min-width:700px){.build-list{grid-template-columns:1fr 1fr}}
 .build{
@@ -4205,7 +4264,9 @@ label.btn{cursor:pointer}
       var v = placed[i];
       if (v) {
         var item = villageItemById(v.id);
-        cells.push('<div class="cell"><span class="bld">' + esc(item.icon) + '</span>'
+        cells.push('<div class="cell" data-bld="' + esc(item.id) + '" role="button" tabindex="0"'
+          + ' title="누르면 포켓몬이 놀러 와요" aria-label="' + esc(item.name) + ' · 누르면 포켓몬이 놀러 와요">'
+          + '<span class="bld"><i class="b-anim b-' + esc(item.id) + '">' + esc(item.icon) + '</i></span>'
           + '<span class="bld-name">' + esc(item.name) + '</span></div>');
       } else {
         cells.push('<div class="cell empty"></div>');
@@ -4221,34 +4282,35 @@ label.btn{cursor:pointer}
     var scene = '<div class="v-scene" aria-hidden="true">'
       + '<span class="v-pond"></span><span class="v-path"></span>' + spr + '</div>';
 
-    /* 마을 앞 잔디마당에서 놀고 있는 친구들 (최대 8마리 + 파트너) */
-    var yardA = [[0, 50], [19, 50], [38, 50], [57, 50], [76, 50]];
-    var yardB = [[8, 4], [30, 4], [52, 4]];
+    /* 마을 안을 돌아다니는 친구들 (최대 8마리 + 파트너) — 끌어다 원하는 자리에 놓을 수 있어요 */
+    var start = [[14, 22], [35, 57], [52, 28], [71, 52], [86, 24], [22, 71], [46, 12], [63, 78]];
     var critters = '';
     var show = ch.dex.slice(0, 8);
     show.forEach(function (id, idx) {
       var c = creatureById(id);
       if (!c) return;
-      var p = idx < yardA.length ? yardA[idx] : yardB[idx - yardA.length];
-      if (!p) return;
-      critters += '<div class="v-critter" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|')) + '" title="탭하면 울음소리" style="left:' + p[0] + '%;bottom:' + p[1] + 'px;animation-delay:' + (idx * 0.35) + 's">'
-        + creatureSVG(c) + '</div>';
+      var p = start[idx] || [50, 30];
+      critters += '<div class="v-critter" data-vid="k' + idx + '" data-cry="' + c.dex + '" data-cry-t="' + esc(c.types.join('|'))
+        + '" data-vx="' + p[0] + '" data-vy="' + p[1] + '" title="끌어서 옮기기 · 탭하면 울음소리">'
+        + '<div class="v-hop"><div class="v-face">' + creatureSVG(c) + '</div></div></div>';
     });
     var stage = stageForLevel(levelInfo(ch.xp).level);
     var pStage = partnerSpec(k, stage);
-    critters += '<div class="v-critter v-partner" data-cry="' + pStage.dex + '" data-cry-t="' + esc(pStage.types.join('|')) + '" title="탭하면 울음소리" style="left:74%;bottom:4px;animation-delay:.2s">'
-      + creatureSVG(pStage) + '</div>';
+    critters += '<div class="v-critter v-partner" data-vid="p" data-cry="' + pStage.dex + '" data-cry-t="' + esc(pStage.types.join('|'))
+      + '" data-vx="83" data-vy="14" title="끌어서 옮기기 · 탭하면 울음소리">'
+      + '<div class="v-hop"><div class="v-face">' + creatureSVG(pStage) + '</div></div></div>';
 
     var html = childSwitchHTML() + '<section class="section"><div class="section-head"><h2>🏡 ' + esc(ch.name) + '의 포켓몬 마을</h2>'
       + '<span class="hint">🪙 ' + ch.coins + ' 코인</span></div>'
-      + '<div class="village">'
+      + '<div class="village" id="villageMap">'
       + '<span class="v-sun">☀️</span><span class="v-cloud">☁️</span><span class="v-cloud b">☁️</span>'
       + scene
       + '<div class="v-grid">' + cells.join('') + '</div>'
-      + critters
+      + '<div class="v-roam">' + critters + '</div>'
       + '</div>'
       + '<div class="bonus-note" style="margin-top:10px">💚 마을에 지은 건물 ' + ch.village.length + '/' + VILLAGE_CELLS + '채 · 수집한 포켓몬 '
-      + ch.dex.length + '마리 중 ' + Math.min(8, ch.dex.length) + '마리가 함께 놀고 있어요. 빈 터를 하나씩 채워 보세요!</div>'
+      + ch.dex.length + '마리 중 ' + Math.min(8, ch.dex.length) + '마리가 마을을 돌아다니며 놀아요.'
+      + '<br>👉 포켓몬을 <b>끌어다</b> 원하는 자리에 놓아 보세요. <b>건물을 누르면</b> 친구가 놀러 와요!</div>'
       + '</section>';
 
     html += '<section class="section"><div class="section-head"><h2>🏗️ 마을 건설</h2>'
@@ -4549,6 +4611,7 @@ label.btn{cursor:pointer}
       + ', 코인 ' + ch.coins + '개, 오늘 완료 ' + doneCount(state.active) + '개</div>';
     app.innerHTML = html;
     renderNav();
+    if (view === 'village') vInit(); else vTeardown();
     if ((view === 'c1' || view === 'c2') && isProofKid(view) && todayStr() === LIE_WARN_DAY && !lieWarnShown[view]) {
       lieWarnShown[view] = true;
       var wnm = state.children[view].name;
@@ -4969,6 +5032,7 @@ label.btn{cursor:pointer}
       SFX.build();
       burst(window.innerWidth / 2, window.innerHeight * 0.35, { count: 55 });
       view = 'village';
+      vRoam.pauseUntil = Date.now() + 1600;
       render();
       toast(item.name + ' 완성! 마을이 더 멋져 졌어요 🏡');
     }, '짓기');
@@ -4989,10 +5053,350 @@ label.btn{cursor:pointer}
     if (next < 0) { toast('옮길 빈 터가 없어요'); return; }
     entry.cell = next;
     save();
+    vRoam.pauseUntil = Date.now() + 1600;
     SFX.tap();
     render();
     toast('자리를 옮겼어요');
   }
+
+  /* ============================================================
+     마을 — 포켓몬 산책 · 건물에서 놀기 · 끌어다 놓기
+     ============================================================ */
+  /* 건물별 재잘거리는 대사 — 마을에서 진짜 놀고 있는 느낌 */
+  var V_BUILD_LINE = {
+    play: ['우와 회전목마 최고! 🎠', '미끄럼틀 한 번 더! 🛝'],
+    ferris: ['하늘까지 올라간다~ 🎡', '관람차에서 마을이 다 보여! ✨'],
+    camp: ['따뜻해~ 마시멜로 굽자! 🔥', '노래 부르자~ 🎵'],
+    fountain: ['물놀이 시원하다! 💦', '분수 물줄기 최고! ⛲'],
+    aqua: ['물고기 친구 안녕~ 🐠', '여기 물이 맑다! 💧'],
+    pond: ['별빛이 반짝반짝! ✨', '밤하늘이 물에 비쳐~ 🌌'],
+    center: ['체력 완전 회복! ❤️', '이제 다시 달릴 수 있어! 💪'],
+    lib: ['재밌는 책 읽는 중! 📖', '여기엔 신기한 이야기가 가득! 📚'],
+    gym: ['힘 대결 한 판! 💪', '여기서 트레이닝! 🥊'],
+    tree: ['그늘 아래가 시원해~ 🌳', '꽃잎이 흩날려! 🌸'],
+    garden: ['꽃 냄새 좋다! 🌷', '여기서 낮잠 잘래~ 🌼'],
+    trophy: ['나도 트로피 갖고 싶어! 🏆'],
+    windmill: ['바람이 솔솔~ 🌬️', '빙글빙글 재밌다! 🌀'],
+    rainbow: ['무지개 다리 건너자! 🌈'],
+    castle: ['성에서 보물 찾자! 🏰'],
+    lighthouse: ['밤에도 환하게 비춰 줘! 🗼']
+  };
+  var V_TAP_LINE = ['안녕! 나랑 놀자~ 💛', '여기 재밌다! ✨', '나 부르셨어요? 🎵', '같이 뛰어 놀자! 🏃', '기분 좋아! ❤️', '오늘도 신난다! ⚡'];
+  var V_DROP_LINE = ['여기서 놀래~ ✨', '좋은 자리다! 💛', '내가 여기 있을게! ❤️'];
+
+  var vRoam = { map: null, list: [], spots: {}, all: { c1: {}, c2: {} }, kid: '', buildings: [], timer: null, pauseUntil: 0 };
+  var vDrag = null;
+  var vLastUp = 0;
+
+  function vPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function vFindCritter(el) {
+    for (var i = 0; i < vRoam.list.length; i++) if (vRoam.list[i].el === el) return vRoam.list[i];
+    return null;
+  }
+  function vLine(id) {
+    var arr = V_BUILD_LINE[id];
+    return arr ? vPick(arr) : '여기 좋다! ✨';
+  }
+
+  /* 말풍선 + 하트·음표 반짝이 */
+  function vBubble(c, text) {
+    if (!c || !c.el) return;
+    var old = c.el.querySelector('.v-bubble');
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var b = document.createElement('div');
+    b.className = 'v-bubble';
+    b.textContent = text;
+    /* 마을 가장자리에서는 말풍선이 잘리지 않게 안쪽으로 밀어 줘요 */
+    var bx = c.x < 22 ? 44 : (c.x > 78 ? -44 : 0);
+    b.style.setProperty('--bx', bx + 'px');
+    c.el.appendChild(b);
+    setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 2900);
+    vSparkle(c);
+  }
+  function vSparkle(c) {
+    var emo = ['❤️', '🎵', '✨'];
+    for (var i = 0; i < 3; i++) {
+      var s = document.createElement('span');
+      s.className = 'v-spk';
+      s.textContent = emo[i % emo.length];
+      s.style.setProperty('--dx', ((i - 1) * 13 + (Math.random() * 8 - 4)).toFixed(1) + 'px');
+      s.style.animationDelay = (i * 0.09).toFixed(2) + 's';
+      s.style.fontSize = (11 + Math.random() * 5).toFixed(1) + 'px';
+      c.el.appendChild(s);
+      (function (node) {
+        setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 1500);
+      })(s);
+    }
+  }
+
+  /* 지은 건물들의 마을 안 좌표(%) — 화면 크기가 달라져도 다시 계산 */
+  function vCollectBuildings(map) {
+    var out = [];
+    var mr = map.getBoundingClientRect();
+    if (!mr.width || !mr.height) return out;
+    Array.prototype.forEach.call(map.querySelectorAll('.cell[data-bld]'), function (cell) {
+      var r = cell.getBoundingClientRect();
+      out.push({
+        id: cell.getAttribute('data-bld'),
+        el: cell,
+        x: clamp((r.left + r.width / 2 - mr.left) / mr.width * 100, 8, 92),
+        y: clamp((mr.bottom - r.bottom) / mr.height * 100 - 3, 5, 84),
+        cx: clamp((r.left + r.width / 2 - mr.left) / mr.width * 100, 8, 92),
+        cy: (mr.bottom - (r.top + r.height / 2)) / mr.height * 100
+      });
+    });
+    return out;
+  }
+
+  function vTeardown() {
+    if (vRoam.timer) { clearInterval(vRoam.timer); vRoam.timer = null; }
+    vRoam.list.forEach(function (c) { clearTimeout(c.timer); });
+    vRoam.list = [];
+    vRoam.map = null;
+    vDrag = null;
+  }
+
+  /* render() 뒤에 불러요 — 지금 마을 DOM에 사는 친구들을 산책시킵니다 */
+  function vInit() {
+    vTeardown();
+    var map = document.getElementById('villageMap');
+    if (!map) return;
+    vRoam.map = map;
+    var kid = state.active;
+    if (vRoam.kid !== kid) { vRoam.kid = kid; vRoam.spots = vRoam.all[kid] || (vRoam.all[kid] = {}); }
+    var spots = vRoam.spots;
+    var list = [];
+    Array.prototype.forEach.call(map.querySelectorAll('.v-critter'), function (el, i) {
+      var vid = el.getAttribute('data-vid') || ('k' + i);
+      var s = spots[vid];
+      if (!s) {
+        s = spots[vid] = {
+          x: parseFloat(el.getAttribute('data-vx')) || 50,
+          y: parseFloat(el.getAttribute('data-vy')) || 20
+        };
+      }
+      el.style.left = s.x + '%';
+      el.style.bottom = s.y + '%';
+      list.push({
+        el: el, vid: vid, x: s.x, y: s.y, face: 1, moving: false, dragging: false,
+        pinnedUntil: 0, nextAt: Date.now() + 500 + i * 240 + Math.random() * 700,
+        dex: el.getAttribute('data-cry'),
+        types: (el.getAttribute('data-cry-t') || '').split('|'),
+        timer: 0
+      });
+    });
+    vRoam.list = list;
+    vRoam.buildings = vCollectBuildings(map);
+    if (!list.length) return;
+    vRoam.timer = setInterval(vTick, 600);
+  }
+
+  function vTick() {
+    if (view !== 'village' || !vRoam.map || !document.body.contains(vRoam.map)) return;
+    if (document.hidden || modalStack.length || vDrag) return;
+    var now = Date.now();
+    if (now < vRoam.pauseUntil) return;
+    for (var i = 0; i < vRoam.list.length; i++) {
+      var c = vRoam.list[i];
+      if (c.moving || c.dragging) continue;
+      if (now < c.pinnedUntil || now < c.nextAt) continue;
+      vWalk(c, vSpot(c));
+    }
+  }
+
+  /* 친구끼리 너무 겹치지 않게 */
+  function vFarFrom(c, x, y, min) {
+    for (var i = 0; i < vRoam.list.length; i++) {
+      var o = vRoam.list[i];
+      if (o === c) continue;
+      if (Math.sqrt(Math.pow(o.x - x, 2) + Math.pow(o.y - y, 2)) < min) return false;
+    }
+    return true;
+  }
+
+  /* 가끔은 건물 앞으로, 가끔은 풀밭·산책로로 */
+  function vSpot(c) {
+    var bs = vRoam.buildings;
+    for (var t = 0; t < 7; t++) {
+      var p;
+      if (bs.length && Math.random() < 0.35) {
+        var b = vPick(bs);
+        p = { x: clamp(b.x + (Math.random() * 10 - 5), 8, 92), y: clamp(b.y, 5, 84) };
+      } else {
+        p = { x: 8 + Math.random() * 84, y: 5 + Math.random() * 79 };
+      }
+      if (vFarFrom(c, p.x, p.y, 16)) return p;
+    }
+    return { x: 8 + Math.random() * 84, y: 5 + Math.random() * 79 };
+  }
+
+  function vWalk(c, spot, opts) {
+    opts = opts || {};
+    if (!c || !c.el || !c.el.parentNode) return;
+    var dx = spot.x - c.x, dy = spot.y - c.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (!opts.force && dist < 6) { c.nextAt = Date.now() + 1000; return; }
+    var dur = opts.dur || clamp(dist * 62, 1100, 3400);
+    c.moving = true;
+    clearTimeout(c.timer);
+    c.el.style.setProperty('--walk', (dur / 1000).toFixed(2) + 's');
+    c.el.classList.add('walking');
+    if (Math.abs(dx) > 1.2) {
+      c.face = dx < 0 ? -1 : 1;
+      c.el.style.setProperty('--flip', String(c.face));
+    }
+    c.x = spot.x; c.y = spot.y;
+    c.el.style.left = c.x + '%';
+    c.el.style.bottom = c.y + '%';
+    if (vRoam.spots[c.vid]) { vRoam.spots[c.vid].x = c.x; vRoam.spots[c.vid].y = c.y; }
+    c.timer = setTimeout(function () {
+      c.moving = false;
+      if (c.el) c.el.classList.remove('walking');
+      if (opts.arrive) opts.arrive();
+      else if (Math.random() < 0.25) vBubble(c, vPick(V_TAP_LINE));
+      c.nextAt = Date.now() + 1600 + Math.random() * 2600;
+    }, dur + 80);
+  }
+
+  /* 건물을 누르면 가장 가까운 친구가 달려와요 */
+  function vCallToBuilding(cellEl) {
+    if (!cellEl || !vRoam.list.length || !vRoam.map) return;
+    var id = cellEl.getAttribute('data-bld');
+    var mr = vRoam.map.getBoundingClientRect();
+    var r = cellEl.getBoundingClientRect();
+    if (!mr.width || !mr.height) return;
+    var base = {
+      x: clamp((r.left + r.width / 2 - mr.left) / mr.width * 100, 8, 92),
+      y: clamp((mr.bottom - r.bottom) / mr.height * 100 - 3, 5, 84)
+    };
+    var now = Date.now();
+    var pool = vRoam.list.filter(function (c) { return !c.dragging && c.pinnedUntil < now; });
+    if (!pool.length) pool = vRoam.list.filter(function (c) { return !c.dragging; });
+    if (!pool.length) return;
+    var c = pool[0], best = 1e9;
+    pool.forEach(function (x) {
+      var d = Math.pow(x.x - base.x, 2) + Math.pow(x.y - base.y, 2);
+      if (d < best) { best = d; c = x; }
+    });
+    /* 건물 아이콘을 가리지 않게 옆자리에 서고, 먼저 온 친구가 있으면 반대쪽 */
+    var sides = [6, -6, 0], spot = base;
+    for (var s = 0; s < sides.length; s++) {
+      var sx = clamp(base.x + sides[s], 8, 92);
+      if (vFarFrom(c, sx, base.y, 9)) { spot = { x: sx, y: base.y }; break; }
+    }
+    vWalk(c, spot, {
+      dur: clamp(Math.sqrt(best) * 34, 620, 1500), force: true,
+      arrive: function () {
+        c.pinnedUntil = Date.now() + 12000;
+        c.nextAt = c.pinnedUntil + 400;
+        c.el.classList.add('playing');
+        setTimeout(function () { if (c.el) c.el.classList.remove('playing'); }, 2100);
+        vBubble(c, vLine(id));
+        pokeFX(c.el, c.types, { noPop: true, scale: 0.9 });
+      }
+    });
+    cellEl.classList.add('called');
+    setTimeout(function () { cellEl.classList.remove('called'); }, 1500);
+    SFX.tap();
+  }
+
+  /* 포켓몬을 톡 누르면 울음소리 + 폴짝 + 말풍선 */
+  function vTapCritter(c) {
+    var ok = playCry(c.dex, c.types);
+    if (!ok) toast('소리가 꺼져 있어요 · 위쪽 🔊 버튼으로 켤 수 있어요');
+    c.el.classList.remove('jumping');
+    void c.el.offsetWidth;
+    c.el.classList.add('jumping');
+    setTimeout(function () { if (c.el) c.el.classList.remove('jumping'); }, 720);
+    pokeFX(c.el, c.types, { noPop: true });
+    vBubble(c, vPick(V_TAP_LINE));
+    c.pinnedUntil = Math.max(c.pinnedUntil, Date.now() + 2500);
+    c.nextAt = Date.now() + 3200;
+  }
+
+  function vNearestBuilding(x, y) {
+    var best = null, bd = 11.5;
+    vRoam.buildings.forEach(function (b) {
+      var d = Math.sqrt(Math.pow(b.cx - x, 2) + Math.pow(b.cy - y, 2));
+      if (d < bd) { bd = d; best = b; }
+    });
+    return best;
+  }
+
+  /* ---- 끌어다 놓기 (터치·마우스 공통, Pointer Events) ---- */
+  function vPointerDown(e) {
+    if (view !== 'village') return;
+    var el = closestEl(e.target, '.v-critter');
+    if (!el) return;
+    var c = vFindCritter(el);
+    if (!c) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    vDrag = { c: c, el: el, id: e.pointerId, x0: e.clientX, y0: e.clientY, moved: false };
+    c.dragging = true;
+    c.moving = false;
+    clearTimeout(c.timer);
+    el.classList.remove('walking');
+    try { el.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
+    if (e.cancelable) e.preventDefault();
+  }
+  function vPointerMove(e) {
+    if (!vDrag || e.pointerId !== vDrag.id) return;
+    var d = vDrag;
+    var dx = e.clientX - d.x0, dy = e.clientY - d.y0;
+    if (!d.moved) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;   /* 6px까지는 탭 */
+      d.moved = true;
+      d.el.classList.add('dragging');
+      d.el.classList.remove('jumping');
+    }
+    var map = vRoam.map;
+    if (!map) return;
+    var r = map.getBoundingClientRect();
+    var x = clamp((e.clientX - r.left) / r.width * 100, 3, 97);
+    var y = clamp((r.bottom - e.clientY) / r.height * 100, 1, 92);
+    d.c.x = x; d.c.y = y;
+    d.el.style.left = x + '%';
+    d.el.style.bottom = y + '%';
+    if (e.cancelable) e.preventDefault();
+  }
+  function vPointerUp(e) {
+    if (!vDrag || (e.pointerId !== vDrag.id && e.pointerType !== 'touch')) return;
+    var d = vDrag;
+    vDrag = null;
+    d.c.dragging = false;
+    try { d.el.releasePointerCapture(d.id); } catch (err) { /* noop */ }
+    if (!d.moved) { vTapCritter(d.c); return; }
+    vLastUp = Date.now();
+    d.el.classList.remove('dragging');
+    var b = vNearestBuilding(d.c.x, d.c.y);
+    if (b) {
+      vWalk(d.c, { x: b.x, y: b.y }, {
+        dur: 420, force: true,
+        arrive: function () {
+          vBubble(d.c, vLine(b.id));
+          d.c.el.classList.add('playing');
+          setTimeout(function () { if (d.c.el) d.c.el.classList.remove('playing'); }, 2000);
+        }
+      });
+    } else {
+      vBubble(d.c, vPick(V_DROP_LINE));
+    }
+    /* 아이가 놓은 자리에 12초는 그대로 있어요 */
+    d.c.pinnedUntil = Date.now() + 12000;
+    d.c.nextAt = d.c.pinnedUntil + 400;
+    if (vRoam.spots[d.c.vid]) { vRoam.spots[d.c.vid].x = d.c.x; vRoam.spots[d.c.vid].y = d.c.y; }
+  }
+  document.addEventListener('pointerdown', vPointerDown, { passive: false });
+  document.addEventListener('pointermove', vPointerMove, { passive: false });
+  document.addEventListener('pointerup', vPointerUp);
+  document.addEventListener('pointercancel', vPointerUp);
+  /* 키보드로도 건물을 부를 수 있게 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (view !== 'village') return;
+    var cell = closestEl(document.activeElement, '.cell[data-bld]');
+    if (cell) { e.preventDefault(); vCallToBuilding(cell); }
+  });
 
   /* ============================================================
      가족 톡방 하트
@@ -5407,6 +5811,9 @@ label.btn{cursor:pointer}
   document.addEventListener('click', function (e) {
     var t = e.target;
 
+    /* 방금 끌어다 놓은 친구 위에서 생기는 클릭은 무시 (드래그 후 유령 탭 방지) */
+    if (vLastUp && Date.now() - vLastUp < 400 && closestEl(t, '#villageMap')) { e.preventDefault(); return; }
+
     var backdrop = closestEl(t, '[data-backdrop]');
     if (backdrop && t === backdrop) { closeModal(); return; }
 
@@ -5429,9 +5836,15 @@ label.btn{cursor:pointer}
     var tuBtn = closestEl(t, '#timeupPin');
     if (tuBtn) { askPin('보호자만 시간을 연장할 수 있어요', useExtend); return; }
 
+    /* 🏡 마을 — 건물을 누르면 친구가 달려와 놀아요 (울음소리보다 먼저) */
+    var bcell = closestEl(t, '#villageMap .cell[data-bld]');
+    if (bcell) { vCallToBuilding(bcell); e.preventDefault(); return; }
+
     /* 포켓몬을 누르면 울음소리 + 타입 이펙트 (카드 이동보다 먼저 처리) */
     var cryEl = closestEl(t, '[data-cry]');
     if (cryEl) {
+      /* 마을 친구는 끌어다 놓기 로직(포인터 이벤트)에서 처리 */
+      if (closestEl(cryEl, '.v-critter')) { e.preventDefault(); return; }
       var cryDex = cryEl.getAttribute('data-cry');
       var cryTypes = (cryEl.getAttribute('data-cry-t') || '').split('|');
       cryAndFX(cryEl, cryDex, cryTypes);
