@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0fae8a">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="오늘의 앱테크">
+<meta name="description" content="토스·디지로카·모니모·신한 SOL페이 바로 열기 + 오늘의 퀴즈 정답">
+<title>🎁 오늘의 앱테크</title>
+<script>
+/* 화면 점검용 오류 수집 (0 errors 확인에 쓴다) */
+window.__errs=[];
+addEventListener('error',function(e){try{__errs.push(String(e.message||(e.error&&e.error.message)||e.type)+' @'+(e.filename||'')+':'+(e.lineno||''))}catch(_){}});
+addEventListener('unhandledrejection',function(e){try{__errs.push('rejection: '+String(e.reason))}catch(_){}});
+</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/apptech/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/apptech/icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/apptech/apple-touch-icon.png">
+<link rel="manifest" href="./manifest-apptech.json">
+<style>
+/* ============================================================
+   🎁 오늘의 앱테크 — 앱테크 4개 바로 열기 + 오늘의 퀴즈 정답
+   · 정답은 apptech-data.json 하나만 갈아끼우면 바뀐다 (밤 11시 알림이 자동 갱신)
+   · 완료 체크는 localStorage에 날짜별로 저장 → 자정에 자동 초기화
+   ============================================================ */
+:root{
+  --mint:#12b886; --mint-d:#0b8f6a; --mint-l:#e6faf2;
+  --gold:#f7b731; --gold-l:#fff5dc; --gold-d:#b17800;
+  --ink:#17251f; --ink2:#3f534b; --muted:#7e918a; --line:#e6efea;
+  --paper:#fff; --bg:#f2faf6;
+  --shadow:0 12px 30px rgba(18,55,44,.08), 0 2px 6px rgba(18,55,44,.05);
+  --shadow-lg:0 18px 44px rgba(18,55,44,.14);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--ink);line-height:1.5;word-break:keep-all;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,
+    "Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+  min-height:100vh;background:var(--bg);
+  background-image:
+    radial-gradient(760px 460px at 82% -8%,#fff3cf 0%,rgba(255,243,207,0) 62%),
+    radial-gradient(900px 560px at 12% 4%,#dcfaee 0%,rgba(220,250,238,0) 60%),
+    linear-gradient(180deg,#eefaf4 0%,var(--bg) 46%,#eaf7f1 100%);
+  background-attachment:fixed;
+  display:flex;justify-content:center;padding:0 0 40px;
+}
+.wrap{width:100%;max-width:480px}
+
+/* ---------------- 헤더 ---------------- */
+.head{
+  position:relative;overflow:hidden;color:#fff;padding:22px 20px 46px;
+  background:linear-gradient(152deg,#12c79a 0%,#0ead88 48%,#07866a 100%);
+  border-bottom-left-radius:30px;border-bottom-right-radius:30px;
+}
+.head::before{
+  content:"";position:absolute;right:-64px;top:-96px;width:236px;height:236px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,214,102,.72),rgba(255,214,102,0) 68%);
+}
+.head::after{
+  content:"";position:absolute;left:-70px;bottom:-120px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.20),rgba(255,255,255,0) 70%);
+}
+.h-row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.h-date{font-size:12.5px;font-weight:600;letter-spacing:.08em;color:#c9f7e7}
+.h-pill{
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  font-size:11px;font-weight:800;color:#5a3d00;background:linear-gradient(135deg,#ffe08a,#ffc94a);
+  padding:5px 10px;border-radius:999px;box-shadow:0 4px 12px rgba(255,201,74,.35)
+}
+h1{
+  position:relative;margin:12px 0 5px;font-size:28px;line-height:1.22;font-weight:900;letter-spacing:-.03em
+}
+h1 em{font-style:normal;color:#ffe066;text-shadow:0 2px 10px rgba(255,204,64,.35)}
+.h-sub{position:relative;margin:0;font-size:12.5px;color:#d6fbef;line-height:1.55}
+.h-sub b{color:#fff;font-weight:800}
+
+/* ---------------- 오늘 완료 카드 ---------------- */
+.done-card{
+  position:relative;margin:-28px 14px 0;background:#fff;border-radius:22px;
+  padding:15px 16px 13px;box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.9)
+}
+.dc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.dc-k{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:-.01em}
+.dc-n{display:flex;align-items:baseline;gap:1px;margin-top:2px}
+.dc-n b{font-size:26px;font-weight:900;letter-spacing:-.03em;color:var(--mint-d);line-height:1.05}
+.dc-n span{font-size:13px;font-weight:800;color:#b9c8c2}
+.dc-time{text-align:right}
+.dc-t{font-size:17px;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-top:2px}
+.dc-t.warn{color:#e0631b}
+.bar{height:7px;border-radius:99px;background:#eaf3ef;margin:11px 0 9px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .3s ease}
+.dc-msg{margin:0;font-size:12px;color:var(--ink2);font-weight:600;letter-spacing:-.01em}
+.dc-msg.on{color:var(--mint-d)}
+
+/* ---------------- 공통 섹션 ---------------- */
+section.block{margin:18px 14px 0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 7px}
+.sec-head h2{margin:0;font-size:15.5px;font-weight:900;letter-spacing:-.02em}
+.badge{
+  font-size:10.5px;font-weight:800;color:var(--mint-d);background:var(--mint-l);
+  padding:4px 9px;border-radius:999px;white-space:nowrap;letter-spacing:-.01em
+}
+.badge.gold{color:var(--gold-d);background:var(--gold-l)}
+.sec-sub{margin:0 2px 10px;font-size:11.5px;color:var(--muted);font-weight:500;line-height:1.5}
+.sec-sub b{color:var(--ink2);font-weight:800}
+
+/* ---------------- 퀴즈 정답 ---------------- */
+.q-list{display:flex;flex-direction:column;gap:9px}
+.q{
+  background:var(--paper);border:1px solid var(--line);border-radius:18px;
+  padding:13px 14px 12px;box-shadow:var(--shadow)
+}
+.q-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.q-app{font-size:10.5px;font-weight:800;color:#1b64da;background:#e8f0ff;padding:3px 8px;border-radius:999px}
+.q-name{font-size:11px;font-weight:700;color:var(--muted)}
+.q-q{margin:8px 0 10px;font-size:12.5px;line-height:1.55;color:var(--ink2);font-weight:500}
+.q-a{display:flex;align-items:center;gap:9px;background:var(--mint-l);border-radius:13px;padding:9px 10px 9px 12px}
+.q-a .lbl{font-size:10px;font-weight:900;color:#fff;background:var(--mint);padding:3px 7px;border-radius:6px;letter-spacing:.02em}
+.q-a b{font-size:16px;font-weight:900;color:#0a5f48;letter-spacing:-.02em;flex:1;min-width:0}
+.cp{
+  flex:0 0 auto;border:1px solid #bfe9d9;background:#fff;color:var(--mint-d);
+  font:inherit;font-size:11.5px;font-weight:800;padding:6px 11px;border-radius:9px;cursor:pointer;
+  transition:.15s;letter-spacing:-.01em
+}
+.cp:active{transform:scale(.96)}
+.cp.ok{background:var(--mint);border-color:var(--mint);color:#fff}
+.q-note{margin:9px 3px 0;font-size:11px;color:var(--muted);line-height:1.5}
+.q-note b{color:var(--ink2)}
+.q-skel{font-size:12px;color:var(--muted);padding:14px;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:16px}
+.prev{margin-top:10px;padding:10px 12px;background:#fbfdfc;border:1px solid var(--line);border-radius:14px}
+.prev .t{font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:-.01em;margin-bottom:3px}
+.prev p{margin:0;font-size:11.5px;color:var(--ink2);line-height:1.6}
+.prev p b{color:var(--ink);font-weight:800}
+
+/* ---------------- 앱 카드 ---------------- */
+.apps{display:flex;flex-direction:column;gap:11px}
+.app{
+  background:var(--paper);border:1px solid var(--line);border-radius:19px;overflow:hidden;
+  box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s
+}
+.app:active{transform:scale(.994)}
+.open{
+  display:flex;align-items:center;gap:12px;padding:14px 15px;min-height:74px;
+  text-decoration:none;color:inherit
+}
+.ico{
+  flex:0 0 auto;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;
+  font-size:25px;background:var(--acs);border:1px solid rgba(0,0,0,.03)
+}
+.txt{flex:1;min-width:0}
+.txt b{display:block;font-size:16.5px;font-weight:900;letter-spacing:-.025em;line-height:1.25}
+.txt small{display:block;margin-top:3px;font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:-.01em}
+.go{
+  flex:0 0 auto;font-size:12px;font-weight:900;color:#fff;background:var(--ac);
+  padding:8px 13px;border-radius:999px;letter-spacing:-.01em;white-space:nowrap;
+  box-shadow:0 6px 14px color-mix(in srgb, var(--ac) 34%, transparent)
+}
+.chk{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  border:0;border-top:1px solid var(--line);background:#fbfdfc;
+  padding:12px;font:inherit;font-size:12.5px;font-weight:800;color:var(--muted);
+  cursor:pointer;transition:.15s;letter-spacing:-.01em
+}
+.chk .box{
+  width:19px;height:19px;border-radius:7px;border:1.7px solid #cfdad5;background:#fff;
+  display:grid;place-items:center;font-size:11px;font-weight:900;color:transparent;transition:.15s
+}
+.chk:active{background:#f1f8f4}
+.chk[aria-pressed="true"]{background:var(--mint-l);color:var(--mint-d);border-top-color:#c9ecdf}
+.chk[aria-pressed="true"] .box{background:var(--mint);border-color:var(--mint);color:#fff}
+.app.is-done .open{opacity:.55}
+.app.is-done .go{background:#c3d3cc;box-shadow:none}
+
+/* ---------------- 하단 ---------------- */
+.foot{margin:22px 18px 0;text-align:center}
+.foot p{margin:0 0 7px;font-size:11px;color:var(--muted);line-height:1.6}
+.foot .links{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.foot .links a{
+  font-size:11.5px;font-weight:800;color:var(--mint-d);text-decoration:none;
+  background:#fff;border:1px solid var(--line);padding:7px 12px;border-radius:999px
+}
+.foot .links span{color:#c8d6d0;font-size:10px}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);
+  background:#17251f;color:#fff;font-size:12.5px;font-weight:700;
+  padding:10px 16px;border-radius:999px;box-shadow:0 12px 28px rgba(0,0,0,.24);
+  opacity:0;pointer-events:none;transition:.2s;z-index:50;white-space:nowrap
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="h-row">
+      <span class="h-date" id="hDate">오늘</span>
+      <span class="h-pill">🎁 앱테크 4개</span>
+    </div>
+    <h1>오늘의 <em>앱테크</em></h1>
+    <p class="h-sub">탭하면 앱이 <b>바로</b> 열려요. 자정 전에 체크만 하면 끝!</p>
+  </header>
+
+  <section class="done-card" aria-label="오늘 완료">
+    <div class="dc-top">
+      <div>
+        <div class="dc-k">오늘 완료</div>
+        <div class="dc-n"><b id="doneN">0</b><span>/ 4</span></div>
+      </div>
+      <div class="dc-time">
+        <div class="dc-k">자정까지</div>
+        <div class="dc-t" id="left">–</div>
+      </div>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+    <p class="dc-msg" id="dcMsg">체크하면 오늘 한 일이 여기에 쌓여요.</p>
+  </section>
+
+  <section class="block" aria-label="오늘의 퀴즈 정답">
+    <div class="sec-head">
+      <h2>🎯 오늘의 퀴즈 정답</h2>
+      <span class="badge" id="qBadge">확인 중</span>
+    </div>
+    <p class="sec-sub">앱에 뜬 문제와 <b>같은 문제</b>를 찾아 <b>복사</b>를 누르면 돼요.</p>
+    <div class="q-list" id="quizList">
+      <div class="q-skel">정답 불러오는 중…</div>
+    </div>
+    <div class="prev" id="prevBox" hidden></div>
+    <p class="q-note" id="qNote">밤 11시 알림이 오늘 정답을 다시 확인해서 이 화면에 자동으로 반영해요.</p>
+  </section>
+
+  <section class="block" aria-label="앱 바로 열기">
+    <div class="sec-head">
+      <h2>📱 앱 바로 열기</h2>
+      <span class="badge gold">4개</span>
+    </div>
+    <div class="apps">
+
+      <div class="app" data-id="toss" style="--ac:#3182f6;--acs:#e9f2ff">
+        <a class="open" href="./apptech.html" data-pkg="viva.republica.toss" data-name="토스">
+          <span class="ico">💙</span>
+          <span class="txt"><b>토스</b><small>만보기 포인트 · 복권 긁기</small></span>
+          <span class="go">열기</span>
+        </a>
+        <button class="chk" type="button" data-id="toss" data-name="토스" aria-pressed="false">
+          <span class="box">✓</span><span class="lb">완료 체크</span>
+        </button>
+      </div>
+
+      <div class="app" data-id="lotte" style="--ac:#e23b32;--acs:#ffecea">
+        <a class="open" href="./apptech.html" data-pkg="com.lcacApp" data-name="롯데 디지로카">
+          <span class="ico">🖤</span>
+          <span class="txt"><b>롯데 디지로카</b><small>출석체크 · 오늘의 혜택</small></span>
+          <span class="go">열기</span>
+        </a>
+        <button class="chk" type="button" data-id="lotte" data-name="롯데 디지로카" aria-pressed="false">
+          <span class="box">✓</span><span class="lb">완료 체크</span>
+        </button>
+      </div>
+
+      <div class="app" data-id="monimo" style="--ac:#7048e8;--acs:#f0ecff">
+        <a class="open" href="./apptech.html" data-pkg="net.ib.android.smcard" data-name="삼성 모니모">
+          <span class="ico">💜</span>
+          <span class="txt"><b>삼성 모니모</b><small>출석체크 · 젤리 받기</small></span>
+          <span class="go">열기</span>
+        </a>
+        <button class="chk" type="button" data-id="monimo" data-name="삼성 모니모" aria-pressed="false">
+          <span class="box">✓</span><span class="lb">완료 체크</span>
+        </button>
+      </div>
+
+      <div class="app" data-id="shinhan" style="--ac:#1b64da;--acs:#e8f0ff">
+        <a class="open" href="./apptech.html" data-pkg="com.shcard.smartpay" data-name="신한 SOL페이">
+          <span class="ico">🔵</span>
+          <span class="txt"><b>신한 SOL페이</b><small>출석체크 · 퀴즈팡팡 · 쏠퀴즈</small></span>
+          <span class="go">열기</span>
+        </a>
+        <button class="chk" type="button" data-id="shinhan" data-name="신한 SOL페이" aria-pressed="false">
+          <span class="box">✓</span><span class="lb">완료 체크</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="links">
+      <a href="./index.html">채씨네 앱 모음</a>
+      <span>·</span>
+      <a href="./homet.html">홈트 &amp; 살림</a>
+    </div>
+    <p>앱이 설치돼 있지 않으면 플레이스토어로 넘어가요.</p>
+    <p>퀴즈 정답 데이터 <span id="upd">–</span> 확인</p>
+  </footer>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+  var APPS = ['toss','lotte','monimo','shinhan'];
+  var KEY = 'apptech.done.v1';
+
+  function $(s,r){ return (r||document).querySelector(s); }
+  function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function todayKey(){
+    var d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+
+  /* ---------- 오늘 날짜 / 자정까지 ---------- */
+  var WD = ['일','월','화','수','목','금','토'];
+  function paintDate(){
+    var d = new Date();
+    $('#hDate').textContent = (d.getMonth()+1)+'월 '+d.getDate()+'일 '+WD[d.getDay()]+'요일';
+  }
+  function paintLeft(){
+    var now = new Date();
+    var mid = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0, 0, 0, 0);
+    var ms = mid - now;
+    var h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+    var el = $('#left');
+    el.textContent = h > 0 ? (h+'시간 '+m+'분') : (m+'분');
+    el.classList.toggle('warn', h === 0);
+  }
+
+  /* ---------- 완료 체크 (날짜별 저장 → 자정 자동 초기화) ---------- */
+  var state = { date: todayKey(), ids: [] };
+  function loadDone(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){
+        var s = JSON.parse(raw);
+        if(s && s.date === todayKey() && Array.isArray(s.ids)){
+          state = { date: s.date, ids: s.ids.filter(function(id){ return APPS.indexOf(id) > -1; }) };
+          return;
+        }
+      }
+    }catch(e){}
+    state = { date: todayKey(), ids: [] };
+  }
+  function saveDone(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function paintDone(){
+    var n = state.ids.length;
+    $('#doneN').textContent = n;
+    $('#bar').style.width = (n/APPS.length*100)+'%';
+    var msg = $('#dcMsg');
+    if(n === 0){ msg.textContent = '체크하면 오늘 한 일이 여기에 쌓여요.'; msg.classList.remove('on'); }
+    else if(n < APPS.length){ msg.textContent = (APPS.length-n)+'개 남았어요! 조금만 더 힘내요 💪'; msg.classList.add('on'); }
+    else { msg.textContent = '오늘 앱테크 완료! 내일 또 만나요 🎉'; msg.classList.add('on'); }
+    $$('.app').forEach(function(card){
+      var on = state.ids.indexOf(card.dataset.id) > -1;
+      card.classList.toggle('is-done', on);
+      var btn = $('.chk', card);
+      if(btn){
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        $('.lb', btn).textContent = on ? '완료했어요' : '완료 체크';
+      }
+    });
+  }
+  function toggleDone(id){
+    var i = state.ids.indexOf(id);
+    if(i > -1) state.ids.splice(i,1); else state.ids.push(id);
+    saveDone(); paintDone();
+  }
+
+  /* ---------- 복사 ---------- */
+  var toastT = null;
+  function toast(msg){
+    var t = $('#toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ t.classList.remove('show'); }, 1600);
+  }
+  function copy(text){
+    function fallback(){
+      try{
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        toast('정답 복사했어요 ✨');
+      }catch(e){ toast('복사가 안 돼요. 직접 적어 주세요 🙏'); }
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        toast('정답 복사했어요 ✨');
+      }).catch(fallback);
+    } else { fallback(); }
+  }
+
+  /* ---------- 퀴즈 정답 불러오기 ---------- */
+  function paintQuiz(d){
+    var list = $('#quizList');
+    var qs = (d && d.quizzes) || [];
+    if(!qs.length){
+      list.innerHTML = '<div class="q-skel">오늘 정답이 아직 없어요.<br>밤 11시 알림 뒤에 다시 열어 주세요.</div>';
+      return;
+    }
+    list.innerHTML = qs.map(function(q){
+      var ans = String(q.answer == null ? '' : q.answer);
+      return '<div class="q">' +
+        '<div class="q-top"><span class="q-app">'+esc(q.app||'')+'</span>' +
+          '<span class="q-name">'+esc(q.name||'')+'</span></div>' +
+        '<p class="q-q">'+esc(q.question||'')+'</p>' +
+        '<div class="q-a"><span class="lbl">정답</span><b>'+esc(ans)+'</b>' +
+          '<button class="cp" type="button" data-copy="'+esc(ans)+'">복사</button></div>' +
+      '</div>';
+    }).join('');
+
+    $$('.cp', list).forEach(function(btn){
+      btn.addEventListener('click', function(){
+        copy(btn.dataset.copy || '');
+        btn.classList.add('ok'); btn.textContent = '복사됨';
+        setTimeout(function(){ btn.classList.remove('ok'); btn.textContent = '복사'; }, 1500);
+      });
+    });
+
+    if(d.updated){
+      var p = String(d.updated).split('-');
+      var day = p.length === 3 ? (Number(p[1])+'/'+Number(p[2])) : String(d.updated);
+      $('#qBadge').textContent = day+' 확인';
+      var tm = String(d.updated_at||'').match(/(\d{1,2}:\d{2})/);
+      $('#upd').textContent = day + (tm ? ' ' + tm[1] : '');
+    }
+    if(d.note){ $('#qNote').textContent = d.note; }
+
+    var prev = d.previous || [];
+    if(prev.length){
+      var box = $('#prevBox');
+      box.innerHTML = '<div class="t">지난 정답</div><p>' + prev.map(function(x){
+        var dt = String(x.date||'').split('-');
+        var label = dt.length === 3 ? (Number(dt[1])+'/'+Number(dt[2])) : String(x.date||'');
+        return label+' '+esc(x.name||'')+' <b>'+esc(x.answer||'')+'</b>';
+      }).join(' · ') + '</p>';
+      box.hidden = false;
+    }
+  }
+
+  function loadQuiz(){
+    var url = './apptech-data.json?t=' + Date.now();
+    fetch(url, { cache: 'no-store' })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(paintQuiz)
+      .catch(function(err){
+        $('#qBadge').textContent = '불러오기 실패';
+        $('#quizList').innerHTML = '<div class="q-skel">정답을 불러오지 못했어요.<br>' +
+          '잠시 뒤 새로고침 해 주세요.<br><span style="font-size:10px;opacity:.65">'+esc(err && err.message)+'</span></div>';
+      });
+  }
+
+  /* ---------- 앱 바로 열기 (Android intent + 스토어 대체) ---------- */
+  var isAndroid = /Android/i.test(navigator.userAgent);
+  function storeUrl(pkg){
+    return 'https://play.google.com/store/apps/details?id=' + encodeURIComponent(pkg);
+  }
+  function intentUrl(pkg){
+    return 'intent://#Intent;package=' + pkg +
+      ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
+      ';S.browser_fallback_url=' + encodeURIComponent(storeUrl(pkg)) + ';end';
+  }
+  function wireOpen(){
+    $$('.open').forEach(function(a){
+      var pkg = a.dataset.pkg;
+      if(!pkg) return;
+      if(isAndroid){
+        a.setAttribute('href', intentUrl(pkg));
+      }else{
+        a.setAttribute('href', storeUrl(pkg));
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+      }
+      a.setAttribute('aria-label', (a.dataset.name || '') + ' 앱 열기');
+    });
+  }
+
+  /* ---------- 시작 ---------- */
+  paintDate();
+  paintLeft();
+  setInterval(function(){
+    paintLeft();
+    if(state.date !== todayKey()){   // 자정을 넘기면 자동 초기화
+      state = { date: todayKey(), ids: [] };
+      paintDone(); paintDate();
+    }
+  }, 30000);
+
+  loadDone(); paintDone(); wireOpen(); loadQuiz();
+
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.chk') : null;
+    if(btn){ toggleDone(btn.dataset.id); }
+  });
+})();
+</script>
+<!-- 「📲 앱으로 설치」 한 번 누르기 버튼 (공통 스크립트) -->
+<script src="./pwa-install.js?v=1" defer></script>
+<!-- 홈 화면 '앱 설치'(크롬 배지 없는 WebAPK) 조건: 매니페스트 + 등록된 서비스 워커 -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>
