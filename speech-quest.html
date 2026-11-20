@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#08101f">
 <title>탐험가 말하기 연구소</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -914,6 +915,7 @@ function openVideo(v){
   ifr.title = v.title;
   ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
   ifr.allowFullscreen = true;
+  try{ ifr.setAttribute('referrerpolicy', 'origin'); }catch(_){}
   f.appendChild(ifr);
   document.getElementById('modal').classList.add('show');
   document.body.style.overflow = 'hidden';
