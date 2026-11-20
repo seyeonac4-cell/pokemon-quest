@@ -466,6 +466,8 @@ function toast(m){
    speechSynthesis가 막힌 곳(카톡·인앱 브라우저·일부 웹뷰)에서는
    구글 음성(mp3)으로 자동 전환해서 들려줘요. */
 const TTS_URL = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ko&q=';
+/* 카톡·인앱 브라우저는 speechSynthesis가 있어도 소리가 안 나는 경우가 많아 처음부터 mp3로 재생 */
+const IN_APP = /KAKAOTALK|Instagram|FBAN|FBAV|Line\/|NAVER\(inapp|Daum|everytime|Twitter/i.test(navigator.userAgent || '');
 let koVoice = null, audioEl = null, audioList = [], audioPos = 0, audioWantRate = 1, audioPlayed = false;
 let ttsToken = 0, ttsMode = 'auto';
 try{ const m = sessionStorage.getItem('sq_tts'); if(m === 'native' || m === 'audio') ttsMode = m; }catch(_){}
@@ -493,10 +495,6 @@ function getAudio(){
   a.preload = 'auto';
   a.onended = () => { audioPos++; playChunk(); };
   a.onloadedmetadata = () => { try{ a.defaultPlaybackRate = audioWantRate; a.playbackRate = audioWantRate; }catch(_){} };
-  a.onerror = () => {
-    if(audioPos < audioList.length){ audioPos++; playChunk(); return; }
-    if(!audioPlayed) toast('🔊 소리를 못 불러왔어요. 잠시 뒤 다시 눌러 봐 주세요');
-  };
   audioEl = a;
   return a;
 }
@@ -515,6 +513,10 @@ function splitTts(text){
 function playChunk(){
   if(audioPos >= audioList.length){ audioList = []; audioPos = 0; return; }
   const a = getAudio();
+  a.onerror = () => {
+    if(!audioPlayed){ audioList = []; audioPos = 0; toast('🔊 소리를 못 불러왔어요. 잠시 뒤 다시 눌러 주세요'); return; }
+    audioPos++; playChunk();
+  };
   a.src = TTS_URL + encodeURIComponent(audioList[audioPos]);
   try{ a.defaultPlaybackRate = audioWantRate; a.playbackRate = audioWantRate; }catch(_){}
   let p = null;
@@ -544,7 +546,7 @@ function nativeSay(text, rate, token, onOk, onFail){
   u.onstart = () => { started = true; clearWd(); if(token === ttsToken) onOk(); };
   u.onend = () => { settled = true; clearWd(); };
   u.onerror = fail;
-  wd = setTimeout(() => { if(!started) fail(); }, 800);
+  wd = setTimeout(() => { if(!started) fail(); }, 1000);
   try{ speechSynthesis.speak(u); }catch(_){ fail(); }
 }
 function speak(text, rate){
@@ -555,14 +557,14 @@ function speak(text, rate){
   stopSpeak();
   const token = ttsToken, r = Number(rate) || 1;
   const toAudio = () => { if(token !== ttsToken) return; markMode('audio'); audioSpeak(t, r); };
-  if(ttsMode === 'audio' || !window.speechSynthesis){ toAudio(); return; }
+  if(ttsMode === 'audio' || IN_APP || !window.speechSynthesis){ toAudio(); return; }
   const run = () => { if(token !== ttsToken) return; nativeSay(t, r, token, () => markMode('native'), toAudio); };
   if(busy) setTimeout(run, 90); else run();
 }
 function stopSpeak(){
   ttsToken++;
   audioList = []; audioPos = 0;
-  if(audioEl){ try{ audioEl.pause(); audioEl.removeAttribute('src'); }catch(_){} }
+  if(audioEl){ try{ audioEl.onerror = null; audioEl.pause(); audioEl.removeAttribute('src'); }catch(_){} }
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(_){}
 }
 
@@ -949,10 +951,9 @@ document.getElementById('copyBtn').onclick = async () => {
 /* ===== 인앱 브라우저 안내 ===== */
 (function(){
   const ua = navigator.userAgent || '';
-  const inApp = /KAKAOTALK|Instagram|FBAN|FBAV|Line\/|NAVER\(inapp|Daum|everytime|Twitter/i.test(ua);
   const noVoice = !window.speechSynthesis;
   const noMic = !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-  if(!(inApp || (/Android/i.test(ua) && (noVoice || noMic)))) return;
+  if(!(IN_APP || (/Android/i.test(ua) && (noVoice || noMic)))) return;
   const el = document.getElementById('inapp');
   el.classList.remove('hide');
   document.getElementById('inappX').onclick = () => el.classList.add('hide');
