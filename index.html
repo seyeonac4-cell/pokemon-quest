@@ -5224,7 +5224,7 @@ label.btn{cursor:pointer}
       var p;
       if (bs.length && Math.random() < 0.35) {
         var b = vPick(bs);
-        p = { x: clamp(b.x + (Math.random() * 10 - 5), 8, 92), y: clamp(b.y, 5, 84) };
+        p = { x: clamp(b.x + (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 6), 8, 92), y: clamp(b.y, 5, 84) };
       } else {
         p = { x: 8 + Math.random() * 84, y: 5 + Math.random() * 79 };
       }
@@ -5282,7 +5282,7 @@ label.btn{cursor:pointer}
       if (d < best) { best = d; c = x; }
     });
     /* 건물 아이콘을 가리지 않게 옆자리에 서고, 먼저 온 친구가 있으면 반대쪽 */
-    var sides = [6, -6, 0], spot = base;
+    var sides = [9, -9, 0], spot = base;
     for (var s = 0; s < sides.length; s++) {
       var sx = clamp(base.x + sides[s], 8, 92);
       if (vFarFrom(c, sx, base.y, 9)) { spot = { x: sx, y: base.y }; break; }
