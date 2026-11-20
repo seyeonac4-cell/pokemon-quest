@@ -5179,8 +5179,9 @@ label.btn{cursor:pointer}
       }
       el.style.left = s.x + '%';
       el.style.bottom = s.y + '%';
+      if (s.face) el.style.setProperty('--flip', String(s.face));
       list.push({
-        el: el, vid: vid, x: s.x, y: s.y, face: 1, moving: false, dragging: false,
+        el: el, vid: vid, x: s.x, y: s.y, face: s.face || 1, moving: false, dragging: false,
         pinnedUntil: 0, nextAt: Date.now() + 500 + i * 240 + Math.random() * 700,
         dex: el.getAttribute('data-cry'),
         types: (el.getAttribute('data-cry-t') || '').split('|'),
@@ -5250,7 +5251,7 @@ label.btn{cursor:pointer}
     c.x = spot.x; c.y = spot.y;
     c.el.style.left = c.x + '%';
     c.el.style.bottom = c.y + '%';
-    if (vRoam.spots[c.vid]) { vRoam.spots[c.vid].x = c.x; vRoam.spots[c.vid].y = c.y; }
+    if (vRoam.spots[c.vid]) { vRoam.spots[c.vid].x = c.x; vRoam.spots[c.vid].y = c.y; vRoam.spots[c.vid].face = c.face; }
     c.timer = setTimeout(function () {
       c.moving = false;
       if (c.el) c.el.classList.remove('walking');
