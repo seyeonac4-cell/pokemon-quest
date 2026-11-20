@@ -1051,6 +1051,14 @@ label.btn{cursor:pointer}
 .sync-badge.off{border-color:#f0dfb0;color:#8a6b18}
 
 /* ---------- 📊 통계 ---------- */
+/* 보호자 패널 안의 통계 — 모달 폭에 맞게 */
+.modal .ptab{margin-bottom:12px}
+.modal .ptab button{font-size:12.5px;padding:9px 4px}
+.modal .section{margin-top:4px}
+.modal .section-head{margin:0 2px 10px}
+.modal .section-head h2{font-size:15.5px}
+.modal .wt-days{width:150px}
+@media (max-width:360px){.modal .wt-days{width:138px;gap:2px}}
 .stat-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}
 .stat-sum .ss{
   background:linear-gradient(180deg,#fff,#f6fbff);border:2px solid var(--line);border-radius:16px;
@@ -1149,13 +1157,16 @@ label.btn{cursor:pointer}
 .proof-stat{text-align:center;font-size:12.5px;font-weight:900;color:#1d4ed8;padding:14px 6px;line-height:1.5}
 .proof-shot{display:block;width:100%;max-height:60vh;object-fit:contain;border-radius:16px;border:2px solid var(--line);background:#f7fbff}
 .proof-meta{text-align:center;font-size:11.5px;font-weight:800;color:var(--muted);margin-top:7px;line-height:1.5}
-.quest .proof-badge{
+.quest .proof-badge,
+.dstat-row .proof-badge{
   display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:8px;
   background:#eaf4ff;border:1.5px solid #bcdcff;font-size:12px;line-height:1;margin-left:6px;vertical-align:middle;
   cursor:pointer;box-shadow:0 1px 0 rgba(30,42,68,.08);
 }
+.dstat-row .proof-badge{width:21px;height:21px;font-size:11px;margin-left:4px}
 .quest.is-done .proof-badge{background:#fff;border-color:#ffd98a}
-.quest .proof-badge:active{transform:scale(.92)}
+.quest .proof-badge:active,
+.dstat-row .proof-badge:active{transform:scale(.92)}
 .btn-pen{background:linear-gradient(180deg,#ff7c88,#ef3d4f);border-color:#a01f2c;color:#fff;box-shadow:0 4px 0 #b82936}
 
 /* ------------- 오늘만 보이는 거짓말 경고 ---------------- */
@@ -1250,8 +1261,9 @@ label.btn{cursor:pointer}
   /* 암산·영단어 퀴즈는 하루에 이만큼만 XP·코인을 줘요 (그 뒤는 연습) */
   var QUIZ_REWARD_MAX = 3;
 
-  /* 📸 퀘스트 인증 사진 — 형원(c2)만, '오늘 것만' 보관해서 용량을 아껴요 */
-  var PROOF_KID = 'c2';
+  /* 📸 퀘스트 인증 사진 — 윤진(c1)·형원(c2) 둘 다, '오늘 것만' 보관해서 용량을 아껴요 */
+  var PROOF_KIDS = { c1: 1, c2: 1 };
+  function isProofKid(k) { return !!PROOF_KIDS[k]; }
   var PROOF_MAX_PX = 480;        /* 긴 변 최대 480px */
   var PROOF_QUALITY = 0.65;      /* JPEG 품질 */
   var PROOF_MAX_LEN = 400000;    /* data URL 문자열 상한(넘으면 잘라서 저장 안 함) */
@@ -1810,8 +1822,10 @@ label.btn{cursor:pointer}
   var statsMode = 'week';     /* week | month */
   var statsWeek = 0;          /* 0 = 이번 주, -1 = 지난 주 */
   var statsMonth = 0;         /* 0 = 이번 달 */
-  var lieWarnShown = false;   /* 오늘의 경고 팝업은 한 번만 */
+  var lieWarnShown = { c1: false, c2: false };   /* 오늘의 경고 팝업은 아이마다 한 번만 */
   var parentUnlocked = false;
+  var parentTab = 'manage';   /* manage = 설정·관리, stats = 📊 통계 */
+  var parentStatsKid = 'c1';
   var editChild = 'c1';
   var chatFrom = '엄마';
   var chatDraft = '';
@@ -2425,25 +2439,27 @@ label.btn{cursor:pointer}
     try { fr.readAsDataURL(file); } catch (e) { cb(null, 'read'); }
   }
 
-  /* 사진 인증 모달 */
-  function openProofModal(qid) {
-    var q = findQuest(PROOF_KID, qid);
+  /* 사진 인증 모달 — 윤진(c1)·형원(c2) 둘 다 같은 방식 */
+  function openProofModal(k, qid) {
+    if (!state.children[k]) k = state.active;
+    var q = findQuest(k, qid);
     if (!q) return;
+    var kid = k;
     openModal({
       title: '📸 다 한 숙제 사진 올리기',
       body: function () {
         return '<div class="proof-who"><span class="pw-i">' + esc(q.icon) + '</span>'
-          + '<span class="pw-t">' + esc(q.title) + '<span class="pw-s">' + esc(state.children[PROOF_KID].name) + ' — 다 한 문제집·책 사진을 찍어 올려 주세요</span></span></div>'
+          + '<span class="pw-t">' + esc(q.title) + '<span class="pw-s">' + esc(state.children[kid].name) + ' — 다 한 문제집·책 사진을 찍어 올려 주세요</span></span></div>'
           + '<label class="proof-open" for="proofCam"><span class="po-ico">📷</span>'
           + '<span class="po-t">지금 사진 찍기</span>'
           + '<span class="po-s">다 한 숙제·책을 찍으면 엄마가 바로 확인할 수 있어요</span></label>'
-          + '<input class="proof-file" type="file" id="proofCam" accept="image/*" capture="environment" data-proof-input="' + esc(qid) + '">'
+          + '<input class="proof-file" type="file" id="proofCam" accept="image/*" capture="environment" data-proof-input="' + esc(qid) + '" data-proof-k="' + esc(kid) + '">'
           + '<label class="proof-open album" for="proofPick"><span class="po-ico">🖼️</span>'
           + '<span class="po-t">앨범에서 고르기</span>'
           + '<span class="po-s">이미 찍어 둔 사진으로 올려도 돼요</span></label>'
-          + '<input class="proof-file" type="file" id="proofPick" accept="image/*" data-proof-input="' + esc(qid) + '">'
+          + '<input class="proof-file" type="file" id="proofPick" accept="image/*" data-proof-input="' + esc(qid) + '" data-proof-k="' + esc(kid) + '">'
           + '<div class="row-btns" style="margin-top:12px">'
-          + '<button type="button" class="btn btn-sm btn-ghost btn-block" data-proof-pin="' + esc(qid) + '">🔒 엄마 PIN으로 사진 없이 통과</button>'
+          + '<button type="button" class="btn btn-sm btn-ghost btn-block" data-proof-pin="' + esc(qid) + '" data-proof-k="' + esc(kid) + '">🔒 엄마 PIN으로 사진 없이 통과</button>'
           + '</div>'
           + '<p class="proof-meta">사진은 오늘만 보관되고, 내일이 되면 자동으로 지워져요</p>';
       }
@@ -2455,9 +2471,9 @@ label.btn{cursor:pointer}
     var q = findQuest(k, qid);
     var src = proofOf(k, qid);
     var title = q ? q.title : '인증 사진';
-    var penBtn = (k === PROOF_KID && state.children[k].done[qid])
+    var penBtn = (isProofKid(k) && state.children[k].done[qid])
       ? '<div class="row-btns" style="margin-top:12px">'
-        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
+        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '" data-penalty-k="' + esc(k) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
         + '</div><p class="proof-meta">사진이 실제로 다 한 숙제가 아니면 눌러 주세요 · 엄마 PIN 필요</p>'
       : '';
     openModal({
@@ -2471,20 +2487,21 @@ label.btn{cursor:pointer}
     });
   }
 
-  /* 완료 취소 선택 (형원) — 실수 취소 / 거짓말 취소를 구분 */
-  function openCancelChoice(qid) {
-    var q = findQuest(PROOF_KID, qid);
+  /* 완료 취소 선택 (윤진·형원) — 실수 취소 / 거짓말 취소를 구분 */
+  function openCancelChoice(k, qid) {
+    if (!state.children[k]) k = state.active;
+    var q = findQuest(k, qid);
     if (!q) return;
-    var hasPhoto = !!proofOf(PROOF_KID, qid);
+    var hasPhoto = !!proofOf(k, qid);
     openModal({
       title: '↩️ 완료 취소',
       body: '<p style="font-weight:800;line-height:1.5">' + esc(q.title) + '<br><span class="muted" style="font-size:12px">어떻게 취소할까요?</span></p>'
         + (hasPhoto
-          ? '<div class="row-btns"><button type="button" class="btn btn-sm btn-ghost btn-block" data-proof="' + esc(qid) + '">📸 올린 사진 보기</button></div>'
+          ? '<div class="row-btns"><button type="button" class="btn btn-sm btn-ghost btn-block" data-proof="' + esc(qid) + '" data-proof-k="' + esc(k) + '">📸 올린 사진 보기</button></div>'
           : '')
         + '<div class="row-btns" style="flex-direction:column;gap:8px;margin-top:10px">'
-        + '<button type="button" class="btn btn-ghost btn-block" data-undo="' + esc(qid) + '">↩️ 그냥 취소 (실수였어요)</button>'
-        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
+        + '<button type="button" class="btn btn-ghost btn-block" data-undo="' + esc(qid) + '" data-undo-k="' + esc(k) + '">↩️ 그냥 취소 (실수였어요)</button>'
+        + '<button type="button" class="btn btn-pen btn-block" data-penalty="' + esc(qid) + '" data-penalty-k="' + esc(k) + '">🚨 거짓말 취소 (코인 2배 차감)</button>'
         + '</div><p class="proof-meta">거짓말 취소는 엄마 PIN이 있어야 해요</p>'
     });
   }
@@ -3269,11 +3286,11 @@ label.btn{cursor:pointer}
     var isDone = !!ch.done[q.id];
     var pf = isDone ? proofOf(k, q.id) : null;
     return '<button type="button" class="quest' + (isDone ? ' is-done' : '') + (other ? ' other' : '')
-      + (celebrateId === q.id ? ' pop' : '') + '" data-quest="' + esc(q.id) + '" aria-pressed="' + isDone + '"'
+      + (celebrateId === q.id ? ' pop' : '') + '" data-quest="' + esc(q.id) + '" data-qk="' + esc(k) + '" aria-pressed="' + isDone + '"'
       + ' aria-label="' + esc(q.title) + (isDone ? ' 완료됨, 누르면 취소' : ' 완료하기') + '">'
       + '<span class="q-ico">' + esc(q.icon) + '</span>'
       + '<span class="q-body"><span class="q-title">' + esc(q.title)
-      + (pf ? '<span class="proof-badge" data-proof="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + esc(q.title) + ' 인증 사진 보기">📸</span>' : '')
+      + (pf ? '<span class="proof-badge" data-proof="' + esc(q.id) + '" data-proof-k="' + esc(k) + '" role="button" tabindex="0" aria-label="' + esc(q.title) + ' 인증 사진 보기">📸</span>' : '')
       + '</span>'
       + '<span class="q-rewards"><span class="r">⚡ +' + q.xp + '</span><span class="r c">🪙 +' + q.coins + '</span></span></span>'
       + '<span class="check" aria-hidden="true">✓</span></button>';
@@ -3315,11 +3332,12 @@ label.btn{cursor:pointer}
     return kidHeadHTML(k) + lieWarnHTML(k) + kidStudyHTML(k) + questListHTML(k);
   }
 
-  /* 🚨 거짓말 경고 — 정해둔 날(LIE_WARN_DAY)에만 형원이 화면에 보임 */
+  /* 🚨 거짓말 경고 — 정해둔 날(LIE_WARN_DAY)에만, 윤진·형원 화면 둘 다 보임 */
   function lieWarnHTML(k) {
-    if (k !== PROOF_KID || todayStr() !== LIE_WARN_DAY) return '';
+    if (!isProofKid(k) || todayStr() !== LIE_WARN_DAY) return '';
+    var nm = state.children[k].name;
     return '<div class="warn-lie" role="alert"><span class="w-ico" aria-hidden="true">🚨</span>'
-      + '형원아! 숙제 안 하고 거짓말로 누르면 엄마가 취소할 때 <b>코인이 2배로 깎여요!</b><br>'
+      + esc(nm) + josa(nm, '아', '야') + '! 숙제 안 하고 거짓말로 누르면 엄마가 취소할 때 <b>코인이 2배로 깎여요!</b><br>'
       + '꼭 다 한 다음 사진 찍고 누르자! 📸</div>';
   }
 
@@ -4226,12 +4244,24 @@ label.btn{cursor:pointer}
       + '<span><i class="lg nr">·</i>기록 없음</span></div>';
   }
 
-  function statsHTML() {
-    var k = state.active;
+  /* 보호자 패널 안의 아이 선택 — 패널을 다시 그려요 (메인 화면은 그대로) */
+  function statsKidSwitchHTML(k) {
+    return '<div class="seg kidseg" role="group" aria-label="아이 선택">'
+      + ['c1', 'c2'].map(function (x) {
+        var ch = state.children[x];
+        var on = k === x;
+        return '<button type="button" data-pstats-kid="' + x + '" class="' + (on ? 'on' : '') + '"'
+          + ' aria-pressed="' + on + '">' + esc(ch.avatar) + ' ' + esc(ch.name)
+          + '<span class="cs-coin">🪙' + ch.coins + '</span></button>';
+      }).join('') + '</div>';
+  }
+
+  function statsHTML(kOpt) {
+    var k = (kOpt && state.children[kOpt]) ? kOpt : state.active;
     var ch = state.children[k];
-    var html = childSwitchHTML();
+    var html = statsKidSwitchHTML(k);
     html += '<section class="section"><div class="section-head"><h2>📊 ' + esc(ch.name) + ' 퀘스트 기록</h2>'
-      + '<span class="hint">' + (k === PROOF_KID ? '📸 사진 인증' : '완료 기록') + '</span></div>'
+      + '<span class="hint">📸 사진 인증</span></div>'
       + '<div class="seg" role="group" aria-label="통계 종류">'
       + [['week', '주간 흐름'], ['month', '월간 기록']].map(function (m) {
         return '<button type="button" data-stat-mode="' + m[0] + '" class="' + (statsMode === m[0] ? 'on' : '') + '" aria-pressed="' + (statsMode === m[0]) + '">' + m[1] + '</button>';
@@ -4279,7 +4309,7 @@ label.btn{cursor:pointer}
     html += '<div class="wt-head"><span class="wt-ql" style="padding-left:25px">퀘스트</span><div class="wt-days">'
       + days.map(function (d, i2) {
         var cls = 'wt-hd' + (dayStrs[i2] === todayKey ? ' on' : '') + (d.getDay() === 0 ? ' wk' : '');
-        return '<button type="button" class="' + cls + '" data-stat-day="' + dayStrs[i2] + '"'
+        return '<button type="button" class="' + cls + '" data-stat-day="' + dayStrs[i2] + '" data-stat-k="' + esc(k) + '"'
           + ' aria-label="' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 기록 보기">'
           + '<b>' + WEEK[d.getDay()] + '</b><span>' + d.getDate() + '</span></button>';
       }).join('') + '</div></div>';
@@ -4340,7 +4370,7 @@ label.btn{cursor:pointer}
     for (var b = 0; b < lead; b++) html += '<div class="mc-day empty"></div>';
 
     var sumC = 0, sumT = 0, allDays = 0, best = 0, cur = 0;
-    var hasProof = k === PROOF_KID && ch.proofs && ch.proofs.items && Object.keys(ch.proofs.items).length;
+    var hasProof = ch.proofs && ch.proofs.items && Object.keys(ch.proofs.items).length;
     for (var dd = 1; dd <= dim; dd++) {
       var ds = y + '-' + pad2(m + 1) + '-' + pad2(dd);
       var rec = dayRecord(k, ds);
@@ -4358,7 +4388,7 @@ label.btn{cursor:pointer}
       }
       if (rec.today) cls += ' today';
       var pf = (hasProof && ch.proofs.date === ds) ? '<span class="pf">📸</span>' : '';
-      html += '<button type="button" class="' + cls + '" data-stat-day="' + ds + '"'
+      html += '<button type="button" class="' + cls + '" data-stat-day="' + ds + '" data-stat-k="' + esc(k) + '"'
         + ' aria-label="' + (m + 1) + '월 ' + dd + '일 기록 보기">'
         + pf + '<span class="n">' + dd + '</span><span class="r">' + txt + '</span></button>';
     }
@@ -4387,7 +4417,7 @@ label.btn{cursor:pointer}
         var has = ok && !!proofOf(k, q.id);
         return '<div class="dstat-row ' + (ok ? 'ok' : 'no') + '"><span class="i">' + esc(q.icon) + '</span>'
           + '<span>' + esc(q.title)
-          + (has ? ' <span class="proof-badge" data-proof="' + esc(q.id) + '" role="button" tabindex="0" aria-label="인증 사진 보기">📸</span>' : '')
+          + (has ? ' <span class="proof-badge" data-proof="' + esc(q.id) + '" data-proof-k="' + esc(k) + '" role="button" tabindex="0" aria-label="인증 사진 보기">📸</span>' : '')
           + '</span><span class="m">' + (ok ? '✓' : '–') + '</span></div>';
       }).join('');
     } else {
@@ -4425,8 +4455,7 @@ label.btn{cursor:pointer}
       { id: 'c2', icon: state.children.c2.avatar, label: state.children.c2.name, badge: remain2 > 0 ? remain2 : 0 },
       { id: 'village', icon: '🏡', label: '마을', badge: buildable },
       { id: 'shop', icon: '🎁', label: '상점', badge: pending },
-      { id: 'dex', icon: '📖', label: '도감', badge: 0 },
-      { id: 'stats', icon: '📊', label: '통계', badge: 0 }
+      { id: 'dex', icon: '📖', label: '도감', badge: 0 }
     ];
     document.getElementById('nav').innerHTML = items.map(function (t) {
       var on = view === t.id || (view === 'quiz' && quiz && quiz.k === t.id);
@@ -4454,18 +4483,18 @@ label.btn{cursor:pointer}
     else if (view === 'shop') html = shopHTML();
     else if (view === 'village') html = villageHTML();
     else if (view === 'dex') html = dexHTML();
-    else if (view === 'stats') html = statsHTML();
     else html = homeHTML();
     html += '<div class="sr" aria-live="polite">' + esc(ch.name) + ' Lv.' + levelInfo(ch.xp).level
       + ', 코인 ' + ch.coins + '개, 오늘 완료 ' + doneCount(state.active) + '개</div>';
     app.innerHTML = html;
     renderNav();
-    if ((view === 'c1' || view === 'c2') && view === PROOF_KID && todayStr() === LIE_WARN_DAY && !lieWarnShown) {
-      lieWarnShown = true;
+    if ((view === 'c1' || view === 'c2') && isProofKid(view) && todayStr() === LIE_WARN_DAY && !lieWarnShown[view]) {
+      lieWarnShown[view] = true;
+      var wnm = state.children[view].name;
       setTimeout(function () {
         if (modalStack.length) return;
         openModal({
-          title: '🚨 형원아, 꼭 읽어 줘!',
+          title: '🚨 ' + esc(wnm) + josa(wnm, '아', '야') + ', 꼭 읽어 줘!',
           body: '<div class="warn-lie" style="margin-top:0">'
             + '<span class="w-ico" aria-hidden="true">🚨</span>'
             + '숙제 안 하고 거짓말로 누르면 엄마가 취소할 때 <b>코인이 2배로 깎여요!</b><br>'
@@ -4537,21 +4566,21 @@ label.btn{cursor:pointer}
   /* ============================================================
      퀘스트 완료
      ============================================================ */
-  function toggleQuest(id, el) {
-    var k = state.active;
-    var ch = activeChild();
+  function toggleQuest(id, el, kOpt) {
+    var k = (kOpt && state.children[kOpt]) ? kOpt : state.active;
+    var ch = state.children[k];
     var q = findQuest(k, id);
     if (!q) return;
 
     if (ch.done[id]) {
-      /* 형원이는 '그냥 취소'와 '거짓말 취소(페널티)'를 골라서 */
-      if (k === PROOF_KID) { openCancelChoice(id); return; }
+      /* 윤진·형원 둘 다 '그냥 취소'와 '거짓말 취소(페널티)'를 골라서 */
+      if (isProofKid(k)) { openCancelChoice(k, id); return; }
       undoQuest(k, id);
       return;
     }
-    /* 형원이는 완료 전에 사진 인증을 먼저 받아요 */
-    if (k === PROOF_KID) { openProofModal(id); return; }
-    completeQuest(id, el);
+    /* 완료 전에 사진 인증을 먼저 받아요 (윤진·형원 둘 다) */
+    if (isProofKid(k)) { openProofModal(k, id); return; }
+    completeQuest(id, el, k);
   }
 
   /* 그냥 취소 (실수) */
@@ -4580,6 +4609,7 @@ label.btn{cursor:pointer}
       ch.xp = Math.max(0, ch.xp - 15);
       ch.coins = Math.max(0, ch.coins - 15);
     }
+    setProof(k, id, null);   /* 취소한 퀘스트의 인증 사진도 같이 지워요 */
     syncHistoryToday(k);
     save();
     SFX.undo();
@@ -4587,8 +4617,8 @@ label.btn{cursor:pointer}
     toast('퀘스트를 취소했어요');
   }
 
-  function completeQuest(id, el) {
-    var k = state.active;
+  function completeQuest(id, el, kOpt) {
+    var k = (kOpt && state.children[kOpt]) ? kOpt : state.active;
     var ch = state.children[k];
     var q = findQuest(k, id);
     if (!q || ch.done[id]) return;
@@ -4614,9 +4644,9 @@ label.btn{cursor:pointer}
     render();
 
     if (afterStage > beforeStage) {
-      setTimeout(function () { openEvolve(beforeStage, afterStage); }, 420);
+      setTimeout(function () { openEvolve(beforeStage, afterStage, k); }, 420);
     } else if (afterLevel > beforeLevel) {
-      setTimeout(function () { openLevelUp(afterLevel); }, 420);
+      setTimeout(function () { openLevelUp(afterLevel, k); }, 420);
     }
 
     var totalQ = applicableQuests(k).length;
@@ -4664,8 +4694,8 @@ label.btn{cursor:pointer}
     }
   }
 
-  function openLevelUp(level) {
-    var ch = activeChild();
+  function openLevelUp(level, kOpt) {
+    var ch = (kOpt && state.children[kOpt]) ? state.children[kOpt] : activeChild();
     openModal({
       title: '⚡ 레벨 업!',
       body: '<div class="levelup"><div style="font-size:44px">🎊</div>'
@@ -4675,9 +4705,9 @@ label.btn{cursor:pointer}
     });
   }
 
-  function openEvolve(fromStage, toStage) {
-    var k = state.active;
-    var ch = activeChild();
+  function openEvolve(fromStage, toStage, kOpt) {
+    var k = (kOpt && state.children[kOpt]) ? kOpt : state.active;
+    var ch = state.children[k];
     var before = partnerSpec(k, fromStage);
     var after = partnerSpec(k, toStage);
     SFX.evolve();
@@ -5007,6 +5037,8 @@ label.btn{cursor:pointer}
   function openParentPanel() {
     parentUnlocked = true;
     editChild = state.active;
+    parentTab = 'manage';
+    parentStatsKid = state.active;
     openModal({
       title: '🔒 보호자 모드',
       body: parentPanelHTML,
@@ -5014,7 +5046,26 @@ label.btn{cursor:pointer}
     });
   }
 
+  /* 보호자 패널 — 설정·관리 / 📊 통계 */
   function parentPanelHTML() {
+    var tabBtn = '<div class="seg ptab" role="tablist" aria-label="보호자 메뉴">'
+      + '<button type="button" role="tab" data-ptab="manage" class="' + (parentTab !== 'stats' ? 'on' : '') + '" aria-selected="' + (parentTab !== 'stats') + '">📋 설정·관리</button>'
+      + '<button type="button" role="tab" data-ptab="stats" class="' + (parentTab === 'stats' ? 'on' : '') + '" aria-selected="' + (parentTab === 'stats') + '">📊 통계</button>'
+      + '</div>';
+    if (parentTab === 'stats') return tabBtn + statsHTML(parentStatsKid);
+    return tabBtn + parentManageHTML();
+  }
+
+  /* 보호자 패널을 다시 그리며 스크롤 위치를 지켜요 */
+  function rerenderParent() {
+    var m = document.querySelector('#modalRoot .modal');
+    var st = m ? m.scrollTop : 0;
+    renderModal();
+    var m2 = document.querySelector('#modalRoot .modal');
+    if (m2) m2.scrollTop = st;
+  }
+
+  function parentManageHTML() {
     var c1 = state.children.c1, c2 = state.children.c2;
     var ec = state.children[editChild] || c1;
     var h = '<div class="note" style="margin-top:0">퀘스트·보상·이름을 관리하고, 오늘 기록을 초기화할 수 있어요.</div>';
@@ -5330,7 +5381,7 @@ label.btn{cursor:pointer}
     var navEl = closestEl(t, '[data-nav]');
     if (navEl) {
       var nv = navEl.getAttribute('data-nav');
-      if (nv !== 'home' && nv !== 'c1' && nv !== 'c2' && nv !== 'shop' && nv !== 'village' && nv !== 'dex' && nv !== 'stats') nv = 'home';
+      if (nv !== 'home' && nv !== 'c1' && nv !== 'c2' && nv !== 'shop' && nv !== 'village' && nv !== 'dex') nv = 'home';
       if (nv === 'c1' || nv === 'c2') state.active = nv;
       if (quiz && view === 'quiz') { stopQuizTimer(); quiz = null; }
       view = nv;
@@ -5342,13 +5393,33 @@ label.btn{cursor:pointer}
       return;
     }
 
-    /* 📊 통계 — 주/월 이동과 날짜 자세히 */
+    /* 🔒 보호자 패널 — 설정·관리 / 📊 통계 탭, 통계 아이 고르기 */
+    var ptab = closestEl(t, '[data-ptab]');
+    if (ptab) {
+      parentTab = ptab.getAttribute('data-ptab') === 'stats' ? 'stats' : 'manage';
+      if (parentTab === 'stats' && state.children[editChild]) parentStatsKid = editChild;
+      SFX.tap();
+      rerenderParent();
+      return;
+    }
+    var psk = closestEl(t, '[data-pstats-kid]');
+    if (psk) {
+      var pkk = psk.getAttribute('data-pstats-kid');
+      if (state.children[pkk]) {
+        parentStatsKid = pkk;
+        SFX.tap();
+        rerenderParent();
+      }
+      return;
+    }
+
+    /* 📊 통계 — 주/월 이동과 날짜 자세히 (보호자 패널 안) */
     var sm = closestEl(t, '[data-stat-mode]');
     if (sm) {
       var mode = sm.getAttribute('data-stat-mode');
       statsMode = mode === 'month' ? 'month' : 'week';
       SFX.tap();
-      render();
+      rerenderParent();
       return;
     }
     var sw = closestEl(t, '[data-stat-week]');
@@ -5357,7 +5428,7 @@ label.btn{cursor:pointer}
       else if (statsWeek < 0) statsWeek += 1;
       if (statsWeek > 0) statsWeek = 0;
       SFX.tap();
-      render();
+      rerenderParent();
       return;
     }
     var smo = closestEl(t, '[data-stat-month]');
@@ -5366,25 +5437,29 @@ label.btn{cursor:pointer}
       else if (statsMonth < 0) statsMonth += 1;
       if (statsMonth > 0) statsMonth = 0;
       SFX.tap();
-      render();
+      rerenderParent();
       return;
     }
     var sd = closestEl(t, '[data-stat-day]');
-    if (sd) { openDayStats(state.active, sd.getAttribute('data-stat-day')); return; }
+    if (sd) {
+      openDayStats(sd.getAttribute('data-stat-k') || parentStatsKid, sd.getAttribute('data-stat-day'));
+      return;
+    }
 
     /* 📸 인증 사진 보기 / 사진 없이 통과 */
     var pv = closestEl(t, '[data-proof]');
     if (pv) {
-      openProofView(state.active, pv.getAttribute('data-proof'));
+      openProofView(pv.getAttribute('data-proof-k') || state.active, pv.getAttribute('data-proof'));
       e.preventDefault();
       return;
     }
     var pp = closestEl(t, '[data-proof-pin]');
     if (pp) {
       var pqid = pp.getAttribute('data-proof-pin');
+      var pkid = pp.getAttribute('data-proof-k') || state.active;
       askPin('엄마 확인이면 사진 없이 통과할 수 있어요', function () {
         closeAllModals();
-        completeQuest(pqid, null);
+        completeQuest(pqid, null, pkid);
         toast('🔓 엄마 확인으로 완료했어요');
       });
       return;
@@ -5394,15 +5469,17 @@ label.btn{cursor:pointer}
     var un = closestEl(t, '[data-undo]');
     if (un) {
       var uqid = un.getAttribute('data-undo');
+      var ukid = un.getAttribute('data-undo-k') || state.active;
       closeAllModals();
-      undoQuest(state.active, uqid);
+      undoQuest(ukid, uqid);
       return;
     }
     var pen = closestEl(t, '[data-penalty]');
     if (pen) {
       var penQid = pen.getAttribute('data-penalty');
+      var penKid = pen.getAttribute('data-penalty-k') || state.active;
       askPin('거짓말 취소는 엄마만 할 수 있어요 (코인 2배 차감)', function () {
-        penaltyCancel(state.active, penQid);
+        penaltyCancel(penKid, penQid);
       });
       return;
     }
@@ -5445,7 +5522,7 @@ label.btn{cursor:pointer}
     if (qx) { exitQuiz(); return; }
 
     var q = closestEl(t, '[data-quest]');
-    if (q) { toggleQuest(q.getAttribute('data-quest'), q); return; }
+    if (q) { toggleQuest(q.getAttribute('data-quest'), q, q.getAttribute('data-qk')); return; }
 
     var g = closestEl(t, '[data-gacha]');
     if (g) { doGacha(); return; }
@@ -5836,6 +5913,8 @@ label.btn{cursor:pointer}
     if (!qid) return;
     var file = inp.files && inp.files[0];
     if (!file) return;
+    var pkid = inp.getAttribute('data-proof-k');
+    if (!state.children[pkid]) pkid = state.active;
     var body = document.querySelector('#modalRoot .modal-body');
     if (body) body.innerHTML = '<div class="proof-stat">📸 사진을 올리는 중이에요…<br><small>잠깐만 기다려 주세요</small></div>';
     proofFromFile(file, function (dataUrl) {
@@ -5846,10 +5925,10 @@ label.btn{cursor:pointer}
         setTimeout(function () { try { renderModal(); } catch (e2) { /* noop */ } }, 1500);
         return;
       }
-      state.active = PROOF_KID;
-      setProof(PROOF_KID, qid, dataUrl);
+      state.active = pkid;
+      setProof(pkid, qid, dataUrl);
       closeAllModals();
-      completeQuest(qid, null);
+      completeQuest(qid, null, pkid);
       toast('📸 사진 인증 완료! 퀘스트를 완료했어요');
     });
   });
@@ -5887,6 +5966,13 @@ label.btn{cursor:pointer}
     openProofModal: openProofModal,
     openProofView: openProofView,
     openCancelChoice: openCancelChoice,
+    parentPanelHTML: parentPanelHTML,
+    openParentPanel: openParentPanel,
+    rerenderParent: rerenderParent,
+    get parentTab() { return parentTab; },
+    set parentTab(v) { parentTab = v; },
+    get parentStatsKid() { return parentStatsKid; },
+    set parentStatsKid(v) { parentStatsKid = v; },
     proofOf: proofOf,
     setProof: setProof,
     proofFromFile: proofFromFile,
@@ -5898,7 +5984,7 @@ label.btn{cursor:pointer}
     lieWarnHTML: lieWarnHTML,
     get statsMode() { return statsMode; },
     get lieWarnShown() { return lieWarnShown; },
-    proofKid: PROOF_KID,
+    proofKids: ['c1', 'c2'],
     lieWarnDay: LIE_WARN_DAY,
     get today() { return todayStr(); },
     doGacha: doGacha,
