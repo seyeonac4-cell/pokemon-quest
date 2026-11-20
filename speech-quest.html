@@ -150,6 +150,12 @@ nav button i{font-size:19px;font-style:normal}
 nav button.on{color:#fff;background:rgba(46,224,166,.12)}
 nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
 
+/* 인앱 브라우저 안내 */
+.inapp{display:flex;align-items:center;gap:8px;background:rgba(255,202,74,.12);border:1px solid rgba(255,202,74,.45);border-radius:14px;padding:9px 11px;margin:0 2px 11px;font-size:12.5px;line-height:1.4;color:#ffe6a6;font-weight:700}
+.inapp span{flex:1}
+.inapp a{flex:0 0 auto;background:#ffd166;color:#2a1c00;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;text-decoration:none;white-space:nowrap}
+.inapp button{flex:0 0 auto;color:#ffe6a6;font-size:14px;font-weight:900;padding:2px 4px}
+
 .hide{display:none!important}
 </style>
 </head>
@@ -161,6 +167,12 @@ nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
     <span class="star">⭐ <span id="starN">0</span></span>
     <button class="iconbtn" id="copyBtn" title="링크 복사">🔗</button>
   </header>
+
+  <div class="inapp hide" id="inapp">
+    <span>📱 이 창에선 듣기·녹음이 잘 안 될 수 있어요.</span>
+    <a href="#" id="openChrome">🌐 Chrome으로 열기</a>
+    <button id="inappX" title="닫기">✕</button>
+  </div>
 
   <!-- 1. 문장 만들기 -->
   <section id="s-sentence" class="card">
@@ -184,7 +196,7 @@ nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
 
   <!-- 2. 말맛 퀴즈 -->
   <section id="s-quiz" class="card hide">
-    <div class="top"><span>말맛 퀴즈</span><span><b id="qIdx">1</b> / <span id="qTotal">15</span></span></div>
+    <div class="top"><span>생활 말 퀴즈</span><span><b id="qIdx">1</b> / <span id="qTotal">15</span></span></div>
     <div class="bar"><i id="qBar"></i></div>
     <div id="qBody"></div>
     <div class="fb" id="qFb"></div>
@@ -251,120 +263,120 @@ nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
 <script>
 /* ===== 데이터 ===== */
 const SENTENCES = [
-  {who:'지호가', where:'운동장에서', what:'축구를', how:'신나게 찼다'},
-  {who:'공룡이', where:'숲속에서', what:'나뭇잎을', how:'많이 먹었다'},
-  {who:'엄마가', where:'부엌에서', what:'라면을', how:'맛있게 끓였다'},
-  {who:'우주인이', where:'달에서', what:'돌멩이를', how:'조심조심 주웠다'},
-  {who:'민준이가', where:'도서관에서', what:'공룡 책을', how:'재미있게 읽었다'},
-  {who:'로봇이', where:'우주선 안에서', what:'나사를', how:'빠르게 조였다'},
-  {who:'오리가', where:'연못에서', what:'물고기를', how:'재빨리 잡았다'},
-  {who:'할아버지가', where:'마당에서', what:'감나무를', how:'정성껏 심으셨다'},
-  {who:'서준이가', where:'바닷가에서', what:'모래성을', how:'크게 만들었다'},
-  {who:'탐정이', where:'박물관에서', what:'보물 지도를', how:'몰래 찾아냈다'},
-  {who:'하늘이가', where:'체육관에서', what:'농구공을', how:'높이 던졌다'},
-  {who:'고양이가', where:'지붕 위에서', what:'참새를', how:'살금살금 쫓았다'}
+  {who:'지호가', what:'공을', how:'힘껏 찼어요'},
+  {who:'엄마가', what:'국을', how:'맛있게 끓였어요'},
+  {who:'고양이가', what:'물을', how:'조금씩 마셨어요'},
+  {who:'동생이', what:'그림을', how:'예쁘게 그렸어요'},
+  {who:'아빠가', where:'거실에서', what:'노래를', how:'크게 불렀어요'},
+  {who:'나는', where:'도서관에서', what:'책을', how:'재미있게 읽어요'},
+  {who:'오리가', where:'연못에서', what:'물고기를', how:'빠르게 잡았어요'},
+  {who:'누나가', where:'교실에서', what:'칠판을', how:'깨끗하게 지웠어요'},
+  {who:'우주인이', where:'달에서', what:'돌을', how:'조심조심 주웠어요'},
+  {who:'서준이가', where:'바닷가에서', what:'모래성을', how:'크게 만들었어요'},
+  {who:'로봇이', where:'우주선 안에서', what:'나사를', how:'빠르게 돌렸어요'},
+  {who:'할머니가', where:'마당에서', what:'꽃을', how:'예쁘게 심으셨어요'}
 ];
 
 const QUIZ = [
   {q:'급식실에서 내 자리에 친구가 앉아 있어요. 뭐라고 말할까요?',
-   o:['“야, 당장 비켜!”','“내 자리인데, 옆에 같이 앉을래?”','아무 말 없이 가방을 확 당긴다'], a:1,
+   o:['아무 말 없이 가방을 확 당긴다','“내 자리인데, 같이 앉을래?”','“당장 비켜!”'], a:1,
    e:'내가 원하는 것을 말하면서 친구 기분도 상하지 않게 하는 말이 좋아요.'},
   {q:'기대하던 소풍이 비 때문에 취소됐어요. 이때 드는 마음은?',
-   o:['서운하다','뿌듯하다','당황하다'], a:0,
-   e:'서운하다 = 기대했는데 안 되어서 마음이 허전하고 아쉬운 마음.'},
+   o:['신나요','서운해요','졸려요'], a:1,
+   e:'서운하다 = 기대했는데 안 되어서 마음이 허전하고 아쉬운 마음이에요.'},
   {q:'어려운 문제를 혼자서 끝까지 풀었어요. 이때 드는 마음은?',
-   o:['지겹다','뿌듯하다','무섭다'], a:1,
-   e:'뿌듯하다 = 내가 해냈다는 생각에 가슴이 뿌듯한 마음.'},
-  {q:'“가는 말이 고와야 오는 말이 곱다”는 무슨 뜻일까요?',
-   o:['말은 천천히 해야 한다','내가 좋게 말하면 상대도 좋게 말한다','말을 많이 하면 친구가 생긴다'], a:1,
-   e:'내가 먼저 좋은 말을 해야 상대도 좋은 말로 답한다는 뜻이에요.'},
-  {q:'“발이 넓다”는 무슨 뜻일까요?',
-   o:['아는 사람이 아주 많다','발 크기가 크다','걸음이 빠르다'], a:0,
-   e:'발이 넓다 = 여기저기 아는 사람이 많은 사람.'},
+   o:['지겨워요','무서워요','뿌듯해요'], a:2,
+   e:'뿌듯하다 = 내가 해냈다는 생각에 가슴이 뿌듯한 마음이에요.'},
+  {q:'친구가 내 물건을 말도 없이 가져갔어요. 뭐라고 말할까요?',
+   o:['“가지고 갈 거면 먼저 말해 줘.”','“그냥 가져. 괜찮아.”','“내 거야, 당장 놔!”'], a:0,
+   e:'내 마음을 말하되 “먼저 말해 줘”처럼 부탁하면 싸우지 않고 이야기할 수 있어요.'},
   {q:'친구가 오래 공들여 그린 그림을 보여 줬어요. 뭐라고 말할까요?',
    o:['“별로네.”','“색을 어떻게 이렇게 예쁘게 칠했어? 멋지다!”','“나도 그릴래. 내가 더 잘 그릴걸?”'], a:1,
    e:'칭찬은 무엇이 좋았는지 콕 집어 말해야 진짜로 들려요.'},
   {q:'모르는 문제가 있어 선생님께 물어보려고 해요. 가장 알맞은 말은?',
-   o:['“이 문제가 잘 모르겠어요. 다시 설명해 주실 수 있어요?”','“몰라요.”','“이거 답만 알려주세요.”'], a:0,
+   o:['“몰라요.”','“이거 답만 알려주세요.”','“선생님, 이 문제가 잘 모르겠어요. 다시 설명해 주실 수 있어요?”'], a:2,
    e:'무엇이 궁금한지 말하고 정중하게 부탁하면 선생님도 도와주기 쉬워요.'},
-  {q:'친구가 내 비밀을 다른 친구들에게 말했어요. 이때 드는 마음은?',
-   o:['신나다','서운하다','시원하다'], a:1,
+  {q:'친구가 내 비밀을 다른 친구에게 말했어요. 이때 드는 마음은?',
+   o:['서운해요','신나요','배불러요'], a:0,
    e:'비밀을 지켜 주길 바랐는데 안 지켜 줘서 서운한 거예요.'},
-  {q:'“티끌 모아 태산”은 무슨 뜻일까요?',
-   o:['작은 것도 모으면 아주 커진다','산은 멀리서 보면 작다','먼지는 건강에 나쁘다'], a:0,
-   e:'작은 노력도 계속 모으면 큰 결과가 된다는 뜻이에요.'},
-  {q:'“귀가 얇다”는 무슨 뜻일까요?',
-   o:['남의 말을 쉽게 믿는다','귀가 잘 안 들린다','귀가 예쁘다'], a:0,
-   e:'귀가 얇다 = 남의 말을 따져 보지 않고 쉽게 믿는 사람.'},
   {q:'놀이터에서 친구가 넘어졌어요. 뭐라고 말할까요?',
-   o:['“괜찮아? 같이 일으켜 줄게.”','“왜 발을 그렇게 못 디뎌? ㅋㅋ”','“나는 먼저 갈게.”'], a:0,
+   o:['“나는 먼저 갈게.”','“괜찮아? 일으켜 줄게.”','“왜 그렇게 못 걸어?”'], a:1,
    e:'먼저 괜찮은지 물어보고 도와주는 말이 배려하는 말이에요.'},
   {q:'갑자기 발표하라고 해서 머릿속이 하얘졌어요. 이때 드는 마음은?',
-   o:['당황하다','뿌듯하다','지루하다'], a:0,
-   e:'당황하다 = 갑작스러운 일에 어떻게 해야 할지 몰라 얼떨떨한 마음.'},
-  {q:'친구가 “너 바보야?”라고 놀렸어요. 내 기분을 말하는 가장 좋은 방법은?',
-   o:['“그렇게 말하니까 기분이 안 좋아. 하지 마.”','“너도 바보야!”','때려서 혼내 준다'], a:0,
-   e:'기분이 나쁘면 그 기분을 말로 정확히 이야기하는 게 좋아요.'},
-  {q:'“소 잃고 외양간 고친다”는 무슨 뜻일까요?',
-   o:['이미 잘못된 뒤에야 뒤늦게 준비한다','소를 아주 아끼는 마음이다','외양간은 소가 자는 곳이다'], a:0,
-   e:'일이 벌어진 뒤에야 고치면 늦다는 뜻이에요.'},
-  {q:'“속이 시원하다”는 무슨 뜻일까요?',
-   o:['답답하던 일이 풀려서 후련하다','배가 부르다','몸이 시원하다'], a:0,
-   e:'답답하던 일이 해결돼서 마음이 후련할 때 쓰는 말이에요.'}
+   o:['당황스러워요','뿌듯해요','지루해요'], a:0,
+   e:'당황하다 = 갑작스러운 일에 어떻게 해야 할지 몰라 얼떨떨한 마음이에요.'},
+  {q:'친구에게 책을 빌렸다가 다 읽고 돌려주려고 해요. 뭐라고 말할까요?',
+   o:['“이제 내 거야.”','“책상에 놓고 갈게.”','“잘 읽었어. 고마워!”'], a:2,
+   e:'빌린 물건을 돌려줄 때는 고맙다는 말을 함께 하면 좋아요.'},
+  {q:'내가 실수로 친구 물컵을 쏟았어요. 뭐라고 말할까요?',
+   o:['“미안해, 내가 닦을게.”','“네가 컵을 여기 두면 어쩌니?”','웃으면서 도망간다'], a:0,
+   e:'잘못했을 때는 “미안해” 하고 바로 고치는 말을 해요.'},
+  {q:'‘크다’의 반대말은 무엇일까요?',
+   o:['작다','빠르다','많다'], a:0,
+   e:'크다 ↔ 작다. 이렇게 짝이 되는 말을 반대말이라고 해요.'},
+  {q:'‘기쁘다’의 반대말은 무엇일까요?',
+   o:['밝다','슬프다','가볍다'], a:1,
+   e:'기쁘다 ↔ 슬프다. 마음이 좋을 때와 속상할 때의 짝이에요.'},
+  {q:'친구가 “같이 축구할래?” 하고 물었어요. 뭐라고 대답할까요?',
+   o:['“내가 잘하는데, 너도 할 수 있어?”','“좋아, 같이 하자!”','못 들은 척한다'], a:1,
+   e:'같이 하자는 말에는 “좋아, 같이 하자!”처럼 밝게 대답해 주면 좋아요.'},
+  {q:'몸이 아파서 보건실에 가야 해요. 선생님께 뭐라고 말할까요?',
+   o:['아무 말 없이 교실을 나간다','“오늘 공부는 안 할래요.”','“선생님, 배가 아파서 보건실에 가도 될까요?”'], a:2,
+   e:'어디가 아픈지 말하고 허락을 받으면 선생님도 안심해요.'}
 ];
 
 const READ = [
-  {tag:'🦖 공룡', text:'티라노사우루스는 앞발이 아주 짧았습니다. 그런데도 사냥을 잘했습니다. 뒷다리가 굵고 튼튼해서 빠르게 달릴 수 있었기 때문입니다.',
-   q:'티라노사우루스가 사냥을 잘한 까닭은?', o:['뒷다리가 튼튼해서 빨리 달릴 수 있어서','앞발이 아주 길어서','날개로 하늘을 날아서'], a:0,
-   e:'글 속에 답이 있어요. “뒷다리가 굵고 튼튼해서”!'},
-  {tag:'🌌 우주', text:'우주인이 달에 가면 몸이 둥둥 뜹니다. 달의 중력이 지구보다 훨씬 약하기 때문입니다. 그래서 가볍게 뛰어도 아주 높이 올라갑니다.',
-   q:'달에서 몸이 둥둥 뜨는 까닭은?', o:['달에는 공기가 없어서','달의 중력이 약해서','달이 아주 멀어서'], a:1,
-   e:'“달의 중력이 지구보다 훨씬 약하기 때문”이라고 나옵니다.'},
-  {tag:'🐟 바다', text:'깊고 어두운 바다에 사는 아귀는 몸에서 희미한 빛을 냅니다. 어둠 속에서 먹이가 그 빛을 보고 다가오기 때문입니다.',
-   q:'아귀가 빛을 내는 까닭은?', o:['먹이를 부르려고','길을 밝히려고','춤을 추려고'], a:0,
-   e:'빛은 아귀의 낚싯대 같은 것이에요. 먹이가 다가오면 잡아먹지요.'},
-  {tag:'🤖 로봇', text:'화성에서 일하는 탐사 로봇은 바퀴가 여섯 개입니다. 화성은 돌이 많고 땅이 고르지 않습니다. 바퀴가 많으면 몇 개가 뜨더라도 넘어지지 않습니다.',
+  {tag:'🦖 공룡', text:'티라노사우루스는 앞발이 아주 짧아요. 그런데 뒷다리가 아주 튼튼해서 빨리 달릴 수 있어요.',
+   q:'티라노사우루스가 빨리 달릴 수 있는 까닭은?', o:['앞발이 길어서','뒷다리가 튼튼해서','날개가 있어서'], a:1,
+   e:'“뒷다리가 아주 튼튼해서”라고 글에 나와 있어요.'},
+  {tag:'🌌 우주', text:'달에서는 몸이 둥둥 떠요. 달의 중력이 지구보다 훨씬 약하기 때문이에요.',
+   q:'달에서 몸이 둥둥 뜨는 까닭은?', o:['달의 중력이 약해서','달에는 공기가 없어서','달이 아주 멀어서'], a:0,
+   e:'“달의 중력이 지구보다 훨씬 약하기 때문”이라고 나와요.'},
+  {tag:'🐟 바다', text:'깊고 어두운 바다에 사는 아귀는 몸에서 빛을 내요. 어둠 속에서 먹이가 그 빛을 보고 다가오기 때문이에요.',
+   q:'아귀가 빛을 내는 까닭은?', o:['길을 밝히려고','춤을 추려고','먹이가 다가오게 하려고'], a:2,
+   e:'빛은 아귀의 낚싯대예요. 먹이가 다가오면 잡아먹지요.'},
+  {tag:'🤖 로봇', text:'화성에서 일하는 로봇은 바퀴가 여섯 개예요. 화성 땅은 돌이 많고 울퉁불퉁해서, 바퀴가 많아야 넘어지지 않아요.',
    q:'화성 로봇의 바퀴가 여섯 개인 까닭은?', o:['더 빨리 달리려고','울퉁불퉁한 땅에서 넘어지지 않으려고','돌을 들려고'], a:1,
-   e:'바퀴가 많으면 일부가 땅에 닿지 않아도 나머지로 버틸 수 있어요.'},
-  {tag:'🦴 공룡', text:'공룡 뼈를 처음 발견한 사람들은 커다란 뼈를 보고 “거인의 뼈”라고 생각했습니다. 그때는 공룡이라는 말조차 없었기 때문입니다.',
-   q:'옛사람들이 거인의 뼈라고 생각한 까닭은?', o:['공룡이라는 말을 몰랐기 때문','거인을 직접 봤기 때문','뼈가 작았기 때문'], a:0,
-   e:'모르는 것을 보면 아는 것으로 짐작하게 됩니다.'},
-  {tag:'🌌 우주', text:'우주는 아주 고요합니다. 소리는 공기 같은 것을 타고 퍼지는데, 우주에는 공기가 거의 없습니다. 그래서 우주선이 부딪혀도 소리가 들리지 않습니다.',
-   q:'우주에서 소리가 안 들리는 까닭은?', o:['우주가 너무 밝아서','소리를 전달할 공기가 없어서','우주인이 귀를 막아서'], a:1,
-   e:'공기가 없으면 소리를 흔들어 퍼뜨릴 것이 없어요.'},
-  {tag:'🦈 바다', text:'상어의 뼈는 단단하지 않고 말랑말랑한 연골로 되어 있습니다. 그래서 상어 화석은 다른 물고기보다 훨씬 적게 발견됩니다.',
-   q:'상어 화석이 적은 까닭은?', o:['아주 빨리 헤엄쳐서','뼈가 말랑해서 잘 남지 않아서','화석을 숨겨서'], a:1,
-   e:'단단한 뼈는 오래 남지만 말랑한 연골은 쉽게 없어져요.'},
-  {tag:'🤖 로봇', text:'바다 깊은 곳을 살피는 잠수 로봇은 사람 대신 들어갑니다. 아주 깊은 바다는 압력이 세고 어두워서 사람이 가기 위험합니다. 로봇은 그곳 사진을 찍어 보내 줍니다.',
-   q:'사람 대신 로봇을 보내는 까닭은?', o:['사람이 가면 위험해서','로봇이 수영을 잘해서','로봇이 물고기와 친해서'], a:0,
-   e:'위험한 곳은 로봇이 먼저 가 보고 알려 줍니다.'},
-  {tag:'🦖 공룡', text:'공룡은 한 번에 여러 개의 알을 낳았습니다. 그리고 알 둘레에 흙과 풀을 모아 둥지를 만들었습니다. 둥지는 알을 따뜻하게 지켜 주고 다른 동물로부터 막아 주었습니다.',
-   q:'공룡이 둥지를 만든 까닭은?', o:['알을 따뜻하게 지키고 지켜 주려고','예쁘게 보이려고','친구를 만나려고'], a:0,
-   e:'둥지의 두 가지 일 — 따뜻하게 지키기, 지켜 주기!'},
-  {tag:'🔎 미스터리', text:'100년 전, 한 배가 바다에서 사라졌습니다. 그런데 30년 뒤에 다시 나타났습니다. 배 안에는 아무도 없었고, 식탁에는 식사가 차려져 있었습니다. 선장의 일기장은 찢겨 있었습니다.',
-   q:'탐험가라면 이 배에서 가장 먼저 무엇을 할까요?', o:['일기장과 기록을 살펴본다','배를 가라앉힌다','아무것도 하지 않고 돌아간다'], a:0,
+   e:'“울퉁불퉁해서 … 넘어지지 않아요”라고 나와요.'},
+  {tag:'🦴 공룡', text:'공룡 뼈를 처음 본 사람들은 “거인의 뼈”라고 불렀어요. 그때는 공룡이라는 말을 몰랐기 때문이에요.',
+   q:'옛사람들이 거인의 뼈라고 생각한 까닭은?', o:['거인을 직접 봐서','공룡이라는 말을 몰라서','뼈가 아주 작아서'], a:1,
+   e:'모르는 것을 보면 아는 것으로 짐작하게 돼요.'},
+  {tag:'🌌 우주', text:'우주에는 공기가 거의 없어요. 소리는 공기를 타고 퍼지기 때문에, 우주에서는 소리가 들리지 않아요.',
+   q:'우주에서 소리가 안 들리는 까닭은?', o:['소리를 전하는 공기가 없어서','우주가 너무 밝아서','우주인이 귀를 막아서'], a:0,
+   e:'“공기를 타고 퍼지기 때문에”가 열쇠예요.'},
+  {tag:'🦈 바다', text:'상어의 뼈는 딱딱하지 않고 말랑말랑해요. 그래서 상어 화석은 다른 물고기보다 적게 발견돼요.',
+   q:'상어 화석이 적게 발견되는 까닭은?', o:['뼈가 말랑해서 잘 남지 않아서','아주 빨리 헤엄쳐서','화석을 숨겨서'], a:0,
+   e:'“뼈가 … 말랑말랑해요”라고 글에 나와요.'},
+  {tag:'🤖 로봇', text:'아주 깊은 바다는 압력이 세고 어두워서 사람이 가기 위험해요. 그래서 잠수 로봇이 대신 가서 사진을 찍어 보내 줘요.',
+   q:'사람 대신 로봇을 보내는 까닭은?', o:['로봇이 수영을 잘해서','사람이 가면 위험해서','로봇이 물고기와 친해서'], a:1,
+   e:'“사람이 가기 위험해요”라고 나와요.'},
+  {tag:'🦖 공룡', text:'공룡은 알 둘레에 흙과 풀을 모아 둥지를 만들었어요. 둥지는 알을 따뜻하게 지켜 주었어요.',
+   q:'공룡이 둥지를 만든 까닭은?', o:['예쁘게 보이려고','친구를 만나려고','알을 따뜻하게 지키려고'], a:2,
+   e:'“알을 따뜻하게 지켜 주었어요” 바로 그거예요!'},
+  {tag:'🔎 미스터리', text:'한 배가 바다에서 사라졌는데, 30년 뒤에 아무도 없는 채로 돌아왔어요. 배 안에는 찢긴 일기장이 있었어요.',
+   q:'탐험가라면 이 배에서 가장 먼저 무엇을 할까요?', o:['배를 가라앉힌다','일기장을 살펴본다','아무것도 하지 않고 돌아간다'], a:1,
    e:'단서를 먼저 모아야 이유를 알 수 있어요. 일기장이 열쇠예요.'},
-  {tag:'🚀 우주', text:'우주선의 창문은 생각보다 작고 두껍습니다. 우주에는 아주 작은 돌이 엄청난 속도로 날아다니기 때문입니다. 작은 돌 하나도 창문에 부딪히면 큰 사고가 납니다.',
-   q:'우주선 창문을 작고 두껍게 만드는 까닭은?', o:['작은 돌이 부딪혀도 안전하려고','별을 작게 보려고','무게를 늘리려고'], a:0,
-   e:'우주를 지키는 첫 번째 규칙은 안전이에요.'},
-  {tag:'🌊 바다', text:'바닷물이 짠 까닭은 육지의 소금기가 강물을 따라 바다로 모이기 때문입니다. 바다 물은 햇빛에 증발하지만 소금은 그대로 남습니다. 이 일이 아주 오래 되풀이되었습니다.',
-   q:'바닷물이 짠 까닭은?', o:['바다에 소금을 뿌려서','강물을 따라온 소금기가 오래 모여서','물고기가 소금을 만들어서'], a:1,
-   e:'물만 증발하고 소금은 남아서 짠맛이 진해진 거예요.'}
+  {tag:'🚀 우주', text:'우주에는 작은 돌이 아주 빠르게 날아다녀요. 그래서 우주선 창문은 작고 두껍게 만들어요.',
+   q:'우주선 창문을 작고 두껍게 만드는 까닭은?', o:['별을 작게 보려고','무게를 늘리려고','작은 돌이 부딪혀도 안전하려고'], a:2,
+   e:'“작은 돌이 아주 빠르게 날아다녀요”가 까닭이에요.'},
+  {tag:'🌊 바다', text:'육지의 소금기가 강물을 타고 바다로 모여요. 바닷물은 증발해도 소금은 남아서, 오래오래 짠맛이 되었어요.',
+   q:'바닷물이 짠 까닭은?', o:['강물을 따라온 소금기가 오래 모여서','바다에 소금을 뿌려서','물고기가 소금을 만들어서'], a:0,
+   e:'“물은 증발해도 소금은 남아서”라고 나와요.'}
 ];
 
 const SPEAK = [
-  {line:'티라노사우루스의 앞발은 짧지만 뒷다리는 아주 튼튼합니다.', focus:'「튼튼합니다」는 끝까지 또박또박'},
-  {line:'나는 오늘 라면을 아주 맵게 끓여서 맛있게 먹었다.', focus:'「맵게」의 ㅁ 받침을 살려서'},
-  {line:'손흥민 선수가 공을 차자 관중석이 우렁차게 환호했다.', focus:'「우렁차게」를 크고 힘있게'},
-  {line:'우주선이 조용히 달 위에 내려앉았다.', focus:'「조용히」는 작은 소리로'},
-  {line:'사면초가라는 말은 사방에서 적에게 둘러싸였다는 뜻이다.', focus:'「사면초가」를 또박또박'},
-  {line:'물론이지, 내일 같이 축구하러 가자!', focus:'신나게, 끝을 살짝 올려서'},
-  {line:'아빠, 이 공룡 이름은 뭐예요? 정말 신기해요.', focus:'물음표에서는 목소리를 올려서'},
-  {line:'바다 깊은 곳에는 빛나는 물고기가 살고 있다.', focus:'「빛나는」의 ㅂ 받침을 살려서'},
-  {line:'와, 이 로봇은 혼자서 문을 열 수도 있구나!', focus:'놀란 마음을 담아 “와”를 길게'},
-  {line:'나는 매일 저녁 식사 후에 엄마랑 산책을 한다.', focus:'한 번에 한 문장씩 또박또박'},
-  {line:'비가 갠 하늘에는 별이 정말 많이 보인다.', focus:'「갠」과 「많이」를 정확하게'},
-  {line:'선생님, 제가 발표해도 될까요? 자신 있게 말해 볼래요.', focus:'두 문장 사이를 한 번 쉬고'}
+  {line:'오늘 날씨가 좋아요.', focus:'「좋아요」를 끝까지 또박또박'},
+  {line:'나는 공룡을 좋아해요.', focus:'「공룡을」의 ㅇ 받침을 살려서'},
+  {line:'물 한 잔 주세요.', focus:'「잔」을 짧고 또렷하게'},
+  {line:'같이 놀자!', focus:'「같이」는 [가치]처럼 부드럽게'},
+  {line:'맛있게 먹었어요.', focus:'「맛있게」의 ㅅ 받침을 살려서'},
+  {line:'만나서 반가워요.', focus:'「반가워요」를 밝게'},
+  {line:'이건 뭐예요?', focus:'물음표에서는 끝을 살짝 올려서'},
+  {line:'나는 축구를 좋아해요.', focus:'「축구」를 또박또박'},
+  {line:'고마워요, 선생님.', focus:'쉼표에서 한 번 쉬고'},
+  {line:'밖에 비가 와요.', focus:'「밖에」의 ㄲ 받침을 살려서'},
+  {line:'우리는 친구예요.', focus:'「친구예요」를 다정하게'},
+  {line:'천천히 말해 볼게요.', focus:'「천천히」를 정말 천천히'}
 ];
 
 const CATS = {science:'🔬 과학', words:'📚 어휘·말하기', history:'🏛️ 역사'};
@@ -449,26 +461,109 @@ function toast(m){
   clearTimeout(tTimer); tTimer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-/* ===== 음성 ===== */
-let koVoice = null;
+/* ===== 음성 (듣기) =====
+   speechSynthesis가 막힌 곳(카톡·인앱 브라우저·일부 웹뷰)에서는
+   구글 음성(mp3)으로 자동 전환해서 들려줘요. */
+const TTS_URL = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ko&q=';
+let koVoice = null, audioEl = null, audioList = [], audioPos = 0, audioWantRate = 1, audioPlayed = false;
+let ttsToken = 0, ttsMode = 'auto';
+try{ const m = sessionStorage.getItem('sq_tts'); if(m === 'native' || m === 'audio') ttsMode = m; }catch(_){}
+
+function markMode(m){
+  ttsMode = m;
+  try{ sessionStorage.setItem('sq_tts', m); }catch(_){}
+  try{ document.documentElement.setAttribute('data-tts', m); }catch(_){}
+}
 function pickVoice(){
   try{
-    const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-    koVoice = vs.find(v => /ko[-_]KR/i.test(v.lang)) || vs.find(v => /^ko/i.test(v.lang)) || null;
+    const vs = window.speechSynthesis ? (speechSynthesis.getVoices() || []) : [];
+    koVoice = vs.find(v => /ko[-_]?KR/i.test(v.lang)) || vs.find(v => /^ko/i.test(v.lang)) || null;
   }catch(_){ koVoice = null; }
 }
-if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-function speak(text, rate){
-  if(!window.speechSynthesis){ toast('이 브라우저에서는 소리 읽기가 안 돼요'); return; }
-  try{
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR'; u.rate = rate || 1; u.pitch = 1;
-    if(koVoice) u.voice = koVoice;
-    speechSynthesis.speak(u);
-  }catch(_){}
+if(window.speechSynthesis){
+  pickVoice();
+  try{ speechSynthesis.addEventListener('voiceschanged', pickVoice); }
+  catch(_){ try{ speechSynthesis.onvoiceschanged = pickVoice; }catch(__){} }
 }
-function stopSpeak(){ try{ speechSynthesis.cancel(); }catch(_){} }
+
+function getAudio(){
+  if(audioEl) return audioEl;
+  const a = new Audio();
+  a.preload = 'auto';
+  a.onended = () => { audioPos++; playChunk(); };
+  a.onloadedmetadata = () => { try{ a.defaultPlaybackRate = audioWantRate; a.playbackRate = audioWantRate; }catch(_){} };
+  a.onerror = () => {
+    if(audioPos < audioList.length){ audioPos++; playChunk(); return; }
+    if(!audioPlayed) toast('🔊 소리를 못 불러왔어요. 잠시 뒤 다시 눌러 봐 주세요');
+  };
+  audioEl = a;
+  return a;
+}
+function splitTts(text){
+  const s = String(text || '').replace(/\s+/g, ' ').trim();
+  const out = [];
+  if(!s) return out;
+  let buf = '';
+  for(const ch of s){
+    buf += ch;
+    if(('.!?。？！'.indexOf(ch) >= 0 && buf.length >= 20) || buf.length >= 110){ out.push(buf.trim()); buf = ''; }
+  }
+  if(buf.trim()) out.push(buf.trim());
+  return out;
+}
+function playChunk(){
+  if(audioPos >= audioList.length){ audioList = []; audioPos = 0; return; }
+  const a = getAudio();
+  a.src = TTS_URL + encodeURIComponent(audioList[audioPos]);
+  try{ a.defaultPlaybackRate = audioWantRate; a.playbackRate = audioWantRate; }catch(_){}
+  let p = null;
+  try{ p = a.play(); }catch(_){}
+  if(p && p.then) p.then(() => { audioPlayed = true; }).catch(() => {});
+}
+function audioSpeak(text, rate){
+  audioList = splitTts(text);
+  audioPos = 0;
+  audioPlayed = false;
+  audioWantRate = Math.max(0.5, Math.min(1.2, Number(rate) || 1));
+  playChunk();
+}
+function nativeSay(text, rate, token, onOk, onFail){
+  let u = null;
+  try{ u = new SpeechSynthesisUtterance(text); }catch(_){ onFail(); return; }
+  u.lang = 'ko-KR'; u.rate = Number(rate) || 1; u.pitch = 1; u.volume = 1;
+  if(koVoice) u.voice = koVoice;
+  let started = false, settled = false, wd = 0;
+  const clearWd = () => { if(wd){ clearTimeout(wd); wd = 0; } };
+  const fail = () => {
+    if(settled) return;
+    settled = true; clearWd();
+    try{ speechSynthesis.cancel(); }catch(_){}
+    onFail();
+  };
+  u.onstart = () => { started = true; clearWd(); if(token === ttsToken) onOk(); };
+  u.onend = () => { settled = true; clearWd(); };
+  u.onerror = fail;
+  wd = setTimeout(() => { if(!started) fail(); }, 800);
+  try{ speechSynthesis.speak(u); }catch(_){ fail(); }
+}
+function speak(text, rate){
+  const t = String(text || '').trim();
+  if(!t) return;
+  let busy = false;
+  try{ busy = !!(window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending)); }catch(_){}
+  stopSpeak();
+  const token = ttsToken, r = Number(rate) || 1;
+  const toAudio = () => { if(token !== ttsToken) return; markMode('audio'); audioSpeak(t, r); };
+  if(ttsMode === 'audio' || !window.speechSynthesis){ toAudio(); return; }
+  const run = () => { if(token !== ttsToken) return; nativeSay(t, r, token, () => markMode('native'), toAudio); };
+  if(busy) setTimeout(run, 90); else run();
+}
+function stopSpeak(){
+  ttsToken++;
+  audioList = []; audioPos = 0;
+  if(audioEl){ try{ audioEl.pause(); audioEl.removeAttribute('src'); }catch(_){} }
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(_){}
+}
 
 /* ===== 탭 ===== */
 const TABS = ['sentence','quiz','read','speak','tube'];
@@ -544,7 +639,7 @@ document.getElementById('sCheck').onclick = () => {
     sl.classList.remove('shake'); void sl.offsetWidth; sl.classList.add('shake');
     fb.className = 'fb show no';
     fb.textContent = tries === 1
-      ? '거의 다 왔어! 순서는 「누가 → 어디서 → 무엇을 → 어떻게」야. 다시 해 볼까?'
+      ? '거의 다 왔어! 순서는 「' + need.map(k => LABEL[k]).join(' → ') + '」야. 다시 해 볼까?'
       : '힌트! 첫 번째는 「' + LABEL[need[0]] + '」 = ' + cur()[need[0]];
     return;
   }
@@ -848,6 +943,24 @@ document.getElementById('copyBtn').onclick = async () => {
   }
   toast(ok ? '🔗 링크를 복사했어요!' : '주소창 주소를 길게 눌러 복사해 주세요');
 };
+
+/* ===== 인앱 브라우저 안내 ===== */
+(function(){
+  const ua = navigator.userAgent || '';
+  const inApp = /KAKAOTALK|Instagram|FBAN|FBAV|Line\/|NAVER\(inapp|Daum|everytime|Twitter/i.test(ua);
+  const noVoice = !window.speechSynthesis;
+  const noMic = !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  if(!(inApp || (/Android/i.test(ua) && (noVoice || noMic)))) return;
+  const el = document.getElementById('inapp');
+  el.classList.remove('hide');
+  document.getElementById('inappX').onclick = () => el.classList.add('hide');
+  document.getElementById('openChrome').onclick = e => {
+    e.preventDefault();
+    const here = (location.host + location.pathname + location.search).replace(/^\/\//, '');
+    location.href = 'intent://' + here + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
+      encodeURIComponent(location.href) + ';end';
+  };
+})();
 
 /* ===== 시작 ===== */
 hud();
