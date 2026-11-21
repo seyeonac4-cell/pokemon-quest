@@ -612,6 +612,13 @@ body{
   background:#FF3D8E; border:1.5px solid #fff; box-shadow:0 0 7px rgba(255,60,140,.95); pointer-events:none;
 }
 .mSis{position:absolute; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:#22CC88; border:1.5px solid #fff; pointer-events:none}
+@media (max-width:400px){
+  .mini{width:104px}
+  .miniMap{height:76px}
+  .mdot{width:14px; height:14px}
+  .mdot i{font-size:7.5px}
+  .mini .mtop{font-size:9px}
+}
 
 /* 포토존 · 사진 */
 .photoBox{display:grid; gap:8px; place-items:center}
@@ -4327,6 +4334,11 @@ function buildMini(){
     map.appendChild(b);
   });
   syncMini();
+  if(VIEW.H < 380){
+    $('mini').classList.add('collapsed');
+    $('miniIco').textContent = '+';
+    $('miniTop').setAttribute('aria-expanded', 'false');
+  }
   applyCam();
 }
 function syncMini(){
