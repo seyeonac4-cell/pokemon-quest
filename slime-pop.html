@@ -271,7 +271,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="row" id="rowBallInfo">
           <span class="lab">왁뿌볼</span>
           <span class="chip" id="ballCountChip">🎈 0개</span>
-          <span class="chip" id="ballTip">꾹 누르고 있으면 뽁! 터져요</span>
+          <span class="chip" id="ballTip">꾹 누르면 뽁!</span>
         </div>
         <div class="row actions">
           <button class="btnA" id="btnAddBall" type="button">➕ 더 놓기</button>
@@ -425,7 +425,7 @@ var Sound = (function(){
     } catch (e) {}
 
     master = AC.createGain();
-    master.gain.value = muted ? 0 : 0.92;
+    master.gain.value = muted ? 0 : 1.0;
     try {
       analyser = AC.createAnalyser();
       analyser.fftSize = 1024;
@@ -807,7 +807,7 @@ var Sound = (function(){
     isMuted: function(){ return muted; },
     setMuted: function(m){
       muted = !!m;
-      if (master) { try { master.gain.value = muted ? 0 : 0.92; } catch (e) {} }
+      if (master) { try { master.gain.value = muted ? 0 : 1.0; } catch (e) {} }
       if (muted) { kneadStop(); } else { unlock(); }
     }
   };
@@ -1408,7 +1408,7 @@ function sprinkleAt(x, y, typeId, count){
       x: px, y: py,
       vx: rand(-90, 90), vy: rand(-90, 90),
       rot: Math.random() * TAU, vr: rand(-4, 4),
-      size: tp.id === 'glitter' ? rand(4, 9) : (tp.id === 'pearl' ? rand(4.5, 8) : rand(6, 11)),
+      size: tp.id === 'glitter' ? rand(5, 11) : (tp.id === 'pearl' ? rand(6, 10) : rand(8, 14)),
       color: tp.id === 'sprinkle' ? pick(SPRINKLE_COLORS) : tp.color,
       alpha: rand(0.65, 1)
     });
@@ -1434,7 +1434,7 @@ var BALLCOLORS = [
 
 var BB = { list: [], sparks: [], floats: [], t: 0, count: 0 };
 
-function ballRadius(){ return clamp(Math.min(W, H) * 0.088, 26, 58); }
+function ballRadius(){ return clamp(Math.min(W, H) * 0.098, 30, 62); }
 
 function makeBall(x, y, forceColor){
   var c = forceColor || pick(BALLCOLORS);
@@ -1499,11 +1499,13 @@ function updateBallChip(){
 function ballStep(dt){
   BB.t += dt;
   var i, j, b;
-  var grav = 118;
+  var grav = 34;               /* 살짝만 가라앉고 둥실둥실 떠다니게 */
   for (i = 0; i < BB.list.length; i++) {
     b = BB.list[i];
     b.vy += grav * dt;
-    b.vx *= 0.996; b.vy *= 0.996;
+    b.vx += Math.sin(BB.t * 0.85 + b.ph) * 11 * dt;
+    b.vy += Math.cos(BB.t * 0.62 + b.ph * 1.7) * 9 * dt;
+    b.vx *= 0.997; b.vy *= 0.997;
     b.x += b.vx * dt; b.y += b.vy * dt;
 
     /* 벽 반동 + 말랑 눌림 */
@@ -1987,7 +1989,9 @@ function updateHud(){
   var C = COLORS[store.color] || PALETTE[0];
   var T = TEX[store.texture] || TEX.water;
   var el = document.getElementById('tagNow');
-  el.textContent = C.name + ' · ' + T.name + (store.topping ? ' · ' + TOP[store.topping].name : '');
+  el.textContent = (store.mode === 'ball')
+    ? '🎈 왁뿌볼 놀이터'
+    : (C.name + ' · ' + T.name + (store.topping ? ' · ' + TOP[store.topping].name : ''));
   var tp = document.getElementById('tagPop');
   var tk = store.popDays[todayKey()] || 0;
   tp.hidden = store.mode !== 'ball';
@@ -2209,6 +2213,7 @@ function boot(){
       mode: store.mode, color: store.color, texture: store.texture,
       parts: SL.parts.length, grabs: grabs.length, balls: BB.list.length,
       saved: store.saved.length, popTotal: store.popTotal, slimeTotal: store.slimeTotal,
+      ballPos: BB.list.map(function(b){ return [Math.round(b.x), Math.round(b.y), Math.round(b.r)]; }),
       popToday: store.popDays[todayKey()] || 0,
       audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
       maxDeform: window.__slimeDiag.maxDeform, maxDrag: window.__slimeDiag.maxDrag,
