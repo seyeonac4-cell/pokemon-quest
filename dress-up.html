@@ -449,6 +449,8 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
   transition:transform .12s ease, color .12s ease;
 }
 .vstars button.on{color:#FFD23F; text-shadow:0 0 13px rgba(255,196,0,.95)}
+.vstars.armed button{color:rgba(255,255,255,.66); text-shadow:0 0 10px rgba(255,255,255,.35); animation:starReady 1.8s ease-in-out infinite}
+@keyframes starReady{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 .vstars button:active{transform:scale(.88)}
 .vstars button:disabled{pointer-events:none}
 .vstars button:disabled:not(.on){color:rgba(255,255,255,.18)}
@@ -464,9 +466,9 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 /* ---------- 시상대 ---------- */
 .podium{
   position:absolute; left:0; right:0; bottom:0; z-index:6; display:flex; align-items:flex-end; justify-content:center;
-  gap:5px; padding:0 8px 22px; pointer-events:none;
+  gap:5px; padding:0 8px 22px; pointer-events:none; max-width:760px; margin:0 auto;
 }
-.pod{flex:1 1 0; max-width:32%; display:flex; flex-direction:column; align-items:center; opacity:0; transform:translateY(24px); animation:podIn .55s cubic-bezier(.2,1.35,.4,1) forwards}
+.pod{flex:1 1 0; max-width:32%; min-width:0; display:flex; flex-direction:column; align-items:center; opacity:0; transform:translateY(24px); animation:podIn .55s cubic-bezier(.2,1.35,.4,1) forwards}
 @keyframes podIn{to{opacity:1; transform:translateY(0)}}
 .pod .pa{position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:center; width:100%}
 .pod .pa svg{height:clamp(90px,15.5vh,138px); width:auto; filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
@@ -495,6 +497,9 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
   .btn.primary{min-height:52px; font-size:15.5px}
   .who{margin-top:7px}
   .grid{max-height:none}
+}
+@media (min-width:821px){
+  .cats{flex-wrap:wrap; overflow:visible}
 }
 footer{margin:16px 4px 0; text-align:center; font-size:11.5px; color:#A794B0; font-weight:600; line-height:1.7}
 footer a{color:#B073FF; text-decoration:none; font-weight:800}
@@ -1082,8 +1087,8 @@ var ACCS = [
     '<path d="M-5 26 q5 3 10 0" stroke="#FFB3C7" stroke-width="2" fill="none" stroke-linecap="round"/>'+
     '</g>' },
   { id:'camera', name:'카메라', prop:true, tags:['cool','street','stage','idol','prop','party'], svg:
-    '<g transform="translate(52 222)">'+
-    '<path d="M4 18 q-6 12 4 22" stroke="#6B5A78" stroke-width="2.4" fill="none"/>'+
+    '<g transform="translate(122 224)">'+
+    '<path d="M23 18 q7 12 -3 22" stroke="#6B5A78" stroke-width="2.4" fill="none"/>'+
     '<rect x="0" y="4" width="27" height="18" rx="4.5" fill="#4A3A5C"/>'+
     '<rect x="4" y="0" width="10" height="6" rx="2" fill="#6B5A78"/>'+
     '<circle cx="13.5" cy="13" r="6.4" fill="#D8E4F2"/><circle cx="13.5" cy="13" r="3.8" fill="#5C6B84"/><circle cx="11.8" cy="11.2" r="1.2" fill="#fff"/>'+
@@ -1545,7 +1550,7 @@ function renderMakeup(){
         'data-mk="'+gr.key+'" data-mkc="'+col+'" style="background:'+col+'" aria-label="'+gr.name+' '+col+'"></button>';
     }).join('');
     var none = '<button class="mk-b none'+(cur === 'none' ? ' on' : '')+'" type="button" data-mk="'+gr.key+'" data-mkc="none" aria-label="'+gr.name+' 없음">✕</button>';
-    return '<div class="mk-row"><div class="mh">'+gr.name+'<em>'+(cur === 'none' ? '안 바름' : '바르는 중')+'</em></div>'+
+    return '<div class="mk-row"><div class="mh">'+gr.name+'<em>'+(cur === 'none' ? '안 바름' : '적용 중')+'</em></div>'+
       '<div class="mk-sw">'+chips+none+'</div></div>';
   }).join('');
   $('catHint').textContent = HINTS.makeup;
@@ -1714,10 +1719,12 @@ function clearStageModels(){
 }
 function resetStars(){
   var btns = $('rwStars').querySelectorAll('button');
+  $('rwStars').classList.remove('armed');
   for(var i=0;i<btns.length;i++){ btns[i].disabled = true; btns[i].classList.remove('on'); }
 }
 function armStars(){
   var btns = $('rwStars').querySelectorAll('button');
+  $('rwStars').classList.add('armed');
   for(var i=0;i<btns.length;i++){ btns[i].disabled = false; btns[i].classList.remove('on'); }
 }
 function setSay(judge, text){
@@ -1885,6 +1892,7 @@ function giveVote(v){
     if(n <= v) btns[i].classList.add('on'); else btns[i].classList.remove('on');
   }
   $('rwVote').classList.add('done');
+  $('rwStars').classList.remove('armed');
   SFX.star(v - 1);
   r(v);
 }
@@ -2316,7 +2324,7 @@ renderStarsDecor();
 renderAll();
 renderTimerMode();
 if(TM.mode === 'challenge') startTimer();
-window.__dti = { get state(){ return st; }, THEMES: THEMES, PATTERNS: PATTERNS, openRunway: openRunway, setTimerMode: setTimerMode };
+window.__dti = { get state(){ return st; }, THEMES: THEMES, PATTERNS: PATTERNS, openRunway: openRunway, setTimerMode: setTimerMode, TM: TM, startTimer: startTimer, buildParticipants: buildParticipants };
 window.__ready = true;
 
 })();

@@ -1037,7 +1037,7 @@ function kgText(kg){
 }
 function kgFactor(seedId, kg){
   const t = SEED[seedId].kg.typ;
-  return clamp(0.7, 2.8, Math.pow(Math.max(0.05, (Number(kg)||t)/t), 0.55));
+  return clamp(Math.pow(Math.max(0.05, (Number(kg)||t)/t), 0.55), 0.7, 2.8);
 }
 function itemPrice(seedId, muts, kg){
   const s = SEED[seedId];
@@ -1324,7 +1324,7 @@ function stageEmoji(p){
 function sizeScale(p){
   const k = SEED[p.seed].kg;
   const ratio = (Number(p.kg) || k.typ) / k.typ;
-  return Math.round(clamp(0.62, 1.45, Math.pow(ratio, 0.28)) * 100) / 100;
+  return Math.round(clamp(Math.pow(ratio, 0.28), 0.62, 1.45) * 100) / 100;
 }
 function bigWord(seedId, kg){
   const f = kgFactor(seedId, kg);
@@ -2033,7 +2033,7 @@ function showHarvest(s, item, idx){
   const rare = muts.length > 0;
   const cls = muts.length >= 2 ? 'rare rainbow' : (rare ? 'rare ' + MUTS[muts[0]].cls : (bw === '거대!' ? 'rare golden' : ''));
   const title = (muts.length ? mutIcons(muts) + ' ' + mutLabel(item.seed, muts) : s.name) + (bw === '거대!' ? ' 거대!' : '');
-  const scale = clamp(1, 1.8, sizeScale({seed:item.seed, kg:item.kg}));
+  const scale = clamp(sizeScale({seed:item.seed, kg:item.kg}), 1, 1.8);
   let chips = '';
   if(muts.length){
     chips = '<div class="mutsline">' + sortMuts(muts).map(function(m){
@@ -2387,7 +2387,7 @@ function renderDuelSheet(){
 
   let html = '<div class="missioncard"><span class="me">' + m.icon + '</span><b>' + m.title + '</b>' +
     '<span>' + m.sub + '</span>' +
-    '<span style="margin-top:3px;color:#8a7132">' + (duel.by ? KIDS[duel.by] ? KIDS[duel.by].name + '이가 시작했어요' : '' : '') + '</span></div>';
+    '<span style="margin-top:3px;color:#8a7132">' + (duel.by ? (duel.by === kid ? '내가 시작했어요' : (KIDS[duel.by] ? KIDS[duel.by].name + '이가 시작했어요' : '')) : '') + '</span></div>';
 
   html += '<div class="duelgrid">' + duelCol(me, myEntry, winner === me) + '<div class="duelvs">VS</div>' + duelCol(ot, otEntry, winner === ot) + '</div>';
 
@@ -2402,6 +2402,7 @@ function renderDuelSheet(){
     html += '<div class="sechead" style="margin:6px 2px 8px"><div><h2 style="font-size:15px">내 작물 내기</h2>' +
       '<p>' + (items.length ? '미션에 맞는 작물을 골라요' : '미션에 맞는 작물이 없어요 — 날씨 변이를 모아 봐요!') + '</p></div></div>';
     html += items.length ? itemRows(items, 'duelSubmit', '내기') : '<div class="emptybox"><div class="eb">🧺</div><b>낼 작물이 없어요</b><span>텃밭에서 작물을 키워 바구니를 채워요!</span></div>';
+    html += '<button class="vbtn" type="button" data-act="duelNew" style="width:100%;margin-top:10px">🔄 새 미션으로 다시 시작</button>';
   }else{
     html += '<div class="emptybox"><div class="eb">⏳</div><b>' + KIDS[ot].name + '이를 기다리는 중</b>' +
       '<span>' + KIDS[ot].name + '이 폰에서 대결을 열고 작물을 내면 결과가 나와요!</span></div>' +

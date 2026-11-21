@@ -78,20 +78,22 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .tab.active{background:linear-gradient(180deg,#fff,#FFF3FA); color:#C2387B; box-shadow:0 6px 16px rgba(226,110,170,.20); border-color:#FFD9EC}
 .tab:active{transform:scale(.98)}
 
-/* ---------- 무대 ---------- */
+/* ---------- 무대 (파스텔 테이블) ---------- */
 .stage{
   position:relative; flex:1 1 auto; min-height:0; border-radius:26px; overflow:hidden;
   background:
-    radial-gradient(420px 300px at 30% 18%, rgba(255,255,255,.85), rgba(255,255,255,0) 70%),
-    radial-gradient(420px 320px at 78% 82%, rgba(255,255,255,.6), rgba(255,255,255,0) 72%),
-    linear-gradient(160deg,#FFFDFE 0%,#FBFAFF 55%,#F6FBFF 100%);
-  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.95), 0 14px 34px rgba(140,100,165,.13);
+    radial-gradient(560px 380px at 20% 4%, rgba(255,255,255,.92), rgba(255,255,255,0) 66%),
+    radial-gradient(520px 400px at 86% 96%, rgba(255,236,248,.9), rgba(255,236,248,0) 70%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.5) 0 20px, rgba(255,255,255,0) 20px 44px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.4) 0 20px, rgba(255,255,255,0) 20px 44px),
+    linear-gradient(155deg,#FFE9F2 0%, #F5EDFF 46%, #E9F6FF 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.95), 0 18px 42px rgba(140,100,165,.18);
   touch-action:none;
 }
-.stage::after{ /* 은은한 물방울 점박이 */
-  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
-  background-image:radial-gradient(rgba(190,160,220,.18) 1px, transparent 1.2px);
-  background-size:22px 22px;
+.stage::after{ /* 테이블보 결 */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.34;
+  background-image:radial-gradient(rgba(180,150,215,.22) 1px, transparent 1.2px);
+  background-size:26px 26px;
 }
 #cv{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
 .hud{
@@ -150,6 +152,11 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .chip:active{transform:scale(.96)}
 .chip.on{background:linear-gradient(180deg,#FFF0F8,#FFE3F1); border-color:#FFC0DC; color:#C2387B; box-shadow:0 4px 12px rgba(240,140,190,.24)}
 .chip .em{font-size:14px}
+.chip.tool{height:34px; padding:0 10px; font-size:12px; gap:4px}
+.chip.tool .em{font-size:13px}
+.chip.tool.on{background:linear-gradient(180deg,#F1E9FF,#E3D8FF); border-color:#C9B6FF; color:#6647C7; box-shadow:0 4px 12px rgba(140,110,240,.24)}
+.hud .tag.bub{color:#2C7FAC}
+.hud .tag.bub b{color:#1E6B95}
 .row.actions{gap:7px; overflow:visible}
 .btnA{
   flex:1 1 0; min-width:0; height:40px; border-radius:14px; font-size:13.5px; font-weight:900; letter-spacing:-.3px;

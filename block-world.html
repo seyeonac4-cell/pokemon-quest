@@ -3748,7 +3748,7 @@ var FB = {
         if (seenGift[snap.key]) return;
         seenGift[snap.key] = 1;
         if (v.to !== ME.id) return;
-        if (Date.now() - (v.ts || 0) > 90000) return;
+        if (Date.now() - (v.ts || 0) > 60000) return;
         playGift(v.kind, v.from, false);
       });
     } catch (e) {}
@@ -3913,9 +3913,16 @@ function startWorld() {
   toast('🌍 블록 월드에 온 걸 환영해요, ' + ME.name + '!');
 }
 
+var SPAWN_OFF = { yunjin: { x: -1.3, y: 0.7 }, hyungwon: { x: 1.3, y: -0.7 } };
+
 function bootWho(who) {
   setProfile(who, true);
   try { store('bw:last', who); } catch (e) {}
+  var off = SPAWN_OFF[who] || { x: 0, y: 0 };
+  G.p.x = G.spawn.x + off.x;
+  G.p.y = G.spawn.y + off.y;
+  G.petXY.x = G.p.x - 1.1;
+  G.petXY.y = G.p.y + 1.1;
   $('#starter').classList.add('gone');
   G.running = true;
   G.paused = false;
