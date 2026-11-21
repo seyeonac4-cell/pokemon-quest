@@ -658,7 +658,12 @@ function load(){
     db.gardens.yunjin = safeGarden(o.gardens.yunjin);
     db.gardens.hyeongwon = safeGarden(o.gardens.hyeongwon);
     return db;
-  }catch(e){ return freshDB(); }
+  }catch(e){
+    // 저장값을 읽지 못해도 아이가 플레이하던 기록을 덮어쓰지 않도록 원본을 따로 보관한다
+    try{ localStorage.setItem(LS_KEY + '.backup', localStorage.getItem(LS_KEY) || ''); }catch(_){}
+    console.warn('[grow-garden] 저장값을 읽지 못했어요:', e);
+    return freshDB();
+  }
 }
 
 let DB = load();
@@ -1515,6 +1520,8 @@ window.__gg = {
   setKid: function(k){ kid = k; DB.kid = k; saveNow(); renderAll(); },
   ripeNow: function(i){ const p = G().plots[i]; if(p){ p.at = Date.now() - SEED[p.seed].ms / fertMul() - 1000; saveNow(); tickUI(); } },
   fresh: function(){ DB = freshDB(); kid = DB.kid; saveNow(); renderAll(); },
+  load: load,
+  safeGarden: safeGarden,
   renderAll: renderAll
 };
 })();
