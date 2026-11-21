@@ -1234,9 +1234,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     f.setAttribute('allowfullscreen', '');
     f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
     f.addEventListener('load', function(){
-      try{
-        f.contentWindow.postMessage(JSON.stringify({ event:'listening', id:'alphablocks' }), '*');
-      }catch(e){}
+      function hello(){
+        try{
+          f.contentWindow.postMessage(JSON.stringify({ event:'listening', id:'alphablocks', channel:'widget' }), '*');
+        }catch(e){}
+      }
+      hello();
+      window.setTimeout(hello, 600);
+      window.setTimeout(hello, 1600);
       after(400, function(){ vCmd('playVideo'); });
     });
     frame.appendChild(f);

@@ -964,8 +964,14 @@ function vMount(){
   ifr.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
   try{ ifr.setAttribute('referrerpolicy', 'origin'); }catch(_){}
   box.appendChild(ifr);
-  /* 재생 버튼을 눌렀을 때 재생이 막힌 경우에도 우리 레이어가 막고 있으므로 직접 재생 명령 */
-  ifr.addEventListener('load', () => { setTimeout(() => vCmd('playVideo'), 350); });
+  /* "듣고 있다"고 알려야 끝·일시정지 상태를 받을 수 있다. 재생이 막혔을 때를 대비해 한 번 더 재생 명령 */
+  const hello = () => { try{ ifr.contentWindow.postMessage(JSON.stringify({event:'listening', id:'speech-guard', channel:'widget'}), '*'); }catch(_){} };
+  ifr.addEventListener('load', () => {
+    hello();
+    setTimeout(hello, 600);
+    setTimeout(hello, 1600);
+    setTimeout(() => { if(vState !== 1 && vState !== 2) vCmd('playVideo'); }, 1200);
+  });
   vPaint();
 }
 window.addEventListener('message', e => {

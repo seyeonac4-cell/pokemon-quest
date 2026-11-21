@@ -700,6 +700,19 @@ body{
   var ov = $('ov'), ovFrame = $('ovFrame');
   var ovNow = null, ovState = -1;
 
+  /* 플레이어에 "듣고 있다"고 알려야 재생 상태(끝·일시정지)를 받을 수 있다 */
+  function ovHello() {
+    try {
+      var w = ovFrame.contentWindow;
+      if (w) w.postMessage(JSON.stringify({ event: 'listening', id: 'idol-guard', channel: 'widget' }), '*');
+    } catch (e) {}
+  }
+  ovFrame.addEventListener('load', function () {
+    ovHello();
+    window.setTimeout(ovHello, 600);
+    window.setTimeout(ovHello, 1600);
+  });
+
   /* 유튜브 플레이어 조작은 우리 버튼으로만 (플레이어는 클릭을 못 받는다) */
   function ovCmd(func, args) {
     try {
