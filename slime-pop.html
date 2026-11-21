@@ -1784,6 +1784,8 @@ cv.addEventListener('pointerdown', function(e){
       Sound.squish(G.inside ? 0.9 : 0.45, panOf(p.x));
       if (store.texture === 'crunch') Sound.crunch(0.7, panOf(p.x));
       Sound.kneadStart(panOf(p.x));
+      /* 파츠를 고른 상태에서 톡 누르면 바로 뿌려진다 */
+      if (store.topping) sprinkleAt(p.x, p.y, store.topping, 2 + ((Math.random() * 2) | 0));
     } else {
       /* 슬라임 바깥을 눌렀을 때 — 살짝 물결만 */
       SL.ripples.push({ x: p.x, y: p.y, t: 0 });
