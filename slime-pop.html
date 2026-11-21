@@ -271,7 +271,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="row" id="rowBallInfo">
           <span class="lab">왁뿌볼</span>
           <span class="chip" id="ballCountChip">🎈 0개</span>
-          <span class="chip" id="ballTip">꾹 누르거나 톡톡 두 번 → 뽁!</span>
+          <span class="chip" id="ballTip">톡톡 두 번 → 뽁!</span>
         </div>
         <div class="row actions">
           <button class="btnA" id="btnAddBall" type="button">➕ 더 놓기</button>
@@ -407,7 +407,7 @@ var Sound = (function(){
   /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
   var DIAG = window.__slimeDiag = {
     snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0 },
-    ctx: 'none', maxDeform: 0, maxDrag: 0, peakLevel: 0, frames: 0
+    ctx: 'none', maxDeform: 0, maxDrag: 0, peakLevel: 0, frames: 0, maxHold: 0
   };
   var knead = { src: null, bp: null, gain: null, lfo: null, pan: null };
 
@@ -1515,7 +1515,7 @@ function ballStep(dt){
     if (b.y - b.r < 26) { b.y = 26 + b.r; b.vy = Math.abs(b.vy) * 0.84; hit = 1; }
     if (b.y + b.r > H - 6) {
       b.y = H - 6 - b.r;
-      if (b.vy > 30) { b.wobV += 5.5; if (Math.random() < 0.35) Sound.boing(0.25, panOf(b.x)); }
+      if (b.vy > 55) { b.wobV += 5.5; if (Math.random() < 0.16) Sound.boing(0.22, panOf(b.x)); }
       b.vy = -Math.abs(b.vy) * 0.82;
       b.vx *= 0.985;
       hit = 1;
@@ -1555,6 +1555,7 @@ function ballStep(dt){
     /* 누르고 있으면 점점 깊게 → 터짐 */
     if (b.pressing) {
       b.hold += dt;
+      if (b.hold > window.__slimeDiag.maxHold) window.__slimeDiag.maxHold = Math.round(b.hold * 100) / 100;
       var target = Math.min(1, b.hold / 0.62);
       b.dent += (target - b.dent) * 0.35;
       if (b.hold > 0.62) ballPop(b);
@@ -2225,7 +2226,7 @@ function boot(){
       popToday: store.popDays[todayKey()] || 0,
       audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
       maxDeform: window.__slimeDiag.maxDeform, maxDrag: window.__slimeDiag.maxDrag,
-      peakLevel: window.__slimeDiag.peakLevel, frames: window.__slimeDiag.frames,
+      peakLevel: window.__slimeDiag.peakLevel, frames: window.__slimeDiag.frames, maxHold: window.__slimeDiag.maxHold,
       stage: [Math.round(W), Math.round(H)],
       scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
     };
