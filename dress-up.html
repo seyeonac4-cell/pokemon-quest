@@ -3377,11 +3377,11 @@ function curtainArtSvg(){
     '<circle cx="46" cy="24" r="3" fill="#FFD166"/><circle cx="74" cy="24" r="3" fill="#FFD166"/>'+
     '</svg>';
 }
-function artEl(svg, x, z, units, ratio, zoff, up){
+function artEl(svg, x, z, units, ratio, zoff, up, nf){
   var p = proj(x, z, up || 0);
   var hpx = units * WORLD.uy * p.s;
   var wpx = hpx * (ratio || 0.72);
-  return '<div class="prop" data-prop="art" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z*10+(zoff||0))+'">'+svg+'</div>';
+  return '<div class="prop" data-prop="art" data-z="'+z+'"'+(nf?' data-nf="1"':'')+' style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z*10+(zoff||0))+'">'+svg+'</div>';
 }
 /* 🌍 다른 월드로 가는 반짝이는 문 (걸어가면 바로 이동) */
 function gateSVG(z){
@@ -3404,7 +3404,7 @@ function gateSVG(z){
 function gateArtEl(z){
   var p = proj(z.x, z.z, 0);
   var hpx = 2.15 * WORLD.uy * p.s, wpx = hpx * 0.63;
-  return '<div class="prop gate" data-prop="art" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z.z*10)+'">'+gateSVG(z)+'</div>';
+  return '<div class="prop gate" data-prop="art" data-z="'+z.z+'" data-nf="1" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z.z*10)+'">'+gateSVG(z)+'</div>';
 }
 function gateLabelEl(z){
   var p = proj(z.x, z.z, 0);
@@ -3444,7 +3444,7 @@ function buildStatic(){
   html += artEl(mannequinArt('#FF9EC6'), -7.0, 4.9, 1.55, 0.47);
   html += artEl(mannequinArt('#C8A6FF'), -4.2, 4.9, 1.55, 0.47);
   html += artEl(mirrorArt(), -8.3, 3.2, 2.1, 0.7);
-  html += artEl(chandelierArt(), -5.6, 3.6, 1.4, 0.95, 0, 1.75);
+  html += artEl(chandelierArt(), -5.6, 3.6, 1.4, 0.95, 0, 1.75, 1);
   /* 부티크: 탈의실 커튼 2 · 선반 */
   html += artEl(curtainArtSvg(), 4.1, 3.4, 2.0, 0.75);
   html += artEl(curtainArtSvg(), 7.1, 3.4, 2.0, 0.75);
@@ -3456,20 +3456,20 @@ function buildStatic(){
   /* 헤어 살롱: 큰 거울 · 의자 · 조명 */
   html += artEl(mirrorArt(), 8.6, 7.2, 2.2, 0.7);
   html += artEl(benchArt(), 6.0, 8.9, 1.2, 1.5);
-  html += artEl(chandelierArt(), 7.2, 7.0, 1.1, 0.95, 0, 1.7);
+  html += artEl(chandelierArt(), 7.2, 7.0, 1.1, 0.95, 0, 1.7, 1);
   /* 메이크업: 파우더룸 스크린 · 네일 테이블 */
   html += artEl(mirrorArt(), -7.3, 10.5, 1.9, 0.7);
   html += artEl(benchArt(), -3.5, 12.0, 1.1, 1.5);
   /* VIP: 주얼리 케이스 2 · 트로피 · 샹들리에 */
   html += artEl(jewelryCaseArt(), 3.9, 12.1, 1.5, 0.8);
   html += artEl(jewelryCaseArt(), 6.9, 12.1, 1.5, 0.8);
-  html += artEl(chandelierArt(), 5.4, 10.6, 1.3, 0.95, 0, 1.8);
+  html += artEl(chandelierArt(), 5.4, 10.6, 1.3, 0.95, 0, 1.8, 1);
   /* 놀이공원: 회전목마 · 관람차 · 솜사탕 가판대 · 포토존 */
   html += artEl(carouselArt(), -7.4, 13.4, 2.9, 1.0);
   html += artEl(ferrisArt(), -8.6, 15.6, 3.4, 1.0);
   html += artEl(cottonStandArt(), -3.9, 13.6, 1.7, 0.75);
   html += artEl(photoFrameArt(), -5.0, 15.8, 1.7, 0.87);
-  html += artEl(chandelierArt(), -5.8, 12.6, 1.2, 0.95, 0, 1.7);
+  html += artEl(chandelierArt(), -5.8, 12.6, 1.2, 0.95, 0, 1.7, 1);
   /* 모델대회: 트로피 · 커튼 2 · 무대 아치 */
   html += artEl(trophyArt(), 5.8, 13.9, 2.2, 0.67);
   html += artEl(curtainArtSvg(), 3.9, 13.6, 2.2, 0.75);
@@ -3479,7 +3479,7 @@ function buildStatic(){
   html += artEl(speakerArt(), -2.9, 9.9, 1.5, 0.6);
   html += artEl(speakerArt(),  2.9, 9.9, 1.5, 0.6);
   /* 로비: 런웨이 아치 · 기둥 */
-  html += artEl(stageArchArt(), 0, 16.1, 3.3, 1.3, 0, 0);
+  html += artEl(stageArchArt(), 0, 16.1, 3.3, 1.3, 0, 0, 1);
   html += artEl(podiumArt(), -2.6, 15.0, 1.0, 0.78);
   html += artEl(podiumArt(),  2.6, 15.0, 1.0, 0.78);
   /* 기둥 화분 */
@@ -3487,6 +3487,7 @@ function buildStatic(){
   /* 🌍 다른 월드로 가는 반짝이는 문 */
   ZONES.forEach(function(z){ if(z.gate) html += gateArtEl(z); });
   worldEl.insertAdjacentHTML('beforeend', html);
+  cacheArts();
 
   /* 구역 클릭 영역 + 이름표 */
   ZONES.forEach(function(z){
@@ -3509,6 +3510,42 @@ function buildStatic(){
   /* 🌍 월드 문 이름표 */
   ZONES.forEach(function(z){ if(z.gate) gateLabelEl(z); });
   layoutPicks();
+}
+
+/* -------------------------------------------
+   캐릭터를 가리는 '앞쪽 소품'은 살짝 비쳐 보이게
+   (확대하면서 커진 가구가 내 아바타·얼굴을 가리지 않도록)
+   ------------------------------------------- */
+var ARTS = [];
+function cacheArts(){
+  ARTS = [];
+  var els = worldEl.querySelectorAll('.prop[data-prop="art"]');
+  var i;
+  for(i=0;i<els.length;i++){
+    var el = els[i];
+    el.style.transition = 'opacity .18s ease';
+    ARTS.push({
+      el: el,
+      x: parseFloat(el.style.left) || 0, y: parseFloat(el.style.top) || 0,
+      w: parseFloat(el.style.width) || 0, h: parseFloat(el.style.height) || 0,
+      z: parseFloat(el.getAttribute('data-z')) || 0, op: 1,
+      fade: !el.hasAttribute('data-nf')
+    });
+  }
+}
+function fadeProps(){
+  if(!ARTS.length || !me) return;
+  var p = proj(PLAYER.x, PLAYER.z, 0);
+  var fh = WORLD.figh * p.s;
+  var head = p.y - fh, half = Math.max(16, fh * 0.34);
+  for(var i=0;i<ARTS.length;i++){
+    var a = ARTS[i];
+    var hit = (a.z > PLAYER.z + 0.35) &&
+              (p.x + half > a.x + 2) && (p.x - half < a.x + a.w - 2) &&
+              (p.y > a.y + 6) && (head < a.y + a.h - 6);
+    var want = (hit && a.fade) ? 0.55 : 1;
+    if(a.op !== want){ a.op = want; a.el.style.opacity = String(want); }
+  }
 }
 
 /* ---------- 줍는 아이템 ---------- */
@@ -3667,6 +3704,7 @@ function drawAll(){
   }
   FRIENDS.forEach(function(f){ drawActor(f, false); });
   if(FAM && FAM.actor) drawActor(FAM.actor, false);
+  fadeProps();
 }
 
 /* ---------- 입력 ---------- */
