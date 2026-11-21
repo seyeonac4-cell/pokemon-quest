@@ -4160,7 +4160,7 @@ label.btn{cursor:pointer}
       return '<div class="empty">보상이 아직 없어요. 보호자 모드에서 우리 집 보상을 추가해 보세요.</div>';
     }
     var pct = todayPct(state.active);
-    var pctOk = pct >= 90;
+    var pctOk = pct >= 80;
     return '<div class="rewards">' + state.rewards.map(function (r) {
       var coinsOk = ch.coins >= r.cost;
       var wk = !!r.weekendOnly;
@@ -4173,10 +4173,10 @@ label.btn{cursor:pointer}
         + '<span class="rw-cost">🪙 ' + r.cost + ' 코인</span></span>'
         + '<button type="button" class="btn btn-sm ' + (can ? 'btn-primary' : 'btn-ghost') + '" data-reward="' + esc(r.id) + '"'
         + (can ? '' : ' disabled') + '>'
-        + (wk && !pctOk ? '90% 필요' : (coinsOk ? '교환' : '코인 부족')) + '</button>'
+        + (wk && !pctOk ? '80% 필요' : (coinsOk ? '교환' : '코인 부족')) + '</button>'
         + (wk ? '<span class="rw-cond' + (pctOk ? ' on' : '') + '">'
-            + (pctOk ? '🏆 90% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
-                     : '🏆 90% 이상 달성 시 교환 (주말 사용) · 오늘 ' + pct + '%')
+            + (pctOk ? '🏆 80% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
+                     : '🏆 80% 이상 달성 시 교환 (주말 사용) · 오늘 ' + pct + '%')
             + '</span>' : '')
         + '</div>';
     }).join('') + '</div>';
@@ -4203,8 +4203,8 @@ label.btn{cursor:pointer}
   function shopHTML() {
     return childSwitchHTML() + gachaHTML()
       + '<section class="section"><div class="section-head"><h2>🎁 보호자 보상 교환</h2>'
-      + '<span class="hint">코인 + 달성률 90%</span></div>'
-      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>90% 이상</b>이면 코인으로 교환할 수 있어요.</div>'
+      + '<span class="hint">코인 + 달성률 80%</span></div>'
+      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>80% 이상</b>이면 코인으로 교환할 수 있어요.</div>'
       + rewardsHTML() + '</section>'
       + '<section class="section"><div class="section-head"><h2>🎫 내 보상함</h2>'
       + '<span class="hint">교환한 쿠폰</span></div>' + ticketsHTML() + '</section>';
@@ -4939,9 +4939,9 @@ label.btn{cursor:pointer}
       toast('코인이 ' + (rw.cost - ch.coins) + '개 부족해요');
       return;
     }
-    if (rw.weekendOnly && todayPct(state.active) < 90) {
+    if (rw.weekendOnly && todayPct(state.active) < 80) {
       SFX.nope();
-      toast('오늘 달성률 ' + todayPct(state.active) + '% · 90% 이상이면 교환할 수 있어요');
+      toast('오늘 달성률 ' + todayPct(state.active) + '% · 80% 이상이면 교환할 수 있어요');
       return;
     }
     var wkOnly = !!rw.weekendOnly;
