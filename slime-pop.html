@@ -941,20 +941,33 @@ var grabs = [];
 
 function slimeGrabAt(x, y, id){
   var R = SL.baseR;
-  var rad = R * 0.95;
+  var rad = R * 1.5;                     /* 손가락 영향 반경 — 슬라임보다 넉넉하게 */
   var w = new Array(N), offX = new Array(N), offY = new Array(N);
-  var any = false, best = 9e9;
-  for (var i = 0; i < N; i++) {
-    var dx = SL.p[i].x - x, dy = SL.p[i].y - y;
-    var d = Math.sqrt(dx * dx + dy * dy);
+  var any = false, best = 9e9, i, d, dx, dy;
+
+  /* 가장 가까운 테두리까지의 거리로 '가운데를 잡았는지' 판단 */
+  for (i = 0; i < N; i++) {
+    dx = SL.p[i].x - x; dy = SL.p[i].y - y;
+    d = Math.sqrt(dx * dx + dy * dy);
     if (d < best) best = d;
+  }
+  var deep = best > R * 0.42;
+
+  for (i = 0; i < N; i++) {
+    dx = SL.p[i].x - x; dy = SL.p[i].y - y;
+    d = Math.sqrt(dx * dx + dy * dy);
     var t = clamp(1 - d / rad, 0, 1);
-    var wi = t * t * (3 - 2 * t);          /* smoothstep */
+    var wi = t * t * (3 - 2 * t);        /* smoothstep */
+    if (deep) wi = Math.max(wi, 0.74);   /* 가운데를 잡으면 슬라임 전체가 따라온다 */
     if (wi > 0.02) any = true;
     w[i] = wi;
     offX[i] = dx; offY[i] = dy;
   }
-  return { id: id, x: x, y: y, w: w, offX: offX, offY: offY, vx: 0, vy: 0, t: 0, any: any, inside: pointInPoly(x, y, SL.p) };
+  return {
+    id: id, x: x, y: y, w: w, offX: offX, offY: offY,
+    vx: 0, vy: 0, t: 0, any: any, deep: deep,
+    inside: pointInPoly(x, y, SL.p)
+  };
 }
 
 function slimeStep(dt){
