@@ -119,6 +119,8 @@ button{font-family:inherit; font:inherit; color:inherit}
 .cover .cover-emoji{font-size:clamp(54px,15vw,84px); line-height:1; filter:drop-shadow(0 10px 18px rgba(0,0,0,.28))}
 .cover .cover-name{font-size:clamp(19px,5vw,24px); font-weight:900; letter-spacing:-.03em}
 .cover .cover-sub{font-size:clamp(12.5px,3.4vw,14.5px); font-weight:700; color:#D9D2F5}
+/* 상태 안내 카드가 떠 있을 때는 뒤 글자를 가려 겹쳐 보이지 않게 */
+.cover.dim .cover-emoji, .cover.dim .cover-name, .cover.dim .cover-sub{visibility:hidden}
 
 /* 내 작은 화면 */
 .local{
@@ -133,6 +135,7 @@ button{font-family:inherit; font:inherit; color:inherit}
   background:rgba(20,14,36,.55); border-radius:999px; padding:1px 7px;
 }
 .local .local-hidden{position:absolute; inset:0; display:grid; place-items:center; font-size:30px; background:linear-gradient(160deg,#FFE6F1,#E7E2FF)}
+.local .local-off{position:absolute; inset:0; display:grid; place-items:center; font-size:26px; background:linear-gradient(160deg,#3B2E63,#241C3E); color:#CFC7EC}
 
 .topline{position:absolute; left:10px; top:10px; z-index:5; display:flex; gap:6px; align-items:center; flex-wrap:wrap; max-width:calc(100% - 20px)}
 .timer,.net{
@@ -161,7 +164,7 @@ button{font-family:inherit; font:inherit; color:inherit}
   background:radial-gradient(110% 80% at 50% 40%, rgba(30,20,54,.28) 0%, rgba(24,16,44,.66) 74%, rgba(20,13,38,.82) 100%);
   backdrop-filter:blur(1.5px);
 }
-.ov-emoji{font-size:clamp(44px,12vw,62px); line-height:1.15; margin-bottom:8px; filter:drop-shadow(0 8px 16px rgba(0,0,0,.3))}
+.ov-emoji{font-size:clamp(42px,11vw,54px); line-height:2.2; margin-bottom:2px; filter:drop-shadow(0 8px 16px rgba(0,0,0,.3))}
 .ov-title{font-size:clamp(19px,5.2vw,26px); font-weight:900; letter-spacing:-.035em; margin-top:2px; text-shadow:0 2px 8px rgba(0,0,0,.25)}
 .ov-sub{font-size:clamp(12.5px,3.5vw,14.5px); font-weight:700; color:#E3DCFA; margin:2px 0 12px; max-width:22em}
 .ov-links{margin-top:10px}
@@ -308,6 +311,7 @@ button{font-family:inherit; font:inherit; color:inherit}
 
       <div class="local mirror" id="localWrap">
         <video id="local" autoplay playsinline muted webkit-playsinline></video>
+        <div class="local-off" id="localOff">📷</div>
         <div class="local-hidden" id="localHidden" hidden>🙈</div>
         <span class="local-tag">나</span>
       </div>
@@ -429,7 +433,7 @@ var el = {
   meChip:$('meChip'), meEmo:$('meEmo'), meName:$('meName'), peerChip:$('peerChip'), peerDot:$('peerDot'), peerTxt:$('peerTxt'),
   btnHelp:$('btnHelp'),
   stage:$('stage'), remote:$('remote'), remoteCover:$('remoteCover'), coverEmoji:$('coverEmoji'), coverName:$('coverName'), coverSub:$('coverSub'),
-  local:$('local'), localWrap:$('localWrap'), localHidden:$('localHidden'),
+  local:$('local'), localWrap:$('localWrap'), localHidden:$('localHidden'), localOff:$('localOff'),
   floatLayer:$('floatLayer'), timer:$('timer'), netTag:$('netTag'),
   overlay:$('overlay'), ovRings:$('ovRings'), ovEmoji:$('ovEmoji'), ovTitle:$('ovTitle'), ovSub:$('ovSub'),
   mainBtn:$('mainBtn'), subBtn:$('subBtn'), ovLinks:$('ovLinks'), copyAunt:$('copyAunt'),
@@ -578,6 +582,7 @@ function startMedia(facing){
         S.micTrack = stream.getAudioTracks()[0] || null;
         if(S.micTrack) S.micTrack.enabled = !S.muted;
         el.local.srcObject = stream;
+        if(el.localOff) el.localOff.hidden = true;
         var p = el.local.play(); if(p && p.catch) p.catch(function(){});
         setFacing(want);
         resolve(true);
@@ -610,17 +615,17 @@ function toggleMic(){
 function makeCoverStream(){
   try{
     var c = document.createElement('canvas');
-    c.width = 480; c.height = 640;
+    c.width = 720; c.height = 720;
     var x = c.getContext('2d');
-    var g = x.createLinearGradient(0, 0, 480, 640);
+    var g = x.createLinearGradient(0, 0, 720, 720);
     g.addColorStop(0, '#FFE3F0'); g.addColorStop(.55, '#E9E3FF'); g.addColorStop(1, '#DDF6FF');
-    x.fillStyle = g; x.fillRect(0, 0, 480, 640);
-    x.font = '200px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    x.fillStyle = g; x.fillRect(0, 0, 720, 720);
+    x.font = '300px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.fillText('🙈', 240, 300);
+    x.fillText('🙈', 360, 310);
     x.fillStyle = '#6B5AA8';
-    x.font = '900 44px "Pretendard","Malgun Gothic",sans-serif';
-    x.fillText('부끄부끄', 240, 470);
+    x.font = '900 56px "Pretendard","Malgun Gothic",sans-serif';
+    x.fillText('부끄부끄', 360, 520);
     var st = c.captureStream(4);
     S.coverCanvas = c;
     return st;
@@ -714,6 +719,7 @@ function renderState(){
 
   /* 영상 자리 */
   el.remoteCover.hidden = connected;
+  el.remoteCover.classList.toggle('dim', !connected);
   el.coverEmoji.textContent = otherEmo();
   el.coverName.textContent = other;
   if(!connected){
@@ -1003,6 +1009,7 @@ function cleanupLocal(fromError){
   }
   S.localStream = null; S.camTrack = null; S.micTrack = null; S.coverStream = null;
   try{ el.local.srcObject = null; }catch(e){}
+  if(el.localOff) el.localOff.hidden = false;
   try{ el.remote.srcObject = null; }catch(e){}
   S.muted = false; S.hidden = false;
   el.btnMic.classList.remove('off'); el.btnHide.classList.remove('off');
