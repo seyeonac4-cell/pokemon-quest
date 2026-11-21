@@ -2252,7 +2252,7 @@ function drawProp(ctx, p) {
       break;
     }
     case 'board': {
-      isoBox(ctx, x, y, z, 2.6, 0.16, 1.5, '#2f6b45', '#215034', '#183c27');
+      isoBox(ctx, x, y, z, 2.6, 0.16, 1.5, '#4f9370', '#3b7357', '#2c5a43');
       emo(ctx, '✏️', base.x + 18, base.y - 72, 13);
       break;
     }
@@ -3639,10 +3639,10 @@ function carePet(kind) {
 function updatePet(dt) {
   if (!G.pet || !G.pet.type) return;
   var p = G.p, xy = G.petXY;
-  var tx = p.x - (p.face > 0 ? 1.0 : -1.0), ty = p.y + 1.0;
+  var tx = p.x - (p.face > 0 ? 1.45 : -1.45), ty = p.y + 1.45;
   var dx = tx - xy.x, dy = ty - xy.y;
   var d = Math.hypot(dx, dy);
-  if (d > 1.1) {
+  if (d > 1.35) {
     var sp = Math.min(7, 2.4 + d * 1.7);
     xy.x += dx / d * sp * dt;
     xy.y += dy / d * sp * dt;
