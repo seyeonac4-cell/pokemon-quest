@@ -402,6 +402,11 @@ var Sound = (function(){
   var AC = null, master = null, bus = null, rev = null, revGain = null, noiseBuf = null;
   var muted = !!store.mute;
   var last = { squish: 0, stretch: 0, crunch: 0, tok: 0, boing: 0, tingle: 0 };
+  /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
+  var DIAG = window.__slimeDiag = {
+    snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0 },
+    ctx: 'none'
+  };
   var knead = { src: null, bp: null, gain: null, lfo: null, pan: null };
 
   /* --- 준비: 마스터 버스 + 리미터 + 작은 방 울림 --- */
@@ -452,6 +457,7 @@ var Sound = (function(){
     var ac = ensure();
     if (!ac) return;
     if (ac.state === 'suspended') { try { ac.resume(); } catch (e) {} }
+    DIAG.ctx = ac.state;
   }
   function noise(){
     if (noiseBuf || !AC) return noiseBuf;
@@ -508,6 +514,7 @@ var Sound = (function(){
     if (!ok() || !can('squish', 80)) return;
     power = clamp(power || 0.6, 0.25, 1);
     pan = pan || 0;
+    DIAG.snd.squish++;
     var t0 = now();
 
     /* (a) 젖은 노이즈 — 손가락이 슬라임을 파고들 때 */
@@ -549,6 +556,7 @@ var Sound = (function(){
     if (!ok() || !can('stretch', 210)) return;
     power = clamp(power || 0.5, 0.2, 1);
     pan = pan || 0;
+    DIAG.snd.stretch++;
     var t0 = now();
     var n = noiseSrc(), bp = AC.createBiquadFilter(), g = AC.createGain();
     bp.type = 'bandpass';
@@ -576,6 +584,7 @@ var Sound = (function(){
   function pop(pan){
     if (!ok()) return;
     pan = pan || 0;
+    DIAG.snd.pop++;
     var t0 = now();
 
     /* (a) 찰진 파열음 */
@@ -630,6 +639,7 @@ var Sound = (function(){
     if (!ok() || !can('crunch', 150)) return;
     power = clamp(power || 0.6, 0.2, 1);
     pan = pan || 0;
+    DIAG.snd.crunch++;
     var t0 = now(), count = 5 + ((Math.random() * 5) | 0), t = t0;
     for (var i = 0; i < count; i++) {
       t += rand(0.014, 0.042);
@@ -657,6 +667,7 @@ var Sound = (function(){
   function tok(pan){
     if (!ok() || !can('tok', 45)) return;
     pan = pan || 0;
+    DIAG.snd.tok++;
     var t0 = now();
     var o = AC.createOscillator(), g = AC.createGain();
     o.type = 'sine';
@@ -671,6 +682,7 @@ var Sound = (function(){
   function tingle(pan){
     if (!ok() || !can('tingle', 90)) return;
     pan = pan || 0;
+    DIAG.snd.tingle++;
     var t0 = now();
     var scale = [1046.5, 1174.7, 1318.5, 1568.0, 1760.0, 2093.0];
     var k = 3 + ((Math.random() * 4) | 0);
@@ -691,6 +703,7 @@ var Sound = (function(){
     if (!ok() || !can('boing', 80)) return;
     power = clamp(power || 0.5, 0.15, 1);
     pan = pan || 0;
+    DIAG.snd.boing++;
     var t0 = now();
     var o = AC.createOscillator(), g = AC.createGain();
     o.type = 'sine';
@@ -708,6 +721,7 @@ var Sound = (function(){
   /* ---------- 8) 주무르는 동안 계속 나는 젖은 소리 ---------- */
   function kneadStart(pan){
     if (!ok() || knead.src) return;
+    DIAG.snd.knead++;
     var t0 = now();
     knead.src = noiseSrc(true);
     knead.bp = AC.createBiquadFilter();
@@ -770,6 +784,7 @@ var Sound = (function(){
     squish: squish, stretch: stretch, pop: pop, crunch: crunch, tok: tok, tingle: tingle,
     boing: boing, click: click,
     kneadStart: kneadStart, kneadLevel: kneadLevel, kneadStop: kneadStop,
+    state: function(){ return AC ? AC.state : 'none'; },
     isMuted: function(){ return muted; },
     setMuted: function(m){
       muted = !!m;
@@ -2097,6 +2112,17 @@ function boot(){
   ballsReset(W < 520 ? 5 : 7);
   setMode(store.mode === 'ball' ? 'ball' : 'slime');
   updateHud();
+  window.__slimeSnap = function(){
+    return {
+      mode: store.mode, color: store.color, texture: store.texture,
+      parts: SL.parts.length, grabs: grabs.length, balls: BB.list.length,
+      saved: store.saved.length, popTotal: store.popTotal, slimeTotal: store.slimeTotal,
+      popToday: store.popDays[todayKey()] || 0,
+      audio: Sound.state(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
+      stage: [Math.round(W), Math.round(H)],
+      scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
+    };
+  };
   requestAnimationFrame(frame);
 }
 
