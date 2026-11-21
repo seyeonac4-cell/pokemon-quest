@@ -427,10 +427,11 @@ var Sound = (function(){
   var AC = null, master = null, bus = null, rev = null, revGain = null, noiseBuf = null;
   var analyser = null, anaBuf = null;
   var muted = !!store.mute;
-  var last = { squish: 0, stretch: 0, crunch: 0, tok: 0, boing: 0, tingle: 0 };
+  var last = { squish: 0, stretch: 0, crunch: 0, tok: 0, boing: 0, tingle: 0, squeak: 0, bubble: 0, cut: 0, swirl: 0 };
   /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
   var DIAG = window.__slimeDiag = {
-    snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0 },
+    snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0,
+           squeak: 0, bubble: 0, cut: 0, swirl: 0 },
     ctx: 'none', maxDeform: 0, maxDrag: 0, peakLevel: 0, frames: 0, maxHold: 0
   };
   var knead = { src: null, bp: null, gain: null, lfo: null, pan: null };
@@ -668,33 +669,189 @@ var Sound = (function(){
     }
   }
 
-  /* ---------- 4) 바스락 크런치 (알갱이 구름) ---------- */
+  /* ---------- 4) 사그락사그락 — 크런치 알갱이가 갈리는 소리 ---------- */
   function crunch(power, pan){
-    if (!ok() || !can('crunch', 150)) return;
+    if (!ok() || !can('crunch', 65)) return;
     power = clamp(power || 0.6, 0.2, 1);
     pan = pan || 0;
     DIAG.snd.crunch++;
-    var t0 = now(), count = 5 + ((Math.random() * 5) | 0), t = t0;
+    var t0 = now(), count = 10 + ((Math.random() * 8) | 0), t = t0;
+    /* (a) 고주파 마이크로 그레인 — 알갱이가 서로 갈리는 사그락 */
     for (var i = 0; i < count; i++) {
-      t += rand(0.014, 0.042);
-      var n = noiseSrc(), hp = AC.createBiquadFilter(), g = AC.createGain();
-      hp.type = 'highpass';
-      hp.frequency.value = 1300 + Math.random() * 2600;
-      n.connect(hp); hp.connect(g);
-      out(g, pan + rand(-0.35, 0.35), 0.22);
+      t += rand(0.005, 0.024);
+      var n = noiseSrc(), bp = AC.createBiquadFilter(), g = AC.createGain();
+      bp.type = 'bandpass';
+      bp.Q.value = 5 + Math.random() * 9;
+      bp.frequency.value = 1700 + Math.random() * 5000;
+      n.connect(bp); bp.connect(g);
+      out(g, pan + rand(-0.42, 0.42), 0.2);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.05 * power + 0.008, t + 0.003);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-      n.start(t); n.stop(t + 0.07);
+      g.gain.exponentialRampToValueAtTime(0.016 + 0.048 * power * rand(0.5, 1), t + 0.0022);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + rand(0.012, 0.032));
+      n.start(t); n.stop(t + 0.05);
     }
-    /* 낮게 깔리는 '오도독' */
+    /* (b) 비즈가 굴러가는 얇은 층 — 빠른 떨림으로 '사그락' 결을 채운다 */
+    var n2 = noiseSrc(), hp = AC.createBiquadFilter(), g2 = AC.createGain();
+    hp.type = 'highpass'; hp.frequency.value = 3000 + Math.random() * 1800;
+    n2.connect(hp); hp.connect(g2);
+    out(g2, pan, 0.26);
+    g2.gain.setValueAtTime(0.0001, t0);
+    g2.gain.exponentialRampToValueAtTime(0.028 * power + 0.008, t0 + 0.014);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.24);
+    var trem = AC.createOscillator(), tg = AC.createGain();
+    trem.type = 'square'; trem.frequency.value = 48 + Math.random() * 46;
+    tg.gain.value = 0.011;
+    trem.connect(tg); tg.connect(g2.gain);
+    trem.start(t0); trem.stop(t0 + 0.26);
+    n2.start(t0); n2.stop(t0 + 0.28);
+    /* (c) 낮게 깔리는 '오도독' — 알갱이 씹히는 몸통 */
     var o = AC.createOscillator(), og = AC.createGain();
     o.type = 'sine';
-    o.frequency.setValueAtTime(rand(150, 210), t0);
+    o.frequency.setValueAtTime(rand(160, 220), t0);
     o.frequency.exponentialRampToValueAtTime(90, t0 + 0.12);
     o.connect(og); out(og, pan, 0.1);
-    env(og, t0, 0.04 * power, 0.006, 0.1);
+    env(og, t0, 0.035 * power + 0.006, 0.006, 0.1);
     o.start(t0); o.stop(t0 + 0.16);
+  }
+
+  /* ---------- 4-1) 뽀득뽀득 — 젖은 고무가 공명하며 미끄러지는 소리 ---------- */
+  function squeak(power, pan){
+    if (!ok() || !can('squeak', 85)) return;
+    power = clamp(power || 0.6, 0.2, 1);
+    pan = pan || 0;
+    DIAG.snd.squeak++;
+    var t0 = now();
+    var reps = 2 + ((Math.random() * 3) | 0);
+    for (var i = 0; i < reps; i++) {
+      var t = t0 + i * rand(0.026, 0.05);
+      var n = noiseSrc(), bp = AC.createBiquadFilter(), g = AC.createGain();
+      bp.type = 'bandpass';
+      bp.Q.value = 13 + Math.random() * 11;              /* 쫀득하게 울리는 공명 */
+      var f = 640 + Math.random() * 980;
+      bp.frequency.setValueAtTime(f, t);
+      bp.frequency.exponentialRampToValueAtTime(f * rand(1.22, 1.75), t + 0.05);
+      /* 빠른 떨림이 '뽀드득' 결을 만든다 */
+      var lfo = AC.createOscillator(), lg = AC.createGain();
+      lfo.type = 'sine'; lfo.frequency.value = 68 + Math.random() * 95; lg.gain.value = f * 0.24;
+      lfo.connect(lg); lg.connect(bp.frequency);
+      n.connect(bp); bp.connect(g);
+      out(g, pan + rand(-0.16, 0.16), 0.26);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.05 * power + 0.01, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + rand(0.042, 0.072));
+      n.start(t); n.stop(t + 0.1);
+      lfo.start(t); lfo.stop(t + 0.1);
+    }
+    /* 젖은 고무 몸통 */
+    var o = AC.createOscillator(), og = AC.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(230 + 130 * power, t0);
+    o.frequency.exponentialRampToValueAtTime(148, t0 + 0.12);
+    o.connect(og); out(og, pan, 0.14);
+    env(og, t0, 0.045 * power + 0.006, 0.008, 0.11);
+    o.start(t0); o.stop(t0 + 0.17);
+  }
+
+  /* ---------- 4-2) 뽁! 기포가 터지는 가벼운 소리 ---------- */
+  function bubblePop(pan){
+    if (!ok() || !can('bubble', 35)) return;
+    pan = pan || 0;
+    DIAG.snd.bubble++;
+    var t0 = now();
+    /* 위로 톡 튀는 맑은 소리 */
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(rand(780, 1060), t0);
+    o.frequency.exponentialRampToValueAtTime(rand(2300, 3200), t0 + 0.045);
+    o.connect(g); out(g, pan, 0.3);
+    env(g, t0, 0.13, 0.003, 0.085);
+    o.start(t0); o.stop(t0 + 0.12);
+    /* 젖은 파열 */
+    var n = noiseSrc(), bp = AC.createBiquadFilter(), ng = AC.createGain();
+    bp.type = 'bandpass'; bp.Q.value = 6;
+    bp.frequency.setValueAtTime(2500, t0);
+    bp.frequency.exponentialRampToValueAtTime(700, t0 + 0.05);
+    n.connect(bp); bp.connect(ng); out(ng, pan, 0.18);
+    env(ng, t0, 0.08, 0.002, 0.055);
+    n.start(t0); n.stop(t0 + 0.1);
+    /* 반짝 벨 */
+    var b = AC.createOscillator(), bg = AC.createGain();
+    b.type = 'sine'; b.frequency.value = rand(2100, 2900);
+    b.connect(bg); out(bg, pan + 0.15, 0.45);
+    env(bg, t0 + 0.02, 0.028, 0.004, 0.17);
+    b.start(t0 + 0.02); b.stop(t0 + 0.26);
+  }
+
+  /* ---------- 4-3) 싹둑 — 슬라임 가르는 소리 ---------- */
+  function cut(pan){
+    if (!ok()) return;
+    pan = pan || 0;
+    DIAG.snd.cut++;
+    var t0 = now();
+    /* 휙— 칼날 부는 바람 */
+    var n = noiseSrc(), bp = AC.createBiquadFilter(), g = AC.createGain();
+    bp.type = 'bandpass'; bp.Q.value = 1.1;
+    bp.frequency.setValueAtTime(4200, t0);
+    bp.frequency.exponentialRampToValueAtTime(880, t0 + 0.17);
+    n.connect(bp); bp.connect(g); out(g, pan, 0.3);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.21);
+    n.start(t0); n.stop(t0 + 0.24);
+    /* 싹둑 — 단단한 파열 */
+    var o = AC.createOscillator(), og = AC.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(540, t0 + 0.1);
+    o.frequency.exponentialRampToValueAtTime(118, t0 + 0.21);
+    o.connect(og); out(og, pan, 0.3);
+    env(og, t0 + 0.1, 0.21, 0.004, 0.17);
+    o.start(t0 + 0.1); o.stop(t0 + 0.32);
+    /* 젤리가 갈라지는 쫀득한 꼬리 */
+    var n2 = noiseSrc(), bp2 = AC.createBiquadFilter(), g2 = AC.createGain();
+    bp2.type = 'bandpass'; bp2.Q.value = 3.2;
+    bp2.frequency.setValueAtTime(1500, t0 + 0.1);
+    bp2.frequency.exponentialRampToValueAtTime(700, t0 + 0.4);
+    n2.connect(bp2); bp2.connect(g2); out(g2, pan, 0.22);
+    env(g2, t0 + 0.1, 0.09, 0.006, 0.28);
+    n2.start(t0 + 0.1); n2.stop(t0 + 0.44);
+  }
+
+  /* ---------- 4-4) 회오리 — 빙글 도는 바람 소리 ---------- */
+  function swirl(level, pan){
+    if (!ok() || !can('swirl', 140)) return;
+    level = clamp(level || 0.5, 0.2, 1);
+    pan = pan || 0;
+    DIAG.snd.swirl++;
+    var t0 = now();
+    var n = noiseSrc(), bp = AC.createBiquadFilter(), g = AC.createGain();
+    bp.type = 'bandpass'; bp.Q.value = 2.4;
+    bp.frequency.setValueAtTime(430, t0);
+    bp.frequency.exponentialRampToValueAtTime(1500 + 950 * level, t0 + 0.15);
+    bp.frequency.exponentialRampToValueAtTime(520, t0 + 0.37);
+    n.connect(bp); bp.connect(g); out(g, pan, 0.2);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.045 * level + 0.01, t0 + 0.07);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4);
+    n.start(t0); n.stop(t0 + 0.44);
+    /* 도는 느낌의 낮은 맴돌이 */
+    var o = AC.createOscillator(), og = AC.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(180, t0);
+    o.frequency.exponentialRampToValueAtTime(320, t0 + 0.2);
+    var lfo = AC.createOscillator(), lg = AC.createGain();
+    lfo.type = 'sine'; lfo.frequency.value = 7.5; lg.gain.value = 22;
+    lfo.connect(lg); lg.connect(o.frequency);
+    o.connect(og); out(og, pan, 0.16);
+    env(og, t0, 0.022 * level, 0.08, 0.3);
+    o.start(t0); lfo.start(t0); o.stop(t0 + 0.4); lfo.stop(t0 + 0.4);
+  }
+
+  /* ---------- 4-5) 질감별 마찰음 — 문지를 때 결에 맞는 소리 ---------- */
+  function friction(tex, power, pan){
+    if (tex === 'crunch') crunch(power, pan);
+    else if (tex === 'butter') squeak(power, pan);
+    else if (tex === 'clear') squeak(power * 0.8, pan);
+    else squish(power * 0.8, pan);
   }
 
   /* ---------- 5) 톡 — 파츠 하나 뿌릴 때 ---------- */
@@ -816,7 +973,8 @@ var Sound = (function(){
   return {
     unlock: unlock,
     squish: squish, stretch: stretch, pop: pop, crunch: crunch, tok: tok, tingle: tingle,
-    boing: boing, click: click,
+    boing: boing, click: click, squeak: squeak, bubblePop: bubblePop, cut: cut, swirl: swirl,
+    friction: friction,
     kneadStart: kneadStart, kneadLevel: kneadLevel, kneadStop: kneadStop,
     state: function(){ return AC ? AC.state : 'none'; },
     level: function(){
@@ -876,6 +1034,16 @@ TOPPINGS.forEach(function(t){ TOP[t.id] = t; });
 
 var SPRINKLE_COLORS = ['#FF8FB8', '#7FD8FF', '#FFD75E', '#9BE8C8', '#C0A6FF', '#FFB081'];
 
+/* 놀이 도구 */
+var TOOLS = [
+  { id: 'knead', em: '✋', name: '주무르기', short: '주물',   tip: '✋ 주무르기 — 꾹 눌러 늘리고 주물러요' },
+  { id: 'poke',  em: '👆', name: '콕콕 찌르기', short: '콕콕', tip: '👆 콕콕 — 톡톡 찌르면 손가락 자국이 남아요' },
+  { id: 'swirl', em: '🌀', name: '회오리 감기', short: '회오리', tip: '🌀 회오리 — 빙글빙글 돌리면 소용돌이가 쳐요' },
+  { id: 'cut',   em: '🔪', name: '싹둑 자르기', short: '싹둑', tip: '🔪 싹둑 — 슬라임을 가로질러 그어 보세요' }
+];
+var TOOL = {};
+TOOLS.forEach(function(t){ TOOL[t.id] = t; });
+
 /* =========================================================
    4. 화면 크기
    ========================================================= */
@@ -889,6 +1057,150 @@ function resize(){
   cv.style.width = W + 'px';
   cv.style.height = H + 'px';
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  computeTray();
+  sceneDirty = true;
+}
+
+/* =========================================================
+   4-1. 입체 무대 — 파스텔 테이블 위 아크릴 트레이
+   ========================================================= */
+var TRAY = { x: 0, y: 0, w: 0, h: 0, r: 0, rim: 10, ix: 0, iy: 0, iw: 0, ih: 0 };
+var sceneCv = document.createElement('canvas');
+var sctx = sceneCv.getContext('2d');
+var sceneDirty = true;
+
+function rrSub(c, x, y, w, h, r){
+  r = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+function roundRectPath(c, x, y, w, h, r){
+  c.beginPath();
+  rrSub(c, x, y, w, h, r);
+}
+
+function computeTray(){
+  var pad = Math.round(clamp(Math.min(W, H) * 0.032, 8, 20));
+  TRAY.x = pad;
+  TRAY.y = pad - 2;
+  TRAY.w = W - pad * 2;
+  TRAY.h = H - pad * 2 + 2;
+  TRAY.r = Math.round(clamp(Math.min(TRAY.w, TRAY.h) * 0.11, 18, 42));
+  TRAY.rim = Math.round(clamp(Math.min(W, H) * 0.026, 9, 16));
+  TRAY.ix = TRAY.x + TRAY.rim;
+  TRAY.iy = TRAY.y + TRAY.rim;
+  TRAY.iw = TRAY.w - TRAY.rim * 2;
+  TRAY.ih = TRAY.h - TRAY.rim * 2;
+}
+
+/* 장면은 크기가 바뀔 때만 한 번 그려 둔다 (매 프레임 비용 0) */
+function paintScene(){
+  var dpr = DPR;
+  sceneCv.width = Math.round(W * dpr);
+  sceneCv.height = Math.round(H * dpr);
+  sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  sctx.clearRect(0, 0, W, H);
+  var x = TRAY.x, y = TRAY.y, w = TRAY.w, h = TRAY.h, r = TRAY.r;
+  var thick = Math.round(clamp(h * 0.024, 7, 14));
+  var rimW = TRAY.rim;
+  var ir = Math.max(8, r - rimW * 0.7);
+
+  /* 1) 테이블에 드리우는 트레이 그림자 */
+  sctx.save();
+  sctx.shadowColor = 'rgba(112,74,142,.26)';
+  sctx.shadowBlur = Math.max(18, Math.min(46, w * 0.05));
+  sctx.shadowOffsetX = 0; sctx.shadowOffsetY = thick + 6;
+  sctx.fillStyle = 'rgba(255,255,255,.92)';
+  roundRectPath(sctx, x, y, w, h, r); sctx.fill();
+  sctx.restore();
+
+  /* 2) 아크릴 두께(옆면) */
+  roundRectPath(sctx, x, y + thick, w, h, r);
+  var side = sctx.createLinearGradient(0, y + h * 0.45, 0, y + h + thick);
+  side.addColorStop(0, 'rgba(233,221,247,.95)');
+  side.addColorStop(0.55, 'rgba(214,197,238,.97)');
+  side.addColorStop(1, 'rgba(182,161,221,.98)');
+  sctx.fillStyle = side; sctx.fill();
+
+  /* 3) 트레이 바닥 */
+  roundRectPath(sctx, x, y, w, h, r);
+  var top = sctx.createLinearGradient(0, y, 0, y + h);
+  top.addColorStop(0, 'rgba(255,255,255,1)');
+  top.addColorStop(0.46, 'rgba(255,250,254,.99)');
+  top.addColorStop(1, 'rgba(243,238,255,.99)');
+  sctx.fillStyle = top; sctx.fill();
+
+  /* 4) 두께 있는 아크릴 테두리 */
+  sctx.beginPath();
+  rrSub(sctx, x, y, w, h, r);
+  rrSub(sctx, TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih, ir);
+  var rg = sctx.createLinearGradient(x, y, x + w * 0.78, y + h);
+  rg.addColorStop(0, 'rgba(255,255,255,1)');
+  rg.addColorStop(0.34, 'rgba(255,250,253,.97)');
+  rg.addColorStop(0.72, 'rgba(240,231,255,.95)');
+  rg.addColorStop(1, 'rgba(214,199,239,.96)');
+  sctx.fillStyle = rg;
+  sctx.fill('evenodd');
+
+  /* 5) 트레이 안쪽벽 그늘 + 깊이 + 아크릴 반사 */
+  sctx.save();
+  roundRectPath(sctx, TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih, ir);
+  sctx.clip();
+  sctx.save();
+  sctx.shadowColor = 'rgba(116,78,148,.28)';
+  sctx.shadowBlur = 18; sctx.shadowOffsetY = 6;
+  roundRectPath(sctx, TRAY.ix + 10, TRAY.iy + 9, TRAY.iw - 20, TRAY.ih - 18, Math.max(6, r - rimW));
+  sctx.strokeStyle = 'rgba(158,128,196,.22)';
+  sctx.lineWidth = 17;
+  sctx.stroke();
+  sctx.restore();
+  var dg = sctx.createLinearGradient(0, TRAY.iy, 0, TRAY.iy + TRAY.ih);
+  dg.addColorStop(0, 'rgba(150,120,190,.05)');
+  dg.addColorStop(0.52, 'rgba(150,120,190,0)');
+  dg.addColorStop(1, 'rgba(130,98,178,.14)');
+  sctx.fillStyle = dg;
+  sctx.fillRect(TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih);
+  /* 반짝이는 아크릴 반사 띠 */
+  sctx.save();
+  sctx.translate(TRAY.ix, TRAY.iy);
+  sctx.rotate(-0.40);
+  var band = sctx.createLinearGradient(0, 0, 0, TRAY.ih * 0.2);
+  band.addColorStop(0, 'rgba(255,255,255,0)');
+  band.addColorStop(0.5, 'rgba(255,255,255,.6)');
+  band.addColorStop(1, 'rgba(255,255,255,0)');
+  sctx.fillStyle = band;
+  sctx.fillRect(-TRAY.iw * 0.2, TRAY.ih * 0.14, TRAY.iw * 1.4, TRAY.ih * 0.2);
+  sctx.globalAlpha = 0.55;
+  sctx.fillRect(-TRAY.iw * 0.2, TRAY.ih * 0.42, TRAY.iw * 1.4, TRAY.ih * 0.07);
+  sctx.restore();
+  sctx.restore();
+
+  /* 6) 테두리 선 */
+  roundRectPath(sctx, x + 1, y + 1, w - 2, h - 2, r);
+  sctx.strokeStyle = 'rgba(255,255,255,.96)';
+  sctx.lineWidth = 2.2; sctx.stroke();
+  roundRectPath(sctx, TRAY.ix - 0.5, TRAY.iy - 0.5, TRAY.iw + 1, TRAY.ih + 1, ir);
+  sctx.strokeStyle = 'rgba(255,255,255,.92)';
+  sctx.lineWidth = 1.8; sctx.stroke();
+  roundRectPath(sctx, TRAY.ix + 1, TRAY.iy + 1, TRAY.iw - 2, TRAY.ih - 2, Math.max(8, r - rimW * 1.4));
+  sctx.strokeStyle = 'rgba(152,122,190,.16)';
+  sctx.lineWidth = 1.2; sctx.stroke();
+
+  /* 7) 파스텔 컨페티 */
+  var conf = ['#FFD3E6', '#D7C8FF', '#C7EEFF', '#FFF0C9', '#CBF3E4'];
+  sctx.globalAlpha = 0.55;
+  for (var i = 0; i < 16; i++) {
+    var a = i * 2.399;
+    var px = TRAY.ix + TRAY.iw * (0.10 + (Math.sin(a) * 0.5 + 0.5) * 0.80);
+    var py = TRAY.iy + TRAY.ih * (0.10 + (Math.cos(a * 1.7) * 0.5 + 0.5) * 0.80);
+    sctx.fillStyle = conf[i % conf.length];
+    sctx.beginPath(); sctx.arc(px, py, 1.5 + (i % 3), 0, TAU); sctx.fill();
+  }
+  sctx.globalAlpha = 1;
 }
 
 /* =========================================================
@@ -897,7 +1209,10 @@ function resize(){
 var N = 78;
 var SL = {
   p: [], v: [], prev: [], ox: [], oy: [], rest: [], baseR: 0, cx: 0, cy: 0,
-  area0: 1, parts: [], ripples: [], flecks: [], wobble: 0
+  area0: 1, parts: [], ripples: [], flecks: [], bubbles: [], wobble: 0,
+  dents: [], airBubbles: [], rising: [], splashes: [],
+  split: null, swirlA: 0, swirlV: 0, swirlI: 0, airAcc: 0, lastGrain: 0,
+  bubblePops: 0, madeToday: 0
 };
 
 function polyArea(pts){
@@ -918,9 +1233,9 @@ function pointInPoly(x, y, pts){
 }
 
 function slimeInit(){
-  SL.cx = W / 2;
-  SL.cy = H / 2 + H * 0.02;
-  SL.baseR = Math.min(W * 0.395, H * 0.355, 265);
+  SL.cx = TRAY.ix + TRAY.iw / 2;
+  SL.cy = TRAY.iy + TRAY.ih * 0.52;
+  SL.baseR = Math.max(48, Math.min(TRAY.iw * 0.400, TRAY.ih * 0.385, 265));
   var R = SL.baseR;
   SL.p = []; SL.v = []; SL.prev = []; SL.ox = []; SL.oy = []; SL.rest = [];
   for (var i = 0; i < N; i++) {
@@ -947,9 +1262,16 @@ function slimeInit(){
   SL.parts = [];
   SL.flecks = [];
   SL.bubbles = [];
-  for (i = 0; i < 11; i++) {
-    var ba2 = Math.random() * TAU, br2 = Math.sqrt(Math.random()) * R * 0.78;
-    SL.bubbles.push({ x: Math.cos(ba2) * br2, y: Math.sin(ba2) * br2 * 0.95, r: rand(2.5, 8.5) });
+  SL.dents = [];
+  SL.airBubbles = [];
+  SL.rising = [];
+  SL.splashes = [];
+  SL.split = null;
+  SL.swirlA = 0; SL.swirlV = 0; SL.swirlI = 0;
+  SL.airAcc = 0;
+  for (i = 0; i < 13; i++) {
+    var ba2 = Math.random() * TAU, br2 = Math.sqrt(Math.random()) * R * 0.76;
+    SL.bubbles.push({ x: Math.cos(ba2) * br2, y: Math.sin(ba2) * br2 * 0.95, r: rand(3, 11) });
   }
   for (i = 0; i < 46; i++) {
     var ang = Math.random() * TAU, rad = Math.sqrt(Math.random()) * R * 0.86;
@@ -997,6 +1319,16 @@ function slimeGrabAt(x, y, id){
 function slimeStep(dt){
   var T = TEX[SL.texture] || TEX.water;
   var n = N, it, i, j;
+
+  /* 회오리 — 손을 떼도 잠시 빙글빙글 돈다 */
+  if (!SL.split && Math.abs(SL.swirlV) > 0.0003) {
+    var dth = SL.swirlV * dt;
+    rotateSlime(dth);
+    SL.swirlA += dth;
+    SL.swirlI = Math.min(1, SL.swirlI + Math.abs(SL.swirlV) * dt * 1.6);
+    SL.swirlV *= Math.pow(0.06, dt);
+  }
+  SL.swirlI *= Math.pow(0.30, dt);
 
   /* 적분 */
   for (i = 0; i < n; i++) {
@@ -1053,13 +1385,15 @@ function slimeStep(dt){
         SL.p[i].y += (gy - SL.p[i].y) * 0.62 * w;
       }
     }
-    /* 5) 무대 밖으로 나가지 않게 */
+    /* 5) 트레이 밖으로 나가지 않게 */
     for (i = 0; i < n; i++) {
-      var pad = 6;
-      if (SL.p[i].x < pad) SL.p[i].x = pad;
-      if (SL.p[i].x > W - pad) SL.p[i].x = W - pad;
-      if (SL.p[i].y < pad + 26) SL.p[i].y = pad + 26;
-      if (SL.p[i].y > H - pad) SL.p[i].y = H - pad;
+      var pad = 5;
+      var x0 = TRAY.ix + pad, x1 = TRAY.ix + TRAY.iw - pad;
+      var y0 = TRAY.iy + pad, y1 = TRAY.iy + TRAY.ih - pad;
+      if (SL.p[i].x < x0) SL.p[i].x = x0;
+      if (SL.p[i].x > x1) SL.p[i].x = x1;
+      if (SL.p[i].y < y0) SL.p[i].y = y0;
+      if (SL.p[i].y > y1) SL.p[i].y = y1;
     }
   }
 
@@ -1080,7 +1414,71 @@ function slimeStep(dt){
 
   /* 파츠 물리 */
   stepParts(dt);
-  /* 물결 */
+
+  /* 손가락 자국 — 서서히 잦아든다 */
+  for (i = SL.dents.length - 1; i >= 0; i--) {
+    var dn = SL.dents[i];
+    dn.t += dt * (dn.hold ? 0.22 : 1);
+    if (dn.hold) dn.depth = Math.min(1.15, dn.depth + dt * 1.8);
+    if (dn.t > dn.life) SL.dents.splice(i, 1);
+  }
+
+  /* 공기방울 — 통통 부풀어 오른다 */
+  for (i = SL.airBubbles.length - 1; i >= 0; i--) {
+    var ab = SL.airBubbles[i];
+    ab.t += dt;
+    ab.r += (ab.rmax - ab.r) * Math.min(1, dt * 2.6);
+    ab.ph += dt * ab.spin;
+    var bx = ab.bx + Math.sin(ab.ph) * ab.sway;
+    var by = ab.by - Math.min(ab.t * 3.2, 9) + Math.cos(ab.ph * 0.8) * ab.sway * 0.5;
+    if (!pointInPoly(bx, by, SL.p)) {
+      ab.bx += (SL.cx - ab.bx) * 0.10;
+      ab.by += (SL.cy - ab.by) * 0.10;
+      bx = ab.bx; by = ab.by;
+    }
+    ab.x = bx; ab.y = by;
+  }
+  while (SL.airBubbles.length > 9) SL.airBubbles.shift();
+
+  /* 콕 찌를 때 올라오는 잔기포 */
+  for (i = SL.rising.length - 1; i >= 0; i--) {
+    var rs = SL.rising[i];
+    rs.t += dt;
+    rs.x += Math.sin(rs.t * 7 + rs.ph) * 9 * dt;
+    rs.y -= rs.sp * dt;
+    if (rs.t > rs.life) SL.rising.splice(i, 1);
+  }
+
+  /* 싹둑 — 반으로 갈라졌다가 다시 합쳐진다 */
+  if (SL.split) {
+    var sp = SL.split;
+    sp.t += dt;
+    var te = clamp(sp.t / sp.dur, 0, 1);
+    sp.sep = sp.sepMax * Math.sin(Math.PI * te);
+    sp.wob = Math.sin(te * Math.PI * 2) * 0.05;
+    if (te >= 1) {
+      SL.split = null;
+      SL.ripples.push({ x: sp.mid.x, y: sp.mid.y, t: 0, color: '#FFFFFF' });
+      for (var k2 = 0; k2 < N; k2++) {
+        var nx2 = SL.p[k2].x - sp.mid.x, ny2 = SL.p[k2].y - sp.mid.y;
+        var nl2 = Math.sqrt(nx2 * nx2 + ny2 * ny2) || 1;
+        SL.v[k2].x += (nx2 / nl2) * 34;
+        SL.v[k2].y += (ny2 / nl2) * 34;
+      }
+      Sound.squish(0.75, panOf(sp.mid.x));
+    }
+  }
+
+  /* 잘린 단면에서 떨어진 젤리 방울 */
+  for (i = SL.splashes.length - 1; i >= 0; i--) {
+    var sj = SL.splashes[i];
+    sj.t += dt;
+    sj.vy += 520 * dt;
+    sj.x += sj.vx * dt; sj.y += sj.vy * dt;
+    if (sj.t > sj.life) SL.splashes.splice(i, 1);
+  }
+
+  /* 물걸 */
   for (i = SL.ripples.length - 1; i >= 0; i--) {
     var rp = SL.ripples[i];
     rp.t += dt;
@@ -1088,6 +1486,38 @@ function slimeStep(dt){
   }
   /* 남은 손가락 시간 */
   for (g = 0; g < grabs.length; g++) grabs[g].t += dt;
+}
+
+/* 회오리 — 슬라임 전체를 살짝 돌린다 (기억하는 모양도 같이 돌아간다) */
+function rotateSlime(dth){
+  var c = Math.cos(dth), s = Math.sin(dth);
+  var i, dx, dy, vx, vy;
+  for (i = 0; i < N; i++) {
+    dx = SL.p[i].x - SL.cx; dy = SL.p[i].y - SL.cy;
+    SL.p[i].x = SL.cx + dx * c - dy * s;
+    SL.p[i].y = SL.cy + dx * s + dy * c;
+    vx = SL.ox[i]; vy = SL.oy[i];
+    SL.ox[i] = vx * c - vy * s;
+    SL.oy[i] = vx * s + vy * c;
+  }
+  for (i = 0; i < SL.parts.length; i++) {
+    var p = SL.parts[i];
+    dx = p.x - SL.cx; dy = p.y - SL.cy;
+    p.x = SL.cx + dx * c - dy * s;
+    p.y = SL.cy + dx * s + dy * c;
+  }
+  for (i = 0; i < SL.airBubbles.length; i++) {
+    var b = SL.airBubbles[i];
+    dx = b.bx - SL.cx; dy = b.by - SL.cy;
+    b.bx = SL.cx + dx * c - dy * s;
+    b.by = SL.cy + dx * s + dy * c;
+  }
+  for (i = 0; i < SL.dents.length; i++) {
+    var d = SL.dents[i];
+    dx = d.x - SL.cx; dy = d.y - SL.cy;
+    d.x = SL.cx + dx * c - dy * s;
+    d.y = SL.cy + dx * s + dy * c;
+  }
 }
 
 function stepParts(dt){

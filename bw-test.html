@@ -16,7 +16,8 @@ var hash = p.get('who') || 'hyungwon';
 var f = document.getElementById('m');
 f.style.width = w + 'px';
 f.style.height = h + 'px';
-f.src = './block-world.html?t=' + Date.now() + '#' + hash;
+var dev = p.get('dev') === '1' ? '&dev=1' : '';
+f.src = './block-world.html?t=' + Date.now() + dev + '#' + hash;
 f.addEventListener('load', function () {
   if (!touch) return;
   try {

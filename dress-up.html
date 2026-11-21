@@ -478,8 +478,11 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 .pod.p1 .pb{height:clamp(56px,9.5vh,84px); background:linear-gradient(180deg,#FFE27A,#F0AE0E); color:#5B3A00; font-size:18px}
 .pod.p2 .pb{height:clamp(38px,6.6vh,56px); background:linear-gradient(180deg,#EEF2F8,#C2CBD9)}
 .pod.p3 .pb{height:clamp(28px,5.2vh,42px); background:linear-gradient(180deg,#F7CFA9,#D5976A)}
-.pod .pn{font-size:10.5px; font-weight:900; color:#fff; margin-top:4px; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.pod .ps{font-size:10px; font-weight:900; color:#FFD23F; margin-top:1px; white-space:nowrap; text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.pod .pn{
+  font-size:10.5px; font-weight:900; color:#fff; margin-top:5px; white-space:nowrap; max-width:100%;
+  overflow:hidden; text-overflow:ellipsis; background:rgba(26,10,36,.62); border-radius:999px; padding:3px 9px;
+}
+.pod .pn b{color:#FFD23F; font-weight:900}
 
 /* ---------- 토스트 ---------- */
 .toast{
@@ -1963,8 +1966,7 @@ async function showPodium(theme, token){
     return '<div class="pod p'+rank+'" style="animation-delay:'+delay+'s">'+
       '<div class="pa">'+(rank === 1 ? '<span class="crown">👑</span>' : '')+figureSVG(p.state, { label:p.name+' '+rank+'등' })+'</div>'+
       '<div class="pb">'+rank+'</div>'+
-      '<div class="pn">'+esc(p.name)+(p.ai ? ' 🤖' : '')+'</div>'+
-      '<div class="ps">⭐'+p.score+'</div></div>';
+      '<div class="pn">'+(p.ai ? '🤖 ' : '')+esc(p.name)+' <b>⭐'+p.score+'</b></div></div>';
   }).join('');
   $('rwStage').appendChild(pod);
 
