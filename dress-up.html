@@ -4346,7 +4346,7 @@ function famRenderPill(){
 function famRenderSheet(){
   var who = $('famWho');
   if(who){
-    var bs = quien('button', who);
+    var bs = who.querySelectorAll('button');
     for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on', bs[i].getAttribute('data-who') === FAM.meId);
   }
   var st2 = $('famState');
@@ -4368,7 +4368,6 @@ function famRenderSheet(){
     if(lv) lv.textContent = FAM.ready ? '대기' : '연결 중';
   }
 }
-function quien(sel, root){ return (root || document).querySelectorAll(sel); }
 
 /* ============================================================
    18. 시작
