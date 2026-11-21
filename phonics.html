@@ -587,6 +587,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
       <div class="vend" id="vEnd" hidden>
         <p>🎉 잘 봤어요!</p>
         <button class="vrb" id="vReplay" type="button">🔁 다시 보기</button>
+        <button class="vrb" id="vOther" type="button" style="min-height:48px;padding:8px 18px;font-size:16px;background:linear-gradient(180deg,#eaf6ff,#d5e9ff)">📺 다른 영상 고르기</button>
       </div>
     </div>
     <div class="vctl">
@@ -1312,6 +1313,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     else { vCmd('seekTo', [0, true]); vCmd('playVideo'); }
   });
   $('vReplay').addEventListener('click', function(){ sfxTap(); mountVideo(); });
+  if($('vOther')) $('vOther').addEventListener('click', function(){ sfxTap(); closeVideo(); });
 
   /* ---------- 영상 전체화면 (보호 레이어·조작 버튼까지 우리 래퍼째로) ---------- */
   function fsEl(){
