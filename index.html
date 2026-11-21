@@ -2054,6 +2054,7 @@ label.btn{cursor:pointer}
   }
   function save() {
     try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 저장 불가 환경 */ }
+    markPending();   /* 아직 서버에 못 올린 내 변경을 기억 — 들어오는 스냅샷이 덮어쓰지 않게 */
     pushSoon();
   }
 
@@ -2075,6 +2076,7 @@ label.btn{cursor:pointer}
     lastJson: '',      // 마지막으로 적용한 서버 스냅샷
     timer: null,
     known: { c1: '', c2: '', chat: {}, settings: '' },
+    pend: { c1: {}, c2: {}, settings: {} },  // 서버에 아직 못 올린 필드
     ref: null
   };
 
@@ -2097,12 +2099,36 @@ label.btn{cursor:pointer}
       ntfy: state.ntfy
     }));
   }
-  function remember() {
+  /* sync.known = '서버가 들고 있다고 여기는 값'. push 는 이것과 다른 필드만 올린다.
+     day 는 서버가 실제로 들고 있는 값(raw)을 기준으로 잡는다 — 예전에는 이 기기가 기억하는
+     오늘 날짜를 기준으로 잡아서, 서버가 어제 날짜(day)를 들고 있어도 그 차이를 보지 못해
+     영영 정정하지 못했고, 스냅샷이 올 때마다 오늘 체크가 지워졌다. */
+  function remember(v) {
     sync.known.c1 = JSON.stringify(childForSend('c1'));
     sync.known.c2 = JSON.stringify(childForSend('c2'));
     sync.known.settings = JSON.stringify(settingsForSend());
     sync.known.chat = {};
     state.cheers.forEach(function (c) { sync.known.chat[c.id] = JSON.stringify(c); });
+    if (v && v.kids) {
+      ['c1', 'c2'].forEach(function (k) {
+        var raw = v.kids[KID_SLUG[k]];
+        if (!raw || typeof raw !== 'object') return;
+        try {
+          var o = JSON.parse(sync.known[k]);
+          o.day = raw.day || null;
+          /* 서버 기록이 어제 것이면 그 어제 값들을 기준으로 잡아 두어야
+             오늘 기준으로 정정하는 push 가 실제로 나간다 */
+          if (raw.day && raw.day !== todayStr()) {
+            o.done = raw.done || {};
+            o.proofs = raw.proofs || emptyProofs();
+            o.lastAllPrev = null;
+            o.bonus90 = null;
+            o.academy = raw.academy || null;
+          }
+          sync.known[k] = JSON.stringify(o);
+        } catch (e) { /* noop */ }
+      });
+    }
   }
 
   function initSync() {
@@ -2185,15 +2211,36 @@ label.btn{cursor:pointer}
     sync.applying = true;
     var kids = v.kids || {};
     var rawKids = {};
+    var needDayFix = {};
     ['c1', 'c2'].forEach(function (k) {
       var raw = kids[KID_SLUG[k]];
       if (!raw || typeof raw !== 'object') return;
       raw = JSON.parse(JSON.stringify(raw));
+      /* 서버 기록이 '오늘' 것이 아니면 어제 체크는 오늘로 끌고 오지 않는다.
+         다만 이 기기에서 오늘 이미 한 체크·사진은 아직 서버에 못 올라갔을 수 있으니 지킨다.
+         (예전엔 무조건 비워서 — 사진을 올려 체크한 직후 서버 스냅샷이 도착하면
+          방금 한 체크가 사라졌다. '숙제 사진 업로드 후 체크 안 됨'의 원인) */
       if (raw.day && raw.day !== todayStr()) {
-        raw.done = {};
+        var loc = state.children[k];
+        var todayLocal = state.date === todayStr() && loc;
+        /* 이 기기에서 오늘 한 체크 + 오늘 올린 사진이 있는 체크는 오늘 것으로 인정해 살린다 */
+        var keepDone = JSON.parse(JSON.stringify((todayLocal && loc.done) || {}));
+        var keepProofs = (todayLocal && loc.proofs && loc.proofs.date === todayStr())
+          ? JSON.parse(JSON.stringify(loc.proofs)) : emptyProofs();
+        var rp = raw.proofs;
+        if (rp && rp.date === todayStr() && rp.items) {
+          Object.keys(rp.items).forEach(function (q) {
+            keepDone[q] = true;
+            if (!keepProofs.items[q]) keepProofs.items[q] = rp.items[q];
+          });
+        }
+        keepProofs.date = todayStr();
+        raw.done = keepDone;
+        raw.proofs = keepProofs;
         raw.lastAllPrev = null;
         raw.bonus90 = null;
         raw.academy = null;
+        needDayFix[k] = 1;
       }
       rawKids[k] = raw;
     });
@@ -2226,12 +2273,78 @@ label.btn{cursor:pointer}
     ['c1', 'c2'].forEach(function (k) { if (rawKids[k]) state.children[k] = next.children[k]; });
     state.cheers = next.cheers;
     sync.applying = false;
-    remember();
+    remember(v);              /* 기준은 '서버가 실제로 들고 있는 값' */
+    applyPending();           /* 아직 못 올린 내 변경은 서버 값 위에 다시 얹는다 */
     /* 서버 값을 이 기기의 저장소에도 써 둔다 — 안 그러면 이 기기는 계속 옛 값을
        들고 있다가 다음에 그 옛 값으로 서버를 덮어쓰게 된다. */
     try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 저장 불가 환경 */ }
     try { if (syncHistoryAll()) pushSoon(); } catch (e) { /* noop */ }
+    if (Object.keys(needDayFix).length) {
+      /* 서버의 day 가 어제로 멈춰 있으면 오늘로 정정 한다 → 다음 스냅샷이 오늘 체크를 지우지 않음 */
+      Object.keys(needDayFix).forEach(function (k) { fixStaleDayChild(k); });
+      pushSoon();
+    }
     renderSafe();
+  }
+
+  /* 서버의 day 가 어제로 멈춰 있으면 오늘로 바로잡는다.
+     done·proofs 는 먼저 비우고 '오늘 것'만 다시 써서 어제 체크·사진이 오늘로 새지 않게 한다.
+     (나머지 코인·XP·도감 등은 건드리지 않는다) */
+  function fixStaleDayChild(k) {
+    if (!sync.ref || !sync.connected) return;
+    var ch = state.children[k];
+    if (!ch) return;
+    var doneCopy = JSON.parse(JSON.stringify(ch.done || {}));
+    var proofsCopy = JSON.parse(JSON.stringify(ch.proofs || emptyProofs()));
+    if (!proofsCopy.date || proofsCopy.date !== todayStr()) proofsCopy = emptyProofs();
+    proofsCopy.date = todayStr();
+    var base = 'kids/' + KID_SLUG[k];
+    var clear = {};
+    clear[base + '/day'] = todayStr();
+    clear[base + '/done'] = null;
+    clear[base + '/proofs'] = null;
+    sync.ref.update(clear).then(function () {
+      var w = {};
+      w[base] = { day: todayStr(), done: doneCopy, proofs: proofsCopy };
+      return sync.ref.update(w);
+    }).catch(function () { /* 연결이 끊기면 다음 스냅샷에서 다시 시도 */ });
+  }
+
+  /* 아직 서버에 못 올린 변경을 기억해 둔다 (스냅샷이 먼저 도착해도 내 체크가 살아남게) */
+  function markPending() {
+    if (!sync.gotRemote) return;   // 서버 기준이 없을 때는 기록하지 않는다(빈 값으로 덮어쓰기 방지)
+    ['c1', 'c2'].forEach(function (k) {
+      var d = null;
+      try { d = fieldDiff(sync.known[k], childForSend(k)); } catch (e) { d = null; }
+      if (!d) return;
+      var bag = sync.pend[k] || (sync.pend[k] = {});
+      Object.keys(d).forEach(function (f) { bag[f] = d[f]; });
+    });
+    var sd = null;
+    try { sd = fieldDiff(sync.known.settings, settingsForSend()); } catch (e) { sd = null; }
+    if (sd) {
+      var b = sync.pend.settings || (sync.pend.settings = {});
+      Object.keys(sd).forEach(function (f) { b[f] = sd[f]; });
+    }
+  }
+
+  function applyPending() {
+    ['c1', 'c2'].forEach(function (k) {
+      var bag = sync.pend[k];
+      var ch = state.children[k];
+      if (!bag || !ch) return;
+      Object.keys(bag).forEach(function (f) {
+        if (bag[f] === null) delete ch[f];
+        else ch[f] = JSON.parse(JSON.stringify(bag[f]));
+      });
+    });
+    var b = sync.pend.settings;
+    if (b) {
+      Object.keys(b).forEach(function (f) {
+        if (b[f] === null) return;
+        state[f] = JSON.parse(JSON.stringify(b[f]));
+      });
+    }
   }
 
   /* 입력 중이면 화면을 건드리지 않음 (커서·글자 유지) — 입력이 끝나면 바뀐 내용을 반영 */
@@ -2325,9 +2438,9 @@ label.btn{cursor:pointer}
     sync.ref.update(out).then(function () {
       commit.forEach(function (c) {
         if (c.chat) { if (c.json === null) delete sync.known.chat[c.chat]; else sync.known.chat[c.chat] = c.json; }
-        else sync.known[c.slot] = c.json;
+        else { sync.known[c.slot] = c.json; sync.pend[c.slot] = {}; }
       });
-    }).catch(function () { /* 오프라인이면 다음에 다시 — known 을 그대로 두어 다시 시도한다 */ });
+    }).catch(function () { /* 오프라인이면 다음에 다시 — known·pend 를 그대로 두어 다시 시도한다 */ });
   }
 
   /* ============================================================
@@ -2523,40 +2636,61 @@ label.btn{cursor:pointer}
     return Object.keys(ch.proofs.items).length;
   }
 
-  /* 고른 사진을 480px·JPEG 0.65로 줄여서 data URL로 */
+  /* 고른 사진을 480px·JPEG 0.65로 줄여서 data URL로
+     폰 사진(큰 사진·회전된 사진·읽기 어려운 형식)에서도 멈추지 않게 한 번만 cb 를 부르고,
+     디코딩이 영영 안 끝나면 12초 뒤 실패로 알려 준다. */
   function proofFromFile(file, cb) {
-    if (!file) { cb(null, 'nofile'); return; }
+    var called = false;
+    function once(u, err) { if (called) return; called = true; cb(u, err); }
+    if (!file) { once(null, 'nofile'); return; }
+    var timer = setTimeout(function () { once(null, 'timeout'); }, 12000);
+    function done(u, err) { clearTimeout(timer); once(u, err); }
     var fr = null;
-    try { fr = new FileReader(); } catch (e) { cb(null, 'reader'); return; }
-    fr.onerror = function () { cb(null, 'read'); };
+    try { fr = new FileReader(); } catch (e) { done(null, 'reader'); return; }
+    fr.onerror = function () { done(null, 'read'); };
+    fr.onabort = function () { done(null, 'read'); };
     fr.onload = function () {
       var src = String(fr.result || '');
-      if (!src) { cb(null, 'read'); return; }
+      if (!src) { done(null, 'read'); return; }
       var img = new Image();
-      img.onerror = function () { cb(null, 'decode'); };
+      img.onerror = function () { done(null, 'decode'); };
       img.onload = function () {
         try {
           var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
-          if (!w || !h) { cb(null, 'decode'); return; }
+          if (!w || !h) { done(null, 'decode'); return; }
           var sc = Math.min(1, PROOF_MAX_PX / Math.max(w, h));
           var cw = Math.max(1, Math.round(w * sc)), chh = Math.max(1, Math.round(h * sc));
           var cv = document.createElement('canvas');
           cv.width = cw; cv.height = chh;
           var cx = cv.getContext('2d');
-          if (!cx) { cb(null, 'canvas'); return; }
+          if (!cx) { done(null, 'canvas'); return; }
           cx.fillStyle = '#ffffff';
           cx.fillRect(0, 0, cw, chh);
           cx.drawImage(img, 0, 0, cw, chh);
           var out = cv.toDataURL('image/jpeg', PROOF_QUALITY);
-          if (!out || out.indexOf('data:image/') !== 0) { cb(null, 'encode'); return; }
+          if (!out || out.indexOf('data:image/') !== 0) { done(null, 'encode'); return; }
           if (out.length > PROOF_MAX_LEN) out = cv.toDataURL('image/jpeg', 0.45);
-          if (out.length > PROOF_MAX_LEN) { cb(null, 'big'); return; }
-          cb(out, null);
-        } catch (e) { cb(null, 'canvas'); }
+          if (out.length > PROOF_MAX_LEN) {
+            /* 마지막 수단: 한 번 더 줄여서(360px·0.5) 시도 */
+            var cv2 = document.createElement('canvas');
+            var s2 = Math.min(1, 360 / Math.max(cw, chh));
+            cv2.width = Math.max(1, Math.round(cw * s2));
+            cv2.height = Math.max(1, Math.round(chh * s2));
+            var cx2 = cv2.getContext('2d');
+            if (cx2) {
+              cx2.fillStyle = '#ffffff';
+              cx2.fillRect(0, 0, cv2.width, cv2.height);
+              cx2.drawImage(cv, 0, 0, cv2.width, cv2.height);
+              out = cv2.toDataURL('image/jpeg', 0.5);
+            }
+          }
+          if (!out || out.length > PROOF_MAX_LEN) { done(null, 'big'); return; }
+          done(out, null);
+        } catch (e) { done(null, 'canvas'); }
       };
       img.src = src;
     };
-    try { fr.readAsDataURL(file); } catch (e) { cb(null, 'read'); }
+    try { fr.readAsDataURL(file); } catch (e) { done(null, 'read'); }
   }
 
   /* 사진 인증 모달 — 윤진(c1)·형원(c2) 둘 다 같은 방식 */
@@ -4160,7 +4294,7 @@ label.btn{cursor:pointer}
       return '<div class="empty">보상이 아직 없어요. 보호자 모드에서 우리 집 보상을 추가해 보세요.</div>';
     }
     var pct = todayPct(state.active);
-    var pctOk = pct >= 80;
+    var pctOk = pct >= 50;
     return '<div class="rewards">' + state.rewards.map(function (r) {
       var coinsOk = ch.coins >= r.cost;
       var wk = !!r.weekendOnly;
@@ -4173,10 +4307,10 @@ label.btn{cursor:pointer}
         + '<span class="rw-cost">🪙 ' + r.cost + ' 코인</span></span>'
         + '<button type="button" class="btn btn-sm ' + (can ? 'btn-primary' : 'btn-ghost') + '" data-reward="' + esc(r.id) + '"'
         + (can ? '' : ' disabled') + '>'
-        + (wk && !pctOk ? '80% 필요' : (coinsOk ? '교환' : '코인 부족')) + '</button>'
+        + (wk && !pctOk ? '50% 필요' : (coinsOk ? '교환' : '코인 부족')) + '</button>'
         + (wk ? '<span class="rw-cond' + (pctOk ? ' on' : '') + '">'
-            + (pctOk ? '🏆 80% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
-                     : '🏆 80% 이상 달성 시 교환 (주말 사용) · 오늘 ' + pct + '%')
+            + (pctOk ? '🏆 50% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
+                     : '🏆 50% 이상 달성 시 교환 (주말 사용) · 오늘 ' + pct + '%')
             + '</span>' : '')
         + '</div>';
     }).join('') + '</div>';
@@ -4203,8 +4337,8 @@ label.btn{cursor:pointer}
   function shopHTML() {
     return childSwitchHTML() + gachaHTML()
       + '<section class="section"><div class="section-head"><h2>🎁 보호자 보상 교환</h2>'
-      + '<span class="hint">코인 + 달성률 80%</span></div>'
-      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>80% 이상</b>이면 코인으로 교환할 수 있어요.</div>'
+      + '<span class="hint">코인 + 달성률 50%</span></div>'
+      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>50% 이상</b>이면 코인으로 교환할 수 있어요.</div>'
       + rewardsHTML() + '</section>'
       + '<section class="section"><div class="section-head"><h2>🎫 내 보상함</h2>'
       + '<span class="hint">교환한 쿠폰</span></div>' + ticketsHTML() + '</section>';
@@ -4939,9 +5073,9 @@ label.btn{cursor:pointer}
       toast('코인이 ' + (rw.cost - ch.coins) + '개 부족해요');
       return;
     }
-    if (rw.weekendOnly && todayPct(state.active) < 80) {
+    if (rw.weekendOnly && todayPct(state.active) < 50) {
       SFX.nope();
-      toast('오늘 달성률 ' + todayPct(state.active) + '% · 80% 이상이면 교환할 수 있어요');
+      toast('오늘 달성률 ' + todayPct(state.active) + '% · 50% 이상이면 교환할 수 있어요');
       return;
     }
     var wkOnly = !!rw.weekendOnly;
@@ -5930,11 +6064,16 @@ label.btn{cursor:pointer}
       e.preventDefault();
       return;
     }
+    var prt = closestEl(t, '[data-proof-retry]');
+    if (prt) {
+      closeAllModals();
+      openProofModal(prt.getAttribute('data-proof-k') || state.active, prt.getAttribute('data-proof-retry'));
+      return;
+    }
     var pp = closestEl(t, '[data-proof-pin]');
     if (pp) {
       var pqid = pp.getAttribute('data-proof-pin');
-      var pkid = pp.getAttribute('data-proof-k') || state.active;
-      askPin('엄마 확인이면 사진 없이 통과할 수 있어요', function () {
+      var pkid = pp.getAttribute('data-proof-k') || state.active;      askPin('엄마 확인이면 사진 없이 통과할 수 있어요', function () {
         closeAllModals();
         completeQuest(pqid, null, pkid);
         toast('🔓 엄마 확인으로 완료했어요');
@@ -6397,9 +6536,13 @@ label.btn{cursor:pointer}
     proofFromFile(file, function (dataUrl) {
       if (!dataUrl) {
         if (body) {
-          body.innerHTML = '<div class="proof-stat" style="color:#c02a3a">사진을 읽지 못했어요.<br><small>다른 사진으로 다시 시도해 주세요</small></div>';
+          body.innerHTML = '<div class="proof-stat" style="color:#c02a3a">사진을 읽지 못했어요.<br><small>다른 사진으로 다시 고르거나, 엄마 PIN으로 통과할 수 있어요</small></div>'
+            + '<div class="row-btns" style="margin-top:12px;flex-direction:column;gap:8px">'
+            + '<button type="button" class="btn btn-sm btn-ghost btn-block" data-proof-retry="' + esc(qid) + '" data-proof-k="' + esc(pkid) + '">📷 다시 고르기</button>'
+            + '<button type="button" class="btn btn-sm btn-ghost btn-block" data-proof-pin="' + esc(qid) + '" data-proof-k="' + esc(pkid) + '">🔒 엄마 PIN으로 사진 없이 통과</button>'
+            + '</div>';
         }
-        setTimeout(function () { try { renderModal(); } catch (e2) { /* noop */ } }, 1500);
+        toast('사진을 읽지 못했어요 — 다른 사진으로 다시 시도해 주세요');
         return;
       }
       state.active = pkid;
