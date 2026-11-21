@@ -296,11 +296,21 @@ body{
   width:32px;height:32px;flex:0 0 auto;border-radius:50%;border:0;background:rgba(255,255,255,.14);
   color:#fff;font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;
 }
-.frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.frame{
+  position:relative;width:100%;aspect-ratio:16/9;background:#000;
+  /* 차단판 두께·광고 건너뛰기 구멍 크기 */
+  --arm-bar:36px;--arm-hole:92px;--arm-hole-w:172px;
+}
+@media(min-width:600px){.frame{--arm-bar:52px;--arm-hole:84px;--arm-hole-w:210px}}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 /* 유튜브 탈출 차단: 플레이어 위를 우리 레이어로 덮어 제목·공유·YouTube 로고·추천 영상을 못 누르게 */
-.yt-arm{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.yt-arm{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;padding:0;border:0;background:transparent;pointer-events:none;-webkit-tap-highlight-color:transparent}
 .yt-arm[hidden]{display:none}
+/* 차단판을 3조각으로 나눠 오른쪽 아래 [광고 건너뛰기] 자리만 구멍으로 비워 둔다 */
+.yt-arm .arm-pane{position:absolute;display:block;padding:0;border:0;background:transparent;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.yt-arm .arm-a{left:0;right:0;top:0;bottom:calc(var(--arm-bar) + var(--arm-hole))}
+.yt-arm .arm-b{left:0;right:var(--arm-hole-w);bottom:var(--arm-bar);height:var(--arm-hole)}
+.yt-arm .arm-c{left:0;right:0;bottom:0;height:var(--arm-bar)}
 .yt-arm .yt-tip{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:9px 16px;border-radius:999px;background:rgba(12,8,20,.72);color:#fff;font-size:13px;font-weight:900;white-space:nowrap;pointer-events:none}
 .yt-arm .yt-tip[hidden]{display:none}
 .yt-pause,.yt-end{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center}
@@ -318,10 +328,38 @@ body{
 .ye-btn{padding:10px 15px;border:0;border-radius:999px;background:linear-gradient(180deg,#ffd7ea,#ffb0d3);color:#3a1030;font-family:inherit;font-size:13px;font-weight:900;cursor:pointer}
 .ye-btn.ghost{background:rgba(255,255,255,.16);color:#fff}
 .ye-btn:active{transform:scale(.97)}
-.ov-ctl{display:flex;gap:7px;padding:9px 12px 0}
-.ov-ctl button{flex:1 1 0;min-width:0;min-height:40px;padding:0 6px;border:0;border-radius:11px;background:rgba(255,255,255,.13);color:#fff;font-family:inherit;font-size:12.5px;font-weight:900;white-space:nowrap;cursor:pointer}
-.ov-ctl button:active{background:rgba(255,255,255,.24)}
+.ov-ctl{display:flex;flex-direction:column;gap:7px;width:100%;max-width:820px;margin:0 auto;padding:10px 12px 0}
+.seek-row{display:flex;align-items:center;gap:9px}
+.seek-row .tt{flex:0 0 auto;min-width:34px;text-align:center;font-size:11.5px;font-weight:800;color:#d9c9f2;font-variant-numeric:tabular-nums}
+.seek{
+  flex:1 1 auto;min-width:0;height:24px;margin:0;padding:0;background:transparent;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+}
+.seek::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,#ffa8d2 var(--p,0%),rgba(255,255,255,.22) var(--p,0%))}
+.seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:-5px;border-radius:50%;background:#fff;border:2px solid #ff8fc2;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.seek::-moz-range-track{height:6px;border-radius:999px;background:rgba(255,255,255,.22)}
+.seek::-moz-range-progress{height:6px;border-radius:999px;background:#ffa8d2}
+.seek::-moz-range-thumb{width:14px;height:14px;border:2px solid #ff8fc2;border-radius:50%;background:#fff}
+.seek:focus-visible{outline:2px solid #ffc9e0;outline-offset:3px;border-radius:999px}
+.btn-row{display:flex;gap:6px}
+.btn-row button{flex:1 1 0;min-width:0;min-height:40px;padding:0 4px;border:0;border-radius:11px;background:rgba(255,255,255,.13);color:#fff;font-family:inherit;font-size:12.5px;font-weight:900;white-space:nowrap;cursor:pointer}
+.btn-row button:active{background:rgba(255,255,255,.26)}
+.btn-row button:focus-visible{outline:2px solid #ffc9e0;outline-offset:2px}
+.btn-row button.on{background:linear-gradient(180deg,#ffd7ea,#ffb0d3);color:#3a1030}
 .ov-note{padding:9px 12px;font-size:11px;color:#b9a8d6;background:#1d1430;text-align:center}
+/* 전체화면: requestFullscreen 지원 시 + 미지원 인앱 브라우저는 CSS로 화면 가득 */
+.ov.fs,.ov:fullscreen{padding:0;background:#000;align-items:stretch;justify-content:stretch}
+.ov.fs .ov-card,.ov:fullscreen .ov-card{
+  max-width:none;width:100vw;height:100vh;height:100dvh;border-radius:0;display:flex;flex-direction:column;box-shadow:none;
+}
+.ov:fullscreen .ov-card{width:100%;height:100%}
+.ov.fs .frame,.ov:fullscreen .frame{flex:1 1 auto;aspect-ratio:auto;min-height:0}
+.ov.fs .ov-ctl,.ov:fullscreen .ov-ctl{padding-bottom:10px}
+@media(max-height:500px){
+  .ov.fs .ov-note,.ov:fullscreen .ov-note{display:none}
+  .ov.fs .btn-row button,.ov:fullscreen .btn-row button{min-height:34px}
+  .ov.fs .ov-ctl,.ov:fullscreen .ov-ctl{gap:5px;padding-top:6px}
+}
 
 /* ---------- 시간 종료 ---------- */
 .timeup{
@@ -440,9 +478,12 @@ body{
     </div>
     <div class="frame">
       <iframe id="ovFrame" title="유튜브 영상" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      <button class="yt-arm" id="ovArm" type="button" aria-label="영상 재생 또는 일시정지">
+      <div class="yt-arm" id="ovArm">
+        <button class="arm-pane arm-a" type="button" aria-label="영상 재생 또는 일시정지"></button>
+        <span class="arm-pane arm-b" aria-hidden="true"></span>
+        <span class="arm-pane arm-c" aria-hidden="true"></span>
         <span class="yt-tip" id="ovTip">▶ 눌러서 재생</span>
-      </button>
+      </div>
       <div class="yt-pause" id="ovPause" hidden role="button" tabindex="0" aria-label="계속 보기">
         <span class="yp-ico" aria-hidden="true">⏸</span>
         <b>잠깐 멈췄어요</b>
@@ -459,11 +500,23 @@ body{
       </div>
     </div>
     <div class="ov-ctl">
-      <button id="ovToggle" type="button">⏸ 잠깐 멈춤</button>
-      <button id="ovRestart" type="button">⏮ 처음부터</button>
-      <button id="ovOther2" type="button">📰 다른 영상</button>
+      <div class="seek-row">
+        <span class="tt" id="ovCur">0:00</span>
+        <input class="seek" id="ovSeek" type="range" min="0" max="1000" step="1" value="0" aria-label="영상 재생 위치">
+        <span class="tt" id="ovDur">0:00</span>
+      </div>
+      <div class="btn-row">
+        <button id="ovBack10" type="button" aria-label="10초 뒤로">⏪ 10초</button>
+        <button id="ovToggle" type="button">▶ 재생</button>
+        <button id="ovFwd10" type="button" aria-label="10초 앞으로">10초 ⏩</button>
+      </div>
+      <div class="btn-row">
+        <button id="ovFs" type="button" aria-label="전체화면">⛶ 전체화면</button>
+        <button id="ovRestart" type="button">⏮ 처음부터</button>
+        <button id="ovOther2" type="button">📰 다른 영상</button>
+      </div>
     </div>
-    <div class="ov-note">영상은 이 창 안에서만 재생돼요 · 유튜브 앱이나 다른 추천 영상으로는 넘어가지 않아요</div>
+    <div class="ov-note">영상은 이 창 안에서만 재생돼요 · 오른쪽 아래 [광고 건너뛰기]만 누를 수 있어요</div>
   </div>
 </div>
 
@@ -699,6 +752,86 @@ body{
      ============================================================ */
   var ov = $('ov'), ovFrame = $('ovFrame');
   var ovNow = null, ovState = -1;
+  /* 재생 위치 · 전체화면 상태 */
+  var ovDur = 0, ovCur = 0, ovSeekBusy = false, ovTickAt = 0, ovFsApi = false;
+
+  function fmtTime(s) {
+    s = Math.max(0, Math.floor(s || 0));
+    var m = Math.floor(s / 60), ss = s % 60;
+    return m + ':' + (ss < 10 ? '0' : '') + ss;
+  }
+  function ovSeekPaint() {
+    var c = $('ovCur'), d = $('ovDur'), r = $('ovSeek');
+    if (!c || !d || !r) return;
+    c.textContent = fmtTime(ovCur);
+    d.textContent = ovDur > 0 ? fmtTime(ovDur) : '0:00';
+    if (ovSeekBusy) return;
+    var p = ovDur > 0 ? Math.min(1, Math.max(0, ovCur / ovDur)) : 0;
+    r.value = String(Math.round(p * 1000));
+    r.style.setProperty('--p', (p * 100).toFixed(2) + '%');
+  }
+  function ovSetTime(t, d) {
+    if (typeof d === 'number' && d > 0) ovDur = d;
+    if (typeof t === 'number' && !ovSeekBusy) ovCur = t;
+    ovSeekPaint();
+  }
+  /* 원하는 위치로 이동 (끝난 뒤에 옮기면 그 지점부터 다시 재생) */
+  function ovSeekTo(t, play) {
+    if (!ovNow) return;
+    if (ovDur > 0) t = Math.min(ovDur, t);
+    t = Math.max(0, t || 0);
+    ovCur = t; ovTickAt = Date.now(); ovSeekPaint();
+    if (!$('ovEnd').hidden) { ovMount(t); return; }
+    ovCmd('seekTo', [t, true]);
+    if (play !== false) ovCmd('playVideo');
+  }
+  /* 전체화면: 브라우저가 지원하면 진짜 풀스크린, 아니면 CSS로 화면 가득 */
+  function ovFsPaint() {
+    var b = $('ovFs');
+    if (!b) return;
+    var on = ov.classList.contains('fs') || !!(document.fullscreenElement || document.webkitFullscreenElement);
+    b.textContent = on ? '⛶ 나가기' : '⛶ 전체화면';
+    b.setAttribute('aria-label', on ? '전체화면 나가기' : '전체화면');
+    b.classList.toggle('on', on);
+  }
+  function ovEnterFs() {
+    ov.classList.add('fs');
+    ovFsPaint();
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      try {
+        var req = ov.requestFullscreen || ov.webkitRequestFullscreen;
+        if (req) {
+          var r = req.call(ov);
+          if (r && r.then) { r.then(function () { ovFsApi = true; ovFsPaint(); })['catch'](function () {}); }
+          else { ovFsApi = true; }
+        }
+      } catch (e) {}
+    }
+    window.setTimeout(function () { ovHello(); ovSeekPaint(); }, 450);
+  }
+  function ovExitFs() {
+    ov.classList.remove('fs');
+    ovFsPaint();
+    try {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        var r = document.exitFullscreen();
+        if (r && r['catch']) r['catch'](function () {});
+      } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    } catch (e) {}
+    ovFsApi = false;
+    window.setTimeout(function () { ovHello(); ovSeekPaint(); }, 350);
+  }
+  function ovToggleFs() { if (ov.classList.contains('fs') || document.fullscreenElement || document.webkitFullscreenElement) ovExitFs(); else ovEnterFs(); }
+  function ovFsSync() {
+    var real = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (real) { ovFsApi = true; ov.classList.add('fs'); }
+    else if (ovFsApi) { ovFsApi = false; ov.classList.remove('fs'); }
+    ovFsPaint();
+  }
+  document.addEventListener('fullscreenchange', ovFsSync);
+  document.addEventListener('webkitfullscreenchange', ovFsSync);
 
   /* 플레이어에 "듣고 있다"고 알려야 재생 상태(끝·일시정지)를 받을 수 있다 */
   function ovHello() {
@@ -711,6 +844,9 @@ body{
     ovHello();
     window.setTimeout(ovHello, 600);
     window.setTimeout(ovHello, 1600);
+    /* 자막 없이 보기: 기본 자막 모듈을 내린다 */
+    window.setTimeout(function () { ovCmd('unloadModule', ['captions']); }, 1200);
+    window.setTimeout(function () { ovCmd('unloadModule', ['captions']); }, 2600);
   });
 
   /* 유튜브 플레이어 조작은 우리 버튼으로만 (플레이어는 클릭을 못 받는다) */
@@ -723,24 +859,30 @@ body{
   function ovPaint() {
     var playing = (ovState === 1);
     var t = $('ovToggle');
-    if (t) t.textContent = playing ? '⏸ 잠깐 멈춤' : '▶ 재생';
+    if (t) t.textContent = playing ? '⏸ 멈춤' : '▶ 재생';
     var tip = $('ovTip');
     if (tip) tip.hidden = playing || ovState === 2 || ovState === 3 || ovState === 5 || ovState === 0;
   }
-  function ovMount() {
+  function ovMount(startAt) {
     if (!ovNow) return;
-    ovState = -1;
+    var st = Math.max(0, Math.floor(startAt || 0));
+    ovState = -1; ovCur = st; ovTickAt = Date.now(); ovSeekBusy = false;
     $('ovEnd').hidden = true;
     $('ovPause').hidden = true;
     $('ovArm').hidden = false;
     ovFrame.hidden = false;
-    /* youtube-nocookie + 추천·주석·키보드·유튜브 전체화면 모두 끔 */
+    /* youtube-nocookie + 자막·추천·주석·키보드·유튜브 전체화면 모두 끔 */
     ovFrame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(ovNow.id)
-      + '?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&fs=0&autoplay=1';
+      + '?rel=0&modestbranding=1&cc_load_policy=0&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&fs=0&autoplay=1'
+      + (st > 0 ? '&start=' + st : '');
+    ovSeekPaint();
     ovPaint();
   }
   function ovEnded() {
     ovState = 0;
+    if (ovDur > 0) ovCur = ovDur;
+    ovSeekBusy = false;
+    ovSeekPaint();
     try { ovFrame.src = 'about:blank'; } catch (e) {}
     ovFrame.hidden = true;
     $('ovArm').hidden = true;
@@ -754,12 +896,14 @@ body{
     ovNow = { id: id, title: title || '영상' };
     $('ovTitle').textContent = ovNow.title;
     $('ovChan').textContent = chan || '';
+    ovDur = 0; ovCur = 0; ovTickAt = 0; ovSeekBusy = false;
     ovMount();
     ov.classList.add('show');
     ov.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
   function closeVideo() {
+    ovExitFs();
     ov.classList.remove('show');
     ov.setAttribute('aria-hidden', 'true');
     try { ovFrame.src = 'about:blank'; } catch (e) {}
@@ -767,6 +911,8 @@ body{
     $('ovPause').hidden = true;
     document.body.style.overflow = '';
     ovNow = null; ovState = -1;
+    ovDur = 0; ovCur = 0; ovSeekBusy = false;
+    ovSeekPaint();
   }
 
   /* 플레이어 상태: 1 재생 · 2 일시정지 · 0 끝 → 완료 화면으로 덮기 */
@@ -777,15 +923,39 @@ body{
     if (typeof d === 'string') { try { j = JSON.parse(d); } catch (err) { j = null; } }
     else if (d && typeof d === 'object') { j = d; }
     if (!j) return;
+
+    /* 재생 위치·전체 길이 받기 (infoDelivery) */
+    if (j.event === 'infoDelivery' && j.info
+      && (typeof j.info.currentTime === 'number' || typeof j.info.duration === 'number')) {
+      ovSetTime(j.info.currentTime, j.info.duration);
+      ovTickAt = Date.now();
+    }
+
     var st = null;
     if (j.event === 'onStateChange') st = j.info;
     else if (j.event === 'infoDelivery' && j.info && typeof j.info.playerState === 'number') st = j.info.playerState;
     if (st === null) return;
     if (st === 0) { ovEnded(); return; }
     ovState = st;
+    ovTickAt = Date.now();
     $('ovPause').hidden = !(st === 2);
     ovPaint();
   });
+
+  /* 초 단위로 재생바를 부드럽게 따라가게 (유튜브 값이 오면 그 값으로 맞춤) */
+  window.setInterval(function () {
+    if (!ov.classList.contains('show') || !ovNow) return;
+    if (ovState !== 1 || ovSeekBusy || ovDur <= 0) return;
+    var now = Date.now();
+    var dt = ovTickAt ? (now - ovTickAt) / 1000 : 0.25;
+    if (dt > 1.5) dt = 0.25;   /* 탭을 다녀온 경우 튀지 않게 */
+    ovTickAt = now;
+    if (ovCur + dt < ovDur) { ovCur += dt; ovSeekPaint(); }
+  }, 250);
+  /* 가만히 있어도 유튜브가 시간을 다시 보내도록 5초마다 신호 */
+  window.setInterval(function () {
+    if (ov.classList.contains('show') && ovNow && ovState === 1) ovHello();
+  }, 5000);
 
   $('ovArm').addEventListener('click', function () {
     if (!$('ovEnd').hidden) return;
@@ -800,9 +970,36 @@ body{
   $('ovToggle').addEventListener('click', function () {
     if (ovState === 1) ovCmd('pauseVideo'); else ovCmd('playVideo');
   });
+
+  /* 재생 위치 슬라이더: 끌거나 콕 찍으면 그 자리로 */
+  var seekEl = $('ovSeek');
+  function seekPreview() {
+    if (ovDur <= 0) return null;
+    var t = (Number(seekEl.value) / 1000) * ovDur;
+    $('ovCur').textContent = fmtTime(t);
+    seekEl.style.setProperty('--p', (Number(seekEl.value) / 10).toFixed(2) + '%');
+    return t;
+  }
+  function seekCommit() {
+    if (!ovSeekBusy) return;
+    ovSeekBusy = false;
+    var t = seekPreview();
+    ovTickAt = Date.now();
+    if (t === null) ovSeekPaint(); else ovSeekTo(t, false);
+  }
+  seekEl.addEventListener('pointerdown', function () { ovSeekBusy = true; });
+  seekEl.addEventListener('keydown', function (e) { if (/^(Arrow|Home|End|Page)/.test(e.key || '')) ovSeekBusy = true; });
+  seekEl.addEventListener('input', function () { ovSeekBusy = true; seekPreview(); });
+  seekEl.addEventListener('change', seekCommit);
+  document.addEventListener('pointerup', function () { if (ovSeekBusy) seekCommit(); });
+  document.addEventListener('pointercancel', function () { if (ovSeekBusy) { ovSeekBusy = false; ovSeekPaint(); } });
+
+  $('ovBack10').addEventListener('click', function () { ovSeekTo(ovCur - 10, false); });
+  $('ovFwd10').addEventListener('click', function () { ovSeekTo(ovCur + 10, false); });
+  $('ovFs').addEventListener('click', ovToggleFs);
   $('ovRestart').addEventListener('click', function () {
     if (!$('ovEnd').hidden) ovMount();
-    else { ovCmd('seekTo', [0, true]); ovCmd('playVideo'); }
+    else { ovCur = 0; ovSeekPaint(); ovCmd('seekTo', [0, true]); ovCmd('playVideo'); }
   });
   $('ovAgain').addEventListener('click', ovMount);
   $('ovOther').addEventListener('click', closeVideo);
@@ -818,7 +1015,13 @@ body{
   $('ovClose').addEventListener('click', closeVideo);
   ov.addEventListener('click', function (e) { if (e.target === ov) closeVideo(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && ov.classList.contains('show')) closeVideo();
+    if (e.key !== 'Escape' || !ov.classList.contains('show')) return;
+    /* 전체화면에서는 먼저 전체화면만 나간다 */
+    if (ov.classList.contains('fs') || document.fullscreenElement || document.webkitFullscreenElement) {
+      ovExitFs();
+      return;
+    }
+    closeVideo();
   });
 
   /* ============================================================
