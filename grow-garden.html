@@ -45,9 +45,8 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 /* ---------- 하늘 장식 ---------- */
 .sky{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0}
 .sun{
-  position:absolute; right:-40px; top:-50px; width:210px; height:210px; border-radius:50%;
-  background:radial-gradient(circle at 40% 40%, #fff6c9 0%, #ffe066 45%, rgba(255,224,102,0) 72%);
-  filter:blur(.3px);
+  position:absolute; right:-64px; top:-78px; width:184px; height:184px; border-radius:50%; opacity:.72;
+  background:radial-gradient(circle at 40% 40%, #fffbe2 0%, #ffe89a 42%, rgba(255,232,154,0) 70%);
 }
 .cloud{position:absolute; background:#fff; border-radius:999px; opacity:.85; filter:blur(.2px)}
 .cloud::before,.cloud::after{content:""; position:absolute; background:#fff; border-radius:50%}
@@ -143,7 +142,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 @media (min-width:700px){ .plots{grid-template-columns:repeat(6,1fr); gap:10px} }
 
 .plot{
-  position:relative; aspect-ratio:1/1; border-radius:16px; overflow:hidden;
+  position:relative; aspect-ratio:1/.96; border-radius:16px; overflow:hidden;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
   background:
     radial-gradient(80% 60% at 50% 110%, #6b4227 0%, rgba(107,66,39,0) 70%),
@@ -194,6 +193,60 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
   100%{opacity:0; transform:translateY(16px) scale(1.05)}
 }
 
+/* 목표 · 추천 카드 */
+.homecards{display:grid; gap:9px; margin-top:10px}
+.goal,.rec{
+  display:flex; align-items:center; gap:11px; border-radius:20px; padding:12px 13px;
+  box-shadow:var(--shadow); position:relative;
+}
+.goal{background:linear-gradient(135deg,#fffdf4,#fff1c8); border:1px solid #f2dfa4}
+.rec{background:linear-gradient(135deg,#f6fff4,#e2f8e0); border:1px solid #bfe6c0}
+.goal .gi,.rec .gi{
+  width:46px; height:46px; flex:0 0 auto; border-radius:14px; display:grid; place-items:center;
+  font-size:24px; background:#fff; border:1px solid #efe2b6; box-shadow:0 2px 6px rgba(150,120,20,.1);
+}
+.rec .gi{border-color:#cbe9c9}
+.goal .gt,.rec .gt{flex:1; min-width:0}
+.goal .gt b,.rec .gt b{display:block; font-size:14px; font-weight:900; letter-spacing:-.03em}
+.goal .gt span,.rec .gt span{display:block; font-size:11.5px; font-weight:800; color:#8a7132; margin-top:1px; line-height:1.35}
+.rec .gt span{color:#4a7a56}
+.gbar{display:block; flex:1; height:7px; border-radius:99px; background:#f0e4bd; overflow:hidden}
+.gbar b{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#ffc94d,#f0a51a); transition:width .4s}
+.gline{display:flex !important; align-items:center; gap:7px; margin-top:6px}
+.gline em{font-style:normal; font-size:10.5px; font-weight:900; color:#9a8b5c; white-space:nowrap}
+
+/* 돌연변이 도감 */
+.dexcard{margin-top:10px; background:#fffdf6; border:1px solid #e9e2c8; border-radius:20px; padding:12px 13px; box-shadow:var(--shadow)}
+.dexcard>b{display:block; font-size:13.5px; font-weight:900; margin-bottom:8px; letter-spacing:-.02em}
+.dex{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+.dxi{border-radius:14px; padding:9px 4px 8px; text-align:center; border:1px solid #e8e2ce; background:#fff}
+.dxi .de{font-size:20px; line-height:1.1}
+.dxi b{display:block; font-size:11.5px; font-weight:900; margin-top:3px; letter-spacing:-.02em}
+.dxi small{display:block; font-size:10px; font-weight:800; color:#8b8264; margin-top:1px}
+.dxi.golden{background:linear-gradient(180deg,#fffbe6,#ffeeb0); border-color:#f0d98a}
+.dxi.rainbow{background:linear-gradient(135deg,#ffe6f2,#e8eeff 50%,#e2ffe9); border-color:#dcc9f2}
+.dxi.frost{background:linear-gradient(180deg,#f1fdff,#d8f4ff); border-color:#a8dcf0}
+.dxi.locked{opacity:.55; filter:grayscale(.7)}
+.gbtn{
+  flex:0 0 auto; align-self:center; min-height:40px; padding:8px 12px; border-radius:12px;
+  background:#fff; border:1.5px solid #e8cf88; font-size:12.5px; font-weight:900; color:#7a5a12;
+  box-shadow:0 2px 0 #ecd48f;
+}
+.rec .gbtn{border-color:#9fd8a2; color:#237a43; box-shadow:0 2px 0 #b6e2b8}
+.gbtn:active{transform:translateY(2px); box-shadow:none}
+.gbtn[disabled]{background:#f1f3f1; border-color:#e0e6e0; color:#9aa89e; box-shadow:none; pointer-events:none}
+
+/* 희귀 안내 */
+.legend{
+  margin-top:12px; background:#fffdf6; border:1px dashed #e8d9a8; border-radius:18px; padding:12px 13px;
+}
+.legend b{display:block; font-size:13.5px; font-weight:900; letter-spacing:-.02em; margin-bottom:7px}
+.legend ul{list-style:none; margin:0; padding:0; display:grid; gap:5px}
+.legend li{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:800; color:#5c5236}
+.legend li span{font-size:16px}
+.legend li b{display:inline; margin:0; font-size:inherit}
+.legend small{display:block; margin-top:8px; font-size:11.5px; font-weight:800; color:#9a8b5c}
+
 /* 팁 줄 */
 .tip{
   margin:12px 2px 0; font-size:13px; font-weight:800; color:#3c6b4d;
@@ -234,6 +287,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 
 .pill{display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:900; padding:2px 8px; border-radius:99px; background:#eef7ee; color:#3d7a52; border:1px solid #d8ebd8}
 .pips{display:inline-flex; gap:3px; vertical-align:middle; margin-left:5px}
+.lvt{display:inline-block; margin-left:5px; font-size:11.5px; font-weight:900; color:#3f7a52; background:#e9f8ec; border:1px solid #cfe9d3; border-radius:8px; padding:0 6px; vertical-align:2px}
 .pips i{width:8px; height:8px; border-radius:3px; background:#dbe6db}
 .pips i.on{background:#4ab86b; box-shadow:0 0 0 2px #d7f0dd}
 
@@ -394,6 +448,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="pond" id="pond" hidden><span>🐟</span></div>
       </div>
       <p class="tip" id="tip">다 자란 작물을 콕 눌러서 수확해 봐! 🌾</p>
+      <div class="homecards" id="homecards"></div>
     </section>
 
     <!-- 씨앗 상점 -->
@@ -418,6 +473,15 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
       <div class="mutchips" id="mutchips"></div>
       <div id="marketList"></div>
       <button class="bigbtn" id="sellAllBtn" type="button" data-act="sellAll">🪙 전부 팔기</button>
+      <div class="legend">
+        <b>🌈 희귀 작물은 이렇게 나와요</b>
+        <ul>
+          <li><span>✨</span> 황금 작물 — 가격 <b>2배</b></li>
+          <li><span>🌈</span> 무지개 작물 — 가격 <b>3배</b></li>
+          <li><span>❄️</span> 서리 작물 — 가격 <b>1.5배</b></li>
+        </ul>
+        <small>수확할 때마다 15% 확률로 희귀 작물이 나와요!</small>
+      </div>
     </section>
 
     <!-- 업그레이드 -->
@@ -779,6 +843,74 @@ function injectKeyframes(){
   document.head.appendChild(st);
 }
 
+function nextGoal(){
+  const g = G();
+  let best = null;
+  UPGRADES.forEach(u => {
+    const lv = g.up[u.id] || 0;
+    if(lv >= u.max) return;
+    const price = u.prices[lv];
+    if(!best || price < best.price){
+      best = {kind:'up', id:u.id, emoji:u.emoji, name:u.name + (lv ? ' Lv.' + (lv+1) : ''), price:price, desc:u.desc(lv+1)};
+    }
+  });
+  DECOS.forEach(d => {
+    if(g.deco[d.id]) return;
+    if(!best || d.price < best.price){
+      best = {kind:'deco', id:d.id, emoji:d.emoji, name:d.name, price:d.price, desc:d.desc};
+    }
+  });
+  return best;
+}
+function recommendSeed(){
+  const g = G();
+  const affordable = SEEDS.filter(s => s.cost <= g.coins);
+  return affordable.length ? affordable[affordable.length - 1] : SEEDS[0];
+}
+function renderHome(){
+  const g = G();
+  const box = $('#homecards');
+  if(!box) return;
+  let html = '';
+  const goal = nextGoal();
+  if(goal){
+    const pct = Math.min(100, Math.round(g.coins / goal.price * 100));
+    html += `<div class="goal">
+      <span class="gi">${goal.emoji}</span>
+      <span class="gt">
+        <b>다음 목표 · ${goal.name}</b>
+        <span>${goal.desc}</span>
+        <span class="gline"><i class="gbar"><b style="width:${pct}%"></b></i><em>${nf(Math.min(g.coins, goal.price))}/${nf(goal.price)}🪙</em></span>
+      </span>
+      <button class="gbtn" type="button" data-act="goUp">보러 가기</button>
+    </div>`;
+  }else{
+    html += `<div class="goal">
+      <span class="gi">👑</span>
+      <span class="gt"><b>정원 마스터!</b><span>업그레이드와 꾸미기를 모두 끝냈어요 🎉</span></span>
+    </div>`;
+  }
+  const rec = recommendSeed();
+  const empty = g.plots.indexOf(null) >= 0;
+  html += `<div class="rec">
+    <span class="gi">${rec.emoji}</span>
+    <span class="gt">
+      <b>지금은 ${rec.name} 씨앗이 딱!</b>
+      <span>${rec.grow}초면 다 자라요 · 다 자라면 ${nf(rec.sell)}🪙</span>
+    </span>
+    <button class="gbtn" type="button" data-act="recPlant" data-seed="${rec.id}"${(empty && g.coins >= rec.cost) ? '' : ' disabled'}>${rec.cost}🪙 심기</button>
+  </div>`;
+
+  const dex = [['golden','✨','황금','2배'], ['rainbow','🌈','무지개','3배'], ['frost','❄️','서리','1.5배']];
+  html += `<div class="dexcard"><b>🌈 돌연변이 도감</b><div class="dex">` +
+    dex.map(d => {
+      const n = g.stats.byMut[d[0]] || 0;
+      return `<div class="dxi ${d[0]}${n ? '' : ' locked'}"><span class="de">${d[1]}</span><b>${d[2]}</b><small>${n ? nf(n) + '개 발견' : '아직 없음'}</small></div>`;
+    }).join('') + `</div></div>`;
+
+  box.innerHTML = html;
+}
+
 function renderShop(){
   const g = G();
   const shop = $('#shopList');
@@ -832,7 +964,7 @@ function renderMarket(){
       if(!n) return;
       count += n;
       value += n * Math.round(s.sell * MUTS[m].mult);
-      parts.push(`<span class="mc ${MUTS[m].cls}" style="padding:2px 7px;font-size:11px">${MUTS[m].icon || '🌱'}${MUTS[m].name[0]} ${n}</span>`);
+      parts.push(`<span class="mc ${MUTS[m].cls}" style="padding:2px 7px;font-size:11px">${MUTS[m].icon || '🌱'} ${MUTS[m].name} ${n}</span>`);
     });
     total += value;
     html += `<div class="row">
@@ -861,7 +993,7 @@ function renderUpgrades(){
     html += `<div class="row">
       <span class="ri">${u.emoji}</span>
       <span class="rmain">
-        <span class="rname">${u.name} ${lv ? 'Lv.' + lv : ''}${pips}</span>
+        <span class="rname">${u.name}${lv ? `<span class="lvt">Lv.${lv}</span>` : ''}${pips}</span>
         <span class="rdesc">${u.desc(lv)}</span>
       </span>
       ${maxed
@@ -891,6 +1023,7 @@ function renderUpgrades(){
 function renderAll(){
   renderHUD();
   renderGarden();
+  renderHome();
   renderShop();
   renderMarket();
   renderUpgrades();
@@ -1245,6 +1378,8 @@ document.addEventListener('click', function(e){
     return;
   }
   if(act === 'shopPlant'){ plantFirst(t.dataset.seed); return; }
+  if(act === 'recPlant'){ plantFirst(t.dataset.seed); return; }
+  if(act === 'goUp'){ goTab('up'); return; }
   if(act === 'sellRow'){ sellRow(t.dataset.seed); return; }
   if(act === 'sellAll'){ sellAll(); return; }
   if(act === 'sellOne'){ sellOne(t.dataset.seed, t.dataset.mut, Number(t.dataset.unit)); return; }
