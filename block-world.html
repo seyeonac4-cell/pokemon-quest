@@ -3898,6 +3898,18 @@ function init() {
       coins: function (n) { addCoins(n); },
       stick: function (x, y) { G.stick.x = x; G.stick.y = y; },
       jump: function () { doJump(); },
+      sim: function (sec, sx, sy, jumpAt) {
+        var ox = G.stick.x, oy = G.stick.y;
+        G.stick.x = sx; G.stick.y = sy;
+        var n = Math.round(sec * 60), out = [];
+        for (var i = 0; i < n; i++) {
+          if (jumpAt !== undefined && i === jumpAt) doJump();
+          updatePlayer(1 / 60);
+          if (i % 20 === 0) out.push([+G.p.x.toFixed(2), +G.p.y.toFixed(2), +G.p.z.toFixed(2)]);
+        }
+        G.stick.x = ox; G.stick.y = oy;
+        return out;
+      },
       ride: function (r) { G.ride = r; updateRideUI(); },
       state: function () { return { p: G.p, coins: SAVE && SAVE.coins, spot: G.spot && G.spot.label, paused: G.paused, gates: G.gates.map(function (g) { return g.solved; }) }; }
     };
