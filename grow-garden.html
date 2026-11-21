@@ -158,6 +158,22 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   background:linear-gradient(135deg,#4ec97e,#1f9c57); transform:scale(1.12);
   box-shadow:0 4px 12px rgba(20,120,70,.45);
 }
+/* 🎮 미니게임 놀이터 — 눈에 띄게 큰 이름패 */
+.zone.bigLb{transform-origin:50% 100%}
+.zone.bigLb .lb{
+  font-size:11px; padding:3px 10px; letter-spacing:-.04em;
+  background:linear-gradient(135deg,#a97bff,#6d28d9); color:#fff;
+  border:1.5px solid rgba(255,255,255,.9);
+  animation:lbGlow 2.2s ease-in-out infinite;
+}
+.zone.bigLb.near .lb{
+  background:linear-gradient(135deg,#ffd84d,#f08a1a); color:#5b3000;
+  box-shadow:0 5px 16px rgba(220,140,0,.55);
+}
+@keyframes lbGlow{
+  0%,100%{box-shadow:0 4px 11px rgba(109,40,217,.42)}
+  50%{box-shadow:0 5px 18px rgba(150,90,255,.85)}
+}
 .zone.near::after{
   content:""; position:absolute; left:50%; top:-5px; width:120%; height:180%;
   transform:translateX(-50%); border-radius:50%; pointer-events:none;
@@ -231,18 +247,41 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 }
 .acts{
   position:absolute; right:10px; bottom:calc(11px + env(safe-area-inset-bottom)); z-index:30;
-  display:grid; grid-template-columns:repeat(2, 50px); gap:6px; pointer-events:auto;
+  display:grid; grid-template-columns:repeat(2, 54px); gap:7px; pointer-events:auto;
   touch-action:none; -webkit-tap-highlight-color:transparent;
 }
 .abtn{
-  width:50px; height:50px; border-radius:16px; border:2px solid rgba(255,255,255,.82);
+  position:relative;
+  width:54px; height:54px; border-radius:17px; border:2px solid rgba(255,255,255,.82);
   background:rgba(255,255,255,.9); display:flex; flex-direction:column; align-items:center;
   justify-content:center; font-size:17px; font-weight:900; color:#2f5540; padding:0;
   box-shadow:0 5px 14px rgba(20,60,30,.26); cursor:pointer; line-height:1;
   touch-action:none; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none;
 }
-.abtn span{font-size:7.5px; font-weight:900; letter-spacing:-.03em; margin-top:1px; color:#5d7a63; line-height:1}
-.abtn .ic{font-size:16px; line-height:1; display:block}
+.abtn span{font-size:9px; font-weight:900; letter-spacing:-.03em; margin-top:2px; color:#5d7a63; line-height:1}
+.abtn .ic{font-size:19px; line-height:1; display:block}
+/* 🎮 미니게임 — 한 칸을 다 쓰는 큰 강조 버튼 */
+.abtn.mega{
+  grid-column:1 / -1; width:auto; height:64px; flex-direction:row; gap:7px;
+  border-radius:20px; border:2.5px solid #fff;
+  background:linear-gradient(135deg,#a97bff 0%,#7b3fe4 55%,#5a23c9 100%);
+  color:#fff; padding:0 8px;
+  box-shadow:0 9px 22px rgba(90,35,201,.48), 0 0 0 3px rgba(255,255,255,.6), inset 0 2px 0 rgba(255,255,255,.35);
+  animation:megaGlow 2.6s ease-in-out infinite;
+}
+.abtn.mega .ic{font-size:27px}
+.abtn.mega span{font-size:13.5px; color:#fff; margin-top:0; letter-spacing:-.05em; text-shadow:0 1px 2px rgba(40,10,90,.45)}
+.abtn.mega .mb3{
+  position:absolute; top:-7px; right:-5px; min-width:23px; height:19px; padding:0 5px; border-radius:99px;
+  background:linear-gradient(180deg,#fff0a8,#ffc93d); color:#7a4b00; border:2px solid #fff;
+  font-size:10.5px; font-weight:900; font-style:normal; display:grid; place-items:center; letter-spacing:-.04em;
+  box-shadow:0 3px 8px rgba(140,90,0,.35);
+}
+@keyframes megaGlow{
+  0%,100%{box-shadow:0 9px 22px rgba(90,35,201,.45), 0 0 0 3px rgba(255,255,255,.55), inset 0 2px 0 rgba(255,255,255,.35)}
+  50%{box-shadow:0 12px 30px rgba(140,70,255,.75), 0 0 0 5px rgba(255,255,255,.9), inset 0 2px 0 rgba(255,255,255,.45)}
+}
+.abtn.mega:active,.abtn.mega.pressing{transform:scale(.95); background:linear-gradient(135deg,#8a55ee,#4a17b0)}
 .abtn.go{
   background:linear-gradient(135deg,#8fe3a8,#38a55c); color:#fff; border-color:rgba(255,255,255,.7);
   box-shadow:0 8px 20px rgba(40,140,80,.45);
@@ -261,7 +300,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 }
 
 .prompt{
-  position:absolute; left:50%; bottom:calc(126px + env(safe-area-inset-bottom)); z-index:28;
+  position:absolute; left:50%; bottom:calc(256px + env(safe-area-inset-bottom)); z-index:28;
   transform:translate(-50%, 10px); opacity:0; pointer-events:none;
   display:inline-flex; align-items:center; gap:6px; border:0; border-radius:999px;
   padding:9px 16px; font:inherit; font-size:13px; font-weight:900; color:#fff; cursor:pointer;
@@ -277,7 +316,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 .prompt.sis{background:linear-gradient(135deg,#ff8fbf,#c94b86); box-shadow:0 10px 26px rgba(180,60,120,.45), inset 0 1px 0 rgba(255,255,255,.45)}
 
 .ctxRow{
-  position:absolute; right:10px; bottom:calc(126px + env(safe-area-inset-bottom)); z-index:28;
+  position:absolute; right:10px; bottom:calc(256px + env(safe-area-inset-bottom)); z-index:28;
   display:flex; flex-direction:column; align-items:flex-end; gap:5px; pointer-events:none;
 }
 .ctxRow button{
@@ -597,7 +636,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 #fx{position:fixed; inset:0; pointer-events:none; z-index:70; overflow:hidden}
 .conf{position:absolute; width:9px; height:14px; border-radius:2px; will-change:transform}
 #toast{
-  position:fixed; left:50%; bottom:calc(196px + env(safe-area-inset-bottom)); transform:translate(-50%,10px);
+  position:fixed; left:50%; bottom:calc(262px + env(safe-area-inset-bottom)); transform:translate(-50%,10px);
   background:#1d3a26; color:#fff; font-weight:900; font-size:12.5px; line-height:1.35;
   padding:9px 14px; border-radius:13px; box-shadow:0 14px 34px rgba(0,0,0,.28);
   opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; max-width:min(88vw,400px);
@@ -612,9 +651,13 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   .coinpill{font-size:13px; padding:3px 8px 3px 6px}
   .stick{width:92px; height:92px}
   .stick .knob{width:40px; height:40px; margin:-20px 0 0 -20px}
-  .acts{grid-template-columns:repeat(2,46px); gap:5px}
-  .abtn{width:46px; height:46px; font-size:15px; border-radius:14px}
-  .prompt{font-size:12px; padding:8px 13px}
+  .acts{grid-template-columns:repeat(2,48px); gap:6px}
+  .abtn{width:48px; height:48px; font-size:15px; border-radius:15px}
+  .abtn.mega{height:58px; border-radius:18px}
+  .abtn.mega .ic{font-size:24px}
+  .abtn.mega span{font-size:12px}
+  .prompt{font-size:12px; padding:8px 13px; bottom:calc(232px + env(safe-area-inset-bottom))}
+  .ctxRow{bottom:calc(232px + env(safe-area-inset-bottom))}
 }
 /* ---------- 🌍 월드 연결 바 ---------- */
 .worldbar{flex:0 0 auto; display:flex; align-items:center; gap:6px; padding:0 2px; min-width:0}
@@ -680,56 +723,80 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 .mwrap{display:flex; flex-direction:column; width:100%; max-width:720px; height:100%; gap:7px; min-height:0}
 .mhead{flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:0 2px}
 .mbk{
-  width:38px; height:38px; flex:0 0 auto; border-radius:13px; background:#fff; border:2px solid #d7e9d5;
-  box-shadow:0 3px 0 #cbe0c9; display:grid; place-items:center; font-size:17px; font-weight:900; color:#3f7a52; padding:0;
+  width:42px; height:42px; flex:0 0 auto; border-radius:14px; background:#fff; border:2px solid #d7e9d5;
+  box-shadow:0 3px 0 #cbe0c9; display:grid; place-items:center; font-size:19px; font-weight:900; color:#3f7a52; padding:0;
 }
 .mbk:active{transform:translateY(2px); box-shadow:none}
 .mhead .mt{flex:1 1 auto; min-width:0}
-.mhead .mt b{display:block; font-size:16px; font-weight:900; letter-spacing:-.04em; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.mhead .mt span{display:block; font-size:10.5px; font-weight:800; color:#5d7a63; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mhead .mt b{display:block; font-size:17.5px; font-weight:900; letter-spacing:-.04em; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mhead .mt span{display:block; font-size:11.5px; font-weight:800; color:#5d7a63; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .mcoin{
   flex:0 0 auto; display:inline-flex; align-items:center; gap:4px; background:linear-gradient(180deg,#fff4cf,#ffe28a);
   border:2px solid #f3c64a; border-radius:999px; padding:4px 10px 4px 7px;
-  font-weight:900; font-size:13px; color:#6b4700; font-variant-numeric:tabular-nums;
+  font-weight:900; font-size:15px; color:#6b4700; font-variant-numeric:tabular-nums;
   box-shadow:inset 0 1px 0 #fffdf0, 0 3px 0 #e7b62f;
 }
 .mbody{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:7px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
 .mbody.game{overflow:hidden}
 
 /* --- 허브 카드 --- */
-.mgGrid{display:flex; flex-direction:column; gap:7px}
+.mgGrid{display:flex; flex-direction:column; gap:10px}
 .mgCard{
-  display:grid; grid-template-columns:46px minmax(0,1fr) 14px; gap:9px; align-items:center; width:100%;
-  text-align:left; padding:9px 11px; border-radius:16px; background:#fff; border:2px solid #d9ead7;
-  box-shadow:inset 0 1px 0 #fff, 0 4px 0 rgba(110,165,110,.20); cursor:pointer;
+  display:grid; grid-template-columns:68px minmax(0,1fr) 18px; gap:12px; align-items:center; width:100%;
+  min-height:140px;
+  text-align:left; padding:16px 14px; border-radius:20px; background:#fff; border:2.5px solid #d9ead7;
+  box-shadow:inset 0 1px 0 #fff, 0 5px 0 rgba(110,165,110,.20); cursor:pointer;
 }
 .mgCard:active{transform:translateY(3px); box-shadow:inset 0 1px 0 #fff, 0 1px 0 rgba(110,165,110,.2)}
-.mgIc{font-size:26px; line-height:1; text-align:center; background:linear-gradient(180deg,#f5fff1,#e5f8e2);
-  border-radius:13px; padding:7px 0; border:1px solid #d5efd4}
-.mgInfo{display:flex; flex-direction:column; gap:1px; min-width:0}
-.mgName{font-size:15px; font-weight:900; letter-spacing:-.04em; color:#274d33; line-height:1.2}
-.mgDesc{font-size:11px; font-weight:800; color:#6b8471; line-height:1.32}
-.mgRw{font-size:10px; font-weight:900; color:#a06a00; background:#fff6d8; border:1px solid #ffe4a3;
-  border-radius:7px; padding:1px 6px; margin-top:3px; align-self:flex-start; line-height:1.5}
-.mrecWrap{display:flex; flex-wrap:wrap; gap:1px 10px; margin-top:3px}
-.mrecRow{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:900; line-height:1.4}
+.mgIc{font-size:38px; line-height:1; text-align:center; background:linear-gradient(180deg,#f5fff1,#e5f8e2);
+  border-radius:17px; padding:10px 0; border:1.5px solid #d5efd4}
+.mgInfo{display:flex; flex-direction:column; gap:2px; min-width:0}
+.mgName{font-size:19px; font-weight:900; letter-spacing:-.045em; color:#274d33; line-height:1.2}
+.mgDesc{font-size:12.5px; font-weight:800; color:#6b8471; line-height:1.34}
+.mgRw{font-size:12px; font-weight:900; color:#a06a00; background:#fff6d8; border:1.5px solid #ffe4a3;
+  border-radius:9px; padding:3px 9px; margin-top:5px; align-self:flex-start; line-height:1.5; word-break:keep-all}
+.mrecWrap{display:flex; flex-wrap:wrap; gap:2px 12px; margin-top:5px}
+.mrecRow{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:900; line-height:1.45}
 .mrecRow i{font-style:normal; color:#8aa08f}
 .mrecRow b{color:#2f6e45; font-variant-numeric:tabular-nums}
 .mrecRow.sis i{color:#b06a90}
 .mrecRow.sis b{color:#a34d78}
-.mgArrow{font-size:17px; color:#9db2a2; text-align:center}
-.hubWrap{margin:auto 0; display:flex; flex-direction:column; gap:7px}
+.mgArrow{font-size:23px; color:#9db2a2; text-align:center}
+.hubWrap{margin:auto 0; display:flex; flex-direction:column; gap:10px}
 .mgHero{
-  flex:0 0 auto; min-height:86px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-  border-radius:18px; background:radial-gradient(120% 120% at 50% 0%,#ffffff,#eaffdc);
-  border:2px dashed #cfe8cd; color:#2f6e45; text-align:center; padding:10px;
+  flex:0 0 auto; min-height:112px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  border-radius:20px; background:radial-gradient(120% 120% at 50% 0%,#ffffff,#eaffdc);
+  border:2px dashed #cfe8cd; color:#2f6e45; text-align:center; padding:14px;
 }
-.mgHero .he{font-size:34px; line-height:1.1; animation:heroFloat 2.6s ease-in-out infinite}
+.mgHero .he{font-size:44px; line-height:1.1; animation:heroFloat 2.6s ease-in-out infinite}
 @keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
-.mgHero b{font-size:14px; font-weight:900; letter-spacing:-.04em}
-.mgHero span{font-size:11px; font-weight:800; color:#6b8471}
-.mgFoot{font-size:11px; font-weight:800; color:#5d7a63; line-height:1.45; background:rgba(255,255,255,.7);
-  border-radius:14px; padding:8px 11px; border:1.5px solid #d9ead7}
+.mgHero b{font-size:17px; font-weight:900; letter-spacing:-.04em}
+.mgHero span{font-size:12.5px; font-weight:800; color:#6b8471}
+.mgFoot{font-size:12px; font-weight:800; color:#5d7a63; line-height:1.5; background:rgba(255,255,255,.7);
+  border-radius:16px; padding:11px 13px; border:1.5px solid #d9ead7}
+/* 좁은 폭·넓은 화면에 맞춰 카드 결 조정 */
+@media (max-width:380px){
+  .mgCard{grid-template-columns:58px minmax(0,1fr) 14px; gap:10px; padding:12px 12px; min-height:112px}
+  .mgIc{font-size:32px; padding:8px 0; border-radius:15px}
+  .mgName{font-size:17.5px}
+  .mgDesc{font-size:12px}
+  .mgRw{font-size:11.5px; padding:3px 8px}
+  .mrecRow{font-size:11.5px; gap:4px}
+  .mrecWrap{gap:2px 9px}
+}
+@media (min-width:640px){
+  .mgCard{grid-template-columns:86px minmax(0,1fr) 20px; gap:15px; padding:18px 20px; min-height:136px}
+  .mgIc{font-size:48px; padding:12px 0}
+  .mgName{font-size:21px}
+  .mgDesc{font-size:13.5px}
+  .mgRw{font-size:13px; padding:4px 11px}
+  .mrecRow{font-size:13px}
+  .mgArrow{font-size:26px}
+  .mgHero{min-height:120px}
+  .mgHero b{font-size:19px}
+  .mgHero span{font-size:13.5px}
+  .mgFoot{font-size:13px; padding:13px 16px}
+}
 
 /* --- 게임 공통 --- */
 .mgTop{flex:0 0 auto; display:flex; align-items:center; gap:5px; flex-wrap:wrap}
@@ -764,7 +831,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 .mgDone .mgGet{font-size:16px; font-weight:900; color:#a06a00; margin-top:2px}
 .mgBtns{display:flex; gap:7px; width:100%; margin-top:9px}
 .mgBtns button{
-  flex:1 1 0; min-height:44px; border-radius:13px; font-size:13.5px; font-weight:900; color:#fff;
+  flex:1 1 0; min-height:52px; border-radius:15px; font-size:15px; font-weight:900; color:#fff;
   background:linear-gradient(135deg,#5ecd7e,#2f9e57); box-shadow:0 3px 0 #23773f;
 }
 .mgBtns button.gh{background:linear-gradient(180deg,#f2f8f1,#e2efe2); color:#4f6b56; box-shadow:0 3px 0 #cddecb}
@@ -773,12 +840,12 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 /* --- 당근 미로 --- */
 .dpad{
   flex:0 0 auto; display:grid; gap:6px; justify-content:center; align-content:center;
-  grid-template-columns:repeat(3,60px); grid-template-rows:repeat(2,50px);
+  grid-template-columns:repeat(3,72px); grid-template-rows:repeat(2,58px);
   grid-template-areas:". up ." "left down right";
 }
 .dpad button{
-  border-radius:15px; background:#fff; border:2px solid #d7e9d5; box-shadow:0 3px 0 #cbe0c9;
-  font-size:19px; font-weight:900; color:#35714a; display:grid; place-items:center; padding:0;
+  border-radius:17px; background:#fff; border:2px solid #d7e9d5; box-shadow:0 3px 0 #cbe0c9;
+  font-size:23px; font-weight:900; color:#35714a; display:grid; place-items:center; padding:0;
   touch-action:none; -webkit-user-select:none; user-select:none;
 }
 .dpad button.on{background:linear-gradient(180deg,#dcf7e0,#b6ecc3); border-color:#7fd094; transform:translateY(2px); box-shadow:0 1px 0 #cbe0c9}
@@ -883,10 +950,10 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
     <div class="stick" id="stick" aria-label="이동 조이스틱"><div class="knob" id="knob"></div><span class="hintAr">이동</span></div>
 
     <div class="acts">
+      <button class="abtn mega" id="miniBtn" type="button" title="정원 미니게임 놀이터"><i class="ic">🎮</i><span>미니게임</span><em class="mb3">3종</em></button>
       <button class="abtn" id="jumpBtn" type="button" title="점프"><i class="ic">⤒</i><span>점프</span></button>
       <button class="abtn" id="basketBtn" type="button" title="바구니 · 판매"><i class="ic">🧺</i><span>바구니</span></button>
       <button class="abtn" id="roulBtn" type="button" title="보물 룰렛"><i class="ic">🎰</i><span>룰렛</span></button>
-      <button class="abtn" id="miniBtn" type="button" title="정원 미니게임"><i class="ic">🎮</i><span>게임</span></button>
       <button class="abtn go wide" id="menuBtn" type="button" title="메뉴"><i class="ic">☰</i><span>메뉴</span></button>
     </div>
   </div>
@@ -1511,7 +1578,7 @@ const GEOM = {
     {id:'seed',     name:'씨앗 가게',    emoji:'🌱', x:-2.95, z:0.80, w:1.80, d:0.62, h:0.34, act:'씨앗 사기'},
     {id:'market',   name:'수확물 판매대', emoji:'🧺', x:0,     z:0.76, w:2.15, d:0.66, h:0.34, act:'작물 팔기'},
     {id:'roulette', name:'보물 룰렛',    emoji:'🎰', x:2.95,  z:0.80, w:1.80, d:0.62, h:0.36, act:'룰렛 돌리기'},
-    {id:'minigame', name:'미니게임', emoji:'🎮', x:-3.78, z:4.60, w:1.40, d:0.46, h:0.28, act:'미니게임'}
+    {id:'minigame', name:'미니게임', emoji:'🎮', x:-3.56, z:4.70, w:1.72, d:0.62, h:0.38, act:'미니게임', artH:1.76}
   ],
   farm: {cx:2.62, colGap:1.02, rowGap:0.66, tileW:0.84, tileD:0.50, z0:2.15, cols:3, rows:4},
   fence: {x:0, z1:1.95, z2:4.35, gate:[3.12,3.78]},
@@ -2078,16 +2145,17 @@ function buildFence(){
 
 function buildBooths(){
   GEOM.booths.forEach(function(b){
+    const artH = b.artH || 1.62;
     /* 기둥·카운터 (입체 상자) */
     worldEl.insertAdjacentHTML('beforeend', propBox(b.x, b.z, b.w, b.d, b.h, '#c9a06a', {plank:true}, 0));
     /* 어닝·간판 그림 */
-    worldEl.insertAdjacentHTML('beforeend', billboard(boothArt(b.id), b.x, b.z + b.d/2, b.w*0.98, 1.62, 2));
+    worldEl.insertAdjacentHTML('beforeend', billboard(boothArt(b.id), b.x, b.z + b.d/2, b.w*0.98, artH, 2));
     /* 이름표 */
-    const top = proj(b.x, b.z + b.d/2, 1.62);
+    const top = proj(b.x, b.z + b.d/2, artH);
     const el = document.createElement('div');
-    el.className = 'zone';
+    el.className = 'zone' + (b.id === 'minigame' ? ' bigLb' : '');
     el.dataset.zone = b.id;
-    el.style.cssText = 'left:'+top.x.toFixed(1)+'px;top:'+(top.y-3).toFixed(1)+'px;transform:translate(-50%,-100%);z-index:170;';
+    el.style.cssText = 'left:'+top.x.toFixed(1)+'px;top:'+(top.y-3).toFixed(1)+'px;transform:translate(-50%,-100%)'+(b.id === 'minigame' ? ' scale(1.08)' : '')+';z-index:170;';
     el.innerHTML = '<span class="lb">'+b.emoji+' '+esc(b.name)+'</span>';
     worldEl.appendChild(el);
     ZONE_EL[b.id] = el;
