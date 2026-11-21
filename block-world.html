@@ -60,7 +60,7 @@ button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer
 input{font-family:inherit}
 :focus-visible{outline:3px dashed #4a7dff;outline-offset:2px;border-radius:12px}
 
-#app{position:fixed;inset:0;overflow:hidden}
+#app{position:fixed;inset:0;overflow:hidden;overflow:clip;overscroll-behavior:none}
 #game{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 
 /* ---------------- 상단 HUD ---------------- */
@@ -2905,6 +2905,7 @@ var TP = null, tpState = { mode: 'free', combo: 0, done: 0 };
 
 function openType(mode) {
   tpState.mode = mode || 'free';
+  resetAppScroll();
   openSheet('typePanel');
   $('#tpModeTxt').textContent = tpState.mode === 'school' ? '🏫 학교 타자 숙제' : '톡톡톡 소리가 나요';
   if (!TP) {
@@ -2947,10 +2948,11 @@ function tpNext() {
   TP.setWord(item.w);
   $('#tpModeTxt').textContent = (item.m ? item.m + ' · ' : '') + (isKo(item.w) ? '한글 낱말' : '영단어');
   if ($('#tpInput')) { $('#tpInput').value = ''; }
-  var focused = false;
-  try { $('#tpInput').focus({ preventScroll: true }); focused = true; } catch (e) {}
-  if (!focused) { try { $('#tpInput').focus(); } catch (e) {} }
   updateTpMeta();
+  setTimeout(function () {
+    if (!$('#typePanel').classList.contains('open')) return;
+    try { $('#tpInput').focus({ preventScroll: true }); } catch (e) {}
+  }, 340);
 }
 
 function updateTpMeta() {
@@ -2980,7 +2982,8 @@ function openGate(g) {
   }
   GATE.setWord(g.word);
   $('#gateInput').value = '';
-  setTimeout(function () { try { $('#gateInput').focus({ preventScroll: true }); } catch (e) {} }, 120);
+  resetAppScroll();
+  setTimeout(function () { try { $('#gateInput').focus({ preventScroll: true }); } catch (e) {} }, 380);
   $('#actionPrompt').classList.remove('on');
   AU.pop();
 }
@@ -3097,7 +3100,12 @@ function updateHint() {
 function anySheetOpen() {
   return $$('.sheet.open').length > 0;
 }
+function resetAppScroll() {
+  var a = $('#app');
+  if (a) { a.scrollTop = 0; a.scrollLeft = 0; }
+}
 function openSheet(id) {
+  resetAppScroll();
   $$('.sheet.open').forEach(function (s) { if (s.id !== id) s.classList.remove('open'); });
   var el = $('#' + id);
   if (el) el.classList.add('open');
@@ -3679,7 +3687,8 @@ function bindUI() {
   $('#btnChat').addEventListener('click', function () {
     closeAllSheets();
     openSheet('chatPanel');
-    setTimeout(function () { try { $('#chatInput').focus(); } catch (e) {} }, 260);
+    resetAppScroll();
+    setTimeout(function () { if ($('#chatPanel').classList.contains('open')) { try { $('#chatInput').focus({ preventScroll: true }); } catch (e) {} } }, 340);
     G.unread = 0; updateChatDot();
   });
   $('#btnMenu').addEventListener('click', function () { AU.pop(); openSheet('menuPanel'); });
@@ -3795,6 +3804,7 @@ function bindUI() {
   window.addEventListener('blur', function () { G.keys = {}; G.stick.x = 0; G.stick.y = 0; });
   document.addEventListener('pointerdown', function () { AU.unlock(); }, { once: false });
 
+  $('#app').addEventListener('scroll', function () { this.scrollTop = 0; this.scrollLeft = 0; }, { passive: true });
   window.addEventListener('resize', function () { resize(); });
   window.addEventListener('orientationchange', function () { setTimeout(resize, 350); });
 }
