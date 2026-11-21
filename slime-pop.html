@@ -1776,6 +1776,11 @@ cv.addEventListener('pointerdown', function(e){
   if (store.mode === 'slime') {
     if (grabs.length >= 3) return;
     var G = slimeGrabAt(p.x, p.y, e.pointerId);
+    window.__slimeDiag.lastDown = {
+      x: Math.round(p.x), y: Math.round(p.y), any: G.any, inside: G.inside,
+      n: SL.p.length, R: Math.round(SL.baseR), cx: Math.round(SL.cx), cy: Math.round(SL.cy),
+      grabbed: grabs.length + 1, muted: Sound.isMuted(), astate: Sound.state()
+    };
     grabs.push(G);
     ptrs[e.pointerId] = G;
     ptrCount++;
