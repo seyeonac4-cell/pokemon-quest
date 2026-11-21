@@ -124,6 +124,18 @@ h1 em{font-style:normal; background:linear-gradient(180deg,transparent 62%, #FFE
 .grid{display:grid; gap:13px; grid-template-columns:repeat(auto-fill,minmax(272px,1fr))}
 @media (max-width:400px){ .grid{grid-template-columns:1fr} }
 
+/* ---------- 🎮 로블록스 놀이 월드 묶음 ---------- */
+.group.world{
+  margin-top:20px; padding:15px 14px 16px; border-radius:26px;
+  background:linear-gradient(160deg,#EDF3FF 0%,#F3EAFF 54%,#FFF0F7 100%);
+  border:1px solid #DCE1F8; box-shadow:0 14px 32px rgba(60,60,120,.10);
+}
+.group.world h2{margin-bottom:5px}
+.group.world h2 .cnt{background:rgba(255,255,255,.94); border-color:#D8DCF5; color:#4A4F86}
+.group.world .gsub{margin:0 2px 13px; font-size:12.8px; font-weight:700; line-height:1.45; color:#5A6390}
+.group.world .gsub b{color:#3A3F6E}
+@media (max-width:400px){ .group.world{padding:13px 11px 14px; border-radius:22px} .group.world .gsub{font-size:12px} }
+
 /* ---------- 카드 ---------- */
 .card{
   position:relative; display:flex; flex-direction:column; gap:11px;
@@ -242,6 +254,52 @@ footer a{color:#9AA0B4}
       <button class="btn btn-soft" id="shareAll" type="button" hidden>📤 공유하기</button>
     </div>
   </section>
+
+    <section class="group world" data-plain="로블록스 놀이 월드">
+      <h2>🎮 로블록스 놀이 월드 <span class="cnt">3개</span></h2>
+      <p class="gsub">🧱 블록 월드 · 🌱 그로우 어 가든 · 👗 드레스 투 임프레스 — 어느 월드에서 놀다가도 <b>🚪 다른 월드 가기</b>로 바로 건너가요</p>
+      <div class="grid">
+      <article class="card" style="--c:#1E9BE8;--cb:#1684C7;--soft:#E8F6FF;--on:#FFFFFF">
+        <a class="card-main" href="./block-world.html" data-open="block-world.html">
+          <span class="ico" data-emoji="🧱"><img src="./assets/block-world/block-world-icon-192.png" alt="블록 월드 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">채씨네 블록 월드 🧱</span>
+            <span class="desc">로블록스식 마을·점프맵·펫·자매 톡방</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./block-world.html" data-open="block-world.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="block-world.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#ED7B3C;--cb:#C25F27;--soft:#FFF2E8;--on:#FFFFFF">
+        <a class="card-main" href="./grow-garden.html" data-open="grow-garden.html">
+          <span class="ico" data-emoji="🌱"><img src="./assets/grow-garden/grow-garden-icon-192.png" alt="그로우 어 가든 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">그로우 어 가든 🌱</span>
+            <span class="desc">씨앗 심고 물 주고 수확! 황금·무지개 작물 정원 가꾸기</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./grow-garden.html" data-open="grow-garden.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="grow-garden.html">📋 링크 복사</button>
+        </div>
+      </article>
+      <article class="card" style="--c:#FF5B9E;--cb:#E23E82;--soft:#FFEDF5;--on:#FFFFFF">
+        <a class="card-main" href="./dress-up.html" data-open="dress-up.html">
+          <span class="ico" data-emoji="👗"><img src="./assets/dress-up/dress-up-icon-192.png" alt="드레스 투 임프레스 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
+          <span class="txt">
+            <span class="name">드레스 투 임프레스 👗</span>
+            <span class="desc">주제 맞춰 코디하고 런웨이 도전·자매 대결</span>
+          </span>
+        </a>
+        <div class="actions">
+          <a class="btn btn-open" href="./dress-up.html" data-open="dress-up.html">🌐 Chrome으로 열기</a>
+          <button class="btn btn-copy" type="button" data-copy="dress-up.html">📋 링크 복사</button>
+        </div>
+      </article>
+      </div>
+    </section>
 
     <section class="group" data-plain="가족 공용">
       <h2>🏡 세연님 · 가족 공용 <span class="cnt">4개</span></h2>
@@ -371,7 +429,7 @@ footer a{color:#9AA0B4}
       </div>
     </section>
     <section class="group" data-plain="윤진 + 형원 함께">
-      <h2>👭 윤진 · 형원 함께 <span class="cnt">4개</span></h2>
+      <h2>👭 윤진 · 형원 함께 <span class="cnt">1개</span></h2>
       <div class="grid">
       <article class="card" style="--c:#FF6FA5;--cb:#E54D88;--soft:#FFEDF5;--on:#FFFFFF">
         <a class="card-main" href="./video-call.html" data-open="video-call.html">
@@ -384,45 +442,6 @@ footer a{color:#9AA0B4}
         <div class="actions">
           <a class="btn btn-open" href="./video-call.html" data-open="video-call.html">🌐 Chrome으로 열기</a>
           <button class="btn btn-copy" type="button" data-copy="video-call.html">📋 링크 복사</button>
-        </div>
-      </article>
-      <article class="card" style="--c:#ED7B3C;--cb:#C25F27;--soft:#FFF2E8;--on:#FFFFFF">
-        <a class="card-main" href="./grow-garden.html" data-open="grow-garden.html">
-          <span class="ico" data-emoji="🌱"><img src="./assets/grow-garden/grow-garden-icon-192.png" alt="그로우 어 가든 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
-          <span class="txt">
-            <span class="name">그로우 어 가든 🌱</span>
-            <span class="desc">씨앗 심고 물 주고 수확! 황금·무지개 작물 정원 가꾸기</span>
-          </span>
-        </a>
-        <div class="actions">
-          <a class="btn btn-open" href="./grow-garden.html" data-open="grow-garden.html">🌐 Chrome으로 열기</a>
-          <button class="btn btn-copy" type="button" data-copy="grow-garden.html">📋 링크 복사</button>
-        </div>
-      </article>
-      <article class="card" style="--c:#FF5B9E;--cb:#E23E82;--soft:#FFEDF5;--on:#FFFFFF">
-        <a class="card-main" href="./dress-up.html" data-open="dress-up.html">
-          <span class="ico" data-emoji="👗"><img src="./assets/dress-up/dress-up-icon-192.png" alt="드레스 투 임프레스 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
-          <span class="txt">
-            <span class="name">드레스 투 임프레스 👗</span>
-            <span class="desc">주제 맞춰 코디하고 런웨이 도전·자매 대결</span>
-          </span>
-        </a>
-        <div class="actions">
-          <a class="btn btn-open" href="./dress-up.html" data-open="dress-up.html">🌐 Chrome으로 열기</a>
-          <button class="btn btn-copy" type="button" data-copy="dress-up.html">📋 링크 복사</button>
-        </div>
-      </article>
-      <article class="card" style="--c:#1E9BE8;--cb:#1684C7;--soft:#E8F6FF;--on:#FFFFFF">
-        <a class="card-main" href="./block-world.html" data-open="block-world.html">
-          <span class="ico" data-emoji="🧱"><img src="./assets/block-world/block-world-icon-192.png" alt="블록 월드 아이콘" width="56" height="56" loading="lazy" onerror="this.parentNode.classList.add('bad')"></span>
-          <span class="txt">
-            <span class="name">채씨네 블록 월드 🧱</span>
-            <span class="desc">로블록스식 마을·점프맵·펫·자매 톡방</span>
-          </span>
-        </a>
-        <div class="actions">
-          <a class="btn btn-open" href="./block-world.html" data-open="block-world.html">🌐 Chrome으로 열기</a>
-          <button class="btn btn-copy" type="button" data-copy="block-world.html">📋 링크 복사</button>
         </div>
       </article>
       </div>

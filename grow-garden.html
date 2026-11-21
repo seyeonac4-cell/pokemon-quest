@@ -614,6 +614,37 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   .abtn{width:46px; height:46px; font-size:15px; border-radius:14px}
   .prompt{font-size:12px; padding:8px 13px}
 }
+/* ---------- 🚪 다른 월드 가기 ---------- */
+.worldNav{
+  margin:0 0 10px; padding:9px 9px 10px; border-radius:18px;
+  background:linear-gradient(180deg,#f3fbf2,#e8f6e9); border:2px solid #cfe8cd;
+  box-shadow:inset 0 1px 0 #fff, 0 3px 0 rgba(120,170,110,.16);
+}
+.worldNav .wnHead{display:flex; align-items:baseline; gap:6px; margin:0 3px 7px; min-width:0}
+.worldNav .wnHead b{font-size:12.5px; font-weight:900; color:#2f5540; letter-spacing:-.03em; white-space:nowrap}
+.worldNav .wnHead span{font-size:10.5px; font-weight:800; color:#7b8f7c; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.wnRow{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+.wn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-width:0; min-height:62px;
+  padding:7px 3px 6px; border-radius:14px; text-align:center; text-decoration:none;
+  background:#fff; border:2px solid #e2eee4; box-shadow:0 3px 0 rgba(0,0,0,.05);
+  font-weight:900; color:#5b7563;
+}
+.wn i{font-style:normal; font-size:19px; line-height:1.05}
+.wn b{font-size:10.8px; line-height:1.16; letter-spacing:-.04em; word-break:keep-all}
+.wn em{font-style:normal; font-size:9px; font-weight:900; color:#93a298}
+.wn:active{transform:translateY(2px); box-shadow:none}
+.wn.now{
+  background:linear-gradient(180deg,#e9ffe9,#c3f2ca); border-color:#65cc80; color:#166534;
+  box-shadow:0 3px 0 #7fd094, 0 8px 16px rgba(60,180,100,.18); cursor:default;
+}
+.wn.now em{color:#2f7a45}
+@media (max-width:360px){
+  .wn{min-height:58px}
+  .wn i{font-size:17px}
+  .wn b{font-size:10px}
+}
+
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important; transition:none!important}
 }
@@ -735,6 +766,14 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
     <div class="sh">
       <div style="flex:1"><h3 id="moreTitle">☰ 정원 메뉴</h3><p>업그레이드 · 꾸미기 · 도감 · 가족</p></div>
       <button class="xbtn" type="button" data-act="closeSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="worldNav" id="worldNav" role="navigation" aria-label="다른 월드 가기">
+      <div class="wnHead"><b>🚪 다른 월드 가기</b><span>놀던 곳에서 바로 건너가요</span></div>
+      <div class="wnRow">
+        <a class="wn" href="./block-world.html"><i>🧱</i><b>블록 월드</b><em>가기</em></a>
+        <span class="wn now" aria-current="page"><i>🌱</i><b>그로우 어 가든</b><em>지금 여기</em></span>
+        <a class="wn" href="./dress-up.html"><i>👗</i><b>드레스</b><em>가기</em></a>
+      </div>
     </div>
     <div class="sechead" style="margin-top:2px"><div><h2>👧 누구로 놀까요?</h2><p>이 기기에서 노는 텃밭을 골라요</p></div></div>
     <div class="kidrow" id="kidRow">

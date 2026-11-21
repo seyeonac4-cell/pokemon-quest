@@ -881,6 +881,32 @@ body{
 }
 .whoRow button.on{background:linear-gradient(135deg,#FFE8F3,#EFE4FF); border-color:#F3B9D8; color:#B02A72}
 
+/* 🚪 다른 월드 가기 */
+.worldNav{margin:0 0 9px; padding:9px 9px 10px; border-radius:16px; background:linear-gradient(180deg,#FFF7FC,#F6EFFF); border:2px solid #F5DDF0}
+.worldNav .wnHead{display:flex; align-items:baseline; gap:6px; margin:0 3px 7px; min-width:0}
+.worldNav .wnHead b{font-size:12.5px; font-weight:900; color:#7A3F68; letter-spacing:-.03em; white-space:nowrap}
+.worldNav .wnHead span{font-size:10.5px; font-weight:800; color:#95879F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.wnRow{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+.wn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-width:0; min-height:60px;
+  padding:7px 3px 6px; border-radius:13px; text-align:center; text-decoration:none; font-weight:900; color:#6B5A78;
+  background:#fff; border:1.5px solid #F0E2F0; box-shadow:0 3px 9px rgba(120,60,120,.07);
+}
+.wn i{font-style:normal; font-size:19px; line-height:1.05}
+.wn b{font-size:10.8px; line-height:1.16; letter-spacing:-.04em; word-break:keep-all}
+.wn em{font-style:normal; font-size:9px; font-weight:900; color:#9A8BA8}
+.wn:active{transform:translateY(2px); box-shadow:none}
+.wn.now{
+  background:linear-gradient(135deg,#FFE8F3,#EFE4FF); border-color:#F3B9D8; color:#B02A72;
+  box-shadow:0 3px 10px rgba(200,80,150,.16); cursor:default;
+}
+.wn.now em{color:#B02A72}
+@media (max-width:360px){
+  .wn{min-height:57px}
+  .wn i{font-size:17px}
+  .wn b{font-size:10px}
+}
+
 /* ---------- 자매 실시간(같이 놀기) ---------- */
 .pill.sis{
   flex:0 0 auto; gap:4px; padding:0 9px; color:#2C6E58; background:#F0FFF9;
@@ -1106,6 +1132,14 @@ body{
       <span class="em">☰</span>
       <div class="t"><b id="menuTitle">메뉴</b><span>꾸미는 사람 · 대결 · 도움말</span></div>
       <button class="x" type="button" data-close="menuSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="worldNav" role="navigation" aria-label="다른 월드 가기">
+      <div class="wnHead"><b>🚪 다른 월드 가기</b><span>놀던 곳에서 바로 건너가요</span></div>
+      <div class="wnRow">
+        <a class="wn" href="./block-world.html"><i>🧱</i><b>블록 월드</b><em>가기</em></a>
+        <a class="wn" href="./grow-garden.html"><i>🌱</i><b>그로우 어 가든</b><em>가기</em></a>
+        <span class="wn now" aria-current="page"><i>👗</i><b>드레스</b><em>지금 여기</em></span>
+      </div>
     </div>
     <div class="whoRow" id="whoRow">
       <button type="button" data-name="윤진" class="on">👧 윤진</button>
