@@ -2077,6 +2077,7 @@ label.btn{cursor:pointer}
     timer: null,
     known: { c1: '', c2: '', chat: {}, settings: '' },
     pend: { c1: {}, c2: {}, settings: {} },  // 서버에 아직 못 올린 필드
+    had: { c1: null, c2: null },            // 서버에 그 아이 필드가 실제로 있었는지
     ref: null
   };
 
@@ -2214,7 +2215,8 @@ label.btn{cursor:pointer}
     var needDayFix = {};
     ['c1', 'c2'].forEach(function (k) {
       var raw = kids[KID_SLUG[k]];
-      if (!raw || typeof raw !== 'object') return;
+      if (!raw || typeof raw !== 'object') { sync.had[k] = {}; return; }
+      sync.had[k] = raw;
       raw = JSON.parse(JSON.stringify(raw));
       /* 서버 기록이 '오늘' 것이 아니면 어제 체크는 오늘로 끌고 오지 않는다.
          다만 이 기기에서 오늘 이미 한 체크·사진은 아직 서버에 못 올라갔을 수 있으니 지킨다.
@@ -2289,7 +2291,8 @@ label.btn{cursor:pointer}
 
   /* 서버의 day 가 어제로 멈춰 있으면 오늘로 바로잡는다.
      done·proofs 는 먼저 비우고 '오늘 것'만 다시 써서 어제 체크·사진이 오늘로 새지 않게 한다.
-     (나머지 코인·XP·도감 등은 건드리지 않는다) */
+     ⚠️ 아이 노드(kids/<slug>) 아래에 객체를 통째로 쓰지 않는다 — leaf 경로만 쓴다.
+        객체를 통째로 쓰면 코인·XP·도감·퀘스트 같은 다른 필드가 지워질 수 있다(2026-11-21 사고). */
   function fixStaleDayChild(k) {
     if (!sync.ref || !sync.connected) return;
     var ch = state.children[k];
@@ -2298,6 +2301,7 @@ label.btn{cursor:pointer}
     var proofsCopy = JSON.parse(JSON.stringify(ch.proofs || emptyProofs()));
     if (!proofsCopy.date || proofsCopy.date !== todayStr()) proofsCopy = emptyProofs();
     proofsCopy.date = todayStr();
+    var items = proofsCopy.items || {};
     var base = 'kids/' + KID_SLUG[k];
     var clear = {};
     clear[base + '/day'] = todayStr();
@@ -2305,7 +2309,10 @@ label.btn{cursor:pointer}
     clear[base + '/proofs'] = null;
     sync.ref.update(clear).then(function () {
       var w = {};
-      w[base] = { day: todayStr(), done: doneCopy, proofs: proofsCopy };
+      w[base + '/day'] = todayStr();
+      w[base + '/proofs/date'] = todayStr();
+      Object.keys(doneCopy).forEach(function (q) { w[base + '/done/' + q] = true; });
+      Object.keys(items).forEach(function (q) { w[base + '/proofs/items/' + q] = items[q]; });
       return sync.ref.update(w);
     }).catch(function () { /* 연결이 끊기면 다음 스냅샷에서 다시 시도 */ });
   }
@@ -2390,6 +2397,14 @@ label.btn{cursor:pointer}
     return changed ? out : null;
   }
 
+  /* 빈 값(0·''·false·[]·{})인지 — 서버에 없던 필드를 이런 값으로 새로 쓰지 않으려고 */
+  function isBlankVal(v) {
+    if (v === null || v === undefined || v === '' || v === 0 || v === false) return true;
+    if (Array.isArray(v)) return v.length === 0;
+    if (typeof v === 'object') return Object.keys(v).length === 0;
+    return false;
+  }
+
   function pushSync(force) {
     if (sync.applying) return;
     if (!sync.ready || !sync.connected) { if (!sync.gotRemote) sync.dirty = true; return; }
@@ -2402,8 +2417,13 @@ label.btn{cursor:pointer}
       if (sync.known[k] === j) return;
       var d = fieldDiff(sync.known[k], o);
       if (d) {
-        out = out || {};
-        Object.keys(d).forEach(function (f) { out['kids/' + KID_SLUG[k] + '/' + f] = d[f]; });
+        Object.keys(d).forEach(function (f) {
+          /* 서버에 한 번도 없었던 필드를 빈 값으로 새로 쓰지 않는다.
+             (서버 노드가 일부만 읽힌 상황에서 코인·XP·도감을 0으로 덮어쓰는 사고 방지) */
+          if (!(sync.had[k] && sync.had[k][f] !== undefined) && isBlankVal(d[f])) { delete d[f]; return; }
+          out = out || {};
+          out['kids/' + KID_SLUG[k] + '/' + f] = d[f];
+        });
       }
       commit.push({ slot: k, json: j });
     });
