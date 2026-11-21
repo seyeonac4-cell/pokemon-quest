@@ -11,11 +11,14 @@
 <script>
 var p = new URLSearchParams(location.search);
 var w = +(p.get('w') || 390), h = +(p.get('h') || 844);
+var touch = p.get('touch') !== '0';
+var hash = p.get('who') || 'hyungwon';
 var f = document.getElementById('m');
 f.style.width = w + 'px';
 f.style.height = h + 'px';
-f.src = './block-world.html?t=' + Date.now() + '#hyungwon';
+f.src = './block-world.html?t=' + Date.now() + '#' + hash;
 f.addEventListener('load', function () {
+  if (!touch) return;
   try {
     var d = f.contentDocument;
     var s = d.createElement('style');
