@@ -724,7 +724,7 @@ input{font-family:inherit}
       <div class="result-grid">
         <div><span>모은 코인</span><b id="finCoins">0</b></div>
         <div><span>걸린 시간</span><b id="finTime">0:00</b></div>
-        <div><span>푼 타자 미션</span><b id="finGates">0</b></div>
+        <div><span>완료한 타자 미션</span><b id="finGates">0</b></div>
         <div><span>받은 상</span><b id="finPrize">+25</b></div>
       </div>
       <button class="btn blue" id="finAgain" type="button">🔁 한 번 더 놀기</button>
@@ -2718,8 +2718,7 @@ function drawMyPet(ctx) {
   var moving = pet.moving;
   var hop = moving ? Math.abs(Math.sin(G.t * 9)) * 5 : Math.sin(G.t * 2) * 1.2;
   drawPet(ctx, s.x, s.y, pet.type, {
-    bob: hop, face: pet.face || 1, happy: pet.happy > 0,
-    name: pet.typeName || (PETS[pet.type] ? PETS[pet.type].name : '펫')
+    bob: hop, face: pet.face || 1, happy: pet.happy > 0
   });
 }
 
@@ -2738,7 +2737,7 @@ function drawRemote(ctx) {
   });
   if (r.pet && PETS[r.pet]) {
     var ps = proj(r.x - 0.9 * (r.face || 1), r.y + 0.8, r.z || 0);
-    drawPet(ctx, ps.x, ps.y, r.pet, { bob: Math.sin(G.t * 2) * 1.5, face: r.face || 1, name: PETS[r.pet].name });
+    drawPet(ctx, ps.x, ps.y, r.pet, { bob: Math.sin(G.t * 2) * 1.5, face: r.face || 1 });
   }
 }
 
@@ -2783,7 +2782,7 @@ function buildVK(el, lang, cb) {
   if (!el) return;
   el.innerHTML = '';
   var rows = VK[lang] || VK.en;
-  rows.forEach(function (row) {
+  rows.forEach(function (row, ri) {
     var d = document.createElement('div');
     d.className = 'row';
     row.forEach(function (ch) {
@@ -2794,14 +2793,13 @@ function buildVK(el, lang, cb) {
       b.dataset.k = ch;
       if (lang === 'en') {
         b.addEventListener('click', function () { if (cb) cb(ch); });
-      } else {
-        b.addEventListener('click', function () { if (cb) cb(null); });
       }
       d.appendChild(b);
     });
-    if (cb) {
+    if (ri === rows.length - 1 && cb) {
       var bs = document.createElement('button');
       bs.type = 'button'; bs.className = 'k wide'; bs.textContent = '⌫';
+      bs.setAttribute('aria-label', '지우기');
       bs.addEventListener('click', function () { cb('__BACK__'); });
       d.appendChild(bs);
     }

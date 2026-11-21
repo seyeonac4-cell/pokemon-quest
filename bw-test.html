@@ -3,21 +3,25 @@
 <title>bw layout test</title>
 <style>
  html,body{margin:0;background:#1b2440;font-family:sans-serif;color:#fff}
- #wrap{display:flex;gap:16px;padding:12px;align-items:flex-start}
- iframe{border:0;background:#fff;display:block}
- #m{width:390px;height:844px}
+ #wrap{padding:12px}
+ iframe{border:0;background:#fff;display:block;border:1px solid #46618f}
 </style></head>
 <body>
-<div id="wrap"><iframe id="m" src="./block-world.html?t=9#hyungwon"></iframe></div>
+<div id="wrap"><iframe id="m"></iframe></div>
 <script>
-var f=document.getElementById('m');
-f.addEventListener('load',function(){
-  try{
-    var d=f.contentDocument;
-    var s=d.createElement('style');
-    s.textContent='#controls{display:block!important}#kbHint{display:none!important}';
+var p = new URLSearchParams(location.search);
+var w = +(p.get('w') || 390), h = +(p.get('h') || 844);
+var f = document.getElementById('m');
+f.style.width = w + 'px';
+f.style.height = h + 'px';
+f.src = './block-world.html?t=' + Date.now() + '#hyungwon';
+f.addEventListener('load', function () {
+  try {
+    var d = f.contentDocument;
+    var s = d.createElement('style');
+    s.textContent = '#controls{display:block!important}#kbHint{display:none!important}';
     d.head.appendChild(s);
-  }catch(e){}
+  } catch (e) {}
 });
 </script>
 </body></html>
