@@ -271,7 +271,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="row" id="rowBallInfo">
           <span class="lab">왁뿌볼</span>
           <span class="chip" id="ballCountChip">🎈 0개</span>
-          <span class="chip" id="ballTip">꾹 누르면 뽁!</span>
+          <span class="chip" id="ballTip">꾹 누르거나 톡톡 두 번 → 뽁!</span>
         </div>
         <div class="row actions">
           <button class="btnA" id="btnAddBall" type="button">➕ 더 놓기</button>
@@ -1820,6 +1820,14 @@ cv.addEventListener('pointerdown', function(e){
       if (d < b.r * 1.08 && d < bestD) { bestD = d; hit = b; }
     }
     if (hit) {
+      /* 톡톡 두 번 두드려도 뽁! (꾹 누르기와 같은 결과) */
+      var tapNow = Date.now();
+      if (hit.lastTap && tapNow - hit.lastTap < 700) {
+        hit.lastTap = 0;
+        ballPop(hit);
+        return;
+      }
+      hit.lastTap = tapNow;
       hit.pressing = true;
       hit.hold = 0;
       hit.pressA = Math.atan2(p.y - hit.y, p.x - hit.x);
@@ -2011,7 +2019,7 @@ function setMode(m){
   document.getElementById('brandEm').textContent = m === 'slime' ? '🫧' : '🎈';
   document.getElementById('brandSub').textContent = m === 'slime' ? '쫀득쫀득 촉감 놀이' : '톡 누르면 뽁! 터지는 말랑볼';
   var hint = document.getElementById('hint');
-  if (hint) hint.textContent = m === 'slime' ? '손가락으로 꾹 눌러 당겨 보세요 🫧' : '왁뿌볼을 꾹 누르고 있으면 뽁! 터져요 🎈';
+  if (hint) hint.textContent = m === 'slime' ? '손가락으로 꾹 눌러 당겨 보세요 🫧' : '왁뿌볼을 꾹 누르거나 톡톡 두 번! 뽁 터져요 🎈';
   /* 손가락 상태 초기화 */
   grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {};
   Sound.kneadStop();
