@@ -624,7 +624,7 @@ input{font-family:inherit}
       <button class="pill" id="btnProfile" type="button" aria-label="프로필 바꾸기">
         <span id="profEmoji">🦊</span><span id="profName">윤진</span><span class="caret">▾</span>
       </button>
-      <div class="pill coin" id="coinPill" title="블록 코인">
+      <div class="pill coin" id="coinPill" title="가족 공용 코인 — 그로우·드레스에서도 같이 써요">
         <span aria-hidden="true">🪙</span><b id="coinNum">50</b>
       </div>
     </div>
@@ -930,8 +930,8 @@ input{font-family:inherit}
         <p>시작 광장 바닥과 점프맵 발판에 알록달록 키캡 블록이 있어요. 밟으면 키캡이 <b>쑥 눌리면서</b> 인쇄소 같은 <b>톡! 찰칵!</b> 타자 소리가 나요. 형원이랑 둘이서 걸어 다니며 소리를 들어 봐요.</p>
       </div>
       <div class="help-sec">
-        <h3>🪙 블록 코인</h3>
-        <p>코인을 모아 <b>🛍️ 상점</b>에서 모자·옷색·표정을 바꿀 수 있어요. (포켓몬 코인과는 따로 관리돼요)</p>
+        <h3>🪙 가족 공용 코인</h3>
+        <p>코인을 모아 <b>🛍️ 상점</b>에서 모자·옷색·표정을 바꿀 수 있어요. 코인은 <b>🌱 그로우 어 가든·👗 드레스 투 임프레스와 같이 쓰는 하나의 지갑</b>이라, 어느 게임에서 모아도 세 게임에서 똑같이 보여요. (포켓몬 코인과는 따로예요)</p>
       </div>
       <div class="help-sec">
         <h3>💬 자매 톡방</h3>
@@ -950,7 +950,7 @@ input{font-family:inherit}
     <div class="modal-card">
       <h2>🔄 게임 처음부터 리셋</h2>
       <p class="reset-q">윤진·형원 코인·아이템·진행을<br>처음부터 다시 시작할까요?</p>
-      <p class="shop-note">블록 코인 · 상점 아이템 · 펫 · 집 색깔 · 미션 진행이 모두 지워져요. 둘이 주고받은 채팅 기록은 그대로 남아요.</p>
+      <p class="shop-note">블록 코인 · 상점 아이템 · 펫 · 집 색깔 · 미션 진행이 모두 지워져요. <b>코인은 세 게임이 함께 쓰는 공용 지갑이라 세 게임 모두 50개로</b> 돌아가요. 둘이 주고받은 채팅 기록은 그대로 남아요.</p>
       <button class="btn danger mt8" id="resetYes" type="button">🔄 처음부터 리셋</button>
       <button class="btn mt8" data-close="resetOverlay" type="button">그냥 둘게요</button>
     </div>
@@ -975,6 +975,7 @@ input{font-family:inherit}
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
+<script src="./world-coins.js?v=1"></script>
 <script src="./pwa-install.js?v=1" defer></script>
 <script>
 try { navigator.serviceWorker && navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {}); } catch (e) {}
@@ -1454,13 +1455,18 @@ function owned(what, id) {
   }
   return !!(SAVE && SAVE.owned[what + ':' + id]);
 }
+/* 코인은 세 게임이 함께 쓰는 공용 지갑(WorldCoins)에 넣고 뺍니다.
+   화면 숫자는 WorldCoins.onValue → SAVE.coins 로 따라옵니다. */
 function addCoins(n, silent) {
   if (!SAVE) return;
-  SAVE.coins = Math.max(0, SAVE.coins + n);
-  persist();
-  updateCoinUI(true);
-  if (typeof FB !== 'undefined' && FB.ready && n > 0) FB.pushCoins(ME.id, SAVE.coins);
-  if (!silent && n > 0) toast('🪙 블록 코인 +' + n);
+  n = Math.floor(Number(n) || 0);
+  if (!n) return;
+  if (n > 0) {
+    WorldCoins.earn(n);
+  } else if (!WorldCoins.spend(-n)) {
+    return;
+  }
+  if (!silent && n > 0) toast('🪙 코인 +' + n);
 }
 function updateCoinUI(bump) {
   var el = $('#coinNum'); if (!el) return;
@@ -4745,12 +4751,11 @@ function shopClick(tab, id) {
   if (!item || !SAVE) return;
   var own = owned(tab, id);
   if (!own) {
-    if (SAVE.coins < item.price) {
+    if (SAVE.coins < item.price || !WorldCoins.spend(item.price)) {
       AU.err();
       toast('🪙 코인이 ' + (item.price - SAVE.coins) + '개 더 필요해요! 점프맵에서 모아요');
       return;
     }
-    SAVE.coins -= item.price;
     SAVE.owned[tab + ':' + id] = 1;
     AU.coin();
     toast('🛍️ ' + item.nm + ' 샀어요!');
@@ -5226,6 +5231,9 @@ function setProfile(who, silent) {
   if (SAVE) persist();
   ME = WHO[who] || WHO.yunjin;
   SAVE = loadSave(ME.id);
+  /* 공용 지갑도 이 아이로 — 코인의 진실은 서버(worldCoins) 값이에요 */
+  WorldCoins.setKid(ME.id);
+  SAVE.coins = WorldCoins.get(ME.id);
   if (!SAVE.house) SAVE.house = (ME.id === 'yunjin') ? '#ffd0e6' : '#c9f2e2';
   if (!SAVE.ride) SAVE.ride = 'walk';
   G.ride = SAVE.ride || 'walk';
@@ -5541,6 +5549,7 @@ function resetGame() {
     if (FB && FB.root) {
       FB.root.child('coins/yunjin').set(START_COINS);    // 윤진 블록 코인 → 처음 값 50
       FB.root.child('coins/hyungwon').set(START_COINS);  // 형원 블록 코인 → 처음 값 50
+      WorldCoins.resetAll(START_COINS);                  // 공용 지갑(세 게임)도 50으로
       FB.root.child('live').remove();    // 지금 놀던 자리 표시
     }
   } catch (e) {}
@@ -5649,6 +5658,23 @@ function init() {
       $('#startBtn').disabled = false;
     }
   }
+
+  /* 🪙 공용 코인 지갑 — 그로우·드레스와 같은 지갑을 실시간으로 봅니다 */
+  WorldCoins.init({
+    kid: ME.id,
+    test: WorldCoins.testFromUrl(),
+    localHint: SAVE ? SAVE.coins : START_COINS,
+    onValue: function (v) {
+      if (!SAVE || !ME) return;
+      if (SAVE.coins === v) return;
+      SAVE.coins = v;
+      persist();
+      updateCoinUI(true);
+      if (typeof FB !== 'undefined' && FB.ready) FB.pushCoins(ME.id, v);
+    },
+    onDenied: function () { toast('🪙 코인이 모자라요!'); }
+  });
+  if (SAVE) { SAVE.coins = WorldCoins.get(); updateCoinUI(); }
 
   FB.init();
   requestAnimationFrame(loop);

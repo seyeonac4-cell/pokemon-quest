@@ -919,7 +919,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
     </div>
     <div class="hud">
       <span class="wxpill" id="wxPill">☀️ 맑음 <b id="wxSec">30초</b></span>
-      <span class="coinpill" aria-live="polite"><span class="ci">🪙</span><b id="coinNum">0</b></span>
+      <span class="coinpill" aria-live="polite" title="가족 공용 코인 — 블록 월드·드레스에서도 같이 써요"><span class="ci">🪙</span><b id="coinNum">0</b></span>
       <button class="mutebtn" id="muteBtn" type="button" aria-label="소리 끄기">🔊</button>
     </div>
   </header>
@@ -1103,6 +1103,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 <!-- Firebase (가족 실시간 텃밭 · 선물 · 대결) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
+<script src="./world-coins.js?v=1"></script>
 <script>
 /* =========================================================
    🌱 그로우 어 가든 v3 — 2.5D 입체 정원 탐험
@@ -1445,6 +1446,40 @@ function save(){
 function saveNow(){
   clearTimeout(saveTimer);
   persist(); schedulePush();
+}
+
+/* ============================================================
+   🪙 공용 코인 지갑 (WorldCoins — 블록 월드 · 드레스와 같은 지갑)
+   코인의 진실은 항상 서버 worldCoins 값이고, 이 게임은 벌거나(+N)
+   쓸 때(-N)만 지갑에 알려 줍니다. 기기 저장값으로 서버를 덮어쓰지 않아요.
+   ============================================================ */
+function walletKid(k){ return (k === 'hyeongwon') ? 'hyungwon' : (k || kid); }
+function growKeyOf(id){ return WorldCoins.kidKey(id) === 'hyungwon' ? 'hyeongwon' : 'yunjin'; }
+function earnCoins(n, k){
+  n = Math.floor(Number(n) || 0);
+  if(n <= 0) return;
+  const kk = k || kid;
+  if(DB.gardens[kk]) DB.gardens[kk].coins = Math.max(0, (DB.gardens[kk].coins || 0) + n);
+  save();
+  renderHUD();
+  WorldCoins.earn(n, walletKid(kk));
+}
+function payCoins(n, k){
+  n = Math.floor(Number(n) || 0);
+  if(n <= 0) return true;
+  return WorldCoins.spend(n, walletKid(k || kid));
+}
+/* 지갑 값이 바뀌면(다른 게임에서 썼거나 다른 기기에서 벌었거나) 화면 코인도 바로 */
+function onWalletCoins(v){
+  const kk = growKeyOf(WorldCoins.kid);
+  if(!DB.gardens[kk]) return;
+  if(DB.gardens[kk].coins === v) return;
+  DB.gardens[kk].coins = v;
+  persist();
+  renderHUD();
+  const mc = $('#miniCoin');
+  if(mc && kk === kid) mc.textContent = nf(v);
+  if(typeof isSheetOpen === 'function' && (isSheetOpen('#seedSheet') || isSheetOpen('#marketSheet') || isSheetOpen('#moreSheet'))) renderCtx();
 }
 
 /* ---------------- 3. 유틸 · 소리 ---------------- */
@@ -2917,8 +2952,7 @@ function takePick(idx){
   const g = G();
   if(pk.k === 'coin'){
     const n = 3 + Math.floor(Math.random()*7);
-    g.coins += n;
-    save();
+    earnCoins(n);
     floatCoin('+'+n);
     Sound.coin();
     pickText('+'+n+'🪙', pk.x, pk.z, pk.y);
@@ -2935,7 +2969,7 @@ function takePick(idx){
       pickText('💧 쑥쑥!', pk.x, pk.z, pk.y);
       toast('💧 마법 물방울! ' + SEED[g.plots[i].seed].name + '이(가) 쑥쑥 자랐어요');
     }else{
-      g.coins += 4; save(); floatCoin('+4'); renderHUD();
+      earnCoins(4); floatCoin('+4');
       toast('💧 마법 물방울! 지금은 자라는 작물이 없어서 코인 +4🪙');
     }
     say('물방울 획득! 💧');
@@ -2945,7 +2979,7 @@ function takePick(idx){
       if(p && !isRipe(p)){ p.boost = (p.boost || 0) + SEED[p.seed].ms * 0.18; any = true; }
     });
     if(any){ save(); paintAll(); Sound.mutate(); toast('✨ 황금 비료! 밭 전체가 쑥쑥 자라요'); }
-    else { g.coins += 6; save(); floatCoin('+6'); renderHUD(); toast('✨ 황금 비료! 지금은 코인 +6🪙'); }
+    else { earnCoins(6); floatCoin('+6'); toast('✨ 황금 비료! 지금은 코인 +6🪙'); }
     pickText('✨ 반짝!', pk.x, pk.z, pk.y);
     say('황금 비료! ✨');
   }
@@ -3025,8 +3059,7 @@ function plantAt(i, seedId, quiet){
   const s = SEED[seedId];
   if(!s) return false;
   if(i < 0 || i >= PLOTS || g.plots[i]) return false;
-  if(g.coins < s.cost){ toast('코인이 모자라요 🥲 열심히 팔아서 모아 봐요!'); Sound.nope(); return false; }
-  g.coins -= s.cost;
+  if(g.coins < s.cost || !payCoins(s.cost)){ toast('코인이 모자라요 🥲 열심히 팔아서 모아 봐요!'); Sound.nope(); return false; }
   g.plots[i] = {seed:seedId, at:Date.now(), boost:0, waters:0, kg:rollKg(seedId), muts:[]};
   save();
   renderAll();
@@ -3083,7 +3116,7 @@ function trimBasket(g){
     let mi = 0;
     for(let i=1;i<g.basket.length;i++){ if(g.basket[i].price < g.basket[mi].price) mi = i; }
     const sold = g.basket.splice(mi, 1)[0];
-    g.coins += sold.price;
+    earnCoins(sold.price);
     g.stats.sold += 1;
     g.stats.earned += sold.price;
     toast('바구니가 가득 차서 가장 싼 ' + mutLabel(sold.seed, sold.muts) + '을 자동으로 팔았어요 (+' + nf(sold.price) + '🪙)');
@@ -3159,7 +3192,7 @@ function sellItemById(itemId){
   if(idx < 0){ closeModal(); return; }
   const it = g.basket[idx];
   g.basket.splice(idx, 1);
-  g.coins += it.price;
+  earnCoins(it.price);
   g.stats.sold += 1;
   g.stats.earned += it.price;
   save();
@@ -3184,7 +3217,7 @@ function sellGroup(key){
     return true;
   });
   if(!count) return;
-  g.coins += total;
+  earnCoins(total);
   g.stats.sold += count;
   g.stats.earned += total;
   save();
@@ -3200,7 +3233,7 @@ function sellAll(){
   const count = g.basket.length;
   g.basket.forEach(function(it){ total += it.price; });
   g.basket = [];
-  g.coins += total;
+  earnCoins(total);
   g.stats.sold += count;
   g.stats.earned += total;
   save();
@@ -3284,8 +3317,7 @@ function buyUpgrade(id){
   const lv = g.up[id] || 0;
   if(lv >= u.max){ toast('이미 최고 단계예요!'); return; }
   const price = u.prices[lv];
-  if(g.coins < price){ toast('코인이 모자라요 🥲'); Sound.nope(); return; }
-  g.coins -= price;
+  if(g.coins < price || !payCoins(price)){ toast('코인이 모자라요 🥲'); Sound.nope(); return; }
   g.up[id] = lv + 1;
   save();
   Sound.upgrade();
@@ -3297,8 +3329,7 @@ function buyDeco(id){
   const d = DECOS.find(function(x){ return x.id === id; });
   if(!d) return;
   if(g.deco[id]) return;
-  if(g.coins < d.price){ toast('코인이 모자라요 🥲'); Sound.nope(); return; }
-  g.coins -= d.price;
+  if(g.coins < d.price || !payCoins(d.price)){ toast('코인이 모자라요 🥲'); Sound.nope(); return; }
   g.deco[id] = 1;
   save();
   Sound.upgrade();
@@ -3354,6 +3385,7 @@ function resetAll(){
   const ok = confirm('🔄 게임을 처음부터 다시 시작할까요?\n\n'
     + '· 윤진이·형원이 텃밭의 작물, 바구니, 코인, 업그레이드, 꾸미기가 모두 사라져요\n'
     + '· 이 기기 저장값과 가족 클라우드(growGarden)도 처음 상태(기본 코인 50)가 돼요\n'
+    + '· 코인은 세 게임(블록 월드·그로우·드레스) 공용 지갑이라 세 게임 모두 50개로 돌아가요\n'
     + '· 가족 앱의 다른 기록(kids)은 건드리지 않아요\n\n'
     + '정말 처음부터 다시 시작할까요?');
   if(!ok) return;
@@ -3387,6 +3419,7 @@ function resetAll(){
       NET.db.ref(NET.root + '/duel').remove();
       NET.db.ref(NET.root + '/water').remove();
       NET.db.ref(NET.root + '/presence').remove();
+      WorldCoins.resetAll(50);   /* 🪙 공용 지갑도 두 아이 50으로 */
       cloudDone = true;
     }catch(e){ cloudDone = false; }
   }
@@ -3411,6 +3444,8 @@ function switchKid(k){
   if(!KIDS[k]) return;
   kid = k; DB.kid = k;
   whoSharedSet(k);
+  WorldCoins.setKid(walletKid(k));
+  DB.gardens[k].coins = WorldCoins.get(walletKid(k));
   PLAYER.x = homeSide()*1.90; PLAYER.z = 6.35; PLAYER.y = 0; PLAYER.vy = 0;
   cancelPath();
   saveNow();
@@ -3515,7 +3550,7 @@ function submitChallenge(itemId){
   if(chalLeft(g) <= 0){ toast('오늘 룰렛은 다 썼어요 🎰'); return; }
   const reward = Math.round(it.price * 1.35) + 25;
   g.basket.splice(idx, 1);
-  g.coins += reward;
+  earnCoins(reward);
   g.stats.challenges += 1;
   g.stats.sold += 1;
   g.stats.earned += reward;
@@ -3661,9 +3696,9 @@ function maybeAwardDuel(){
   if(g.lastDuel === duel.ts) return;
   g.lastDuel = duel.ts;
   g.stats.duels = (g.stats.duels || 0) + 1;
-  if(winner === kid){ g.coins += 150; g.stats.wins = (g.stats.wins || 0) + 1; toast('🏆 대결 승리! +150🪙'); Sound.jackpot(); confetti('rainbow'); }
-  else if(winner === 'tie'){ g.coins += 80; toast('🤝 무승부! +80🪙'); Sound.coin(); }
-  else { g.coins += 50; toast('😊 참가상 +50🪙 — 다음엔 이겨요!'); Sound.coin(); }
+  if(winner === kid){ earnCoins(150); g.stats.wins = (g.stats.wins || 0) + 1; toast('🏆 대결 승리! +150🪙'); Sound.jackpot(); confetti('rainbow'); }
+  else if(winner === 'tie'){ earnCoins(80); toast('🤝 무승부! +80🪙'); Sound.coin(); }
+  else { earnCoins(50); toast('😊 참가상 +50🪙 — 다음엔 이겨요!'); Sound.coin(); }
   saveNow();
   renderHUD();
   if(isSheetOpen('#marketSheet')) renderMarket();
@@ -4105,6 +4140,7 @@ function initNet(){
         }
       });
       syncReady = true;
+      onWalletCoins(WorldCoins.get());
       if(adopted){
         saveNow();
         renderAll();
@@ -4324,6 +4360,18 @@ renderAll();
 ensureWeather();
 renderWeather(true);
 setTimeout(function(){ setFairy(FAIRY_LINES[0]); }, 3600);
+
+/* 🪙 공용 코인 지갑 — 블록 월드·드레스와 같은 지갑을 실시간으로 봅니다 */
+WorldCoins.init({
+  kid: walletKid(kid),
+  test: WorldCoins.testFromUrl(),
+  localHint: G().coins,
+  onValue: onWalletCoins,
+  onDenied: function(){ toast('🪙 코인이 모자라요 🥲'); }
+});
+G().coins = WorldCoins.get();
+renderHUD();
+
 initNet();
 
 let lastT = 0;
@@ -4369,7 +4417,7 @@ function stopMiniLoops(){
 function miniCoins(n){
   const g = G();
   if(n > 0){
-    g.coins += n;
+    earnCoins(n);
     try{ floatCoin('+' + n); }catch(e){}
     try{ Sound.coin(); }catch(e){}
     try{ confetti('golden'); }catch(e){}
