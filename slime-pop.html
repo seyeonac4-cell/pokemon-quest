@@ -407,7 +407,7 @@ var Sound = (function(){
   /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
   var DIAG = window.__slimeDiag = {
     snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0 },
-    ctx: 'none', maxDeform: 0, maxDrag: 0
+    ctx: 'none', maxDeform: 0, maxDrag: 0, peakLevel: 0, frames: 0
   };
   var knead = { src: null, bp: null, gain: null, lfo: null, pan: null };
 
@@ -2183,6 +2183,11 @@ function frame(ts){
   }
   if (guard >= 4) acc = 0;
 
+  var DIAG = window.__slimeDiag;
+  DIAG.frames++;
+  var lv = Sound.level();
+  if (lv > DIAG.peakLevel) DIAG.peakLevel = lv;
+
   ctx.clearRect(0, 0, W, H);
   if (store.mode === 'slime') drawSlime(ballTime);
   else drawBalls(ballTime);
@@ -2207,6 +2212,7 @@ function boot(){
       popToday: store.popDays[todayKey()] || 0,
       audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
       maxDeform: window.__slimeDiag.maxDeform, maxDrag: window.__slimeDiag.maxDrag,
+      peakLevel: window.__slimeDiag.peakLevel, frames: window.__slimeDiag.frames,
       stage: [Math.round(W), Math.round(H)],
       scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
     };
