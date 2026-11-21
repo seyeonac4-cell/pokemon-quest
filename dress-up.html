@@ -2705,7 +2705,10 @@ var HIDDEN_DEFS = {
    13. 2.5D 드레싱룸 월드 — 넓은 확장판(v4) + 카메라 팔로우
    · 예전 1화면 방(7.6 × 6.6칸)을 가로·세로 2.5배(19 × 16.5칸)로 넓히고,
      카메라가 내 캐릭터를 부드럽게 따라가며 구역마다 펼쳐진 공간을 보여 줍니다.
+   · v4.6 카메라 줌: 칸당 픽셀(ux·uy)을 1.40배 키워 캐릭터·얼굴·메이크업·옷 결이
+     폰 화면에서도 크게 보이게 했습니다(월드 좌표는 그대로, 보이는 범위만 가까이).
    ============================================================ */
+var ZOOM  = 1.40;   /* 캐릭터·카메라 확대 배율(1 = v4 이전) */
 var WORLD = { x0:-9.5, x1:9.5, z0:0, z1:16.5, W:374, H:707, zTop:219, zLen:414, ux:36.6, uy:62.7, figh:104 };
 var VIEW  = { W:374, H:707 };
 var CAM   = { x:0, y:0, tx:0, ty:0, ready:false };
@@ -2719,8 +2722,8 @@ function measureRoom(){
   var r = roomEl.getBoundingClientRect();
   VIEW.W = Math.max(220, Math.round(r.width));
   VIEW.H = Math.max(260, Math.round(r.height));
-  var sx = (WORLD.x1 - WORLD.x0) / 7.6;   /* 가로 2.5배 */
-  var sz = (WORLD.z1 - WORLD.z0) / 6.6;   /* 세로 2.5배 */
+  var sx = ((WORLD.x1 - WORLD.x0) / 7.6) * ZOOM;   /* 가로 2.5배 × 줌 */
+  var sz = ((WORLD.z1 - WORLD.z0) / 6.6) * ZOOM;   /* 세로 2.5배 × 줌 */
   WORLD.zTop = Math.round(VIEW.H * 0.31);
   WORLD.zLen = Math.round(VIEW.H * 0.585 * sz);
   WORLD.uy = WORLD.zLen / (WORLD.z1 - WORLD.z0);
