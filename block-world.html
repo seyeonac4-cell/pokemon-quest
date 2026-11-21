@@ -381,7 +381,7 @@ input{font-family:inherit}
 
 /* ---------------- 토스트 · 결과 ---------------- */
 #toast{
-  position:absolute;left:50%;bottom:calc(126px + var(--safe-b));transform:translate(-50%,14px);
+  position:absolute;left:50%;bottom:calc(252px + var(--safe-b));transform:translate(-50%,14px);
   z-index:80;padding:11px 18px;border-radius:16px;
   background:rgba(33,44,68,.94);color:#fff;font-size:14px;line-height:1.5;
   max-width:min(86vw,360px);text-align:center;box-shadow:0 10px 26px rgba(16,26,44,.3);
@@ -436,7 +436,7 @@ input{font-family:inherit}
 #btnRide span:first-child{font-size:18px}
 #actionPrompt{
   position:absolute;left:50%;transform:translate(-50%,10px);
-  bottom:calc(150px + var(--safe-b));z-index:26;opacity:0;pointer-events:none;
+  bottom:calc(196px + var(--safe-b));z-index:26;opacity:0;pointer-events:none;
   transition:opacity .22s,transform .22s
 }
 #actionPrompt.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
@@ -450,8 +450,8 @@ input{font-family:inherit}
 #actBtn span:first-child{font-size:19px}
 @keyframes actpulse{0%,100%{box-shadow:0 8px 20px rgba(35,189,122,.42)}50%{box-shadow:0 8px 26px rgba(35,189,122,.7)}}
 @media (hover:hover) and (pointer:fine){
-  #ridePill{left:50%;transform:translateX(-50%);bottom:calc(56px + var(--safe-b))}
-  #actionPrompt{bottom:calc(116px + var(--safe-b))}
+  #ridePill{left:50%;transform:translateX(-50%);bottom:calc(74px + var(--safe-b))}
+  #actionPrompt{bottom:calc(140px + var(--safe-b))}
 }
 
 /* ---------------- 메뉴 목록 ---------------- */
@@ -3476,7 +3476,7 @@ function updateOtherChip() {
   if (o && o.who !== ME.id) {
     var w = WHO[o.who] || { name: '자매' };
     el.classList.add('show');
-    $('#otherChipTxt').textContent = w.name + '가 지금 놀고 있어! 같이 놀자';
+    $('#otherChipTxt').textContent = w.name + '이가 지금 놀고 있어! 같이 놀자';
   } else {
     el.classList.remove('show');
   }
@@ -3562,7 +3562,7 @@ function setProfile(who, silent) {
     }
   tpState.combo = 0;
   updateHint();
-  if (!silent) toast(ME.emoji + ' ' + ME.name + '(으)로 놀아요!');
+  if (!silent) toast(ME.emoji + ' ' + ME.name + '으로 놀아요!');
   FB.pushLive(true);
   FB.watchOther();
 }
@@ -3878,6 +3878,14 @@ function init() {
   }
 
   FB.init();
+  if (/[?&]dev=1/.test(location.search)) {
+    window.BWDEV = {
+      G: G,
+      go: function (x, y, z) { G.p.x = x; G.p.y = y; G.p.z = z || 0; G.p.air = false; G.p.vz = 0; G.cam = proj(x, y, z || 0); },
+      coins: function (n) { addCoins(n); },
+      state: function () { return { p: G.p, coins: SAVE && SAVE.coins, spot: G.spot && G.spot.label, paused: G.paused, gates: G.gates.map(function (g) { return g.solved; }) }; }
+    };
+  }
   requestAnimationFrame(loop);
   updateHint();
 }

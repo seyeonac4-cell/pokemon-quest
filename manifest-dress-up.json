@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/dress-up.html",
+  "name": "드레스 투 임프레스 · 스타일 패션쇼",
+  "short_name": "드레스 투 임프레스",
+  "description": "오늘의 주제로 코디하고 런웨이를 걸어요 — 드레스 투 임프레스 스타일 패션쇼 놀이",
+  "start_url": "/pokemon-quest/dress-up.html",
+  "scope": "/pokemon-quest/dress-up.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7FC",
+  "theme_color": "#FFD3E8",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/dress-up/dress-up-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/dress-up/dress-up-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/dress-up/dress-up-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

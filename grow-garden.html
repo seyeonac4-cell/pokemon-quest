@@ -194,9 +194,9 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 }
 
 /* 목표 · 추천 카드 */
-.homecards{display:grid; gap:9px; margin-top:10px}
+.homecards{display:grid; gap:8px; margin-top:8px}
 .goal,.rec{
-  display:flex; align-items:center; gap:11px; border-radius:20px; padding:12px 13px;
+  display:flex; align-items:center; gap:10px; border-radius:20px; padding:11px 12px;
   box-shadow:var(--shadow); position:relative;
 }
 .goal{background:linear-gradient(135deg,#fffdf4,#fff1c8); border:1px solid #f2dfa4}
@@ -216,19 +216,18 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .gline em{font-style:normal; font-size:10.5px; font-weight:900; color:#9a8b5c; white-space:nowrap}
 
 /* 돌연변이 도감 */
-.dexcard{margin-top:10px; background:#fffdf6; border:1px solid #e9e2c8; border-radius:20px; padding:12px 13px; box-shadow:var(--shadow)}
-.dexcard>b{display:block; font-size:13.5px; font-weight:900; margin-bottom:8px; letter-spacing:-.02em}
-.dex{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
-.dxi{border-radius:14px; padding:9px 4px 8px; text-align:center; border:1px solid #e8e2ce; background:#fff}
-.dxi .de{font-size:20px; line-height:1.1}
-.dxi b{display:block; font-size:11.5px; font-weight:900; margin-top:3px; letter-spacing:-.02em}
-.dxi small{display:block; font-size:10px; font-weight:800; color:#8b8264; margin-top:1px}
+.dexcard{background:#fffdf6; border:1px solid #e9e2c8; border-radius:20px; padding:11px 12px 12px; box-shadow:var(--shadow)}
+.dexcard>b{display:block; font-size:13px; font-weight:900; margin-bottom:7px; letter-spacing:-.02em}
+.dex{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
+.dxi{display:flex; align-items:center; justify-content:center; gap:4px; border-radius:12px; padding:8px 3px; border:1px solid #e8e2ce; background:#fff; font-size:11px; font-weight:900; letter-spacing:-.03em}
+.dxi .de{font-size:15px; line-height:1}
+.dxi em{font-style:normal; font-size:10px; font-weight:900; color:#8b8264}
 .dxi.golden{background:linear-gradient(180deg,#fffbe6,#ffeeb0); border-color:#f0d98a}
 .dxi.rainbow{background:linear-gradient(135deg,#ffe6f2,#e8eeff 50%,#e2ffe9); border-color:#dcc9f2}
 .dxi.frost{background:linear-gradient(180deg,#f1fdff,#d8f4ff); border-color:#a8dcf0}
 .dxi.locked{opacity:.55; filter:grayscale(.7)}
 .gbtn{
-  flex:0 0 auto; align-self:center; min-height:40px; padding:8px 12px; border-radius:12px;
+  flex:0 0 auto; align-self:center; min-height:40px; padding:8px 11px; border-radius:12px; white-space:nowrap;
   background:#fff; border:1.5px solid #e8cf88; font-size:12.5px; font-weight:900; color:#7a5a12;
   box-shadow:0 2px 0 #ecd48f;
 }
@@ -249,8 +248,8 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 
 /* 팁 줄 */
 .tip{
-  margin:12px 2px 0; font-size:13px; font-weight:800; color:#3c6b4d;
-  background:#ffffffb8; border:1px dashed #a9dcb8; border-radius:14px; padding:9px 12px; text-align:center;
+  margin:10px 2px 0; font-size:12.5px; font-weight:800; color:#3c6b4d;
+  background:#ffffffb8; border:1px dashed #a9dcb8; border-radius:13px; padding:7px 10px; text-align:center;
 }
 
 /* ---------- 공통 카드/섹션 ---------- */
@@ -310,7 +309,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .stat{background:var(--cream); border:1px solid var(--line); border-radius:16px; padding:10px 8px; text-align:center; box-shadow:var(--shadow)}
 .stat b{display:block; font-size:18px; font-weight:900; color:#2c6a45; font-variant-numeric:tabular-nums}
 .stat span{display:block; font-size:11.5px; color:var(--muted); font-weight:800; margin-top:1px}
-.mutchips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px}
+.mutchips{display:block; margin-bottom:12px}
 .mutchips .mc{display:flex; align-items:center; gap:4px; font-size:12px; font-weight:900; padding:5px 10px; border-radius:99px; border:1px solid #e2ebdd; background:#fff}
 .mc.golden{background:linear-gradient(90deg,#fff5cf,#ffe08a); border-color:#f0c94b; color:#7a5200}
 .mc.rainbow{background:linear-gradient(90deg,#ffe1ef,#e2ecff,#dffbe7); border-color:#c8b8f0; color:#5a3c8a}
@@ -470,8 +469,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div><h2>🧺 내 바구니 · 시장</h2><p>수확한 작물을 팔아서 코인을 벌어요</p></div>
       </div>
       <div class="statgrid" id="stats"></div>
-      <div class="mutchips" id="mutchips"></div>
-      <div id="marketList"></div>
+      <div class="mutchips" id="mutchips"></div>      <div id="marketList"></div>
       <button class="bigbtn" id="sellAllBtn" type="button" data-act="sellAll">🪙 전부 팔기</button>
       <div class="legend">
         <b>🌈 희귀 작물은 이렇게 나와요</b>
@@ -541,10 +539,9 @@ const PLOTS = 12;
 const SEEDS = [
   {id:'carrot',    name:'당근',      emoji:'🥕', bud:'🌼', leaf:'🌿', cost:10,  sell:18,  grow:20},
   {id:'strawberry',name:'딸기',      emoji:'🍓', bud:'🌸', leaf:'🌿', cost:25,  sell:45,  grow:28},
-  {id:'sunflower', name:'해바라기',  emoji:'🌻', bud:'🌱', leaf:'🌿', cost:45,  sell:85,  grow:42},
+  {id:'sunflower', name:'해바라기',  emoji:'🌻', bud:'🌻', leaf:'🌿', cost:45,  sell:85,  grow:42},
   {id:'watermelon',name:'수박',      emoji:'🍉', bud:'🌼', leaf:'🌿', cost:80,  sell:155, grow:65},
-  {id:'grape',     name:'포도',      emoji:'🍇', bud:'🍃', leaf:'🌿', cost:130, sell:250, grow:90},
-  {id:'starflower',name:'별꽃',      emoji:'🌟', bud:'✨', leaf:'🌿', cost:200, sell:400, grow:120},
+  {id:'grape',     name:'포도',      emoji:'🍇', bud:'🍃', leaf:'🌿', cost:130, sell:250, grow:90},  {id:'starflower',name:'별꽃',      emoji:'🌟', bud:'✨', leaf:'🌿', cost:200, sell:400, grow:120},
   {id:'rainmelon', name:'무지개 멜론',emoji:'🍈', bud:'🌈', leaf:'🌿', cost:320, sell:680, grow:160}
 ];
 const SEED = {};
@@ -823,7 +820,7 @@ function renderGarden(){
             `<span class="plant">${stageEmoji(p)}</span>` +
             `<span class="pname">${ripe ? '수확!' : s.name}</span>` +
             `<span class="pb"><i style="width:${ripe ? 100 : pr}%"></i></span>` +
-            (ripe ? '' : `<span class="wchip">💧${3 - Math.min(3, p.waters)}</span>`) +
+            (ripe ? '' : (p.waters > 0 ? `<span class="wchip">💧${Math.min(3, p.waters)}</span>` : '')) +
             `</button>`;
   }
   plotsEl.innerHTML = html;
@@ -851,13 +848,13 @@ function nextGoal(){
     if(lv >= u.max) return;
     const price = u.prices[lv];
     if(!best || price < best.price){
-      best = {kind:'up', id:u.id, emoji:u.emoji, name:u.name + (lv ? ' Lv.' + (lv+1) : ''), price:price, desc:u.desc(lv+1)};
+      best = {kind:'up', id:u.id, emoji:u.emoji, name:u.name, lv:lv ? lv+1 : 0, price:price, desc:u.desc(lv+1) + (lv ? ` (Lv.${lv+1})` : '')};
     }
   });
   DECOS.forEach(d => {
     if(g.deco[d.id]) return;
     if(!best || d.price < best.price){
-      best = {kind:'deco', id:d.id, emoji:d.emoji, name:d.name, price:d.price, desc:d.desc};
+      best = {kind:'deco', id:d.id, emoji:d.emoji, name:d.name, lv:0, price:d.price, desc:d.desc};
     }
   });
   return best;
@@ -879,8 +876,7 @@ function renderHome(){
       <span class="gi">${goal.emoji}</span>
       <span class="gt">
         <b>다음 목표 · ${goal.name}</b>
-        <span>${goal.desc}</span>
-        <span class="gline"><i class="gbar"><b style="width:${pct}%"></b></i><em>${nf(Math.min(g.coins, goal.price))}/${nf(goal.price)}🪙</em></span>
+        <span>${goal.desc}</span>        <span class="gline"><i class="gbar"><b style="width:${pct}%"></b></i><em>${nf(Math.min(g.coins, goal.price))}/${nf(goal.price)}🪙</em></span>
       </span>
       <button class="gbtn" type="button" data-act="goUp">보러 가기</button>
     </div>`;
@@ -901,14 +897,17 @@ function renderHome(){
     <button class="gbtn" type="button" data-act="recPlant" data-seed="${rec.id}"${(empty && g.coins >= rec.cost) ? '' : ' disabled'}>${rec.cost}🪙 심기</button>
   </div>`;
 
+  box.innerHTML = html;
+}
+
+function dexHTML(){
+  const g = G();
   const dex = [['golden','✨','황금','2배'], ['rainbow','🌈','무지개','3배'], ['frost','❄️','서리','1.5배']];
-  html += `<div class="dexcard"><b>🌈 돌연변이 도감</b><div class="dex">` +
+  return `<div class="dexcard"><b>🌈 돌연변이 도감</b><div class="dex">` +
     dex.map(d => {
       const n = g.stats.byMut[d[0]] || 0;
-      return `<div class="dxi ${d[0]}${n ? '' : ' locked'}"><span class="de">${d[1]}</span><b>${d[2]}</b><small>${n ? nf(n) + '개 발견' : '아직 없음'}</small></div>`;
+      return `<div class="dxi ${d[0]}${n ? '' : ' locked'}"><span class="de">${d[1]}</span>${d[2]}<em>${n ? nf(n) : 0}</em></div>`;
     }).join('') + `</div></div>`;
-
-  box.innerHTML = html;
 }
 
 function renderShop(){
@@ -936,10 +935,7 @@ function renderMarket(){
     `<div class="stat"><b>${nf(st.rare)}</b><span>희귀 작물</span></div>` +
     `<div class="stat"><b>${nf(st.earned)}</b><span>번 코인</span></div>`;
 
-  $('#mutchips').innerHTML = MUT_ORDER.map(m => {
-    const mu = MUTS[m], n = st.byMut[m] || 0;
-    return `<span class="mc ${mu.cls}">${mu.icon || '🌱'} ${mu.name} ${nf(n)}</span>`;
-  }).join('');
+  $('#mutchips').innerHTML = dexHTML();
 
   const rows = SEEDS.filter(s => {
     const row = g.basket[s.id];
@@ -1119,6 +1115,12 @@ function waterAt(i){
   save();
   Sound.water(); vibe(10);
   splash(i);
+  const pel = document.querySelector(`#plots .plot[data-i="${i}"]`);
+  if(pel){
+    let chip = pel.querySelector('.wchip');
+    if(!chip){ chip = document.createElement('span'); chip.className = 'wchip'; pel.appendChild(chip); }
+    chip.textContent = '💧' + Math.min(3, p.waters);
+  }
   tickUI();
   renderShop();  // 코인 그대로지만 상태 갱신
   if(isRipe(p)){ /* 다 자라면 수확 안내 */ }
