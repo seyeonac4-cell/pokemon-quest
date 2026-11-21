@@ -2373,7 +2373,7 @@ label.btn{cursor:pointer}
      고치기 전 화면을 열어 둔 기기가 옛 코드로 서버 기록을 덮어쓰는 일을 막는다.
      version.json 이 바뀌면 열려 있던 화면도 스스로 새로고침한다.
      ============================================================ */
-  var APP_VERSION = '2026-11-22a';
+  var APP_VERSION = '2026-11-22b';
   function checkVersion(delay) {
     if (!window.fetch) return;
     setTimeout(function () {
@@ -6759,6 +6759,9 @@ label.btn{cursor:pointer}
     sync: sync,
     initSync: initSync,
     pushSync: pushSync,
+    safetyLoad: safetyLoad,
+    safetyRemember: safetyRemember,
+    version: APP_VERSION,
     ntfySend: ntfySend,
     ntfyCfg: ntfyCfg,
     playCry: playCry,
