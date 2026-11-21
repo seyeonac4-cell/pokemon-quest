@@ -2223,8 +2223,20 @@ label.btn{cursor:pointer}
       if (raw.day && raw.day !== todayStr()) {
         var loc = state.children[k];
         var todayLocal = state.date === todayStr() && loc;
-        raw.done = (todayLocal && loc.done) ? loc.done : {};
-        raw.proofs = (todayLocal && loc.proofs && loc.proofs.date === todayStr()) ? loc.proofs : emptyProofs();
+        /* 이 기기에서 오늘 한 체크 + 오늘 올린 사진이 있는 체크는 오늘 것으로 인정해 살린다 */
+        var keepDone = JSON.parse(JSON.stringify((todayLocal && loc.done) || {}));
+        var keepProofs = (todayLocal && loc.proofs && loc.proofs.date === todayStr())
+          ? JSON.parse(JSON.stringify(loc.proofs)) : emptyProofs();
+        var rp = raw.proofs;
+        if (rp && rp.date === todayStr() && rp.items) {
+          Object.keys(rp.items).forEach(function (q) {
+            keepDone[q] = true;
+            if (!keepProofs.items[q]) keepProofs.items[q] = rp.items[q];
+          });
+        }
+        keepProofs.date = todayStr();
+        raw.done = keepDone;
+        raw.proofs = keepProofs;
         raw.lastAllPrev = null;
         raw.bonus90 = null;
         raw.academy = null;
