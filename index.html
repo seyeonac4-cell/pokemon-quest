@@ -4294,7 +4294,9 @@ label.btn{cursor:pointer}
       return '<div class="empty">보상이 아직 없어요. 보호자 모드에서 우리 집 보상을 추가해 보세요.</div>';
     }
     var pct = todayPct(state.active);
-    var pctOk = pct >= 50;
+    /* 윤진(c1)은 다른 공부 중이라 달성률과 상관없이 교환 (형원(c2)은 50% 기준 그대로) */
+    var pctFree = state.active === 'c1';
+    var pctOk = pctFree || pct >= 50;
     return '<div class="rewards">' + state.rewards.map(function (r) {
       var coinsOk = ch.coins >= r.cost;
       var wk = !!r.weekendOnly;
@@ -4309,7 +4311,8 @@ label.btn{cursor:pointer}
         + (can ? '' : ' disabled') + '>'
         + (wk && !pctOk ? '50% 필요' : (coinsOk ? '교환' : '코인 부족')) + '</button>'
         + (wk ? '<span class="rw-cond' + (pctOk ? ' on' : '') + '">'
-            + (pctOk ? '🏆 50% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
+            + (pctFree ? '✨ ' + esc(ch.name) + '이는 다른 공부 중이라 달성률 상관없이 바로 교환할 수 있어요 (주말 사용)'
+              : pctOk ? '🏆 50% 이상 달성 완료! 지금 코인으로 교환할 수 있어요 (주말 사용)'
                      : '🏆 50% 이상 달성 시 교환 (주말 사용) · 오늘 ' + pct + '%')
             + '</span>' : '')
         + '</div>';
@@ -4338,7 +4341,8 @@ label.btn{cursor:pointer}
     return childSwitchHTML() + gachaHTML()
       + '<section class="section"><div class="section-head"><h2>🎁 보호자 보상 교환</h2>'
       + '<span class="hint">코인 + 달성률 50%</span></div>'
-      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>50% 이상</b>이면 코인으로 교환할 수 있어요.</div>'
+      + '<div class="bonus-note" style="margin:0 0 10px">🎮 <b>닌텐도·로블록스 30분</b>은 <b>주말 사용</b> 보상이에요. 오늘 달성률이 <b>50% 이상</b>이면 코인으로 교환할 수 있어요.'
+      + (state.active === 'c1' ? '<br>✨ <b>윤진이는 다른 공부 중이라 달성률과 상관없이 교환할 수 있어요.</b>' : '') + '</div>'
       + rewardsHTML() + '</section>'
       + '<section class="section"><div class="section-head"><h2>🎫 내 보상함</h2>'
       + '<span class="hint">교환한 쿠폰</span></div>' + ticketsHTML() + '</section>';
@@ -5073,7 +5077,7 @@ label.btn{cursor:pointer}
       toast('코인이 ' + (rw.cost - ch.coins) + '개 부족해요');
       return;
     }
-    if (rw.weekendOnly && todayPct(state.active) < 50) {
+    if (rw.weekendOnly && state.active !== 'c1' && todayPct(state.active) < 50) {
       SFX.nope();
       toast('오늘 달성률 ' + todayPct(state.active) + '% · 50% 이상이면 교환할 수 있어요');
       return;
