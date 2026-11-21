@@ -298,10 +298,10 @@ body{
 }
 .frame{
   position:relative;width:100%;aspect-ratio:16/9;background:#000;
-  /* 차단판 두께·광고 건너뛰기 구멍 크기 */
-  --arm-bar:36px;--arm-hole:92px;--arm-hole-w:172px;
+  /* 차단판 두께·광고 건너뛰기 구멍 크기 (실제 광고 화면에서 버튼 위치를 재서 맞춤) */
+  --arm-bar:28px;--arm-hole:100px;--arm-hole-w:172px;
 }
-@media(min-width:600px){.frame{--arm-bar:52px;--arm-hole:84px;--arm-hole-w:210px}}
+@media(min-width:600px){.frame{--arm-hole-w:210px}}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 /* 유튜브 탈출 차단: 플레이어 위를 우리 레이어로 덮어 제목·공유·YouTube 로고·추천 영상을 못 누르게 */
 .yt-arm{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;padding:0;border:0;background:transparent;pointer-events:none;-webkit-tap-highlight-color:transparent}
@@ -844,10 +844,16 @@ body{
     ovHello();
     window.setTimeout(ovHello, 600);
     window.setTimeout(ovHello, 1600);
-    /* 자막 없이 보기: 기본 자막 모듈을 내린다 */
-    window.setTimeout(function () { ovCmd('unloadModule', ['captions']); }, 1200);
-    window.setTimeout(function () { ovCmd('unloadModule', ['captions']); }, 2600);
+    /* 자막 없이 보기: 기본 자막 트랙을 끄고 모듈을 내린다 */
+    window.setTimeout(ovCaptionsOff, 1000);
+    window.setTimeout(ovCaptionsOff, 2400);
   });
+
+  /* 자막 끄기 (cc_load_policy=0 만으로는 영상 기본 자막이 켜진 채 나오는 경우가 있어 한 번 더 끈다) */
+  function ovCaptionsOff(full) {
+    ovCmd('setOption', ['captions', 'track', {}]);
+    if (full !== false) ovCmd('unloadModule', ['captions']);
+  }
 
   /* 유튜브 플레이어 조작은 우리 버튼으로만 (플레이어는 클릭을 못 받는다) */
   function ovCmd(func, args) {
@@ -936,6 +942,10 @@ body{
     else if (j.event === 'infoDelivery' && j.info && typeof j.info.playerState === 'number') st = j.info.playerState;
     if (st === null) return;
     if (st === 0) { ovEnded(); return; }
+    if (st === 1 && ovState !== 1) {
+      window.setTimeout(ovCaptionsOff, 700);
+      window.setTimeout(ovCaptionsOff, 2200);
+    }
     ovState = st;
     ovTickAt = Date.now();
     $('ovPause').hidden = !(st === 2);
@@ -954,7 +964,8 @@ body{
   }, 250);
   /* 가만히 있어도 유튜브가 시간을 다시 보내도록 5초마다 신호 */
   window.setInterval(function () {
-    if (ov.classList.contains('show') && ovNow && ovState === 1) ovHello();
+    if (!ov.classList.contains('show') || !ovNow) return;
+    if (ovState === 1) { ovHello(); if (!document.hidden) ovCaptionsOff(false); }
   }, 5000);
 
   $('ovArm').addEventListener('click', function () {
