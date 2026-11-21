@@ -1862,12 +1862,13 @@ function renderAll(){
 /* ---------- 진행 중인 밭 갱신 ---------- */
 function tickUI(){
   const mine = !visiting;
-  const g = visiting ? (remoteGardens[visiting] || {plots: []}) : G();
+  const g = visiting ? (remoteGardens[visiting] || {}) : G();
+  const plots = (g && g.plots) || [];
   const els = document.querySelectorAll('#plots .plot');
   for(let i=0;i<els.length;i++){
     const el = els[i];
     const idx = Number(el.dataset.i);
-    const p = g.plots[idx];
+    const p = plots[idx];
     if(!p || !SEED[p.seed]) continue;
     const ripe = isRipe(p);
     const pr = Math.round(progress(p) * 100);
@@ -2428,9 +2429,17 @@ function renderDuelSheet(){
   box.innerHTML = html;
 }
 
+function duelMissionPool(){
+  const og = safeGarden(remoteGardens[otherKid()]);
+  const pool = MISSIONS.filter(function(mm){
+    return og.basket.some(function(it){ return challengeValid(it, mm); });
+  });
+  return pool.length ? pool : MISSIONS;
+}
 function startDuel(){
   if(!NET.db || !NET.on){ toast('가족 연결을 기다리는 중이에요 📡'); return; }
-  const m = MISSIONS[Math.floor(Math.random()*MISSIONS.length)];
+  const pool = duelMissionPool();
+  const m = pool[Math.floor(Math.random()*pool.length)];
   const payload = {mission: m.id, by: kid, ts: Date.now(), entries: {}, winner: null};
   Sound.spin();
   try{
@@ -2460,6 +2469,7 @@ function submitDuel(itemId){
 
 function maybeAwardDuel(){
   if(!duel || !duel.entries || !duel.entries.yunjin || !duel.entries.hyeongwon) return;
+  if(Date.now() - (+duel.ts || 0) > 30*60*1000) return;   // 오래된 대결은 다시 정산하지 않아요
   const winner = duel.winner || decideWinner(duel);
   if(!winner) return;
   const g = G();
@@ -2878,7 +2888,7 @@ window.__gg = {
   goTab: goTab,
   setKid: function(k){ visiting = null; kid = k; DB.kid = k; saveNow(); goTab('garden'); renderAll(); },
   ripeNow: function(i){ const p = G().plots[i]; if(p){ p.at = Date.now() - SEED[p.seed].ms / fertMul() - 1000; saveNow(); tickUI(); } },
-  fresh: function(){ DB = freshDB(); kid = DB.kid; saveNow(); renderAll(); },
+  fresh: function(){ var k = kid; DB = freshDB(); DB.kid = k; kid = k; saveNow(); renderAll(); },
   load: load,
   safeGarden: safeGarden,
   renderAll: renderAll,

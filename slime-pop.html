@@ -114,12 +114,12 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .hint.out{opacity:0}
 .toast{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.8);
-  font-size:23px; font-weight:900; color:#fff; letter-spacing:-.5px; z-index:4; pointer-events:none;
-  padding:14px 26px; border-radius:20px; opacity:0;
+  font-size:17px; font-weight:900; color:#fff; letter-spacing:-.4px; z-index:4; pointer-events:none;
+  padding:12px 18px; border-radius:18px; opacity:0;
+  max-width:calc(100% - 30px); white-space:normal; text-align:center; line-height:1.35;
   background:linear-gradient(160deg,rgba(255,143,191,.96),rgba(169,139,255,.96));
   box-shadow:0 16px 40px rgba(190,110,180,.35); text-shadow:0 2px 6px rgba(120,60,110,.3);
   transition:opacity .25s, transform .35s cubic-bezier(.2,1.5,.4,1);
-  white-space:nowrap;
 }
 .toast.show{opacity:1; transform:translate(-50%,-50%) scale(1)}
 
@@ -1036,10 +1036,10 @@ var SPRINKLE_COLORS = ['#FF8FB8', '#7FD8FF', '#FFD75E', '#9BE8C8', '#C0A6FF', '#
 
 /* 놀이 도구 */
 var TOOLS = [
-  { id: 'knead', em: '✋', name: '주무르기', short: '주물',   tip: '✋ 주무르기 — 꾹 눌러 늘리고 주물러요' },
-  { id: 'poke',  em: '👆', name: '콕콕 찌르기', short: '콕콕', tip: '👆 콕콕 — 톡톡 찌르면 손가락 자국이 남아요' },
-  { id: 'swirl', em: '🌀', name: '회오리 감기', short: '회오리', tip: '🌀 회오리 — 빙글빙글 돌리면 소용돌이가 쳐요' },
-  { id: 'cut',   em: '🔪', name: '싹둑 자르기', short: '싹둑', tip: '🔪 싹둑 — 슬라임을 가로질러 그어 보세요' }
+  { id: 'knead', em: '✋', name: '주무르기', short: '주물',   msg: '✋ 주무르기', tip: '✋ 주무르기 — 꾹 눌러 늘리고 주물러요' },
+  { id: 'poke',  em: '👆', name: '콕콕 찌르기', short: '콕콕', msg: '👆 콕콕 — 자국이 쏘옥', tip: '👆 콕콕 — 톡톡 찌르면 손가락 자국이 남아요' },
+  { id: 'swirl', em: '🌀', name: '회오리 감기', short: '회오리', msg: '🌀 회오리 — 빙글빙글', tip: '🌀 회오리 — 빙글빙글 돌리면 소용돌이가 쳐요' },
+  { id: 'cut',   em: '🔪', name: '싹둑 자르기', short: '싹둑', msg: '🔪 싹둑! 슬라임을 그어 보세요', tip: '🔪 싹둑 — 슬라임을 가로질러 그어 보세요' }
 ];
 var TOOL = {};
 TOOLS.forEach(function(t){ TOOL[t.id] = t; });
@@ -1111,8 +1111,8 @@ function paintScene(){
 
   /* 1) 테이블에 드리우는 트레이 그림자 */
   sctx.save();
-  sctx.shadowColor = 'rgba(112,74,142,.26)';
-  sctx.shadowBlur = Math.max(18, Math.min(46, w * 0.05));
+  sctx.shadowColor = 'rgba(112,74,142,.20)';
+  sctx.shadowBlur = Math.max(16, Math.min(42, w * 0.045));
   sctx.shadowOffsetX = 0; sctx.shadowOffsetY = thick + 6;
   sctx.fillStyle = 'rgba(255,255,255,.92)';
   roundRectPath(sctx, x, y, w, h, r); sctx.fill();
@@ -1121,9 +1121,9 @@ function paintScene(){
   /* 2) 아크릴 두께(옆면) */
   roundRectPath(sctx, x, y + thick, w, h, r);
   var side = sctx.createLinearGradient(0, y + h * 0.45, 0, y + h + thick);
-  side.addColorStop(0, 'rgba(233,221,247,.95)');
-  side.addColorStop(0.55, 'rgba(214,197,238,.97)');
-  side.addColorStop(1, 'rgba(182,161,221,.98)');
+  side.addColorStop(0, 'rgba(246,240,255,.96)');
+  side.addColorStop(0.55, 'rgba(235,226,250,.97)');
+  side.addColorStop(1, 'rgba(214,200,240,.98)');
   sctx.fillStyle = side; sctx.fill();
 
   /* 3) 트레이 바닥 */
@@ -1140,9 +1140,9 @@ function paintScene(){
   rrSub(sctx, TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih, ir);
   var rg = sctx.createLinearGradient(x, y, x + w * 0.78, y + h);
   rg.addColorStop(0, 'rgba(255,255,255,1)');
-  rg.addColorStop(0.34, 'rgba(255,250,253,.97)');
-  rg.addColorStop(0.72, 'rgba(240,231,255,.95)');
-  rg.addColorStop(1, 'rgba(214,199,239,.96)');
+  rg.addColorStop(0.34, 'rgba(255,252,254,.98)');
+  rg.addColorStop(0.72, 'rgba(247,242,255,.96)');
+  rg.addColorStop(1, 'rgba(231,222,246,.96)');
   sctx.fillStyle = rg;
   sctx.fill('evenodd');
 
@@ -1151,17 +1151,17 @@ function paintScene(){
   roundRectPath(sctx, TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih, ir);
   sctx.clip();
   sctx.save();
-  sctx.shadowColor = 'rgba(116,78,148,.28)';
-  sctx.shadowBlur = 18; sctx.shadowOffsetY = 6;
-  roundRectPath(sctx, TRAY.ix + 10, TRAY.iy + 9, TRAY.iw - 20, TRAY.ih - 18, Math.max(6, r - rimW));
-  sctx.strokeStyle = 'rgba(158,128,196,.22)';
-  sctx.lineWidth = 17;
+  sctx.shadowColor = 'rgba(132,102,168,.20)';
+  sctx.shadowBlur = 15; sctx.shadowOffsetY = 5;
+  roundRectPath(sctx, TRAY.ix + 12, TRAY.iy + 11, TRAY.iw - 24, TRAY.ih - 22, Math.max(6, r - rimW));
+  sctx.strokeStyle = 'rgba(160,132,196,.10)';
+  sctx.lineWidth = 12;
   sctx.stroke();
   sctx.restore();
   var dg = sctx.createLinearGradient(0, TRAY.iy, 0, TRAY.iy + TRAY.ih);
-  dg.addColorStop(0, 'rgba(150,120,190,.05)');
+  dg.addColorStop(0, 'rgba(150,120,190,.03)');
   dg.addColorStop(0.52, 'rgba(150,120,190,0)');
-  dg.addColorStop(1, 'rgba(130,98,178,.14)');
+  dg.addColorStop(1, 'rgba(130,98,178,.09)');
   sctx.fillStyle = dg;
   sctx.fillRect(TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih);
   /* 반짝이는 아크릴 반사 띠 */
@@ -1187,7 +1187,7 @@ function paintScene(){
   sctx.strokeStyle = 'rgba(255,255,255,.92)';
   sctx.lineWidth = 1.8; sctx.stroke();
   roundRectPath(sctx, TRAY.ix + 1, TRAY.iy + 1, TRAY.iw - 2, TRAY.ih - 2, Math.max(8, r - rimW * 1.4));
-  sctx.strokeStyle = 'rgba(152,122,190,.16)';
+  sctx.strokeStyle = 'rgba(152,122,190,.10)';
   sctx.lineWidth = 1.2; sctx.stroke();
 
   /* 7) 파스텔 컨페티 */
@@ -1235,7 +1235,7 @@ function pointInPoly(x, y, pts){
 function slimeInit(){
   SL.cx = TRAY.ix + TRAY.iw / 2;
   SL.cy = TRAY.iy + TRAY.ih * 0.52;
-  SL.baseR = Math.max(48, Math.min(TRAY.iw * 0.400, TRAY.ih * 0.385, 265));
+  SL.baseR = Math.max(48, Math.min(TRAY.iw * 0.375, TRAY.ih * 0.370, 265));
   var R = SL.baseR;
   SL.p = []; SL.v = []; SL.prev = []; SL.ox = []; SL.oy = []; SL.rest = [];
   for (var i = 0; i < N; i++) {
@@ -2125,9 +2125,9 @@ function paintJelly(pts, M, C, T, o){
     ctx.translate(0, thick);
     blobPath(pts);
     var sg = ctx.createLinearGradient(cx, cy, cx, cy + ry + thick);
-    sg.addColorStop(0, rgba(mixHex(C.base, C.dark, 0.45), Math.min(1, alpha + 0.10)));
-    sg.addColorStop(0.42, rgba(mixHex(C.base, C.dark, 0.92), 0.68));
-    sg.addColorStop(1, rgba(darken(C.dark, 0.4), 0.55));
+    sg.addColorStop(0, rgba(mixHex(C.base, C.dark, 0.25), Math.min(1, alpha + 0.06)));
+    sg.addColorStop(0.42, rgba(mixHex(C.base, C.dark, 0.62), 0.55));
+    sg.addColorStop(1, rgba(mixHex(C.base, C.dark, 0.92), 0.46));
     ctx.fillStyle = sg;
     ctx.fill();
     ctx.restore();
@@ -2144,8 +2144,8 @@ function paintJelly(pts, M, C, T, o){
   g.addColorStop(0.80, rgba(mixHex(C.base, C.dark, 0.50), Math.min(1, alpha + 0.06)));
   g.addColorStop(1, rgba(mixHex(C.base, C.dark, 0.92), Math.min(1, alpha + 0.20)));
   ctx.save();
-  ctx.shadowColor = rgba(C.dark, 0.42);
-  ctx.shadowBlur = Math.min(28, rx * 0.20);
+  ctx.shadowColor = rgba(C.dark, 0.30);
+  ctx.shadowBlur = Math.min(20, rx * 0.15);
   ctx.fillStyle = g;
   ctx.fill();
   ctx.restore();
@@ -3081,13 +3081,15 @@ function drawBalls(t){
 }
 
 /* =========================================================
-   7. 입력
+   7. 입력 — 도구마다 다른 손맛
    ========================================================= */
 var ptrs = {};      /* 슬라임용 포인터 */
 var ballPtrs = {};  /* 왁뿌볼용 포인터 */
 var ptrCount = 0;
 var lastSprinkle = 0;
 var hintGone = false;
+var cutLine = null;
+var pointerPos = null;
 
 function hideHint(){
   if (hintGone) return;
@@ -3103,44 +3105,39 @@ function evPos(e){
 }
 function panOf(x){ return (x / Math.max(1, W)) * 2 - 1; }
 
+function nearSlime(x, y){
+  if (pointInPoly(x, y, SL.p)) return true;
+  var best = 1e18;
+  for (var i = 0; i < SL.p.length; i++) {
+    var dx = SL.p[i].x - x, dy = SL.p[i].y - y;
+    var d = dx * dx + dy * dy;
+    if (d < best) best = d;
+  }
+  var lim = SL.baseR * 0.22;
+  return best < lim * lim;
+}
+
+function ballHit(x, y){
+  var hit = null, bestD = 1e9;
+  for (var i = 0; i < BB.list.length; i++) {
+    var b = BB.list[i];
+    var dx = x - b.x, dy = y - b.y;
+    var d = Math.sqrt(dx * dx + dy * dy);
+    if (d < b.r * 1.10 && d < bestD) { bestD = d; hit = b; }
+  }
+  return hit;
+}
+
 cv.addEventListener('pointerdown', function(e){
   e.preventDefault();
   Sound.unlock();
   hideHint();
   var p = evPos(e);
+  pointerPos = p;
   try { cv.setPointerCapture(e.pointerId); } catch (err) {}
 
-  if (store.mode === 'slime') {
-    if (grabs.length >= 3) return;
-    var G = slimeGrabAt(p.x, p.y, e.pointerId);
-    window.__slimeDiag.lastDown = {
-      x: Math.round(p.x), y: Math.round(p.y), any: G.any, inside: G.inside,
-      n: SL.p.length, R: Math.round(SL.baseR), cx: Math.round(SL.cx), cy: Math.round(SL.cy),
-      grabbed: grabs.length + 1, muted: Sound.isMuted(), astate: Sound.state()
-    };
-    grabs.push(G);
-    ptrs[e.pointerId] = G;
-    ptrCount++;
-    if (G.any) {
-      SL.ripples.push({ x: p.x, y: p.y, t: 0 });
-      Sound.squish(G.inside ? 0.9 : 0.45, panOf(p.x));
-      if (store.texture === 'crunch') Sound.crunch(0.7, panOf(p.x));
-      Sound.kneadStart(panOf(p.x));
-      /* 파츠를 고른 상태에서 톡 누르면 바로 뿌려진다 */
-      if (store.topping) sprinkleAt(p.x, p.y, store.topping, 2 + ((Math.random() * 2) | 0));
-    } else {
-      /* 슬라임 바깥을 눌렀을 때 — 살짝 물결만 */
-      SL.ripples.push({ x: p.x, y: p.y, t: 0 });
-    }
-  } else {
-    /* 왁뿌볼: 가장 가까운 볼 집기 */
-    var hit = null, bestD = 1e9;
-    for (var i = 0; i < BB.list.length; i++) {
-      var b = BB.list[i];
-      var dx = p.x - b.x, dy = p.y - b.y;
-      var d = Math.sqrt(dx * dx + dy * dy);
-      if (d < b.r * 1.08 && d < bestD) { bestD = d; hit = b; }
-    }
+  if (store.mode === 'ball') {
+    var hit = ballHit(p.x, p.y);
     if (hit) {
       /* 톡톡 두 번 두드려도 뽁! (꾹 누르기와 같은 결과) */
       var tapNow = Date.now();
@@ -3155,43 +3152,89 @@ cv.addEventListener('pointerdown', function(e){
       hit.pressA = Math.atan2(p.y - hit.y, p.x - hit.x);
       ballPtrs[e.pointerId] = { ball: hit, x: p.x, y: p.y };
       Sound.squish(0.85, panOf(p.x));
+      Sound.squeak(0.55, panOf(p.x));
     } else {
       ballPtrs[e.pointerId] = { ball: null, x: p.x, y: p.y };
       Sound.click();
     }
+    return;
+  }
+
+  /* 표면 기포는 어떤 도구로도 톡 터뜨릴 수 있다 */
+  var bub = bubbleAt(p.x, p.y);
+  if (bub) {
+    popAirBubble(bub);
+    ptrs[e.pointerId] = { mode: 'pop', x: p.x, y: p.y };
+    return;
+  }
+  if (SL.split) return;
+
+  var tool = store.tool;
+
+  /* 🔪 싹둑 */
+  if (tool === 'cut') {
+    cutLine = { active: true, ax: p.x, ay: p.y, bx: p.x, by: p.y, valid: false };
+    ptrs[e.pointerId] = { mode: 'cut', x: p.x, y: p.y };
+    Sound.squish(0.45, panOf(p.x));
+    return;
+  }
+
+  /* 🌀 회오리 */
+  if (tool === 'swirl') {
+    if (!nearSlime(p.x, p.y)) { SL.ripples.push({ x: p.x, y: p.y, t: 0 }); return; }
+    ptrs[e.pointerId] = {
+      mode: 'swirl', x: p.x, y: p.y,
+      ang: Math.atan2(p.y - SL.cy, p.x - SL.cx)
+    };
+    SL.swirlI = Math.min(1, SL.swirlI + 0.3);
+    SL.ripples.push({ x: p.x, y: p.y, t: 0 });
+    Sound.swirl(0.55, panOf(p.x));
+    Sound.kneadStart(panOf(p.x));
+    return;
+  }
+
+  /* 👆 콕콕 */
+  if (tool === 'poke') {
+    if (!nearSlime(p.x, p.y)) { SL.ripples.push({ x: p.x, y: p.y, t: 0 }); return; }
+    var d = addDent(p.x, p.y, 0.8);
+    d.hold = true;
+    ptrs[e.pointerId] = { mode: 'poke', x: p.x, y: p.y, dent: d };
+    Sound.squish(0.95, panOf(p.x));
+    grain(store.texture, 0.85, panOf(p.x), 0);
+    if (store.topping) sprinkleAt(p.x, p.y, store.topping, 2);
+    return;
+  }
+
+  /* ✋ 주무르기 */
+  if (grabs.length >= 3) return;
+  var G = slimeGrabAt(p.x, p.y, e.pointerId);
+  window.__slimeDiag.lastDown = {
+    x: Math.round(p.x), y: Math.round(p.y), any: G.any, inside: G.inside,
+    n: SL.p.length, R: Math.round(SL.baseR), cx: Math.round(SL.cx), cy: Math.round(SL.cy),
+    grabbed: grabs.length + 1, muted: Sound.isMuted(), astate: Sound.state()
+  };
+  grabs.push(G);
+  ptrs[e.pointerId] = G;
+  ptrCount++;
+  if (G.any) {
+    SL.ripples.push({ x: p.x, y: p.y, t: 0 });
+    Sound.squish(G.inside ? 0.9 : 0.45, panOf(p.x));
+    grain(store.texture, 0.75, panOf(p.x), 0);
+    Sound.kneadStart(panOf(p.x));
+    /* 파츠를 고른 상태에서 톡 누르면 바로 뿌려진다 */
+    if (store.topping) sprinkleAt(p.x, p.y, store.topping, 2 + ((Math.random() * 2) | 0));
+    /* 문지르면 기포가 통통 */
+    if (Math.random() < 0.55) spawnAirBubbles(1, p.x, p.y);
+  } else {
+    SL.ripples.push({ x: p.x, y: p.y, t: 0 });
   }
 }, { passive: false });
 
 cv.addEventListener('pointermove', function(e){
   var p = evPos(e);
+  pointerPos = p;
 
-  if (store.mode === 'slime') {
-    var G = ptrs[e.pointerId];
-    if (!G) return;
-    var dx = p.x - G.x, dy = p.y - G.y;
-    var sp = Math.sqrt(dx * dx + dy * dy);
-    G.x = p.x; G.y = p.y;
-    G.inside = pointInPoly(p.x, p.y, SL.p);
-    if (sp > window.__slimeDiag.maxDrag) window.__slimeDiag.maxDrag = Math.round(sp);
-
-    /* 파츠 뿌리기 (파츠 선택 중이고, 슬라임 안을 문지를 때) */
-    if (store.topping && sp > 2) {
-      var now = performance.now();
-      if (now - lastSprinkle > 70 && G.inside) {
-        lastSprinkle = now;
-        sprinkleAt(p.x, p.y, store.topping, 1);
-      }
-    }
-    if (G.any) {
-      Sound.kneadLevel(clamp(sp / 22, 0, 1), panOf(p.x));
-      if (sp > 5) Sound.stretch(clamp(sp / 26, 0.2, 1), panOf(p.x));
-      if ((store.texture === 'crunch') && sp > 7) Sound.crunch(clamp(sp / 30, 0.2, 1), panOf(p.x));
-    } else {
-      Sound.kneadLevel(0, panOf(p.x));
-    }
-    /* 이동 중이면 은은한 물결 */
-    if (sp > 12 && Math.random() < 0.25 && SL.ripples.length < 16) SL.ripples.push({ x: p.x, y: p.y, t: 0.35 });
-  } else {
+  if (store.mode === 'ball') {
     var B = ballPtrs[e.pointerId];
     if (!B) return;
     if (B.ball) {
@@ -3201,33 +3244,116 @@ cv.addEventListener('pointermove', function(e){
       bb.vx = (p.x - B.x) * 5.2;
       bb.vy = (p.y - B.y) * 5.2;
       bb.pressA = Math.atan2(p.y - bb.y, p.x - bb.x);
-      /* 집어서 문지르면 말랑 소리 */
-      if (Math.abs(p.x - B.x) + Math.abs(p.y - B.y) > 8) Sound.squish(0.45, panOf(p.x));
+      if (Math.abs(p.x - B.x) + Math.abs(p.y - B.y) > 8) {
+        Sound.squish(0.45, panOf(p.x));
+        Sound.squeak(0.35, panOf(p.x));
+      }
     }
     B.x = p.x; B.y = p.y;
+    return;
   }
+
+  var P = ptrs[e.pointerId];
+  if (!P) return;
+
+  /* 🔪 자르는 중 */
+  if (P.mode === 'cut') {
+    if (!cutLine) return;
+    cutLine.bx = p.x; cutLine.by = p.y;
+    cutLine.valid = !!splitPolygonByLine({ x: cutLine.ax, y: cutLine.ay }, { x: cutLine.bx, y: cutLine.by });
+    if (cutLine.valid) grain(store.texture, 0.4, panOf(p.x), 150);
+    P.x = p.x; P.y = p.y;
+    return;
+  }
+
+  /* 🌀 회오리 */
+  if (P.mode === 'swirl') {
+    if (SL.split) return;
+    var ang = Math.atan2(p.y - SL.cy, p.x - SL.cx);
+    var dth = ang - P.ang;
+    while (dth > Math.PI) dth -= TAU;
+    while (dth < -Math.PI) dth += TAU;
+    P.ang = ang;
+    if (Math.abs(dth) > 0.004) {
+      rotateSlime(dth);
+      SL.swirlA += dth;
+      SL.swirlV = clamp(dth * 26, -9, 9);
+      SL.swirlI = Math.min(1, SL.swirlI + Math.abs(dth) * 1.4);
+      Sound.swirl(clamp(Math.abs(dth) * 5, 0.2, 1), panOf(p.x));
+      Sound.kneadLevel(clamp(Math.abs(dth) * 18, 0, 1), panOf(p.x));
+      if (Math.random() < 0.35 && SL.ripples.length < 14) {
+        SL.ripples.push({
+          x: SL.cx + (p.x - SL.cx) * 0.6,
+          y: SL.cy + (p.y - SL.cy) * 0.6,
+          t: 0.18
+        });
+      }
+    }
+    P.x = p.x; P.y = p.y;
+    return;
+  }
+
+  /* 👆 콕콕 — 끌면 자국이 따라오고 기포가 솟는다 */
+  if (P.mode === 'poke') {
+    var pdx = p.x - P.x, pdy = p.y - P.y;
+    var psp = Math.sqrt(pdx * pdx + pdy * pdy);
+    P.x = p.x; P.y = p.y;
+    if (psp > 2.5) {
+      if (P.dent && pointInPoly(p.x, p.y, SL.p)) {
+        P.dent.x = p.x;
+        P.dent.y = p.y;
+        P.dent.t = 0;
+        P.dent.r = clamp(P.dent.r * 1.005, 15, 46);
+      }
+      if (psp > 5 && Math.random() < 0.35) addDent(p.x + rand(-5, 5), p.y + rand(-5, 5), 0.35).hold = false;
+      grain(store.texture, clamp(psp / 18, 0.25, 1), panOf(p.x), 70);
+      if (Math.random() < 0.45 && SL.rising.length < 26) {
+        SL.rising.push({
+          x: p.x + rand(-8, 8), y: p.y + rand(-4, 4),
+          r: rand(1.6, 4), sp: rand(20, 48), t: 0, life: rand(0.5, 0.95), ph: Math.random() * TAU
+        });
+      }
+    }
+    return;
+  }
+
+  if (P.mode === 'pop') return;
+
+  /* ✋ 주무르기 */
+  var G = P;
+  var dx = p.x - G.x, dy = p.y - G.y;
+  var sp = Math.sqrt(dx * dx + dy * dy);
+  G.x = p.x; G.y = p.y;
+  G.inside = pointInPoly(p.x, p.y, SL.p);
+  if (sp > window.__slimeDiag.maxDrag) window.__slimeDiag.maxDrag = Math.round(sp);
+
+  /* 파츠 뿌리기 */
+  if (store.topping && sp > 2) {
+    var now = performance.now();
+    if (now - lastSprinkle > 70 && G.inside) {
+      lastSprinkle = now;
+      sprinkleAt(p.x, p.y, store.topping, 1);
+    }
+  }
+  if (G.any) {
+    Sound.kneadLevel(clamp(sp / 22, 0, 1), panOf(p.x));
+    if (sp > 5) Sound.stretch(clamp(sp / 26, 0.2, 1), panOf(p.x));
+    /* 질감 결 — 사그락사그락 / 뽀득뽀득 */
+    if (sp > 4) grain(store.texture, clamp(sp / 26, 0.25, 1), panOf(p.x), 75);
+    /* 문지른 만큼 슬라임 속에 공기가 찬다 */
+    SL.airAcc += sp * (G.inside ? 1 : 0.35);
+    if (SL.airAcc > 240) {
+      SL.airAcc = 0;
+      spawnAirBubbles(1, p.x, p.y);
+    }
+  } else {
+    Sound.kneadLevel(0, panOf(p.x));
+  }
+  if (sp > 12 && Math.random() < 0.25 && SL.ripples.length < 16) SL.ripples.push({ x: p.x, y: p.y, t: 0.35 });
 }, { passive: false });
 
 function endPointer(e, cancelled){
-  if (store.mode === 'slime') {
-    var G = ptrs[e.pointerId];
-    if (!G) return;
-    delete ptrs[e.pointerId];
-    ptrCount = Math.max(0, ptrCount - 1);
-    var i = grabs.indexOf(G);
-    if (i >= 0) grabs.splice(i, 1);
-    /* 놓을 때 말랑 튕김 */
-    var dist = 0;
-    for (var k = 0; k < G.w.length; k += 6) {
-      if (G.w[k] > 0.3) dist = Math.max(dist, Math.abs(G.x - (SL.cx + SL.ox[k])) + Math.abs(G.y - (SL.cy + SL.oy[k])));
-    }
-    if (G.any && !cancelled) {
-      Sound.squish(clamp(dist / 190, 0.3, 1), panOf(G.x));
-      /* 놓은 자리에 잔물결 */
-      SL.ripples.push({ x: G.x, y: G.y, t: 0.2 });
-    }
-    if (!grabs.length) Sound.kneadStop();
-  } else {
+  if (store.mode === 'ball') {
     var B = ballPtrs[e.pointerId];
     if (!B) return;
     delete ballPtrs[e.pointerId];
@@ -3239,7 +3365,52 @@ function endPointer(e, cancelled){
       if (!cancelled) Sound.boing(power, panOf(bb.x));
       bb.hold = 0;
     }
+    return;
   }
+
+  var P = ptrs[e.pointerId];
+  if (!P) return;
+  delete ptrs[e.pointerId];
+
+  if (P.mode === 'cut') {
+    var applied = false;
+    if (cutLine && cutLine.active && !cancelled) {
+      var L = Math.hypot(cutLine.bx - cutLine.ax, cutLine.by - cutLine.ay);
+      if (L > 24) applied = applyCut({ x: cutLine.ax, y: cutLine.ay }, { x: cutLine.bx, y: cutLine.by });
+      if (!applied && L > 40) toast('슬라임을 가로질러 그어 주세요 🔪');
+    }
+    cutLine = null;
+    return;
+  }
+
+  if (P.mode === 'pop') return;
+
+  if (P.mode === 'swirl') {
+    Sound.kneadStop();
+    return;
+  }
+
+  if (P.mode === 'poke') {
+    if (P.dent) P.dent.hold = false;
+    return;
+  }
+
+  /* 주무르기 grab 놓기 */
+  ptrCount = Math.max(0, ptrCount - 1);
+  var i = grabs.indexOf(P);
+  if (i >= 0) grabs.splice(i, 1);
+  var dist = 0;
+  for (var k = 0; k < P.w.length; k += 6) {
+    if (P.w[k] > 0.3) dist = Math.max(dist, Math.abs(P.x - (SL.cx + SL.ox[k])) + Math.abs(P.y - (SL.cy + SL.oy[k])));
+  }
+  if (P.any && !cancelled) {
+    Sound.squish(clamp(dist / 190, 0.3, 1), panOf(P.x));
+    SL.ripples.push({ x: P.x, y: P.y, t: 0.2 });
+    if (store.texture === 'butter' || store.texture === 'crunch') {
+      grain(store.texture, clamp(dist / 160, 0.3, 1), panOf(P.x), 0);
+    }
+  }
+  if (!grabs.length) Sound.kneadStop();
 }
 cv.addEventListener('pointerup', function(e){ endPointer(e, false); }, { passive: true });
 cv.addEventListener('pointercancel', function(e){ endPointer(e, true); }, { passive: true });
@@ -3249,6 +3420,35 @@ cv.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 /* =========================================================
    8. UI 만들기
    ========================================================= */
+var rowTools = document.getElementById('rowTools');
+TOOLS.forEach(function(tl){
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip tool' + (store.tool === tl.id ? ' on' : '');
+  b.dataset.tool = tl.id;
+  b.innerHTML = '<span class="em">' + tl.em + '</span>' + tl.short;
+  b.title = tl.tip;
+  b.setAttribute('aria-label', tl.name);
+  b.addEventListener('click', function(){ Sound.unlock(); setTool(tl.id); });
+  rowTools.appendChild(b);
+});
+
+function setTool(id){
+  if (!TOOL[id]) return;
+  store.tool = id;
+  saveStore();
+  var chips = rowTools.querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.toggle('on', chips[i].dataset.tool === id);
+  Sound.click();
+  toast(TOOL[id].msg);
+  var hint = document.getElementById('hint');
+  if (hint && store.mode === 'slime') hint.textContent = TOOL[id].tip;
+  cutLine = null;
+  grabs = []; ptrs = {}; ptrCount = 0;
+  Sound.kneadStop();
+  updateHud();
+}
+
 var rowColors = document.getElementById('rowColors');
 PALETTE.forEach(function(c){
   var b = document.createElement('button');
@@ -3318,14 +3518,21 @@ TOPPINGS.forEach(function(tp){
 function updateHud(){
   var C = COLORS[store.color] || PALETTE[0];
   var T = TEX[store.texture] || TEX.water;
+  var tl = TOOL[store.tool] || TOOLS[0];
   var el = document.getElementById('tagNow');
   el.textContent = (store.mode === 'ball')
     ? '🎈 왁뿌볼 놀이터'
-    : (C.name + ' · ' + T.name + (store.topping ? ' · ' + TOP[store.topping].name : ''));
+    : (tl.em + ' ' + (store.tool === 'knead' ? '' : tl.short + ' · ') + C.name + ' · ' + T.name + (store.topping ? ' · ' + TOP[store.topping].name : ''));
   var tp = document.getElementById('tagPop');
   var tk = store.popDays[todayKey()] || 0;
   tp.hidden = store.mode !== 'ball';
   if (!tp.hidden) tp.innerHTML = '뽁 <b>' + tk + '</b>';
+  var tb = document.getElementById('tagBub');
+  var nBub = SL.airBubbles.length;
+  tb.hidden = store.mode !== 'slime' || (!nBub && !SL.bubblePops);
+  if (!tb.hidden) {
+    tb.innerHTML = nBub ? ('🫧 기포 <b>' + nBub + '</b>') : ('🫧 뽁 <b>' + SL.bubblePops + '</b>');
+  }
   var jar = document.getElementById('jarN');
   jar.textContent = store.saved.length;
 }
@@ -3341,9 +3548,9 @@ function setMode(m){
   document.getElementById('brandEm').textContent = m === 'slime' ? '🫧' : '🎈';
   document.getElementById('brandSub').textContent = m === 'slime' ? '쫀득쫀득 촉감 놀이' : '톡 누르면 뽁! 터지는 말랑볼';
   var hint = document.getElementById('hint');
-  if (hint) hint.textContent = m === 'slime' ? '손가락으로 꾹 눌러 당겨 보세요 🫧' : '왁뿌볼을 꾹 누르거나 톡톡 두 번! 뽁 터져요 🎈';
+  if (hint) hint.textContent = m === 'slime' ? TOOL[store.tool].tip : '왁뿌볼을 꾹 누르거나 톡톡 두 번! 뽁 터져요 🎈';
   /* 손가락 상태 초기화 */
-  grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {};
+  grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {}; cutLine = null;
   Sound.kneadStop();
   if (m === 'ball') {
     if (!BB.list.length) ballsReset();
@@ -3395,6 +3602,8 @@ function renderSheet(){
   document.getElementById('stSlimeAll').textContent = store.slimeTotal || 0;
   document.getElementById('stPopToday').textContent = store.popDays[tk] || 0;
   document.getElementById('stPopAll').textContent = store.popTotal || 0;
+  document.getElementById('stBubToday').textContent = store.bubbleDays[tk] || 0;
+  document.getElementById('stBubAll').textContent = store.bubbleTotal || 0;
   document.getElementById('stColN').textContent = store.saved.length + '개';
 
   var grid = document.getElementById('colGrid');
@@ -3444,6 +3653,21 @@ btnSound.addEventListener('click', function(){
   toast(m ? '🔇 소리 꺼짐' : '🔊 소리 켜짐');
 });
 
+document.getElementById('btnBubble').addEventListener('click', function(){
+  Sound.unlock();
+  if (store.mode !== 'slime') return;
+  if (SL.split) { toast('합쳐진 다음에 불려요 🫧'); return; }
+  var n = spawnAirBubbles(3, null, null);
+  if (n) {
+    Sound.squish(0.6, panOf(SL.cx));
+    Sound.boing(0.5, panOf(SL.cx));
+    SL.ripples.push({ x: SL.cx, y: SL.cy, t: 0 });
+    toast('🫧 기포가 통통! 톡 터뜨려 보세요');
+  } else {
+    toast('기포가 가득 찼어요! 톡 터뜨려 보세요');
+  }
+});
+
 document.getElementById('btnSave').addEventListener('click', function(){
   Sound.unlock();
   var tk = todayKey();
@@ -3465,6 +3689,13 @@ document.getElementById('btnNew').addEventListener('click', function(){
   Sound.unlock();
   var C = COLORS[store.color];
   SL.parts = [];
+  SL.dents = [];
+  SL.airBubbles = [];
+  SL.rising = [];
+  SL.splashes = [];
+  SL.split = null;
+  SL.swirlV = 0; SL.swirlI = 0; SL.airAcc = 0;
+  cutLine = null;
   for (var i = 0; i < grabs.length; i++) grabs[i].t = 0;
   /* 새 슬라임이 통통 튀어 오르는 느낌 */
   for (var k = 0; k < N; k++) {
@@ -3522,7 +3753,9 @@ function frame(ts){
   var lv = Sound.level();
   if (lv > DIAG.peakLevel) DIAG.peakLevel = lv;
 
+  if (sceneDirty) { paintScene(); sceneDirty = false; }
   ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(sceneCv, 0, 0, W, H);
   if (store.mode === 'slime') drawSlime(ballTime);
   else drawBalls(ballTime);
 
@@ -3540,17 +3773,37 @@ function boot(){
   updateHud();
   window.__slimeSnap = function(){
     return {
-      mode: store.mode, color: store.color, texture: store.texture,
+      mode: store.mode, color: store.color, texture: store.texture, tool: store.tool,
       parts: SL.parts.length, grabs: grabs.length, balls: BB.list.length,
       saved: store.saved.length, popTotal: store.popTotal, slimeTotal: store.slimeTotal,
-      ballPos: BB.list.map(function(b){ return [Math.round(b.x), Math.round(b.y), Math.round(b.r)]; }),
+      bubbleTotal: store.bubbleTotal, bubblePops: SL.bubblePops,
+      dents: SL.dents.length, airBubbles: SL.airBubbles.map(function(b){ return [Math.round(b.x), Math.round(b.y), Math.round(b.r)]; }),
+      rising: SL.rising.length, sparks: SL.sparks.length, floats: SL.floats.length,
+      split: SL.split ? { t: Math.round(SL.split.t * 100) / 100, sep: Math.round(SL.split.sep) } : null,
+      swirl: { v: Math.round(SL.swirlV * 1000) / 1000, i: Math.round(SL.swirlI * 100) / 100 },
+      cut: cutLine ? { valid: !!cutLine.valid, active: !!cutLine.active } : null,
+      ballPos: BB.list.map(function(b){ return [Math.round(b.x), Math.round(b.y), Math.round(b.r), b.tier]; }),
       popToday: store.popDays[todayKey()] || 0,
       audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
       maxDeform: window.__slimeDiag.maxDeform, maxDrag: window.__slimeDiag.maxDrag,
       peakLevel: window.__slimeDiag.peakLevel, frames: window.__slimeDiag.frames, maxHold: window.__slimeDiag.maxHold,
-      stage: [Math.round(W), Math.round(H)],
+      stage: [Math.round(W), Math.round(H)], tray: [Math.round(TRAY.ix), Math.round(TRAY.iy), Math.round(TRAY.iw), Math.round(TRAY.ih)],
       scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
     };
+  };
+  /* 점검용 손잡이 (아이 화면에는 보이지 않음) */
+  window.__slimeTest = {
+    setTool: setTool,
+    poke: function(x, y){ return addDent(x == null ? SL.cx : x, y == null ? SL.cy : y, 0.9); },
+    bubbles: function(n, x, y){ return spawnAirBubbles(n || 3, x, y); },
+    bubbleList: function(){ return SL.airBubbles.map(function(b){ return [Math.round(b.x), Math.round(b.y), Math.round(b.r)]; }); },
+    popBubble: function(i){ var b = SL.airBubbles[i || 0]; return b ? popAirBubble(b) : false; },
+    cut: function(x1, y1, x2, y2){ return applyCut({ x: x1, y: y1 }, { x: x2, y: y2 }); },
+    splitInfo: function(){ return SL.split ? { t: SL.split.t, sep: SL.split.sep } : null; },
+    slimeInfo: function(){ return { cx: SL.cx, cy: SL.cy, R: SL.baseR, pts: SL.p.length }; },
+    ballList: function(){ return BB.list.map(function(b){ return { x: b.x, y: b.y, r: b.r, tier: b.tier }; }); },
+    ballsReset: function(n){ ballsReset(n); },
+    scene: function(){ return { tray: TRAY, dirty: sceneDirty }; }
   };
   requestAnimationFrame(frame);
 }
@@ -3566,10 +3819,9 @@ function onResize(){
     if (BB.list.length) {
       for (var i = 0; i < BB.list.length; i++) {
         var b = BB.list[i];
-        b.r = b.r0 = ballRadius() * rand(0.82, 1.16);
-        b.x = clamp(b.x, b.r + 4, W - b.r - 4);
-        b.y = clamp(b.y, b.r + 26, H - b.r - 6);
+        b.r = b.r0 = ballRadius() * tierScale(b.tier) * rand(0.94, 1.06);
       }
+      clampBallsInside();
     } else ballsReset(W < 520 ? 5 : 7);
   }, 140);
 }
@@ -3577,7 +3829,7 @@ window.addEventListener('resize', onResize);
 window.addEventListener('orientationchange', onResize);
 
 document.addEventListener('visibilitychange', function(){
-  if (document.hidden) { grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {}; saveStoreNow(); }
+  if (document.hidden) { grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {}; cutLine = null; saveStoreNow(); }
   else { lastT = 0; }
 });
 

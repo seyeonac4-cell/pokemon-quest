@@ -284,7 +284,7 @@ input{font-family:inherit}
 }
 .tp-word span{
   font-size:32px;line-height:1;padding:8px 7px;border-radius:11px;
-  background:#f2f6fd;color:#8a97b4;border-bottom:4px solid #e0e8f6;
+  background:#eef3fb;color:#56648a;border-bottom:4px solid #e0e8f6;
   min-width:26px;text-align:center;transition:all .12s
 }
 .tp-word span.done{background:#dcfdec;color:#12854a;border-bottom-color:#8fe0b4}
@@ -1128,7 +1128,7 @@ var TYPES = {
   brick:  { top: '#ffb43d', right: '#e2911c', left: '#bd7611' },
   stone:  { top: '#cfdae6', right: '#adbccc', left: '#8b9cae' },
   wood:   { top: '#cf9055', right: '#ab713c', left: '#8a572c' },
-  neon:   { top: '#8df2ff', right: '#4ed4f0', left: '#2babca' },
+  neon:   { top: '#71e8ff', right: '#37c6e6', left: '#1ea2c2' },
   gold:   { top: '#ffd24a', right: '#e6ad1c', left: '#c08c0d' },
   bounce: { top: '#ff8cc0', right: '#ef63a2', left: '#cd4786' },
   rainbow:{ top: '#ffa6e6', right: '#f27ecb', left: '#d05fa9' },
@@ -1244,9 +1244,9 @@ function buildMap() {
   props.push({ k: 'rug', x: hH.cx + 0.5, y: hH.cy + 0.2, z: 0 });
   props.push({ k: 'houseSign', x: hH.x0 + 1.1, y: hH.y0 + hH.d + 0.6, z: 0, who: 'hyungwon', label: '형원이네 집', emoji: '🐣' });
 
-  props.push({ k: 'houseSign', x: -14.2, y: 4.5, z: 0, who: null, label: '카페', emoji: '☕' });
-  props.push({ k: 'houseSign', x: -8.6, y: 4.5, z: 0, who: null, label: '학교', emoji: '🏫' });
-  props.push({ k: 'houseSign', x: -2.6, y: 4.5, z: 0, who: null, label: '병원', emoji: '🏥' });
+  props.push({ k: 'houseSign', x: -13.4, y: 8.6, z: 0, who: null, label: '카페', emoji: '☕' });
+  props.push({ k: 'houseSign', x: -7.3, y: 8.6, z: 0, who: null, label: '학교', emoji: '🏫' });
+  props.push({ k: 'houseSign', x: -2.4, y: 8.6, z: 0, who: null, label: '병원', emoji: '🏥' });
   props.push({ k: 'counter', x: -13.9, y: 7.0, z: 0 });       // 카페 카운터
   props.push({ k: 'table', x: -12.9, y: 6.2, z: 0 });
   props.push({ k: 'desk', x: -7.7, y: 6.4, z: 0 });           // 학교 책상
@@ -1558,7 +1558,7 @@ function drawTile(ctx, t) {
 
   if (t.type === 'neon' || t.type === 'rainbow') {
     var cx2 = (p0.x + p2.x) / 2, cy2 = (p0.y + p2.y) / 2;
-    var pulse = 0.35 + 0.25 * Math.sin(G.t * 4 + t.x + t.y);
+    var pulse = 0.16 + 0.12 * Math.sin(G.t * 4 + t.x + t.y);
     ctx.beginPath();
     ctx.ellipse(cx2, cy2, 26, 13, 0, 0, 6.2832);
     ctx.fillStyle = 'rgba(255,255,255,' + pulse.toFixed(3) + ')';
