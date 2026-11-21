@@ -23,7 +23,7 @@ f.addEventListener('load', function () {
     var d = f.contentDocument;
     var s = d.createElement('style');
     s.textContent = '#controls{display:block!important}#kbHint{display:none!important}' +
-      '#ridePill{left:calc(16px + env(safe-area-inset-left,0px))!important;transform:none!important;bottom:calc(152px + env(safe-area-inset-bottom,0px))!important}' +
+      '#ridePill{left:auto!important;right:calc(16px + env(safe-area-inset-right,0px))!important;transform:none!important;bottom:calc(128px + env(safe-area-inset-bottom,0px))!important}' +
       '#actionPrompt{bottom:calc(196px + env(safe-area-inset-bottom,0px))!important}' +
       '#toast{bottom:calc(252px + env(safe-area-inset-bottom,0px))!important}';
     d.head.appendChild(s);
