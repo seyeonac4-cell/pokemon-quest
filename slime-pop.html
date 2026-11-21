@@ -1476,8 +1476,13 @@ function makeBall(x, y, forceColor){
 function ballsReset(n){
   BB.list = [];
   var count = n || (W < 520 ? 5 : 7);
+  var order = BALLCOLORS.slice();
+  for (var oi = order.length - 1; oi > 0; oi--) {
+    var oj = (Math.random() * (oi + 1)) | 0;
+    var tmp = order[oi]; order[oi] = order[oj]; order[oj] = tmp;
+  }
   for (var i = 0; i < count; i++) {
-    var b = makeBall(rand(W * 0.15, W * 0.85), rand(H * 0.2, H * 0.8));
+    var b = makeBall(rand(W * 0.15, W * 0.85), rand(H * 0.2, H * 0.8), order[i % order.length]);
     /* 처음엔 겹치지 않게 밀어 두기 */
     for (var k = 0; k < 40; k++) {
       var ok = true;
@@ -1496,7 +1501,10 @@ function ballsReset(n){
 }
 function ballAddOne(){
   if (BB.list.length >= 11) { toast('왁뿌볼이 가득 찼어요!'); return; }
-  var b = makeBall(rand(W * 0.2, W * 0.8), rand(H * 0.2, H * 0.45));
+  /* 지금 없는 색을 골라 알록달록하게 */
+  var used = BB.list.map(function(x){ return x.color.base; });
+  var fresh = BALLCOLORS.filter(function(c){ return used.indexOf(c.base) < 0; });
+  var b = makeBall(rand(W * 0.2, W * 0.8), rand(H * 0.2, H * 0.45), fresh.length ? pick(fresh) : null);
   BB.list.push(b);
   updateBallChip();
   Sound.tok();
@@ -1509,13 +1517,15 @@ function updateBallChip(){
 function ballStep(dt){
   BB.t += dt;
   var i, j, b;
-  var grav = 34;               /* 살짝만 가라앉고 둥실둥실 떠다니게 */
+  var grav = 0;                /* 물속 젤리처럼 둥실둥실 떠다니게 */
   for (i = 0; i < BB.list.length; i++) {
     b = BB.list[i];
-    b.vy += grav * dt;
-    b.vx += Math.sin(BB.t * 0.85 + b.ph) * 11 * dt;
-    b.vy += Math.cos(BB.t * 0.62 + b.ph * 1.7) * 9 * dt;
-    b.vx *= 0.997; b.vy *= 0.997;
+    b.vx += Math.cos(BB.t * 0.55 + b.ph) * 16 * dt;
+    b.vy += Math.sin(BB.t * 0.47 + b.ph * 1.4) * 14 * dt;
+    b.vx *= 0.995; b.vy *= 0.995;
+    /* 너무 멈춰 있으면 살짝 떠오르게 */
+    var sp2 = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    if (sp2 < 14) { b.vx += rand(-26, 26); b.vy += rand(-26, 26); }
     b.x += b.vx * dt; b.y += b.vy * dt;
 
     /* 벽 반동 + 말랑 눌림 */
