@@ -1571,7 +1571,7 @@ function addDent(x, y, power){
   var C = COLORS[store.color] || PALETTE[0];
   var d = {
     x: x, y: y,
-    r: clamp(SL.baseR * 0.155, 15, 44) * (0.82 + 0.30 * clamp(power || 0.6, 0, 1)),
+    r: clamp(SL.baseR * 0.185, 17, 48) * (0.84 + 0.28 * clamp(power || 0.6, 0, 1)),
     t: 0, life: 2.7, depth: 0.50 + 0.55 * clamp(power || 0.6, 0, 1),
     hold: false, rot: Math.random() * TAU
   };
@@ -1984,29 +1984,29 @@ function drawDentMark(d, C, T){
 
   /* 파인 그늘 */
   var g = ctx.createRadialGradient(d.x + r * 0.04, d.y + r * 0.10, r * 0.05, d.x, d.y + r * 0.04, r * 1.12);
-  g.addColorStop(0, rgba(darken(C.dark, 0.45), 0.36 * depth));
-  g.addColorStop(0.52, rgba(C.dark, 0.18 * depth));
-  g.addColorStop(0.82, rgba(C.dark, 0.05 * depth));
+  g.addColorStop(0, rgba(darken(C.dark, 0.55), 0.50 * depth));
+  g.addColorStop(0.52, rgba(darken(C.dark, 0.30), 0.26 * depth));
+  g.addColorStop(0.82, rgba(C.dark, 0.07 * depth));
   g.addColorStop(1, rgba(C.dark, 0));
   ctx.fillStyle = g;
   ctx.beginPath(); ctx.arc(d.x, d.y, r * 1.12, 0, TAU); ctx.fill();
 
   /* 홈 아래쪽에 맺히는 반사 */
   var bg = ctx.createRadialGradient(d.x, d.y + r * 0.58, r * 0.04, d.x, d.y + r * 0.58, r * 1.0);
-  bg.addColorStop(0, 'rgba(255,255,255,' + (0.44 * depth * T.gloss) + ')');
-  bg.addColorStop(0.6, 'rgba(255,255,255,' + (0.14 * depth * T.gloss) + ')');
+  bg.addColorStop(0, 'rgba(255,255,255,' + (0.62 * depth * T.gloss) + ')');
+  bg.addColorStop(0.6, 'rgba(255,255,255,' + (0.20 * depth * T.gloss) + ')');
   bg.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = bg;
   ctx.beginPath(); ctx.ellipse(d.x, d.y + r * 0.52, r * 0.95, r * 0.55, 0, 0, TAU); ctx.fill();
 
   /* 테두리 */
   ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, TAU);
-  ctx.strokeStyle = 'rgba(255,255,255,' + (0.34 * depth * T.gloss) + ')';
-  ctx.lineWidth = 2.1;
+  ctx.strokeStyle = 'rgba(255,255,255,' + (0.52 * depth * T.gloss) + ')';
+  ctx.lineWidth = 2.6;
   ctx.stroke();
   ctx.beginPath(); ctx.arc(d.x, d.y, r * 0.98, Math.PI * 0.15, Math.PI * 0.9);
-  ctx.strokeStyle = rgba(darken(C.dark, 0.2), 0.18 * depth);
-  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = rgba(darken(C.dark, 0.2), 0.30 * depth);
+  ctx.lineWidth = 1.8;
   ctx.stroke();
 
   /* 지문 결 */
@@ -3556,6 +3556,13 @@ function setMode(m){
     if (!BB.list.length) ballsReset();
     updateBallChip();
   }
+  /* 도크 높이가 바뀌면 무대도 다시 잡는다 */
+  setTimeout(function(){
+    resize();
+    slimeInit();
+    if (BB.list.length) clampBallsInside(); else ballsReset(W < 520 ? 5 : 7);
+    updateHud();
+  }, 0);
   updateHud();
 }
 for (var ti = 0; ti < tabs.length; ti++) {
@@ -3827,6 +3834,9 @@ function onResize(){
 }
 window.addEventListener('resize', onResize);
 window.addEventListener('orientationchange', onResize);
+if (window.ResizeObserver) {
+  try { new ResizeObserver(function(){ onResize(); }).observe(stage); } catch (e) {}
+}
 
 document.addEventListener('visibilitychange', function(){
   if (document.hidden) { grabs = []; ptrs = {}; ptrCount = 0; ballPtrs = {}; cutLine = null; saveStoreNow(); }

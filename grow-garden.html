@@ -246,6 +246,11 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
   animation:sway 4.6s ease-in-out infinite;
 }
 @keyframes sway{0%,100%{transform:translateY(-1px) rotate(-1.6deg)}50%{transform:translateY(0) rotate(1.6deg)}}
+@media (min-width:700px){
+  .plot .plant{font-size:calc(clamp(26px,3.4vw,44px) * var(--sz,1))}
+  .plot .pname{font-size:11px}
+  .plot .muts{font-size:10.5px}
+}
 .plot:nth-child(2n) .plant{animation-duration:5.4s; animation-delay:-1.2s}
 .plot:nth-child(3n) .plant{animation-duration:4.1s; animation-delay:-2.4s}
 .plot.ripe .plant{animation-name:ripeBounce; animation-duration:.95s; animation-timing-function:ease-in-out}
