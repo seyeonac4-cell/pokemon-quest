@@ -131,6 +131,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
   scrollbar-width:none; -ms-overflow-style:none}
 .row::-webkit-scrollbar{display:none}
 .row + .row{margin-top:6px}
+#rowTop{flex-wrap:wrap; overflow:visible; row-gap:5px}
 .row .lab{flex:0 0 auto; font-size:10.5px; font-weight:900; color:var(--muted); padding-right:2px; letter-spacing:-.2px}
 .sw{
   flex:0 0 auto; width:38px; height:38px; border-radius:50%; position:relative;
@@ -400,6 +401,7 @@ loadStore();
    ========================================================= */
 var Sound = (function(){
   var AC = null, master = null, bus = null, rev = null, revGain = null, noiseBuf = null;
+  var analyser = null, anaBuf = null;
   var muted = !!store.mute;
   var last = { squish: 0, stretch: 0, crunch: 0, tok: 0, boing: 0, tingle: 0 };
   /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
@@ -424,7 +426,15 @@ var Sound = (function(){
 
     master = AC.createGain();
     master.gain.value = muted ? 0 : 0.92;
-    bus.connect(master);
+    try {
+      analyser = AC.createAnalyser();
+      analyser.fftSize = 1024;
+      anaBuf = new Float32Array(analyser.fftSize);
+      bus.connect(analyser);
+      analyser.connect(master);
+    } catch (e) {
+      bus.connect(master);
+    }
     master.connect(AC.destination);
 
     /* 부드러운 잔향 — 촉감 소리가 '젖은' 느낌으로 남는다 */
@@ -785,6 +795,15 @@ var Sound = (function(){
     boing: boing, click: click,
     kneadStart: kneadStart, kneadLevel: kneadLevel, kneadStop: kneadStop,
     state: function(){ return AC ? AC.state : 'none'; },
+    level: function(){
+      if (!analyser) return 0;
+      try {
+        analyser.getFloatTimeDomainData(anaBuf);
+        var sum = 0;
+        for (var i = 0; i < anaBuf.length; i++) sum += anaBuf[i] * anaBuf[i];
+        return Math.round(Math.sqrt(sum / anaBuf.length) * 1000) / 1000;
+      } catch (e) { return -1; }
+    },
     isMuted: function(){ return muted; },
     setMuted: function(m){
       muted = !!m;
@@ -1121,14 +1140,19 @@ function drawSlime(t){
 
   /* 본체 */
   blobPath(pts);
-  var g = ctx.createRadialGradient(SL.cx - SL.baseR * 0.32, SL.cy - SL.baseR * 0.40, SL.baseR * 0.08,
-                                   SL.cx - SL.baseR * 0.05, SL.cy, SL.baseR * 1.35);
-  g.addColorStop(0, rgba(C.light, T.alpha));
-  g.addColorStop(0.42, rgba(C.base, T.alpha));
-  g.addColorStop(0.82, rgba(mixHex(C.base, C.dark, 0.45), Math.min(1, T.alpha + 0.04)));
-  g.addColorStop(1, rgba(C.dark, Math.min(1, T.alpha + 0.1)));
+  var g = ctx.createRadialGradient(SL.cx - SL.baseR * 0.30, SL.cy - SL.baseR * 0.38, SL.baseR * 0.06,
+                                   SL.cx - SL.baseR * 0.02, SL.cy + SL.baseR * 0.05, SL.baseR * 1.30);
+  g.addColorStop(0, rgba(C.light, Math.min(1, T.alpha + 0.05)));
+  g.addColorStop(0.34, rgba(C.base, T.alpha));
+  g.addColorStop(0.70, rgba(mixHex(C.base, C.dark, 0.32), Math.min(1, T.alpha + 0.03)));
+  g.addColorStop(0.92, rgba(mixHex(C.base, C.dark, 0.62), Math.min(1, T.alpha + 0.05)));
+  g.addColorStop(1, rgba(C.dark, Math.min(1, T.alpha + 0.12)));
+  ctx.save();
+  ctx.shadowColor = rgba(C.base, 0.55);
+  ctx.shadowBlur = 16;
   ctx.fillStyle = g;
   ctx.fill();
+  ctx.restore();
 
   /* 안쪽 디테일 (클립) */
   ctx.save();
@@ -2151,7 +2175,7 @@ function boot(){
       parts: SL.parts.length, grabs: grabs.length, balls: BB.list.length,
       saved: store.saved.length, popTotal: store.popTotal, slimeTotal: store.slimeTotal,
       popToday: store.popDays[todayKey()] || 0,
-      audio: Sound.state(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
+      audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
       stage: [Math.round(W), Math.round(H)],
       scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
     };
