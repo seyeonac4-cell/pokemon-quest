@@ -453,7 +453,7 @@ input{font-family:inherit}
 #actBtn span:first-child{font-size:19px}
 @keyframes actpulse{0%,100%{box-shadow:0 8px 20px rgba(35,189,122,.42)}50%{box-shadow:0 8px 26px rgba(35,189,122,.7)}}
 @media (hover:hover) and (pointer:fine){
-  #ridePill{left:50%;transform:translateX(-50%);bottom:calc(74px + var(--safe-b))}
+  #ridePill{left:50%;right:auto;transform:translateX(-50%);bottom:calc(74px + var(--safe-b))}
   #actionPrompt{bottom:calc(140px + var(--safe-b))}
 }
 
@@ -1952,7 +1952,7 @@ function drawAvatar(ctx, sx, sy, look, o) {
   // 이름표
   if (o.name && o.shadow !== false) {
     ctx.save();
-    ctx.translate(sx, sy - 112);
+    ctx.translate(sx, sy - 122);
     ctx.font = '12px Jua, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1965,7 +1965,7 @@ function drawAvatar(ctx, sx, sy, look, o) {
     ctx.restore();
     if (o.roleEmoji) {
       ctx.save();
-      ctx.translate(sx - tw / 2 - 12, sy - 112);
+      ctx.translate(sx - tw / 2 - 12, sy - 122);
       ctx.beginPath();
       ctx.arc(0, 0, 10, 0, 6.2832);
       ctx.fillStyle = 'rgba(255,255,255,.96)';
@@ -1977,7 +1977,7 @@ function drawAvatar(ctx, sx, sy, look, o) {
   }
 
   // 말풍선
-  if (o.bubble) drawBubble(ctx, sx, sy - 128, o.bubble, o.me);
+  if (o.bubble) drawBubble(ctx, sx, sy - 140, o.bubble, o.me);
 }
 
 function drawFace(ctx, kind, cx, cy) {

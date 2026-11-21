@@ -1131,7 +1131,7 @@ function paintScene(){
   var top = sctx.createLinearGradient(0, y, 0, y + h);
   top.addColorStop(0, 'rgba(255,255,255,1)');
   top.addColorStop(0.46, 'rgba(255,250,254,.99)');
-  top.addColorStop(1, 'rgba(243,238,255,.99)');
+  top.addColorStop(1, 'rgba(240,234,255,.99)');
   sctx.fillStyle = top; sctx.fill();
 
   /* 4) 두께 있는 아크릴 테두리 */
@@ -1164,6 +1164,12 @@ function paintScene(){
   dg.addColorStop(1, 'rgba(130,98,178,.09)');
   sctx.fillStyle = dg;
   sctx.fillRect(TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih);
+  /* 테두리가 바닥에 드리우는 얇은 그늘 */
+  var tsg = sctx.createLinearGradient(0, TRAY.iy, 0, TRAY.iy + 22);
+  tsg.addColorStop(0, 'rgba(140,110,180,.13)');
+  tsg.addColorStop(1, 'rgba(140,110,180,0)');
+  sctx.fillStyle = tsg;
+  sctx.fillRect(TRAY.ix, TRAY.iy, TRAY.iw, 22);
   /* 반짝이는 아크릴 반사 띠 */
   sctx.save();
   sctx.translate(TRAY.ix, TRAY.iy);
@@ -1867,25 +1873,25 @@ function jellyMetrics(pts){
 /* 접지 그림자 — 젤리가 트레이 바닥에 딱 붙어 있는 느낌 */
 function drawContactShadow(M, C, k){
   k = k == null ? 1 : k;
-  var rx = M.rx * 1.04, ry = M.ry * 0.40;
-  var ox = M.cx, oy = M.cy + M.ry * 0.66;
+  var rx = M.rx * 1.08, ry = M.ry * 0.44;
+  var ox = M.cx, oy = M.cy + M.ry * 0.72;
   ctx.save();
   var g = ctx.createRadialGradient(ox, oy, ry * 0.15, ox, oy, rx * 1.10);
-  g.addColorStop(0, rgba(darken(C.dark, 0.35), 0.20 * k));
-  g.addColorStop(0.46, rgba(darken(C.dark, 0.2), 0.12 * k));
+  g.addColorStop(0, rgba(darken(C.dark, 0.40), 0.26 * k));
+  g.addColorStop(0.46, rgba(darken(C.dark, 0.2), 0.14 * k));
   g.addColorStop(1, rgba(darken(C.dark, 0.2), 0));
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(ox, oy, rx * 1.10, ry * 1.12, 0, 0, TAU);
   ctx.fill();
 
-  var g2 = ctx.createRadialGradient(ox, oy, 1, ox, oy, rx * 0.94);
-  g2.addColorStop(0, rgba(darken(C.dark, 0.55), 0.27 * k));
-  g2.addColorStop(0.58, rgba(darken(C.dark, 0.4), 0.13 * k));
+  var g2 = ctx.createRadialGradient(ox, oy, 1, ox, oy, rx * 0.96);
+  g2.addColorStop(0, rgba(darken(C.dark, 0.60), 0.34 * k));
+  g2.addColorStop(0.58, rgba(darken(C.dark, 0.45), 0.16 * k));
   g2.addColorStop(1, rgba(darken(C.dark, 0.3), 0));
   ctx.fillStyle = g2;
   ctx.beginPath();
-  ctx.ellipse(ox, oy, rx * 0.96, ry * 0.62, 0, 0, TAU);
+  ctx.ellipse(ox, oy, rx * 0.98, ry * 0.64, 0, 0, TAU);
   ctx.fill();
   ctx.restore();
 }
@@ -2139,10 +2145,11 @@ function paintJelly(pts, M, C, T, o){
     cx - rx * 0.32, cy - ry * 0.44, Math.min(rx, ry) * 0.04,
     cx - rx * 0.02, cy + ry * 0.14, Math.max(rx, ry) * 1.32);
   g.addColorStop(0, rgba(C.light, Math.min(1, alpha + 0.05)));
-  g.addColorStop(0.24, rgba(mixHex(C.light, C.base, 0.55), Math.min(1, alpha + 0.02)));
-  g.addColorStop(0.52, rgba(C.base, alpha));
-  g.addColorStop(0.80, rgba(mixHex(C.base, C.dark, 0.50), Math.min(1, alpha + 0.06)));
-  g.addColorStop(1, rgba(mixHex(C.base, C.dark, 0.92), Math.min(1, alpha + 0.20)));
+  g.addColorStop(0.20, rgba(mixHex(C.light, C.base, 0.60), Math.min(1, alpha + 0.02)));
+  g.addColorStop(0.46, rgba(C.base, alpha));
+  g.addColorStop(0.72, rgba(mixHex(C.base, C.dark, 0.42), Math.min(1, alpha + 0.05)));
+  g.addColorStop(0.90, rgba(mixHex(C.base, C.dark, 0.78), Math.min(1, alpha + 0.12)));
+  g.addColorStop(1, rgba(mixHex(C.base, C.dark, 0.98), Math.min(1, alpha + 0.22)));
   ctx.save();
   ctx.shadowColor = rgba(C.dark, 0.30);
   ctx.shadowBlur = Math.min(20, rx * 0.15);
@@ -2164,17 +2171,17 @@ function paintJelly(pts, M, C, T, o){
   ctx.fillRect(cx - rx * 2, cy - ry * 2, rx * 4, ry * 4);
 
   /* 아래쪽 두께 그늘 */
-  var dg2 = ctx.createLinearGradient(0, cy + ry * 0.05, 0, cy + ry * 1.05);
+  var dg2 = ctx.createLinearGradient(0, cy - ry * 0.10, 0, cy + ry * 1.05);
   dg2.addColorStop(0, rgba(C.dark, 0));
-  dg2.addColorStop(0.72, rgba(C.dark, 0.22));
-  dg2.addColorStop(1, rgba(darken(C.dark, 0.3), 0.44));
+  dg2.addColorStop(0.62, rgba(C.dark, 0.20));
+  dg2.addColorStop(1, rgba(darken(C.dark, 0.35), 0.52));
   ctx.fillStyle = dg2;
-  ctx.fillRect(cx - rx * 2, cy, rx * 4, ry * 1.2);
+  ctx.fillRect(cx - rx * 2, cy - ry * 0.1, rx * 4, ry * 1.2);
 
   /* 아래 가장자리로 스며드는 빛 (젤리 투과) */
-  var tg = ctx.createRadialGradient(cx, cy + ry * 0.96, ry * 0.10, cx, cy + ry * 0.74, ry * 0.95);
-  tg.addColorStop(0, rgba(C.light, 0.34 * Math.min(1, alpha + 0.2)));
-  tg.addColorStop(0.55, rgba(C.base, 0.13));
+  var tg = ctx.createRadialGradient(cx, cy + ry * 1.02, ry * 0.06, cx, cy + ry * 0.86, ry * 0.80);
+  tg.addColorStop(0, rgba(C.light, 0.58 * Math.min(1, alpha + 0.25)));
+  tg.addColorStop(0.42, rgba(mixHex(C.base, C.light, 0.5), 0.26));
   tg.addColorStop(1, rgba(C.base, 0));
   ctx.fillStyle = tg;
   ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
