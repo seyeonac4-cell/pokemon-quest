@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="이모랑 화상통화">
-<meta name="description" content="윤진·형원이가 이모(경민)와 바로 화상통화하는 전용 앱">
-<title>📹 이모랑 화상통화</title>
+<meta name="apple-mobile-web-app-title" content="가족 화상통화">
+<meta name="description" content="윤진·형원·엄마·이모가 링크만 열면 바로 화상통화하는 가족 전용 앱">
+<title>📹 가족 화상통화</title>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -79,11 +79,52 @@ button{font-family:inherit; font:inherit; color:inherit}
 .role-btn:hover{border-color:#FFD3E4; background:#FFF9FC}
 .role-btn.aunt{border-color:#E3DBFF; background:linear-gradient(160deg,#FBF8FF,#F1EDFF)}
 .role-btn.aunt:hover{border-color:#CDBFFF}
+.role-btn.mom{border-color:#FFD9E5; background:linear-gradient(160deg,#FFF8FB,#FFEDF4)}
+.role-btn.mom:hover{border-color:#FFC0D6}
 .gate-note{
   margin:16px 0 0; font-size:12.8px; line-height:1.6; color:#6E5B2E; font-weight:700;
   background:#FFF8E4; border:1.5px solid #FFE9B0; border-radius:16px; padding:11px 13px; text-align:left;
 }
 .gate-note b{color:#8A5A00}
+
+/* ===== 전화 걸 상대 고르기 ===== */
+.opts{display:grid; gap:9px; width:100%; max-width:420px; margin:0 auto}
+.main-btn.opt{display:flex; align-items:center; justify-content:center; gap:9px; max-width:420px; margin:0 auto}
+.main-btn.opt .oe{font-size:1.16em; line-height:1}
+.main-btn.opt .ol{letter-spacing:-.03em}
+.main-btn.t-mom{background:linear-gradient(160deg,#FF9CC2 0%,#FF6FA5 52%,#E54D88 100%); box-shadow:0 10px 0 #C43A6B, 0 16px 30px rgba(229,77,136,.32)}
+.main-btn.t-mom:active{box-shadow:0 5px 0 #C43A6B}
+.main-btn.t-aunt{background:linear-gradient(160deg,#A99CFB 0%,#8C7BF7 52%,#6D5BE0 100%); box-shadow:0 10px 0 #5744BE, 0 16px 30px rgba(109,91,224,.30)}
+.main-btn.t-aunt:active{box-shadow:0 5px 0 #5744BE}
+.main-btn.t-kids{background:linear-gradient(160deg,#63D9C6 0%,#22C0A4 52%,#0E9A80 100%); box-shadow:0 10px 0 #0A7A65, 0 16px 30px rgba(14,154,128,.30)}
+.main-btn.t-kids:active{box-shadow:0 5px 0 #0A7A65}
+.who{
+  margin:11px auto 0; width:100%; max-width:420px; font-size:12.3px; line-height:1.6; font-weight:800; color:#E4DEFA;
+  background:rgba(255,255,255,.10); border:1.5px solid rgba(255,255,255,.16); border-radius:14px; padding:8px 11px;
+  text-align:center;
+}
+.who.any{color:#EDFFF9; border-color:rgba(130,245,205,.5); background:rgba(22,140,110,.34)}
+body.inapp-on .wrap{padding-top:calc(var(--ia-h, 96px) + 12px + env(safe-area-inset-top))}
+.who .who-small{font-size:11.3px; font-weight:700; color:#C9C0E8}
+.ov-links{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:9px}
+.link-btn{font-size:11.5px; padding:7px 11px}
+.local.hideable{opacity:0; pointer-events:none; transition:opacity .18s}
+
+/* ===== 앱 안 브라우저 경고 ===== */
+.inapp{
+  position:fixed; left:8px; right:8px; top:calc(6px + env(safe-area-inset-top)); z-index:120;
+  background:linear-gradient(160deg,#FFF4D6,#FFE7A8); color:#5A3E00;
+  border:2px solid #F5C33B; border-radius:18px; padding:10px 12px;
+  box-shadow:0 12px 30px rgba(120,80,0,.22);
+}
+.inapp .ia-txt{font-size:13px; font-weight:800; line-height:1.5}
+.inapp .ia-btns{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; align-items:center}
+.ia-btn{
+  border:0; cursor:pointer; border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:900;
+  background:#fff; color:#7A5200; text-decoration:none; box-shadow:0 2px 0 rgba(120,80,0,.12);
+}
+.ia-btn.go{background:linear-gradient(160deg,#4285F4,#2A6BE0); color:#fff; box-shadow:0 3px 0 #1D51B8}
+.ia-btn.x{margin-left:auto; padding:8px 11px; background:rgba(255,255,255,.72)}
 
 /* ================= 통화 화면 ================= */
 .room{flex:1 1 auto; display:flex; flex-direction:column; gap:8px; min-height:0}
@@ -253,8 +294,15 @@ button{font-family:inherit; font:inherit; color:inherit}
 .modal ul{margin:0; padding-left:18px}
 .modal li+li{margin-top:3px}
 .modal b{color:var(--ink)}
+.lk-list{display:grid; gap:5px; margin-top:6px}
+.lk{display:flex; align-items:center; gap:8px; background:#F7F5FF; border-radius:11px; padding:7px 10px}
+.lk-n{font-size:13px; font-weight:900; color:var(--ink)}
+.lk-b{
+  margin-left:auto; border:0; cursor:pointer; border-radius:9px; padding:5px 11px;
+  font-size:12px; font-weight:900; background:#E3DCFF; color:#5340C0;
+}
+.diag{font-size:12px; line-height:1.7; color:#5B5570; background:#F4F1FA; border-radius:11px; padding:8px 10px; margin-top:6px; word-break:break-all}
 .modal .kbd{display:inline-block; padding:1px 7px; border-radius:7px; background:#2A2440; color:#fff; font-size:12px; font-weight:900}
-#auntLink{word-break:break-all}
 .modal .mbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap}
 .modal .mbtn{
   border:0; border-radius:14px; padding:12px 16px; font-size:14px; font-weight:900; cursor:pointer;
@@ -265,13 +313,24 @@ button{font-family:inherit; font:inherit; color:inherit}
 </style>
 </head>
 <body>
+
+<!-- 앱 안 브라우저(카톡·네이버) 경고 -->
+<div class="inapp" id="inappBar" hidden>
+  <div class="ia-txt" id="iaText">⚠️ 카톡·네이버 같은 <b>앱 안 브라우저</b>에서는 카메라와 통화가 막혀요. <b>Chrome</b>으로 열어 주세요!</div>
+  <div class="ia-btns">
+    <a class="ia-btn go" id="iaChrome" href="#">Chrome으로 열기</a>
+    <button class="ia-btn" id="iaCopy" type="button">링크 복사</button>
+    <button class="ia-btn x" id="iaClose" type="button" aria-label="닫기">✕</button>
+  </div>
+</div>
+
 <div class="wrap">
 
   <!-- ============ 1. 역할 고르기 ============ -->
   <section class="gate" id="gate">
     <div class="gate-card">
       <div class="gate-emoji">📹</div>
-      <h1>이모랑 화상통화</h1>
+      <h1>가족 화상통화</h1>
       <p class="gate-sub">누구세요? <b>내 이름을 한 번만</b> 누르면 다음부터 기억해요</p>
       <div class="role-list">
         <button class="role-btn" type="button" data-role="yunjin">
@@ -280,8 +339,11 @@ button{font-family:inherit; font:inherit; color:inherit}
         <button class="role-btn" type="button" data-role="hyungwon">
           <span class="re">👧</span><span class="rt"><b>형원</b><small>7세 · 동생</small></span>
         </button>
+        <button class="role-btn mom" type="button" data-role="mom">
+          <span class="re">👩</span><span class="rt"><b>엄마</b><small>세연 엄마</small></span>
+        </button>
         <button class="role-btn aunt" type="button" data-role="aunt">
-          <span class="re">👩</span><span class="rt"><b>이모</b><small>경민 이모 · 어른</small></span>
+          <span class="re">💜</span><span class="rt"><b>이모</b><small>경민 이모 · 어른</small></span>
         </button>
       </div>
       <p class="gate-note">📷 처음 한 번만 <b>카메라·마이크 허용</b>을 물어봐요. 꼭 <b>‘허용’</b>을 눌러 주세요.<br>카톡 안에서 열었다면 <b>Chrome으로 열기</b>를 눌러 주세요.</p>
@@ -295,7 +357,7 @@ button{font-family:inherit; font:inherit; color:inherit}
         <span id="meEmo">👧</span><b id="meName">윤진</b>
       </button>
       <div class="chip peer" id="peerChip">
-        <span class="dot" id="peerDot"></span><span id="peerTxt">이모 연결 안 됨</span>
+        <span class="dot" id="peerDot"></span><span id="peerTxt">가족 연결 안 됨</span>
       </div>
       <button class="icon-btn" id="btnHelp" type="button" aria-label="도움말">❓</button>
     </header>
@@ -305,7 +367,7 @@ button{font-family:inherit; font:inherit; color:inherit}
 
       <div class="cover" id="remoteCover">
         <div class="cover-emoji" id="coverEmoji">👩</div>
-        <div class="cover-name" id="coverName">이모</div>
+        <div class="cover-name" id="coverName">가족</div>
         <div class="cover-sub" id="coverSub">전화를 기다리는 중이에요</div>
       </div>
 
@@ -326,13 +388,13 @@ button{font-family:inherit; font:inherit; color:inherit}
       <div class="overlay" id="overlay">
         <div class="ov-rings" id="ovRings" hidden><span></span><span></span><span></span></div>
         <div class="ov-emoji" id="ovEmoji">📹</div>
-        <div class="ov-title" id="ovTitle">이모한테 전화해 볼까?</div>
-        <div class="ov-sub" id="ovSub">아래 초록 버튼을 누르면 이모한테 전화가 가요</div>
-        <button class="main-btn" id="mainBtn" type="button">📞 이모한테 화상통화 걸기</button>
+        <div class="ov-title" id="ovTitle">누구한테 전화할까?</div>
+        <div class="ov-sub" id="ovSub">아래에서 고르면 바로 전화가 가요</div>
+        <div class="opts" id="callOpts"></div>
+        <div class="who" id="whoBox"></div>
+        <button class="main-btn" id="mainBtn" type="button" hidden>📞 화상통화 걸기</button>
         <button class="sub-btn" id="subBtn" type="button" hidden>❌ 안 받기</button>
-        <div class="ov-links" id="ovLinks">
-          <button class="link-btn" id="copyAunt" type="button">🔗 이모에게 보낼 링크 복사</button>
-        </div>
+        <div class="ov-links" id="ovLinks"></div>
       </div>
     </div>
 
@@ -357,14 +419,14 @@ button{font-family:inherit; font:inherit; color:inherit}
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="box">
-    <h3 id="modalTitle">📹 이모랑 화상통화 쓰는 법</h3>
+    <h3 id="modalTitle">📹 가족 화상통화 쓰는 법</h3>
     <div id="modalBody">
       <h4>1. 카메라·마이크 허용</h4>
       <p>처음에 <b>“카메라와 마이크를 사용하도록 허용할까요?”</b> 하고 물어보면 꼭 <b>허용</b>을 눌러요.<br>
         실수로 막았다면 → 주소창 왼쪽 <b>🔒 자물쇠</b> → <b>권한</b> → 카메라·마이크를 <b>허용</b>으로 바꾸고 새로고침해요.</p>
-      <h4>2. 이모에게 링크 보내기</h4>
-      <p><b>🔗 이모에게 보낼 링크 복사</b>를 눌러 카톡으로 보내면, 이모는 그 링크만 누르면 이모 화면으로 바로 열려요.<br>
-        링크: <b id="auntLink">…</b></p>
+      <h4>2. 링크 보내기 (엄마 · 이모 · 아이들)</h4>
+      <p>아래에서 <b>복사</b>를 누른 뒤 카톡으로 보내면, 누른 사람은 그 링크만 열면 자기 화면으로 바로 열려요.</p>
+      <div class="lk-list" id="linkList"></div>
       <h4>3. 소리가 안 들릴 때</h4>
       <ul>
         <li>화면을 한 번 톡 누르면 소리가 켜져요 (브라우저가 소리를 막아 둘 때가 있어요).</li>
@@ -372,11 +434,15 @@ button{font-family:inherit; font:inherit; color:inherit}
       </ul>
       <h4>4. 통화가 안 될 때</h4>
       <ul>
-        <li>둘 다 <b>Chrome</b>으로 열어 주세요. 카톡·네이버 앱 안에서는 카메라가 안 될 수 있어요.</li>
-        <li>와이파이와 데이터를 바꿔 보거나, 통화를 끊고 <b>다시 걸기</b>를 해 보세요.</li>
-        <li>전화를 받는 사람도 이 화면(<b>이모</b> 역할)을 켜 두어야 벨이 울려요.</li>
+        <li>둘 다 <b>Chrome</b>으로 열어 주세요. 카톡·네이버 앱 안에서는 카메라·통화가 막혀요.</li>
+        <li>전화를 받는 사람도 이 화면을 켜 두어야 벨이 울려요(앱을 닫으면 벨이 안 올려요).</li>
+        <li>받는 사람이 <b>같은 기기에서 두 창</b>으로 열려 있으면 엇갈릴 수 있어요. 한 창만 켜요.</li>
+        <li>연결이 끊기면 화면이 <b>다시 연결하는 중…</b>으로 혼자 다시 붙어요. 그래도 안 되면 🔴 끊고 다시 걸어요.</li>
+        <li>와이파이 ↔ 데이터를 바꾸거나, 공유기 안테나를 다시 시작해 보세요.</li>
       </ul>
-      <h4>5. 이름 바꾸기</h4>
+      <h4>5. 지금 연결 상태</h4>
+      <div class="diag" id="diagBox">연결 진단…</div>
+      <h4>6. 이름 바꾸기</h4>
       <p>왼쪽 위 이름(<b id="myNameInHelp">윤진</b>)을 누르면 역할을 다시 고를 수 있어요.</p>
     </div>
     <div class="mbtns">
@@ -395,10 +461,10 @@ button{font-family:inherit; font:inherit; color:inherit}
 'use strict';
 
 /* ============================================================
-   이모랑 화상통화 (사용자 요청: 이모(임경민)와 윤진·형원이 화상통화)
+   가족 화상통화 (윤진 · 형원 · 엄마 · 이모)
    · 시그널링 전용 경로: family-lim-7660/videoCall  (kids 노드는 안 씀)
    · 영상·음성은 WebRTC P2P 로만 오가고 Firebase 에는 저장되지 않는다.
-   · 무료 공개 STUN 만 사용 (TURN 서버 없음)
+   · STUN 여러 개 + (설정되면) TURN, 연결이 끊기면 ICE 재시작으로 다시 붙인다.
    ============================================================ */
 
 var FB_CFG = {
@@ -411,20 +477,28 @@ var FB_CFG = {
   appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
 };
 var PATH = 'family-lim-7660/videoCall';
-var K_ROLE = 'vc_role_v1';
+var K_ROLE = 'vc_role_v2';
 var K_NAME = 'vc_dev_v1';
+var K_TURN = 'vc_turn_v1';
 
-var ICE = [
-  { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
-  { urls: ['stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302'] },
-  { urls: 'stun:stun.cloudflare.com:3478' }
+var STUN = [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302',
+           'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302'] },
+  { urls: 'stun:stun.cloudflare.com:3478' },
+  { urls: 'stun:global.stun.twilio.com:3478' }
 ];
+/* 공개 무료 TURN 은 2026년 현재 계정 없이 쓰는 것이 사실상 없어졌다.
+   계정을 만들어 받은 TURN 은 아래 TURN_PRESET 에 넣거나,
+   기기 저장값(vc_turn_v1), 주소창 ?turn=... 로 넣을 수 있다. */
+var TURN_PRESET = [];
 
 var ROLES = {
-  yunjin:  { name:'윤진', emo:'👧', side:'kids', other:'이모', otherEmo:'👩', otherSide:'aunt' },
-  hyungwon:{ name:'형원', emo:'👧', side:'kids', other:'이모', otherEmo:'👩', otherSide:'aunt' },
-  aunt:    { name:'이모', emo:'👩', side:'aunt', other:'윤진·형원', otherEmo:'👧', otherSide:'kids' }
+  yunjin:  { name:'윤진', emo:'👧', kind:'kid',   targets:['mom','aunt'],  sub:'초3 · 언니' },
+  hyungwon:{ name:'형원', emo:'👧', kind:'kid',   targets:['mom','aunt'],  sub:'7세 · 동생' },
+  mom:     { name:'엄마', emo:'👩', kind:'adult', targets:['kids','aunt'], sub:'세연 엄마' },
+  aunt:    { name:'이모', emo:'💜', kind:'adult', targets:['kids','mom'],  sub:'경민 이모 · 어른' }
 };
+var KIDS = ['yunjin', 'hyungwon'];
 var EMO_FREQ = { '💖':1046, '⭐':1318, '😂':784, '🎉':1568 };
 
 var $ = function(id){ return document.getElementById(id); };
@@ -436,23 +510,26 @@ var el = {
   local:$('local'), localWrap:$('localWrap'), localHidden:$('localHidden'), localOff:$('localOff'),
   floatLayer:$('floatLayer'), timer:$('timer'), netTag:$('netTag'),
   overlay:$('overlay'), ovRings:$('ovRings'), ovEmoji:$('ovEmoji'), ovTitle:$('ovTitle'), ovSub:$('ovSub'),
-  mainBtn:$('mainBtn'), subBtn:$('subBtn'), ovLinks:$('ovLinks'), copyAunt:$('copyAunt'),
+  mainBtn:$('mainBtn'), subBtn:$('subBtn'), ovLinks:$('ovLinks'), callOpts:$('callOpts'), whoBox:$('whoBox'),
   pad:$('pad'), reacts:$('reacts'),
   btnMic:$('btnMic'), btnCam:$('btnCam'), btnHide:$('btnHide'), btnEnd:$('btnEnd'),
   micLbl:$('micLbl'), camLbl:$('camLbl'), hideLbl:$('hideLbl'),
   toast:$('toast'), modal:$('modal'), modalClose:$('modalClose'), modalRole:$('modalRole'),
-  auntLink:$('auntLink'), myNameInHelp:$('myNameInHelp')
+  myNameInHelp:$('myNameInHelp'), linkList:$('linkList'), diagBox:$('diagBox'),
+  inappBar:$('inappBar'), iaText:$('iaText'), iaChrome:$('iaChrome'), iaCopy:$('iaCopy'), iaClose:$('iaClose')
 };
 
 var S = {
-  role:null, devId:'', db:null, root:null, dbReady:false, dbTried:0,
+  role:null, prevRole:null, devId:'', pageId:'', db:null, root:null, dbReady:false, dbTried:0,
   localStream:null, camTrack:null, micTrack:null, videoSender:null, audioSender:null,
+  camReal:false, camPlaceholder:false, mediaMode:'none', mediaErr:'',
   pc:null, remoteSet:false, pendingCands:[], candPool:{}, pcConnected:false,
-  facing:'user', // 'user' | 'environment'
-  hidden:false, muted:false, coverStream:null,
+  facing:'user', hidden:false, muted:false, coverStream:null,
   callId:null, isCaller:false, callState:'idle', pending:null, lastCall:null,
-  callStartAt:0, timerT:0, ringT:0, bellT:0, outT:0,
-  seenReact:{}, presence:{}, unreadHint:false
+  target:null, remoteRole:null, rev:0, retries:0, restartT:0, weakT:0, lastRestartReq:0, connFailed:false,
+  candCount:{ host:0, srflx:0, relay:0 }, lastIce:'', applied:0, gotCand:0, iceErr:'',
+  callStartAt:0, timerT:0, bellT:0, outT:0, presenceT:0,
+  seenReact:{}, presence:{}
 };
 
 /* ---------------- 유틸 ---------------- */
@@ -468,7 +545,7 @@ function nowMs(){ return Date.now(); }
 function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function safeSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 
-/* ---------------- 소리 (직접 만든 귀여운 벨소리) ---------------- */
+/* ---------------- 소리 ---------------- */
 var AC = null;
 function ac(){
   if(!AC){
@@ -506,7 +583,6 @@ function stopBell(){ if(S.bellT){ clearInterval(S.bellT); S.bellT = 0; } }
 function chime(){ tone(784, 0, 0.18, 'sine', 0.06); tone(1046, 0.12, 0.22, 'sine', 0.055); tone(1318, 0.26, 0.3, 'sine', 0.05); }
 function popSound(freq){ tone(freq || 1046, 0, 0.12, 'triangle', 0.06); tone((freq || 1046) * 1.5, 0.05, 0.14, 'sine', 0.035); }
 
-/* 첫 터치에서 소리 잠금 해제 */
 function unlockAudio(){
   ac();
   document.removeEventListener('pointerdown', unlockAudio, true);
@@ -515,9 +591,46 @@ function unlockAudio(){
 document.addEventListener('pointerdown', unlockAudio, true);
 document.addEventListener('keydown', unlockAudio, true);
 
+/* ---------------- 앱 안 브라우저(카톡·네이버 등) 감지 ---------------- */
+var UA = navigator.userAgent || '';
+var UA_INAPP = /KAKAOTALK|NAVER|DaumApps|Instagram|FBAN|FBAV|FB_IAB|Line\/|WhatsApp|Snapchat|Twitter|Threads|everytimeApp|KAKAOSTORY|wv\)/i.test(UA);
+var FORCE_INAPP = /[?&]inapp=1\b/.test(location.search);
+var IN_APP = UA_INAPP || FORCE_INAPP;
+
+function chromeUrl(){
+  var host = location.host + location.pathname + location.search;
+  var scheme = location.protocol.replace(':', '') || 'https';
+  if(/Android/i.test(UA)){
+    return 'intent://' + host + '#Intent;scheme=' + scheme + ';package=com.android.chrome;end';
+  }
+  return location.href;
+}
+function showInApp(why){
+  if(!el.inappBar) return;
+  if(why && el.iaText) el.iaText.innerHTML = why;
+  el.inappBar.hidden = false;
+  if(el.iaChrome) el.iaChrome.setAttribute('href', chromeUrl());
+  document.body.classList.add('inapp-on');
+  var fit = function(){
+    try{ document.body.style.setProperty('--ia-h', el.inappBar.offsetHeight + 'px'); }catch(e){}
+  };
+  fit();
+  setTimeout(fit, 60);
+}
+function hideInApp(){
+  if(!el.inappBar) return;
+  el.inappBar.hidden = true;
+  document.body.classList.remove('inapp-on');
+}
+if(IN_APP){
+  showInApp(FORCE_INAPP && !UA_INAPP
+    ? '⚠️ 지금 <b>앱 안 브라우저</b>로 열려 있어요. 카메라·통화가 막혀요. <b>Chrome</b>으로 열어 주세요!'
+    : '⚠️ 카톡·네이버 같은 <b>앱 안 브라우저</b>에서는 카메라와 통화가 막혀요. <b>Chrome</b>으로 열어 주세요!');
+}
+
 /* ---------------- 역할 ---------------- */
 function roleFromUrl(){
-  var m = location.search.match(/[?&]role=(yunjin|hyungwon|aunt)\b/);
+  var m = location.search.match(/[?&]role=(yunjin|hyungwon|mom|aunt)\b/);
   return m ? m[1] : null;
 }
 function pickRole(id){
@@ -534,23 +647,29 @@ function pickRole(id){
   el.myNameInHelp.textContent = r.name;
   el.gate.hidden = true;
   el.room.hidden = false;
-  document.title = r.emo + ' ' + r.name + ' · 이모랑 화상통화';
-  el.auntLink.textContent = auntUrl();
+  document.title = r.emo + ' ' + r.name + ' · 가족 화상통화';
+  buildCallOpts();
+  buildLinks();
+  setCamLabel();
   renderState();
   ac();
-  if(S.localStream){
-    try{ S.localStream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
-    S.localStream = null; S.camTrack = null; S.micTrack = null;
-  }
+  stopLocal();
   startMedia().then(function(ok){
-    if(ok) toast('카메라·마이크 준비 완료!', 1800);
+    if(ok === true) toast('카메라·마이크 준비 완료!', 1800);
+    renderState();
   });
   initFirebase();
 }
 
-function auntUrl(){
-  return location.origin + location.pathname + '?role=aunt';
+function roleUrl(id){
+  return location.origin + location.pathname + (id ? '?role=' + id : '');
 }
+function nameOfRole(id){ return ROLES[id] ? ROLES[id].name : '가족'; }
+function emoOfRole(id){ return ROLES[id] ? ROLES[id].emo : '👧'; }
+function isKidRole(id){ return !!(ROLES[id] && ROLES[id].kind === 'kid'); }
+function targetName(t){ return t === 'kids' ? '아이들' : nameOfRole(t); }
+function targetEmo(t){ return t === 'kids' ? '👧' : emoOfRole(t); }
+function targetVerb(t){ return t === 'kids' ? '아이들에게' : nameOfRole(t) + '한테'; }
 
 /* ---------------- 미디어 ---------------- */
 function videoConstraints(facing){
@@ -568,43 +687,156 @@ function mediaErrorMessage(e){
     return '다른 앱이 카메라를 쓰고 있어요. 그 앱을 닫고 다시 해 주세요.';
   return '카메라를 켜지 못했어요. 인터넷과 권한을 확인해 주세요.';
 }
+function withTimeout(p, ms){
+  return new Promise(function(resolve, reject){
+    var done = false;
+    var t = setTimeout(function(){ if(!done){ done = true; reject(new Error('timeout')); } }, ms);
+    p.then(function(v){ if(!done){ done = true; clearTimeout(t); resolve(v); } },
+           function(e){ if(!done){ done = true; clearTimeout(t); reject(e); } });
+  });
+}
+function makePlaceholderVideo(){
+  try{
+    var c = document.createElement('canvas');
+    c.width = 480; c.height = 640;
+    var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 480, 640);
+    g.addColorStop(0, '#FFE3F0'); g.addColorStop(.55, '#E9E3FF'); g.addColorStop(1, '#DDF6FF');
+    x.fillStyle = g; x.fillRect(0, 0, 480, 640);
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.font = '150px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    x.fillText('📷', 240, 250);
+    x.fillStyle = '#6B5AA8';
+    x.font = '900 38px "Pretendard","Malgun Gothic",sans-serif';
+    x.fillText('카메라 없음', 240, 400);
+    S.placeholderCanvas = c;
+    var st = c.captureStream(2);
+    return st.getVideoTracks()[0] || null;
+  }catch(e){ return null; }
+}
+
+/* 실제 스트림(있으면)을 받아 '내가 보낼 스트림'을 만든다.
+   카메라가 없어도 그림 자리(placeholder)를 넣어 연결 자체는 되게 한다. */
+function buildLocal(avStream){
+  var out;
+  try{ out = new MediaStream(); }catch(e){ out = null; }
+  if(!out) return { stream: avStream, mode:'av' };
+  var mic = null, cam = null;
+  if(avStream){
+    try{ mic = avStream.getAudioTracks()[0] || null; }catch(e){}
+    try{ cam = avStream.getVideoTracks()[0] || null; }catch(e){}
+  }
+  if(mic) out.addTrack(mic);
+  if(cam) out.addTrack(cam);
+  S.micTrack = mic;
+  S.camTrack = cam;
+  S.camReal = !!cam;
+  S.camPlaceholder = false;
+  if(!cam){
+    var pv = makePlaceholderVideo();
+    if(pv){ try{ out.addTrack(pv); S.camTrack = pv; S.camPlaceholder = true; }catch(e){} }
+  }
+  if(mic) S.micTrack.enabled = !S.muted;
+  return { stream: out, mode: (mic && cam) ? 'av' : (cam ? 'video' : (mic ? 'audio' : 'none')) };
+}
+
+function paintLocal(){
+  var st = S.localStream;
+  if(!st){ return; }
+  if(S.camReal){
+    el.local.srcObject = st;
+    el.localOff.hidden = true;
+    var p = el.local.play(); if(p && p.catch) p.catch(function(){});
+  }else{
+    try{ el.local.srcObject = null; }catch(e){}
+    el.localOff.hidden = false;
+  }
+  setCamLabel();
+}
+
 function startMedia(facing){
   return new Promise(function(resolve){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      S.mediaMode = 'none'; S.mediaErr = '이 브라우저에서는 카메라를 쓸 수 없어요';
       setCoverHint('이 브라우저에서는 카메라를 쓸 수 없어요. Chrome으로 열어 주세요.');
+      if(IN_APP) showInApp();
       resolve(false); return;
     }
     var want = facing || S.facing;
-    navigator.mediaDevices.getUserMedia({ audio:true, video: videoConstraints(want) })
-      .then(function(stream){
-        S.localStream = stream;
-        S.camTrack = stream.getVideoTracks()[0] || null;
-        S.micTrack = stream.getAudioTracks()[0] || null;
-        if(S.micTrack) S.micTrack.enabled = !S.muted;
-        el.local.srcObject = stream;
-        if(el.localOff) el.localOff.hidden = true;
-        var p = el.local.play(); if(p && p.catch) p.catch(function(){});
-        setFacing(want);
-        resolve(true);
-      }, function(err){
-        toast(mediaErrorMessage(err), 5200);
-        setCoverHint('📷 카메라를 켜지 못했어요');
-        resolve(false);
+    var av = { audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true },
+               video: videoConstraints(want) };
+
+    withTimeout(navigator.mediaDevices.getUserMedia(av), 15000)
+    .then(function(st){ finish(st, want); })
+    .catch(function(e1){
+      /* 2단계: 소리만 */
+      return withTimeout(navigator.mediaDevices.getUserMedia({ audio:true }), 12000)
+      .then(function(st){
+        S.mediaErr = mediaErrorMessage(e1);
+        finish(st, want);
+        toast('📷 카메라는 안 켜졌지만 🎤 소리로는 연결돼요', 3600);
+      })
+      .catch(function(e2){
+        /* 3단계: 화면만 */
+        return withTimeout(navigator.mediaDevices.getUserMedia({ video: videoConstraints(want) }), 12000)
+        .then(function(st){
+          S.mediaErr = mediaErrorMessage(e2);
+          finish(st, want);
+          toast('🎤 마이크는 안 됐지만 📷 화면은 보여요', 3600);
+        })
+        .catch(function(e3){
+          /* 4단계: 둘 다 안 됨 → 연결은 되게 (그림 자리) */
+          S.mediaMode = 'none';
+          S.mediaErr = mediaErrorMessage(e3);
+          var built = buildLocal(null);
+          S.localStream = built.stream;
+          paintLocal();
+          setCallHint();
+          toast('카메라·마이크를 켜지 못했어요. ' + S.mediaErr, 5200);
+          if(IN_APP) showInApp();
+          diagnose();
+          resolve(false);
+        });
       });
+    });
+
+    function finish(st, want){
+      var built = buildLocal(st);
+      S.localStream = built.stream;
+      S.mediaMode = built.mode === 'none' ? 'none' : built.mode;
+      S.mediaErr = '';
+      paintLocal();
+      setFacing(want);
+      if(built.mode === 'av' && IN_APP){ /* 앱 안인데 카메라가 되면 배너는 접는다 */ }
+      diagnose();
+      resolve(true);
+    }
   });
 }
 
-/* ---------------- 스피커/마이크 ---------------- */
+function stopLocal(){
+  if(S.localStream){
+    try{ S.localStream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+  }
+  S.localStream = null; S.camTrack = null; S.micTrack = null;
+  S.camReal = false; S.camPlaceholder = false; S.mediaMode = 'none';
+  try{ el.local.srcObject = null; }catch(e){}
+  if(el.localOff) el.localOff.hidden = false;
+}
+
+function setCamLabel(){
+  if(el.camLbl) el.camLbl.textContent = S.camReal ? '카메라 전환' : '카메라 켜기';
+}
+
 function setFacing(f){
   S.facing = (f === 'environment') ? 'environment' : 'user';
   var mirror = (S.facing === 'user');
   el.localWrap.classList.toggle('mirror', mirror);
   el.remote.classList.remove('mirror');
-  el.camLbl.textContent = '카메라 전환';
 }
 
 function toggleMic(){
-  if(!S.micTrack){ toast('마이크가 없어요'); return; }
+  if(!S.micTrack){ toast('마이크가 없어요. 카메라만 켜져 있어요.', 2400); return; }
   S.muted = !S.muted;
   S.micTrack.enabled = !S.muted;
   el.btnMic.classList.toggle('off', S.muted);
@@ -642,7 +874,9 @@ function toggleHide(){
     el.hideLbl.textContent = '다시 보이기';
     toast('🙈 내 화면을 가렸어요', 1600);
   }else{
-    if(S.videoSender && S.camTrack) S.videoSender.replaceTrack(S.camTrack).catch(function(){});
+    if(S.videoSender){
+      if(S.camTrack) S.videoSender.replaceTrack(S.camTrack).catch(function(){});
+    }
     S.hidden = false;
     el.localHidden.hidden = true;
     el.btnHide.classList.remove('off');
@@ -653,136 +887,260 @@ function toggleHide(){
 
 function switchCamera(){
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ toast('카메라를 바꿀 수 없어요'); return; }
-  var next = (S.facing === 'user') ? 'environment' : 'user';
+  var next = S.camReal ? (S.facing === 'user' ? 'environment' : 'user') : (S.facing || 'user');
   navigator.mediaDevices.getUserMedia({ video: videoConstraints(next) })
     .then(function(st){
       var t = st.getVideoTracks()[0];
-      if(!t){ throw new Error('no track'); }
+      if(!t) throw new Error('no track');
       var old = S.camTrack;
-      S.camTrack = t;
+      S.camTrack = t; S.camReal = true; S.camPlaceholder = false;
       setFacing(next);
-      if(S.localStream && old){ try{ S.localStream.removeTrack(old); }catch(e){} }
-      if(S.localStream){ try{ S.localStream.addTrack(t); }catch(e){} }
+      if(S.localStream){
+        try{ if(old) S.localStream.removeTrack(old); }catch(e){}
+        try{ S.localStream.addTrack(t); }catch(e){}
+      }else{
+        S.localStream = new MediaStream();
+        try{ S.localStream.addTrack(t); }catch(e){}
+      }
       if(S.videoSender && !S.hidden) S.videoSender.replaceTrack(t).catch(function(){});
-      if(old) old.stop();
-      toast(next === 'user' ? '🤳 앞 카메라' : '🌄 뒷 카메라', 1500);
-    }, function(err){ toast('카메라를 바꾸지 못했어요', 2200); });
+      if(old && old !== t){ try{ old.stop(); }catch(e){} }
+      paintLocal();
+      toast(S.facing === 'user' ? '🤳 앞 카메라' : '🌄 뒷 카메라', 1500);
+      diagnose();
+    }, function(err){
+      if(err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')){
+        toast('카메라 권한을 허용해 주세요', 2800);
+        if(IN_APP) showInApp();
+      }else{
+        toast('카메라를 켜지 못했어요', 2400);
+      }
+    });
 }
 
 /* ---------------- 상태 그리기 ---------------- */
-function otherRole(){ return ROLES[S.role] ? ROLES[S.role].other : '이모'; }
-function otherEmo(){ return ROLES[S.role] ? ROLES[S.role].otherEmo : '👩'; }
-function nameOfRole(id){ return ROLES[id] ? ROLES[id].name : otherRole(); }
+function freshRole(id){
+  var p = S.presence && S.presence[id];
+  return !!(p && p.ts && (nowMs() - p.ts < 75000));
+}
+function renderWho(){
+  if(!el.whoBox || !S.role) return;
+  var on = [];
+  ['yunjin', 'hyungwon', 'mom', 'aunt'].forEach(function(id){
+    if(id === S.role) return;
+    if(freshRole(id)) on.push(emoOfRole(id) + ' ' + nameOfRole(id));
+  });
+  if(on.length){
+    el.whoBox.innerHTML = '🟢 지금 접속 중 · ' + on.join(' · ');
+  }else{
+    el.whoBox.innerHTML = '⚪ 지금은 아무도 앱을 안 켰어요<br><span class="who-small">상대도 앱을 켜 두어야 벨이 울려요</span>';
+  }
+  el.whoBox.classList.toggle('any', on.length > 0);
+}
+function renderPeerPresence(){
+  var live = false;
+  if(S.remoteRole && S.remoteRole !== 'kids') live = freshRole(S.remoteRole);
+  else if(S.target === 'kids') live = KIDS.some(freshRole);
+  else if(S.remoteRole === 'kids') live = KIDS.some(freshRole);
+  else live = ['yunjin','hyungwon','mom','aunt'].some(function(id){ return id !== S.role && freshRole(id); });
+  return live;
+}
 
 function setCoverHint(txt){ el.coverSub.textContent = txt; }
+function setCallHint(){
+  if(S.callState !== 'idle' && S.callState !== 'ended') return;
+  setCoverHint(S.mediaMode === 'none' ? '카메라 없이도 대화는 돼요' : '전화를 기다리는 중이에요');
+}
+
+function showNet(txt){
+  if(!el.netTag) return;
+  if(!txt){ el.netTag.hidden = true; return; }
+  el.netTag.hidden = false;
+  el.netTag.textContent = txt;
+}
 
 function renderState(){
   var st = S.callState;
-  var other = otherRole();
   var connected = (st === 'connected');
+  var idle = (st === 'idle' || st === 'ended');
   el.ovRings.hidden = true;
   el.subBtn.hidden = true;
-  el.ovLinks.hidden = (S.role === 'aunt');
   el.mainBtn.className = 'main-btn';
   el.overlay.hidden = connected;
 
-  if(st === 'idle'){
+  if(el.callOpts) el.callOpts.hidden = !idle;
+  if(el.localWrap) el.localWrap.classList.toggle('hideable', idle);
+  if(el.whoBox) el.whoBox.hidden = !idle;
+  if(el.mainBtn) el.mainBtn.hidden = !!idle;
+  if(el.ovLinks) el.ovLinks.hidden = !idle || !S.role;
+
+  if(idle){
     el.ovEmoji.textContent = '📹';
-    el.ovTitle.textContent = (S.role === 'aunt') ? '아이들이 기다리고 있어요' : other + '한테 전화해 볼까?';
-    el.ovSub.textContent = (S.role === 'aunt') ? '아래 초록 버튼을 누르면 아이들 기기로 전화가 가요' : '아래 초록 버튼을 누르면 ' + other + '한테 전화가 가요';
-    el.mainBtn.textContent = (S.role === 'aunt') ? '📞 아이들에게 화상통화 걸기' : '📞 ' + other + '한테 화상통화 걸기';
+    el.ovTitle.textContent = '누구한테 전화할까?';
+    el.ovSub.textContent = '아래에서 고르면 바로 전화가 가요';
   }else if(st === 'outgoing'){
     el.ovEmoji.textContent = '📞';
     el.ovRings.hidden = false;
-    el.ovTitle.textContent = other + '한테 전화 거는 중…';
-    el.ovSub.textContent = other + '가 받으면 자동으로 연결돼요';
+    el.ovTitle.textContent = targetVerb(S.target) + ' 전화 거는 중…';
+    el.ovSub.textContent = targetName(S.target) + '가 받으면 자동으로 연결돼요';
     el.mainBtn.textContent = '🔴 그만두기';
     el.mainBtn.classList.add('cancel');
-    el.ovLinks.hidden = true;
   }else if(st === 'incoming'){
+    var from = (S.pending && S.pending.from) || S.remoteRole;
     el.ovEmoji.textContent = '🔔';
     el.ovRings.hidden = false;
-    el.ovTitle.textContent = (S.pending ? nameOfRole(S.pending.from) : other) + '한테서 전화 왔어요!';
+    el.ovTitle.textContent = nameOfRole(from) + '한테서 전화 왔어요!';
     el.ovSub.textContent = '아래 초록 버튼을 누르면 받아요';
     el.mainBtn.textContent = '📞 전화 받기';
     el.mainBtn.classList.add('accept');
     el.subBtn.hidden = false;
-    el.ovLinks.hidden = true;
   }else if(st === 'connecting'){
-    el.ovEmoji.textContent = '✨';
-    el.ovTitle.textContent = '연결하는 중…';
-    el.ovSub.textContent = '잠깐만 기다려 주세요';
+    el.ovEmoji.textContent = S.connFailed ? '😢' : '✨';
+    el.ovTitle.textContent = S.connFailed ? '연결이 안 됐어요' : '연결하는 중…';
+    el.ovSub.textContent = S.connFailed
+      ? '와이파이 ↔ 데이터를 바꾸거나 🔄 다시 연결을 눌러 보세요'
+      : (S.candCount.relay ? '릴레이 서버로 잇는 중이에요' : '잠깐만 기다려 주세요');
     el.mainBtn.textContent = '🔴 끊기';
     el.mainBtn.classList.add('cancel');
-    el.ovLinks.hidden = true;
+    if(S.connFailed){
+      el.subBtn.hidden = false;
+      el.subBtn.textContent = '🔄 다시 연결';
+    }
   }
 
-  /* 영상 자리 */
+  /* 영상 자리(상대) */
   el.remoteCover.hidden = connected;
   el.remoteCover.classList.toggle('dim', !connected);
-  el.coverEmoji.textContent = otherEmo();
-  el.coverName.textContent = other;
+  var who = S.remoteRole || (st === 'outgoing' ? S.target : null);
+  el.coverEmoji.textContent = who ? targetEmo(who) : '👩';
+  el.coverName.textContent = who ? targetName(who) : '가족';
   if(!connected){
     var hints = { idle:'전화를 기다리는 중이에요', outgoing:'전화 거는 중…', incoming:'전화가 왔어요!', connecting:'연결 중…' };
     setCoverHint(hints[st] || '');
   }
 
-  /* 버튼 활성 */
   var canUse = (connected || st === 'connecting');
   el.pad.classList.toggle('off', !canUse);
   el.reacts.classList.toggle('off', !connected);
   el.timer.hidden = !(connected || st === 'connecting');
 
-  /* 상대 표시 */
   updatePeerChip();
+  renderWho();
 }
 
 function updatePeerChip(){
-  var other = otherRole();
-  var live = peerPresenceFresh();
   var st = S.callState;
+  var label = S.remoteRole ? targetName(S.remoteRole) : '가족';
+  if(!S.remoteRole && ROLES[S.role] && ROLES[S.role].targets.length === 1) label = targetName(ROLES[S.role].targets[0]);
+  var live = renderPeerPresence();
   el.peerDot.classList.toggle('on', st === 'connected' || live);
-  if(st === 'connected' || st === 'connecting') el.peerTxt.textContent = other + ' · 통화 중';
-  else if(live) el.peerTxt.textContent = other + ' 접속 중';
-  else el.peerTxt.textContent = other + ' 연결 안 됨';
+  if(st === 'connected' || st === 'connecting' || st === 'outgoing' || st === 'incoming') el.peerTxt.textContent = label + ' · 통화 중';
+  else if(live) el.peerTxt.textContent = '가족 접속 중';
+  else el.peerTxt.textContent = '지금은 아무도 없어요';
 }
 
-function peerPresenceFresh(){
-  var side = ROLES[S.role] ? ROLES[S.role].otherSide : null;
-  if(!side) return false;
-  var t = 0;
-  for(var k in S.presence){
-    var p = S.presence[k];
-    if(!p || !p.ts) continue;
-    var kids = (k === 'yunjin' || k === 'hyungwon');
-    if((side === 'kids') === !!kids) t = Math.max(t, p.ts);
+function buildCallOpts(){
+  if(!el.callOpts) return;
+  el.callOpts.innerHTML = '';
+  var r = ROLES[S.role]; if(!r) return;
+  r.targets.forEach(function(t){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'main-btn opt t-' + t;
+    b.setAttribute('data-target', t);
+    b.innerHTML = '<span class="oe">' + targetEmo(t) + '</span>' +
+      '<span class="ol">' + (t === 'kids' ? '아이들에게' : nameOfRole(t) + '한테') + ' 걸기</span>';
+    b.addEventListener('click', function(){ if(el.callOpts.contains(b)) startCall(t); });
+    el.callOpts.appendChild(b);
+  });
+}
+
+function buildLinks(){
+  if(!el.ovLinks) return;
+  el.ovLinks.innerHTML = '';
+  var r = ROLES[S.role]; if(!r) return;
+  var seen = {};
+  r.targets.forEach(function(t){
+    var key = t === 'kids' ? 'kids' : t;
+    if(seen[key]) return; seen[key] = 1;
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'link-btn';
+    b.textContent = '🔗 ' + targetEmo(t) + ' ' + (t === 'kids' ? '아이들' : nameOfRole(t)) + ' 링크 복사';
+    b.addEventListener('click', function(){
+      copyText(t === 'kids' ? roleUrl('') : roleUrl(t),
+        '🔗 ' + (t === 'kids' ? '아이들' : nameOfRole(t)) + ' 링크를 복사했어요! 카톡에 붙여넣으세요.');
+    });
+    el.ovLinks.appendChild(b);
+  });
+  if(el.linkList){
+    el.linkList.innerHTML = '';
+    [['yunjin', '👧 윤진'], ['hyungwon', '👧 형원'], ['mom', '👩 엄마'], ['aunt', '💜 이모']].forEach(function(pair){
+      var row = document.createElement('div');
+      row.className = 'lk';
+      var span = document.createElement('span');
+      span.className = 'lk-n';
+      span.textContent = pair[1];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'lk-b';
+      btn.textContent = '복사';
+      btn.addEventListener('click', function(){
+        copyText(roleUrl(pair[0]), '🔗 ' + pair[1] + ' 링크를 복사했어요!');
+      });
+      row.appendChild(span); row.appendChild(btn);
+      el.linkList.appendChild(row);
+    });
   }
-  return t && (nowMs() - t < 75000);
 }
 
 /* ---------------- 동작 ---------------- */
 function onMainBtn(){
   var st = S.callState;
-  if(st === 'idle' || st === 'ended'){ startCall(); return; }
+  if(st === 'idle' || st === 'ended'){ startCall(S.target); return; }
   if(st === 'outgoing'){ endCall('전화를 그만뒀어요'); return; }
   if(st === 'incoming'){ acceptCall(); return; }
   if(st === 'connecting' || st === 'connected'){ endCall('통화를 끊었어요'); return; }
 }
 
-/* ---------------- WebRTC ---------------- */
+/* ---------------- ICE ---------------- */
+function iceServers(){
+  var list = STUN.slice();
+  var extra = [];
+  try{
+    var q = new URLSearchParams(location.search);
+    var tu = q.get('turn');
+    if(tu){
+      extra.push({ urls: tu.split('|'), username: q.get('turnu') || '', credential: q.get('turnp') || '' });
+    }
+  }catch(e){}
+  try{
+    var s = safeGet(K_TURN);
+    if(s){ var arr = JSON.parse(s); if(arr && arr.length) extra = extra.concat(arr); }
+  }catch(e){}
+  return list.concat(extra, TURN_PRESET);
+}
+
 function closePC(){
   if(S.pc){
-    try{ S.pc.onicecandidate = null; S.pc.ontrack = null; S.pc.onconnectionstatechange = null; S.pc.close(); }catch(e){}
+    try{
+      S.pc.onicecandidate = null; S.pc.ontrack = null;
+      S.pc.onconnectionstatechange = null; S.pc.oniceconnectionstatechange = null;
+      S.pc.onicecandidateerror = null; S.pc.close();
+    }catch(e){}
   }
   S.pc = null; S.videoSender = null; S.audioSender = null; S.remoteSet = false; S.pcConnected = false;
   S.pendingCands = [];
+  S.candCount = { host:0, srflx:0, relay:0 };
+  S.lastIce = '';
+  clearTimeout(S.weakT); clearTimeout(S.restartT);
 }
 
 function createPC(){
   closePC();
   var pc = null;
+  var cfg = { iceServers: iceServers(), bundlePolicy:'max-bundle', iceCandidatePoolSize:2 };
   try{
-    pc = new RTCPeerConnection({ iceServers: ICE, bundlePolicy:'max-bundle' });
+    pc = new RTCPeerConnection(cfg);
   }catch(e){
     toast('이 브라우저에서는 화상통화를 할 수 없어요', 5000);
     return null;
@@ -790,10 +1148,19 @@ function createPC(){
 
   pc.onicecandidate = function(ev){
     if(!ev.candidate || !S.callId || !S.root) return;
+    var c = ev.candidate;
+    var t = c.type || 'host';
+    if(S.candCount[t] === undefined) S.candCount[t] = 0;
+    S.candCount[t]++;
+    diagnose();
     var side = S.isCaller ? 'callerCand' : 'calleeCand';
     try{
-      S.root.child(side).push({ c: ev.candidate.toJSON(), callId: S.callId, ts: nowMs() }).catch(function(){});
+      S.root.child(side).push({ c: c.toJSON(), callId: S.callId, rev: S.rev, ts: nowMs() }).catch(function(){});
     }catch(e){}
+  };
+
+  pc.onicecandidateerror = function(ev){
+    S.iceErr = (ev.errorCode || '') + ' ' + (ev.errorText || '') + ' ' + (ev.url || '');
   };
 
   pc.ontrack = function(ev){
@@ -806,17 +1173,31 @@ function createPC(){
     if(p && p.catch) p.catch(function(){ toast('🔊 화면을 한 번 누르면 소리가 켜져요', 3600); });
   };
 
-  pc.onconnectionstatechange = function(){
+  function onState(){
     var cs = pc.connectionState;
-    if(cs === 'connected'){ S.pcConnected = true; onConnected(); }
-    else if(cs === 'disconnected'){
-      el.netTag.hidden = false; el.netTag.textContent = '연결이 약해요…';
+    if(cs === 'connected'){
+      S.pcConnected = true;
+      S.retries = 0;
+      clearTimeout(S.weakT);
+      onConnected();
+    }else if(cs === 'disconnected'){
+      showNet('연결이 약해요… 다시 붙이는 중');
+      clearTimeout(S.weakT);
+      S.weakT = setTimeout(function(){
+        if(S.pc === pc && pc.connectionState !== 'connected' && (S.callState === 'connected' || S.callState === 'connecting')){
+          tryRestart(false);
+        }
+      }, 6000);
     }else if(cs === 'failed'){
-      el.netTag.hidden = false; el.netTag.textContent = '연결 실패';
-      if(S.callState === 'connected' || S.callState === 'connecting'){
-        toast('연결이 끊겼어요. 끊고 다시 걸어 주세요.', 4200);
-      }
+      showNet('연결이 끊겼어요 · 다시 연결 중');
+      tryRestart(false);
     }
+  }
+  pc.onconnectionstatechange = onState;
+  pc.oniceconnectionstatechange = function(){
+    S.lastIce = pc.iceConnectionState || '';
+    diagnose();
+    if(pc.iceConnectionState === 'failed') tryRestart(false);
   };
 
   if(S.localStream){
@@ -834,19 +1215,56 @@ function createPC(){
   return pc;
 }
 
+/* ICE 재시작: 직접 연결(같은 와이파이)이 안 되는 망에서도 다시 시도한다. */
+function tryRestart(manual){
+  if(!S.pc || !S.callId || !S.root) return;
+  if(S.callState !== 'connected' && S.callState !== 'connecting') return;
+  if(!manual && S.retries >= 3){
+    S.connFailed = true;
+    showNet('연결 실패 · 다시 연결을 눌러 보세요');
+    toast('연결이 안 돼요. 🔄 다시 연결을 누르거나 끊고 다시 걸어 보세요.', 4600);
+    renderState();
+    return;
+  }
+  S.retries++;
+  S.connFailed = false;
+  if(S.isCaller){
+    try{ S.pc.restartIce(); }catch(e){}
+    S.rev = (S.rev || 0) + 1;
+    S.remoteSet = false;
+    showNet('다시 연결하는 중…');
+    S.pc.createOffer({ iceRestart:true, offerToReceiveAudio:true, offerToReceiveVideo:true })
+      .then(function(o){ return S.pc.setLocalDescription(o).then(function(){ return o; }); })
+      .then(function(o){
+        var r = ROLES[S.role] || {};
+        return S.root.child('call').update({
+          offer: { type:o.type, sdp:o.sdp }, rev: S.rev, state:'accepted',
+          from: S.role, fromName: r.name || '', fromEmo: r.emo || '',
+          to: S.target || 'kids', restartAt: nowMs()
+        });
+      })
+      .catch(function(){});
+  }else{
+    showNet('다시 연결을 요청했어요…');
+    try{ S.root.child('call').update({ restartReq: nowMs() }).catch(function(){}); }catch(e){}
+  }
+}
+
 function onConnected(){
+  S.connFailed = false;
   if(S.callState !== 'connected'){
     setCallState('connected');
     chime();
   }
-  el.netTag.hidden = true;
-  el.remoteCover.hidden = true;   /* 연결됨 → 대기 그림 숨기고 상대 영상 보여 주기 */
+  showNet('');
+  el.remoteCover.hidden = true;
   if(!S.callStartAt || !S.timerT){
     S.callStartAt = nowMs();
     clearInterval(S.timerT);
     S.timerT = setInterval(tickTimer, 500);
     tickTimer();
   }
+  diagnose();
 }
 function tickTimer(){
   var s = Math.max(0, Math.floor((nowMs() - S.callStartAt) / 1000));
@@ -860,20 +1278,37 @@ function setCallState(st){
   renderState();
 }
 
+function diagnose(){
+  if(!el.diagBox) return;
+  var c = S.candCount || {};
+  var parts = [];
+  parts.push('연결 상태: <b>' + (S.pc ? (S.pc.connectionState || 'new') : '없음') + '</b>');
+  if(S.lastIce) parts.push('ICE: <b>' + S.lastIce + '</b>');
+  parts.push('후보 직접 ' + (c.host || 0) + ' · 공인 ' + (c.srflx || 0) + ' · <b>릴레이 ' + (c.relay || 0) + '</b>');
+  if(S.iceErr) parts.push('오류: ' + S.iceErr);
+  el.diagBox.innerHTML = parts.join('<br>');
+}
+
 /* ---------------- 통화 시작 ---------------- */
-function startCall(){
+function startCall(t){
+  t = t || S.target || (ROLES[S.role] ? ROLES[S.role].targets[0] : 'aunt');
   if(!S.dbReady){ toast('인터넷 연결을 확인해 주세요', 3200); initFirebase(); return; }
   if(S.callId){ toast('이미 통화 중이에요'); return; }
+  if(IN_APP){
+    showInApp('⚠️ 앱 안 브라우저에서는 통화가 안 될 수 있어요. <b>Chrome</b>으로 열어 주세요!');
+  }
+  S.target = t;
+  S.remoteRole = t;
   var go = function(){
     if(!S.root) return;
     S.isCaller = true;
     S.callId = 'c' + nowMs().toString(36) + rnd(4);
+    S.rev = 0; S.retries = 0;
     S.remoteSet = false;
     S.pendingCands = [];
     setCallState('outgoing');
     startBell();
-    /* 중요: 옛 후보 지우기는 **후보가 생기기 전에** 끝내야 한다.
-       (setLocalDescription 뒤에 지우면 방금 모인 후보가 통째로 사라져 연결이 안 됨) */
+    /* 옛 후보 지우기는 후보가 생기기 전에 끝내야 한다. */
     S.root.update({ callerCand: null, calleeCand: null }).catch(function(){}).then(function(){
       var pc = createPC();
       if(!pc) return null;
@@ -883,7 +1318,7 @@ function startCall(){
           var r = ROLES[S.role];
           var call = {
             id: S.callId, from: S.role, fromName: r.name, fromEmo: r.emo,
-            to: r.otherSide, state: 'ringing', ts: nowMs(),
+            to: t, state: 'ringing', ts: nowMs(), rev: 0,
             offer: { type: offer.type, sdp: offer.sdp }
           };
           return S.root.update({ call: call });
@@ -895,15 +1330,14 @@ function startCall(){
     clearTimeout(S.outT);
     S.outT = setTimeout(function(){
       if(S.callState === 'outgoing'){
-        toast(otherRole() + '가 받지 않아서 그만뒀어요', 3200);
+        toast(nameOfRole(t) + '가 받지 않아서 그만뒀어요', 3200);
         endCall('');
       }
     }, 75000);
   };
 
-  /* 카메라가 꺼져 있으면 먼저 켠다 */
-  if(!S.localStream || !S.camTrack || S.camTrack.readyState !== 'live'){
-    startMedia().then(function(ok){ if(ok) go(); else toast('카메라를 켜야 전화를 걸 수 있어요', 3600); });
+  if(!S.localStream){
+    startMedia().then(function(){ go(); });
   }else{
     go();
   }
@@ -916,10 +1350,12 @@ function acceptCall(){
   stopBell();
   S.callId = c.id;
   S.isCaller = false;
+  S.remoteRole = c.from || null;
+  S.rev = c.rev || 0;
+  S.retries = 0;
   setCallState('connecting');
 
-  startMedia().then(function(ok){
-    if(!ok){ endCall(''); toast('카메라를 켜야 받을 수 있어요', 3600); return; }
+  var run = function(){
     var pc = createPC();
     if(!pc) return;
     S.remoteSet = false;
@@ -933,26 +1369,31 @@ function acceptCall(){
     }).then(function(ans){
       return S.root.child('call').update({
         answer: { type: ans.type, sdp: ans.sdp },
-        state: 'accepted', answeredBy: S.role, answeredAt: nowMs()
+        state: 'accepted', rev: S.rev, answeredBy: S.role, answeredAt: nowMs()
       });
     }).catch(function(){
       toast('연결하지 못했어요. 다시 걸어 달라고 해요.', 4200);
       cleanupLocal(true);
     });
-  });
+  };
+
+  if(!S.localStream){
+    startMedia().then(function(){ run(); });
+  }else{
+    run();
+  }
 }
 
 function applyCand(c){
   if(!S.pc || !S.remoteSet){ S.pendingCands.push({ c: c, callId: S.callId }); return; }
-  try{ S.pc.addIceCandidate(c).catch(function(){}); }catch(e){}
+  S.applied = (S.applied||0) + 1;
+  try{ S.pc.addIceCandidate(c).catch(function(e){ S.iceErr = 'addCand: ' + (e && e.message); }); }catch(e){ S.iceErr = 'addCand sync: ' + (e && e.message); }
 }
 
-/* 통화 정보보다 후보가 먼저 도착할 수 있어(걸 때 후보 → 그다음 전화 정보)
-   통화 id 별로 모아 두었다가 연결 준비가 끝나면 한꿄번에 넣는다. */
 function poolPush(callId, c){
   if(!callId || !c) return;
   var arr = S.candPool[callId] || (S.candPool[callId] = []);
-  if(arr.length < 40) arr.push(c);
+  if(arr.length < 60) arr.push(c);
   var keys = Object.keys(S.candPool);
   if(keys.length > 4){ try{ delete S.candPool[keys[0]]; }catch(e){} }
 }
@@ -974,7 +1415,6 @@ function flushCands(){
   }
 }
 
-/* 한 번 더 DB 에서 직접 읽어 온다 (리스너를 놓친 경우 대비) */
 function pullCands(side){
   if(!S.root || !S.callId) return;
   try{
@@ -1014,21 +1454,17 @@ function cleanupLocal(fromError){
   stopBell();
   clearInterval(S.timerT); S.timerT = 0;
   closePC();
-  /* 카메라·마이크는 통화가 끝나면 끈다 (아이들 기기에서 몰래 켜져 있지 않게) */
-  if(S.localStream){
-    try{ S.localStream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
-  }
-  S.localStream = null; S.camTrack = null; S.micTrack = null; S.coverStream = null;
-  try{ el.local.srcObject = null; }catch(e){}
-  if(el.localOff) el.localOff.hidden = false;
+  /* 카메라·마이크는 통화가 끝나면 끈다 */
+  stopLocal();
   try{ el.remote.srcObject = null; }catch(e){}
   S.muted = false; S.hidden = false;
   el.btnMic.classList.remove('off'); el.btnHide.classList.remove('off');
   el.micLbl.textContent = '마이크 끄기'; el.hideLbl.textContent = '내 화면 가리기';
   el.localHidden.hidden = true;
   el.timer.textContent = '00:00'; el.timer.hidden = true;
-  el.netTag.hidden = true;
+  showNet('');
   S.callId = null; S.isCaller = false; S.pending = null; S.callStartAt = 0;
+  S.rev = 0; S.retries = 0; S.remoteRole = null; S.connFailed = false;
   setCallState('idle');
   if(!fromError) toast('통화를 끊었어요', 1800);
 }
@@ -1051,7 +1487,7 @@ function initFirebase(){
     S.root.child('reactions').limitToLast(12).on('child_added', onReaction);
     S.root.child('callerCand').on('child_added', function(s){ onCand('caller', s); });
     S.root.child('calleeCand').on('child_added', function(s){ onCand('callee', s); });
-    S.root.child('presence').on('value', function(s){ S.presence = s.val() || {}; updatePeerChip(); });
+    S.root.child('presence').on('value', function(s){ S.presence = s.val() || {}; updatePeerChip(); renderWho(); });
     presenceLoop();
     pruneSoon();
   }catch(e){
@@ -1074,26 +1510,58 @@ function presenceLoop(){
 
 function isRecent(ts, ms){ return ts && (nowMs() - ts) < (ms || 150000); }
 
-function canAnswer(c){
-  if(!c || !c.to || !c.from) return false;
-  if(c.from === S.role) return false;
-  if(c.to === 'aunt') return S.role === 'aunt';
-  return S.role !== 'aunt';
+/* 이 전화가 나에게 온 것인가 */
+function toMe(c){
+  if(!c || !c.to) return false;
+  if(c.to === S.role) return true;
+  if(c.to === 'kids' && isKidRole(S.role)) return true;
+  return false;
 }
 
 function onCall(snap){
   var c = snap.val();
   S.lastCall = c || null;
-  if(!c || !c.id){ return; }
+  if(!c || !c.id) return;
   var mine = (S.callId === c.id);
+
+  /* 1) 끊김 → 상대가 다시 연결을 요청(offer 재전송)한 경우 */
+  if(mine && !S.isCaller && c.offer && S.pc && (c.rev || 0) > (S.rev || 0)){
+    S.rev = c.rev || 0;
+    S.remoteSet = false;
+    showNet('다시 연결하는 중…');
+    S.pc.setRemoteDescription(new RTCSessionDescription(c.offer)).then(function(){
+      S.remoteSet = true;
+      flushCands();
+      pullCands('callerCand');
+      return S.pc.createAnswer();
+    }).then(function(ans){
+      return S.pc.setLocalDescription(ans).then(function(){ return ans; });
+    }).then(function(ans){
+      return S.root.child('call').update({
+        answer: { type: ans.type, sdp: ans.sdp }, state:'accepted', rev: S.rev, answeredAt: nowMs()
+      });
+    }).catch(function(){});
+    return;
+  }
+
+  /* 2) 끊긴 쪽(받는 사람)이 다시 연결을 부탁한 경우 */
+  if(mine && S.isCaller && c.restartReq && c.restartReq > (S.lastRestartReq || 0)){
+    S.lastRestartReq = c.restartReq;
+    if(S.callState === 'connected' || S.callState === 'connecting'){
+      tryRestart(false);
+    }
+  }
 
   if(c.state === 'ringing'){
     if(mine) return;
-    if(S.callId) return;                       /* 이미 통화 중 */
-    if(S.callState === 'incoming') return;            /* 이미 받을 전화가 걸려 있음 */
-    if(!canAnswer(c)) return;
-    if(!isRecent(c.ts, 150000)) return;        /* 오래된 벨은 무시 */
+    if(S.callId) return;
+    if(S.callState === 'incoming') return;
+    if(!toMe(c)) return;
+    if(c.from === S.role) return;
+    if(!isRecent(c.ts, 150000)) return;
     S.pending = c;
+    S.remoteRole = c.from || null;
+    S.target = c.to === 'kids' ? 'kids' : c.to;
     setCallState('incoming');
     startBell();
     return;
@@ -1101,16 +1569,21 @@ function onCall(snap){
 
   if(c.state === 'accepted'){
     if(mine){
-      if(S.isCaller && c.answer && !S.remoteSet){
-        if(!S.pc) return;
-        S.pc.setRemoteDescription(new RTCSessionDescription(c.answer)).then(function(){
-          S.remoteSet = true;
-          flushCands();
-          pullCands('calleeCand');
-          if(S.callState !== 'connected') setCallState('connecting');
-        }).catch(function(){ toast('연결 정보를 읽지 못했어요', 3600); });
-      }else if(!S.isCaller){
-        if(S.callState !== 'connected') setCallState('connecting');
+      if(S.isCaller){
+        if(c.answeredBy && ROLES[c.answeredBy] && S.remoteRole !== c.answeredBy){
+          S.remoteRole = c.answeredBy;   /* '아이들'에게 걸었어도 실제 받은 사람 이름으로 */
+          renderState();
+        }
+        if(c.answer && (c.rev || 0) === (S.rev || 0) && !S.remoteSet && S.pc){
+          S.pc.setRemoteDescription(new RTCSessionDescription(c.answer)).then(function(){
+            S.remoteSet = true;
+            flushCands();
+            pullCands('calleeCand');
+            if(S.callState !== 'connected') setCallState('connecting');
+          }).catch(function(){ toast('연결 정보를 읽지 못했어요', 3600); });
+        }
+      }else if(S.callState !== 'connected'){
+        setCallState('connecting');
       }
     }else if(S.callState === 'incoming'){
       stopBell();
@@ -1138,10 +1611,11 @@ function onCall(snap){
 function onCand(side, snap){
   var v = snap.val();
   if(!v || !v.c || !v.callId) return;
-  if(side === 'caller' && S.isCaller) return;    /* 내가 건 전화의 후보는 내가 안 씀 */
+  S.gotCand = (S.gotCand||0) + 1;
+  if(side === 'caller' && S.isCaller) return;
   if(side === 'callee' && !S.isCaller) return;
   poolPush(v.callId, v.c);
-  if(v.callId !== S.callId) return;              /* 아직 모르는 통화 → 모아만 둔다 */
+  if(v.callId !== S.callId) return;
   applyCand(v.c);
 }
 
@@ -1168,23 +1642,15 @@ function sendReaction(emo){
 
 function onReaction(snap){
   var v = snap.val();
-  if(!v || !v.e || !isRecent(v.ts, 6000)) return;   /* 새로 고른 것만 (지난 것 반복 방지) */
+  if(!v || !v.e || !isRecent(v.ts, 6000)) return;
   if(v.rk === S.pageId) return;
   showFloat(v.e);
 }
 
-/* 오래된 리액션 정리 (내 쪽에서 한 번) */
 function pruneSoon(){
   setTimeout(function(){
     if(!S.root) return;
-    try{
-      S.root.child('reactions').orderByChild('ts').endAt(nowMs() - 60000).once('value').then(function(s){
-        var v = s.val(); if(!v) return;
-        var upd = {}; Object.keys(v).forEach(function(k){ upd[k] = null; });
-        s.ref.update(upd).catch(function(){});
-      });
-    }catch(e){}
-    setInterval(function(){
+    var clean = function(){
       try{
         S.root.child('reactions').orderByChild('ts').endAt(nowMs() - 60000).once('value').then(function(s){
           var v = s.val(); if(!v) return;
@@ -1192,7 +1658,9 @@ function pruneSoon(){
           s.ref.update(upd).catch(function(){});
         });
       }catch(e){}
-    }, 60000);
+    };
+    clean();
+    setInterval(clean, 60000);
   }, 4000);
 }
 
@@ -1221,12 +1689,16 @@ for(var i = 0; i < roleBtns.length; i++){
 }
 
 el.mainBtn.addEventListener('click', onMainBtn);
-el.subBtn.addEventListener('click', rejectCall);
+el.subBtn.addEventListener('click', function(){
+  if(S.callState === 'incoming'){ rejectCall(); return; }
+  if(S.callState === 'connecting' || S.callState === 'connected'){
+    S.retries = 0; S.connFailed = false; renderState(); tryRestart(true);
+  }
+});
 el.btnEnd.addEventListener('click', function(){ endCall('통화를 끊었어요'); });
 el.btnMic.addEventListener('click', toggleMic);
 el.btnCam.addEventListener('click', switchCamera);
 el.btnHide.addEventListener('click', toggleHide);
-el.copyAunt.addEventListener('click', function(){ copyText(auntUrl(), '🔗 이모에게 보낼 링크를 복사했어요! 카톡에 붙여넣으세요.'); });
 
 var reactBtns = el.reacts.querySelectorAll('.react');
 for(var j = 0; j < reactBtns.length; j++){
@@ -1239,7 +1711,7 @@ el.meChip.addEventListener('click', function(){
   el.room.hidden = true;
   el.gate.hidden = false;
 });
-el.btnHelp.addEventListener('click', function(){ el.modal.classList.add('show'); });
+el.btnHelp.addEventListener('click', function(){ diagnose(); el.modal.classList.add('show'); });
 el.modalClose.addEventListener('click', function(){ el.modal.classList.remove('show'); });
 el.modal.addEventListener('click', function(e){ if(e.target === el.modal) el.modal.classList.remove('show'); });
 el.modalRole.addEventListener('click', function(){
@@ -1248,6 +1720,8 @@ el.modalRole.addEventListener('click', function(){
   el.room.hidden = true;
   el.gate.hidden = false;
 });
+if(el.iaClose) el.iaClose.addEventListener('click', hideInApp);
+if(el.iaCopy) el.iaCopy.addEventListener('click', function(){ copyText(location.href, '🔗 주소를 복사했어요. Chrome 주소창에 붙여넣으세요!'); });
 
 window.addEventListener('pagehide', function(){
   if(S.root && S.role){ try{ S.root.child('presence/' + S.role).remove(); }catch(e){} }
@@ -1260,12 +1734,12 @@ document.addEventListener('visibilitychange', function(){
 /* ---------------- 시작 ---------------- */
 S.devId = safeGet(K_NAME);
 if(!S.devId){ S.devId = 'd' + rnd(10); safeSet(K_NAME, S.devId); }
-S.pageId = 'p' + rnd(10);   /* 이 창에서만 쓰는 id (같은 기기? 두 탭에서도 내 이모지가 두 번 뜨지 않게) */
+S.pageId = 'p' + rnd(10);
 
 (function boot(){
   var fromUrl = roleFromUrl();
   if(fromUrl){ pickRole(fromUrl); return; }
-  var saved = safeGet(K_ROLE);
+  var saved = safeGet(K_ROLE) || safeGet('vc_role_v1');
   if(saved && ROLES[saved]){ pickRole(saved); return; }
   el.gate.hidden = false;
 })();
@@ -1276,8 +1750,24 @@ window.__vc = {
   get state(){ return S.callState; },
   get callId(){ return S.callId; },
   get isCaller(){ return S.isCaller; },
+  get target(){ return S.target; },
+  get remoteRole(){ return S.remoteRole; },
   get pc(){ return S.pc; },
   get pcState(){ return S.pc && S.pc.connectionState; },
+  get rev(){ return S.rev; },
+  get retries(){ return S.retries; },
+  get cand(){ return S.candCount; },
+  get applied(){ return S.applied; },
+  get connFailed(){ return !!S.connFailed; },
+  get gotCand(){ return S.gotCand; },
+  get iceErr(){ return S.iceErr; },
+  get pending(){ return S.pendingCands.length; },
+  get pool(){ return Object.keys(S.candPool).map(function(k){ return [k, S.candPool[k].length]; }); },
+  get mediaMode(){ return S.mediaMode; },
+  get hasMic(){ return !!S.micTrack; },
+  get camReal(){ return S.camReal; },
+  get inapp(){ return IN_APP; },
+  get banner(){ return el.inappBar ? !el.inappBar.hidden : false; },
   get micOn(){ return !S.muted; },
   get facing(){ return S.facing; },
   get hidden(){ return S.hidden; },
@@ -1287,6 +1777,9 @@ window.__vc = {
   get bellOn(){ return !!S.bellT; },
   get call(){ return S.lastCall; },
   get dbPath(){ return PATH; },
+  get labels(){ return Array.prototype.map.call(document.querySelectorAll('.role-btn .rt b'), function(n){ return n.textContent; }); },
+  get opts(){ return Array.prototype.map.call(document.querySelectorAll('#callOpts .opt'), function(n){ return n.textContent; }); },
+  restart: function(){ tryRestart(true); },
   fails: function(){ return (window.__errs || []).slice(); }
 };
 })();
