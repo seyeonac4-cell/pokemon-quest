@@ -213,13 +213,15 @@ input{font-family:inherit}
 
 /* ---------------- 채팅 ---------------- */
 .msgs{display:flex;flex-direction:column;gap:8px;min-height:90px}
+#chatPanel{max-height:min(62dvh,560px)}
+#chatPanel .sheet-body{display:flex;flex-direction:column;justify-content:flex-end}
 .msg{display:flex;gap:8px;align-items:flex-end;max-width:100%}
 .msg .av{
   flex:0 0 auto;width:32px;height:32px;border-radius:11px;display:flex;align-items:center;justify-content:center;
   font-size:17px;background:#eef4ff;border:2px solid #dfe9fb
 }
 .msg .bubble{
-  max-width:76%;padding:9px 13px;border-radius:16px 16px 16px 4px;
+  max-width:min(78vw,340px);padding:9px 13px;border-radius:16px 16px 16px 4px;
   background:#f2f6fd;font-size:15px;line-height:1.42;letter-spacing:-.01em;
   word-break:break-word;white-space:pre-wrap;
 }
@@ -2146,7 +2148,7 @@ function drawProp(ctx, p) {
       var ownerPet = (p.who === ME_ID() && SAVE && SAVE.pet && SAVE.pet.type) ? true : false;
       if (!ownerPet) {
         ctx.save();
-        ctx.translate(n.x, n.y - 16 + Math.sin(G.t * 2) * 1.5);
+        ctx.translate(n.x, n.y - 11 + Math.sin(G.t * 2) * 1.5);
         ctx.rotate(Math.sin(G.t * 1.4) * 0.06);
         ctx.beginPath();
         ctx.ellipse(0, 0, 13, 17, 0, 0, 6.2832);
@@ -2154,10 +2156,10 @@ function drawProp(ctx, p) {
         eg.addColorStop(0, '#ffffff'); eg.addColorStop(1, '#e7f0ff');
         ctx.fillStyle = eg; ctx.fill();
         ctx.strokeStyle = '#c9d8ef'; ctx.lineWidth = 2; ctx.stroke();
-        ctx.fillStyle = '#b7c9e6';
-        ctx.beginPath(); ctx.arc(-4, -4, 2.6, 0, 6.2832); ctx.fill();
-        ctx.beginPath(); ctx.arc(4, 2, 2.1, 0, 6.2832); ctx.fill();
-        ctx.beginPath(); ctx.arc(-2, 6, 1.8, 0, 6.2832); ctx.fill();
+        ctx.fillStyle = 'rgba(183,201,230,.85)';
+        ctx.beginPath(); ctx.arc(-4, 2, 2.2, 0, 6.2832); ctx.fill();
+        ctx.beginPath(); ctx.arc(3, 6, 1.8, 0, 6.2832); ctx.fill();
+        ctx.beginPath(); ctx.arc(5, -4, 1.6, 0, 6.2832); ctx.fill();
         ctx.restore();
         emo(ctx, '✨', n.x + 22, n.y - 26, 12);
       }
