@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="드레스 투 임프레스">
-<meta name="description" content="오늘의 주제로 코디하고 런웨이를 걸어요 — 드레스 투 임프레스 스타일 패션쇼 놀이">
-<title>👗 드레스 투 임프레스 · 스타일 패션쇼</title>
+<meta name="description" content="2.5D 드레싱룸을 걸어 다니며 아이템을 찾아 꾸미고 런웨이를 걸어요 — 드레스 투 임프레스 드레싱룸 탐험">
+<title>👗 드레스 투 임프레스 · 드레싱룸 탐험</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="icon" type="image/png" sizes="192x192" href="./assets/dress-up/dress-up-icon-192.png">
@@ -486,102 +486,476 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 }
 footer{margin:16px 4px 0; text-align:center; font-size:11.5px; color:#A794B0; font-weight:600; line-height:1.7}
 footer a{color:#B073FF; text-decoration:none; font-weight:800}
+/* ============================================================
+   v3 · 드레싱룸 탐험 (2.5D) — 추가 스타일
+   ============================================================ */
+html,body{height:100%}
+body{
+  padding:0!important; min-height:0!important; height:100%;
+  overflow:hidden; background:linear-gradient(180deg,#FFF7FC 0%,#F1EBFF 62%,#FFF0F8 100%);
+  -webkit-user-select:none; user-select:none; touch-action:manipulation;
+}
+.app{
+  height:100vh; height:100dvh; max-width:1260px; margin:0 auto;
+  display:flex; flex-direction:column; gap:6px; min-height:0;
+  padding:calc(8px + env(safe-area-inset-top)) 8px calc(8px + env(safe-area-inset-bottom));
+}
+
+/* ---------- 상단 ---------- */
+.top{display:flex; align-items:center; gap:7px; flex:0 0 auto}
+.brand{display:flex; align-items:center; gap:7px; min-width:0; flex:1 1 auto}
+.brand .logo{
+  width:36px; height:36px; flex:0 0 auto; display:grid; place-items:center; font-size:19px;
+  border-radius:12px; background:linear-gradient(150deg,#FFE9F3,#EADFFF); border:1px solid #fff;
+  box-shadow:0 5px 13px rgba(160,80,170,.2);
+}
+.brand .tx{min-width:0}
+.brand h1{
+  margin:0; font-size:clamp(13px,3.6vw,18px); font-weight:900; letter-spacing:-.04em;
+  line-height:1.12; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.brand h1 small{display:block; font-size:7.5px; font-weight:900; letter-spacing:.22em; color:var(--pink); margin-top:1px}
+.hud{margin-left:auto; display:flex; gap:5px; align-items:center; flex:0 0 auto}
+.coin{
+  display:inline-flex; align-items:center; gap:4px; background:#fff; border:1.5px solid #F3E0EE;
+  border-radius:999px; padding:5px 9px 5px 8px; font-size:11.5px; font-weight:900; color:#B23A6E;
+  box-shadow:0 3px 9px rgba(120,60,120,.09); white-space:nowrap;
+}
+.coin b{font-size:14px; font-variant-numeric:tabular-nums}
+.coin .ci{
+  width:15px; height:15px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center;
+  background:linear-gradient(160deg,#FFE585,#F0AF14); border:1px solid #DC9700;
+  font-size:8px; font-style:normal; color:#fff; text-shadow:0 1px 1px rgba(150,90,0,.5);
+}
+.coin.up{animation:coinPop .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes coinPop{0%{transform:scale(1)}40%{transform:scale(1.22); background:#FFF1C9}100%{transform:scale(1)}}
+.iconbtn{
+  width:37px; height:37px; border-radius:12px; border:1.5px solid #F0DCEC; background:#fff;
+  font-size:15px; display:grid; place-items:center; cursor:pointer; padding:0;
+  box-shadow:0 3px 9px rgba(120,60,120,.08);
+}
+.iconbtn:active{transform:scale(.94)}
+
+/* ---------- 주제 · 타이머 ---------- */
+.bar2{display:flex; gap:5px; align-items:center; flex:0 0 auto; min-width:0}
+.pill{
+  border:1.5px solid #F0DCEC; background:rgba(255,255,255,.95); border-radius:13px; height:38px;
+  padding:0 10px; display:inline-flex; align-items:center; gap:5px; font:inherit;
+  font-weight:900; font-size:12px; color:#6B4B72; cursor:pointer; box-shadow:0 3px 9px rgba(120,60,120,.08);
+}
+.pill.theme{flex:1 1 auto; min-width:0}
+.pill.theme em{font-style:normal; font-size:14px; flex:0 0 auto}
+.pill.theme b{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:-.03em}
+.pill.theme i{font-style:normal; color:#BCA9C8; font-size:9px; flex:0 0 auto}
+.pill.clock{
+  background:linear-gradient(135deg,#FFEFF7,#F1E8FF); border-color:#F3D8EA; color:#8B2E63;
+  min-width:62px; justify-content:center; cursor:default; gap:3px;
+}
+.pill.clock b{font-size:15px; font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.pill.clock.warn{border-color:#FF9E9E; background:linear-gradient(135deg,#FFE2E2,#FFEEF4); animation:tmWarn 1s ease-in-out infinite}
+.pill.clock.warn b{color:#D6243F}
+.pill.mode{color:#7846C8; background:#F7F1FF; border-color:#E4D7FF; white-space:nowrap; padding:0 9px}
+
+/* ---------- 방 ---------- */
+.room{
+  position:relative; flex:1 1 auto; min-height:0; border-radius:20px; overflow:hidden;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.8), 0 12px 30px rgba(120,60,120,.16);
+  background:linear-gradient(180deg,var(--t2),#F7E9FF); isolation:isolate;
+  touch-action:none;
+}
+.room::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:26;
+  box-shadow:inset 0 -54px 70px -30px rgba(45,12,58,.28), inset 0 40px 60px -40px rgba(45,12,58,.22);
+  border-radius:20px;
+}
+.roomSvg{position:absolute; inset:0; width:100%; height:100%; display:block}
+.layer{position:absolute; inset:0; pointer-events:none}
+.layer.world{z-index:5}
+.layer.actors{z-index:10}
+.layer.props{z-index:9}
+.layer.picks{z-index:11}
+.layer.zones{z-index:12}
+
+/* 존 */
+.zone{
+  position:absolute; transform:translate(-50%,-100%); pointer-events:auto; cursor:pointer;
+  text-align:center; -webkit-user-select:none; user-select:none;
+}
+.zone::after{
+  content:""; position:absolute; left:50%; bottom:-6px; width:118%; height:34%;
+  transform:translateX(-50%); border-radius:50%; opacity:0; transition:opacity .2s ease;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(255,236,150,.9), rgba(255,236,150,0) 72%);
+  pointer-events:none;
+}
+.zone.near::after{opacity:1}
+.zone .lb{
+  position:absolute; left:50%; bottom:-4px; transform:translateX(-50%);
+  display:inline-block; background:rgba(44,18,58,.6); color:#fff;
+  font-size:9px; font-weight:900; padding:2px 7px; border-radius:999px; white-space:nowrap;
+  letter-spacing:-.02em; backdrop-filter:blur(4px); transition:background .2s, transform .2s;
+}
+.zone.near .lb{background:linear-gradient(135deg,#FF6BA8,#B073FF); transform:translateX(-50%) scale(1.1); box-shadow:0 4px 12px rgba(200,50,160,.45)}
+
+/* 소품 박스 */
+.prop{position:absolute; pointer-events:none}
+.prop svg{width:100%; height:100%; display:block; overflow:visible}
+
+/* 배우 */
+.actor{position:absolute; pointer-events:none}
+.actor .mid{transform-origin:50% 100%; will-change:transform}
+.actor .mid svg{width:100%; height:100%; display:block; filter:drop-shadow(0 9px 9px rgba(50,10,62,.28))}
+.actor .ts{position:absolute; left:50%; transform:translateX(-50%); white-space:nowrap; pointer-events:none}
+.actor .nm{
+  font-size:9px; font-weight:900; color:#fff; background:rgba(44,16,58,.55);
+  padding:1px 6px; border-radius:999px; letter-spacing:-.02em; backdrop-filter:blur(3px);
+}
+.actor.me .nm{background:linear-gradient(135deg,#FF5B9E,#9B6BFF); box-shadow:0 3px 9px rgba(190,50,160,.4)}
+.actor .bub{
+  background:#fff; color:#5A2C6B; font-size:10.5px; font-weight:900; padding:4px 8px;
+  border-radius:11px; box-shadow:0 6px 16px rgba(60,20,70,.28); opacity:0;
+  transition:opacity .18s ease; letter-spacing:-.03em;
+}
+.actor .bub::after{
+  content:""; position:absolute; left:50%; bottom:-4px; width:8px; height:8px; margin-left:-4px;
+  background:#fff; transform:rotate(45deg); border-radius:2px;
+}
+.actor .bub.on{opacity:1}
+.actor.walk .mid svg{animation:figBob .32s ease-in-out infinite alternate}
+@keyframes figBob{from{transform:translateY(0) rotate(-1.6deg)}to{transform:translateY(-3px) rotate(1.6deg)}}
+.actor.pose1 .mid svg{transform:rotate(-4.5deg)}
+.actor.pose2 .mid svg{transform:rotate(4.5deg)}
+.actor.pose3 .mid svg{transform:scaleY(1.035)}
+
+/* 줍는 아이템 */
+.pick{
+  position:absolute; transform:translate(-50%,-100%); pointer-events:none;
+  line-height:1; filter:drop-shadow(0 3px 5px rgba(40,10,50,.45));
+  animation:pickFloat 2.1s ease-in-out infinite;
+}
+.pick svg{width:100%; height:100%; display:block; position:relative; z-index:1}
+.pick .glow{
+  position:absolute; left:50%; bottom:-14%; width:190%; height:90%; transform:translateX(-50%); z-index:0;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(255,240,170,.85), rgba(255,240,170,0) 70%);
+  pointer-events:none;
+}
+@keyframes pickFloat{0%,100%{transform:translate(-50%,-100%)}50%{transform:translate(-50%,-126%)}}
+.pick.got{animation:pickGot .34s ease-out forwards}
+@keyframes pickGot{0%{opacity:1; transform:translate(-50%,-100%) scale(1)}100%{opacity:0; transform:translate(-50%,-190%) scale(1.5)}}
+.gift .glow{background:radial-gradient(50% 50% at 50% 50%, rgba(255,190,255,.95), rgba(255,190,255,0) 70%)}
+
+/* ---------- 조작 ---------- */
+.stick{
+  position:absolute; left:13px; bottom:calc(13px + env(safe-area-inset-bottom));
+  width:104px; height:104px; border-radius:50%; z-index:30; pointer-events:auto;
+  background:radial-gradient(circle at 50% 38%, rgba(255,255,255,.62), rgba(255,255,255,.2));
+  border:2px solid rgba(255,255,255,.8); touch-action:none;
+  box-shadow:0 8px 22px rgba(55,16,68,.28), inset 0 0 20px rgba(255,255,255,.4);
+}
+.stick::before{
+  content:""; position:absolute; inset:16px; border-radius:50%;
+  border:1.5px dashed rgba(255,255,255,.6);
+}
+.stick .knob{
+  position:absolute; left:50%; top:50%; width:46px; height:46px; margin:-23px 0 0 -23px;
+  border-radius:50%; background:linear-gradient(160deg,#fff,#FFD9EC);
+  box-shadow:0 6px 14px rgba(90,30,110,.4), inset 0 -3px 6px rgba(200,120,190,.25);
+  transition:transform .05s linear;
+}
+.stick .hintAr{
+  position:absolute; left:0; right:0; bottom:-15px; text-align:center;
+  font-size:8.5px; font-weight:900; color:rgba(70,30,85,.65); letter-spacing:.04em;
+}
+.acts{
+  position:absolute; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:30;
+  display:grid; grid-template-columns:repeat(2, 54px); gap:7px; pointer-events:auto;
+}
+.abtn{
+  width:54px; height:54px; border-radius:17px; border:2px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.88); display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:0; font-size:19px; font-weight:900; color:#5A2C6B; padding:0;
+  box-shadow:0 6px 16px rgba(55,16,68,.26); cursor:pointer; line-height:1;
+}
+.abtn span{font-size:8px; font-weight:900; letter-spacing:-.02em; margin-top:0; color:#7A5C88; line-height:1}
+.abtn .ic{font-size:17px; line-height:1; display:block; margin-bottom:1px}
+.abtn.go{
+  background:linear-gradient(135deg,#FF5B9E,#B073FF); color:#fff; border-color:rgba(255,255,255,.65);
+  box-shadow:0 10px 24px rgba(200,50,160,.5);
+}
+.abtn.go span{color:#FFEAF6}
+.abtn:active{transform:scale(.93)}
+.abtn.dim{opacity:.72}
+
+.prompt{
+  position:absolute; left:50%; bottom:calc(142px + env(safe-area-inset-bottom)); z-index:32;
+  transform:translate(-50%, 8px); opacity:0; pointer-events:none;
+  display:inline-flex; align-items:center; gap:5px; border:0; border-radius:999px;
+  padding:9px 15px; font:inherit; font-size:12.5px; font-weight:900; color:#fff; cursor:pointer;
+  background:linear-gradient(135deg,#FF6BA8,#B073FF);
+  box-shadow:0 10px 26px rgba(190,50,160,.5), inset 0 1px 0 rgba(255,255,255,.4);
+  transition:opacity .16s ease, transform .16s ease; white-space:nowrap;
+}
+.prompt.on{opacity:1; transform:translate(-50%,0); pointer-events:auto}
+.prompt b{font-weight:900}
+.prompt:active{transform:translate(-50%,0) scale(.97)}
+
+.tipbar{
+  position:absolute; left:50%; top:9px; transform:translateX(-50%); z-index:33; max-width:92%;
+  background:rgba(40,14,54,.8); color:#fff; font-size:10.5px; font-weight:800; line-height:1.35;
+  padding:7px 12px; border-radius:14px; backdrop-filter:blur(6px); text-align:center;
+  transition:opacity .35s ease; pointer-events:none; letter-spacing:-.02em;
+}
+.tipbar b{color:#FFD9EC}
+.tipbar.off{opacity:0}
+
+.claim{
+  position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) scale(.6); z-index:34;
+  pointer-events:none; opacity:0; text-align:center;
+}
+.claim.go{animation:claimIn 1.5s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes claimIn{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(.5)}
+  18%{opacity:1; transform:translate(-50%,-50%) scale(1.12)}
+  30%{transform:translate(-50%,-50%) scale(1)}
+  80%{opacity:1; transform:translate(-50%,-58%) scale(1)}
+  100%{opacity:0; transform:translate(-50%,-70%) scale(1)}
+}
+.claim b{
+  display:block; font-size:17px; font-weight:900; color:#fff; letter-spacing:-.03em;
+  text-shadow:0 3px 10px rgba(60,10,70,.6);
+}
+.claim i{display:block; font-style:normal; font-size:11.5px; font-weight:900; color:#FFE9A8; margin-top:2px}
+
+/* ---------- 시트(옷장·주제·VIP·룩북·메뉴) ---------- */
+.sh-head{display:flex; align-items:center; gap:8px; margin:0 2px 9px}
+.sh-head .em{
+  width:38px; height:38px; flex:0 0 auto; display:grid; place-items:center; font-size:20px;
+  border-radius:12px; background:linear-gradient(150deg,var(--t1),var(--t2)); border:1px solid #fff;
+}
+.sh-head .t{min-width:0; flex:1}
+.sh-head .t b{display:block; font-size:15.5px; font-weight:900; letter-spacing:-.03em; line-height:1.2}
+.sh-head .t span{display:block; font-size:10.5px; color:var(--muted); font-weight:700; margin-top:1px}
+.sh-head .x{
+  width:34px; height:34px; flex:0 0 auto; border-radius:11px; border:1.5px solid #EFDFF0;
+  background:#fff; font-size:14px; font-weight:900; color:#7A6688; cursor:pointer; padding:0;
+}
+.sheet .box{padding-top:13px}
+.sheet h2{margin:0 0 2px; font-size:17px; font-weight:900; letter-spacing:-.03em}
+.sheet .sub{margin:0 0 10px; font-size:11.5px; color:var(--muted); font-weight:700; line-height:1.4}
+.cats{display:flex; gap:5px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none; min-width:0}
+.grid{max-height:min(42vh, 360px)}
+.item .th{height:66px}
+.item .th svg{height:66px}
+.item.vip::after{
+  content:"💎"; position:absolute; left:3px; top:2px; font-size:10px;
+}
+.item.lock{opacity:.62}
+.item .pr{
+  position:absolute; right:3px; bottom:2px; background:#FFF1C9; color:#8A5B00;
+  font-size:9px; font-weight:900; padding:1px 5px; border-radius:999px;
+}
+.swatches{padding-bottom:8px}
+.patterns{padding-bottom:8px}
+.mk-sw{gap:5px}
+
+/* 동전 아이콘 */
+.cn{width:13px; height:13px; display:inline-block; vertical-align:-2px}
+
+/* VIP 상점 */
+.vipList{display:grid; grid-template-columns:repeat(auto-fill, minmax(132px, 1fr)); gap:8px}
+.vipCard{
+  border:2px solid #F1E2F0; border-radius:16px; background:#fff; padding:7px; text-align:center;
+  display:flex; flex-direction:column; gap:3px; position:relative;
+}
+.vipCard .ph{height:118px; display:grid; place-items:center; background:linear-gradient(160deg,#FFF6E6,#F6EEFF); border-radius:11px; overflow:hidden}
+.vipCard .ph svg{height:114px; width:auto}
+.vipCard .ph svg.shot{height:76px; width:auto; overflow:visible}
+.vipCard .ph.z2 svg{transform:scale(2.1); transform-origin:50% 10%}
+.vipCard .nm{font-size:11px; font-weight:900; line-height:1.2; letter-spacing:-.03em}
+.vipCard .pr{font-size:11px; font-weight:900; color:#B23A6E}
+.vipCard button{
+  border:0; border-radius:11px; padding:8px 0; font:inherit; font-size:11.5px; font-weight:900;
+  cursor:pointer; background:linear-gradient(135deg,#FFC53D,#FFA400); color:#4A3000;
+  display:inline-flex; align-items:center; justify-content:center; gap:4px;
+}
+.vipCard button:disabled{background:#F1ECF5; color:#9C90A8; cursor:default}
+.vipCard.own{background:linear-gradient(180deg,#FFFDF2,#FFF6E4); border-color:#FFD98A}
+
+/* 룩북 그리드 */
+.look .nm{font-size:10px}
+.look .sc{font-size:10px}
+
+/* 메뉴 */
+.menuList{display:flex; flex-direction:column; gap:7px}
+.menuList button{
+  display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+  border:1.5px solid #F0E2F0; background:#fff; border-radius:14px; padding:11px 12px;
+  font:inherit; font-size:13.5px; font-weight:900; color:#5B4568; cursor:pointer;
+}
+.menuList button .em{ont-size:18px; font-size:18px}
+.menuList button small{display:block; font-size:10.5px; color:#9A8BA8; font-weight:700; margin-top:1px}
+.menuList button.end{color:#B9325F; border-color:#FFDDE8; background:#FFF6F9}
+.whoRow{display:flex; gap:6px; margin-bottom:4px}
+.whoRow button{
+  flex:1; border:1.5px solid #EFDFF0; background:#fff; border-radius:13px; padding:10px 4px;
+  font:inherit; font-size:12px; font-weight:900; color:#6B5A78; cursor:pointer;
+}
+.whoRow button.on{background:linear-gradient(135deg,#FFE8F3,#EFE4FF); border-color:#F3B9D8; color:#B02A72}
+
+/* 테마 칩 시트 */
+.themeGrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(104px,1fr)); gap:7px}
+.themeGrid button{
+  border:2px solid #F1E2F0; background:#fff; border-radius:15px; padding:9px 6px; text-align:center;
+  font:inherit; font-size:11px; font-weight:900; color:#6B5A78; cursor:pointer; line-height:1.25;
+}
+.themeGrid button .e{display:block; font-size:22px; line-height:1.1; margin-bottom:2px}
+.themeGrid button.on{background:linear-gradient(160deg,var(--t1),var(--t2)); border-color:#F3B9D8; color:#B02A72}
+
+@media (max-width:420px){
+  .stick{width:96px; height:96px}
+  .stick .knob{width:42px; height:42px; margin:-21px 0 0 -21px}
+  .acts{grid-template-columns:repeat(2, 50px); gap:6px}
+  .abtn{width:50px; height:50px; font-size:17px; border-radius:15px}
+  .pill{height:36px; font-size:11.5px}
+  .prompt{font-size:11.5px; padding:8px 13px}
+}
+@media (max-height:620px){
+  .brand h1 small{display:none}
+  .stick{width:88px; height:88px}
+  .abtn{width:46px; height:46px; font-size:16px}
+  .acts{grid-template-columns:repeat(2, 46px)}
+}
+
+/* 토스트 위치(조작 버튼 위로) */
+.toast{bottom:calc(86px + env(safe-area-inset-bottom)); font-size:12.5px; padding:9px 15px; max-width:76vw}
+
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
 
-  <header>
+  <header class="top">
     <div class="brand">
       <span class="logo">👗</span>
-      <h1>드레스 투 임프레스<small>STYLE &amp; RUNWAY</small></h1>
+      <div class="tx">
+        <h1>드레스 투 임프레스<small>DRESSING ROOM</small></h1>
+      </div>
     </div>
-    <div class="hbtns">
-      <button class="iconbtn" id="lookBtn" type="button" title="내 룩북">📖</button>
+    <div class="hud">
+      <span class="coin" id="coinHud" title="모은 코인"><i class="ci">★</i><b id="coinCount">0</b></span>
       <button class="iconbtn" id="muteBtn" type="button" title="소리 켜기/끄기" aria-pressed="false">🔊</button>
+      <button class="iconbtn" id="menuBtn" type="button" title="메뉴">☰</button>
     </div>
   </header>
 
-  <section class="timer-bar card" aria-label="시간 제한 모드">
-    <div class="tm-modes" role="group" aria-label="코디 모드">
-      <button class="tm on" type="button" data-tm="free">🌿 자유 코디</button>
-      <button class="tm" type="button" data-tm="challenge">⏱️ 3분 도전</button>
-    </div>
-    <div class="tm-clock" id="tmClock" hidden>
-      <b id="tmTime">3:00</b><span>남은 시간</span>
-    </div>
-    <span class="tm-hint" id="tmHint">3분 도전을 골라 봐!</span>
-  </section>
-
-  <section class="theme-bar card">
-    <div class="theme-top">
-      <span class="tem" id="themeEmoji">✨</span>
-      <div class="tx">
-        <b id="themeName">반짝이는 공주 파티</b>
-        <span id="themeDesc">왕관과 드레스로 반짝반짝!</span>
-      </div>
-      <button class="iconbtn dice" id="diceBtn" type="button" title="주제 랜덤">🎲</button>
-    </div>
-    <div class="chips" id="themeChips"></div>
-  </section>
-
-  <div class="main">
-    <section class="stage-card card">
-      <div class="stage" id="stage">
-        <div class="lamp l"></div>
-        <div class="lamp r"></div>
-        <div class="stars" id="stageStars"></div>
-        <div class="model-wrap" id="modelWrap"></div>
-        <div class="model-badge" id="modelBadge">👑 내 모델</div>
-        <div class="pose-btns" id="poseBtns">
-          <button type="button" data-pose="0" class="on" title="서 있기">🧍</button>
-          <button type="button" data-pose="1" title="포즈 1">💃</button>
-          <button type="button" data-pose="2" title="포즈 2">🕺</button>
-          <button type="button" data-pose="3" title="포즈 3">✨</button>
-        </div>
-      </div>
-
-      <div class="who" id="who">
-        <span class="lbl">꾸미는 사람</span>
-        <button class="name on" type="button" data-name="윤진">👧 윤진</button>
-        <button class="name" type="button" data-name="형원">👧 형원</button>
-        <button class="name" type="button" data-name="세연">👩 세연</button>
-        <button class="vs" id="vsBtn" type="button">👭 자매 대결</button>
-      </div>
-
-      <div class="cta">
-        <button class="btn primary" id="runBtn" type="button">👠 런웨이 출발!</button>
-        <button class="btn ghost" id="saveBtn" type="button" title="룩북에 저장">💾</button>
-      </div>
-    </section>
-
-    <section class="wardrobe card">
-      <div class="wd-head">
-        <b>👗 옷장</b>
-        <span class="mode" id="modeTag">한 벌 드레스</span>
-      </div>
-      <div class="cats" id="cats"></div>
-      <div class="swatches" id="swatches"></div>
-      <div class="patterns" id="patterns" hidden></div>
-      <div class="grid" id="grid"></div>
-      <p class="hint" id="catHint">옷을 눌러 갈아입혀 보세요. 액세서리는 여러 개 같이 낄 수 있어요!</p>
-    </section>
+  <div class="bar2">
+    <button class="pill theme" id="themePill" type="button" title="오늘의 주제 바꾸기">
+      <em id="themeEmoji">✨</em><b id="themeName">반짝이는 공주 파티</b><i>▾</i>
+    </button>
+    <div class="pill clock" id="tmClock" hidden><b id="tmTime">3:00</b></div>
+    <span id="tmHint" hidden></span>
+    <button class="pill mode" id="tmToggle" type="button">⏱️ 3분 도전</button>
   </div>
 
-  <footer>
-    채씨네 가족 앱 · 드레스 투 임프레스<br>
-    <a href="./apps.html">📱 앱 모음으로 가기</a>
+  <div class="room" id="room">
+    <svg class="roomSvg" id="roomSvg" viewBox="0 0 400 700" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+    <div class="layer world" id="world"></div>
+
+    <div class="claim" id="claim"><b></b><i></i></div>
+    <div class="tipbar" id="tipBar">🕹️ 조이스틱·방향키로 걸어 다니고, 존에 가까이 가면 <b>✨ 입어보기</b> · 발판은 <b>⤒ 점프</b>!</div>
+
+    <button class="prompt" id="prompt" type="button"><span>✨</span><b id="promptName">드레스 존</b><span>입어보기</span></button>
+
+    <div class="stick" id="stick" aria-label="이동 조이스틱"><div class="knob" id="knob"></div><span class="hintAr">이동</span></div>
+
+    <div class="acts">
+      <button class="abtn" id="vipBtn" type="button" title="VIP 상점"><i class="ic">💎</i><span>VIP</span></button>
+      <button class="abtn" id="poseBtn" type="button" title="포즈 바꾸기"><i class="ic">💃</i><span>포즈</span></button>
+      <button class="abtn" id="jumpBtn" type="button" title="점프"><i class="ic">⤒</i><span>점프</span></button>
+      <button class="abtn go" id="runBtn" type="button" title="런웨이 출발"><i class="ic">👠</i><span>런웨이</span></button>
+    </div>
+  </div>
+
+  <footer style="flex:0 0 auto;margin:0;padding:1px 2px 0;text-align:center;font-size:10px;color:#A794B0;font-weight:700">
+    채씨네 가족 앱 · <a href="./apps.html" style="color:#B073FF;text-decoration:none;font-weight:800">📱 앱 모음</a>
   </footer>
+</div>
+
+<!-- ================= 옷장 시트 ================= -->
+<div class="sheet" id="wdSheet" role="dialog" aria-modal="true" aria-labelledby="wdTitle">
+  <div class="box">
+    <div class="sh-head">
+      <span class="em" id="wdEmoji">👗</span>
+      <div class="t"><b id="wdTitle">드레스 존</b><span id="wdSub">마음에 드는 옷을 골라 입어 보세요</span></div>
+      <button class="x" type="button" data-close="wdSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="swatches" id="swatches"></div>
+    <div class="patterns" id="patterns" hidden></div>
+    <div class="grid" id="grid"></div>
+    <p class="hint" id="catHint"></p>
+  </div>
+</div>
+
+<!-- ================= 주제 시트 ================= -->
+<div class="sheet" id="themeSheet" role="dialog" aria-modal="true" aria-labelledby="themeTitle">
+  <div class="box">
+    <div class="sh-head">
+      <span class="em">🎲</span>
+      <div class="t"><b id="themeTitle">오늘의 주제</b><span>주제에 맞게 꾸미면 점수가 더 높아요</span></div>
+      <button class="x" type="button" data-close="themeSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="themeGrid" id="themeGrid"></div>
+    <div style="display:flex;gap:6px;margin-top:11px">
+      <button class="btn ghost" type="button" id="diceBtn" style="flex:1">🎲 주제 랜덤 뽑기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= VIP 상점 ================= -->
+<div class="sheet" id="vipSheet" role="dialog" aria-modal="true" aria-labelledby="vipTitle">
+  <div class="box">
+    <div class="sh-head">
+      <span class="em">💎</span>
+      <div class="t"><b id="vipTitle">VIP 특별 상점</b><span>드레싱룸에서 주운 코인으로 특별한 옷을 사요</span></div>
+      <button class="x" type="button" data-close="vipSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="vipList" id="vipList"></div>
+    <p class="hint">초록 지폐 = 1코인 · ⭐ 별코인 = 3코인 · 🎁 보물상자 = 히든 아이템 해금!</p>
+  </div>
 </div>
 
 <!-- ================= 룩북 ================= -->
 <div class="sheet" id="lookSheet" role="dialog" aria-modal="true" aria-labelledby="lookTitle">
   <div class="box">
-    <h2 id="lookTitle">📖 내 룩북</h2>
-    <p class="sub">저장한 코디를 다시 꺼내 입혀 볼 수 있어요. (이 기기에만 저장돼요)</p>
+    <div class="sh-head">
+      <span class="em">📖</span>
+      <div class="t"><b id="lookTitle">내 룩북</b><span>저장한 코디를 다시 꺼내 입혀 볼 수 있어요 (이 기기에만)</span></div>
+      <button class="x" type="button" data-close="lookSheet" aria-label="닫기">✕</button>
+    </div>
     <div class="looks" id="looks"></div>
-    <div style="display:flex; gap:7px; margin-top:13px">
-      <button class="btn ghost" id="lookClose" type="button" style="flex:1">닫기</button>
+  </div>
+</div>
+
+<!-- ================= 메뉴 ================= -->
+<div class="sheet" id="menuSheet" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+  <div class="box">
+    <div class="sh-head">
+      <span class="em">☰</span>
+      <div class="t"><b id="menuTitle">메뉴</b><span>꾸미는 사람 · 대결 · 도움말</span></div>
+      <button class="x" type="button" data-close="menuSheet" aria-label="닫기">✕</button>
+    </div>
+    <div class="whoRow" id="whoRow">
+      <button type="button" data-name="윤진" class="on">👧 윤진</button>
+      <button type="button" data-name="형원">👧 형원</button>
+      <button type="button" data-name="세연">👩 세연</button>
+    </div>
+    <div class="menuList">
+      <button type="button" id="vsBtn"><span class="em">👭</span><span>자매 대결<small>윤진이 먼저, 형원이가 이어서 런웨이 대결</small></span></button>
+      <button type="button" id="lookBtn2"><span class="em">📖</span><span>내 룩북<small>저장한 코디 불러오기</small></span></button>
+      <button type="button" id="saveBtn"><span class="em">💾</span><span>지금 코디 저장<small>룩북에 한 벌 담기</small></span></button>
+      <button type="button" id="helpBtn"><span class="em">❓</span><span>노는 방법<small>조작·숨은 아이템 힌트</small></span></button>
+      <button type="button" class="end" id="resetBtn"><span class="em">♻️</span><span>코인·아이템 처음부터<small>이 기기에 저장된 진행을 지워요</small></span></button>
     </div>
   </div>
 </div>
@@ -634,7 +1008,6 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
 <script>
 (function(){
 'use strict';
-
 /* ============================================================
    0. 작은 도우미
    ============================================================ */
@@ -1186,15 +1559,6 @@ function vsSelect(idx){
   syncWhoUI();
   renderAll();
 }
-function syncWhoUI(){
-  var btns = $('who').querySelectorAll('.name');
-  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('on', btns[i].getAttribute('data-name') === activeName);
-  $('vsBtn').classList.toggle('on', versus.on);
-  $('runBtn').textContent = versus.on
-    ? (versus.active === 0 ? '👉 형원이 차례' : '👠 둘 다 런웨이 출발!')
-    : '👠 런웨이 출발!';
-}
-
 /* ============================================================
    5. 아바타 그리기
    ============================================================ */
@@ -1398,160 +1762,6 @@ function thumbSVG(kind, item){
   else if(kind === 'acc'){ s.acc = [item.id]; }
   return figureSVG(s, { label:item.name });
 }
-
-/* ============================================================
-   6. 렌더링
-   ============================================================ */
-function renderAvatar(){
-  var wrap = $('modelWrap');
-  wrap.innerHTML = figureSVG(st, { label: activeName + ' 패션 모델' });
-  setPose(st.pose);
-  $('modelBadge').textContent = (versus.on ? (versus.active === 0 ? '1️⃣ ' : '2️⃣ ') : '👑 ') + activeName;
-}
-function setPose(p){
-  st.pose = p;
-  var wrap = $('modelWrap');
-  wrap.className = 'model-wrap' + (p ? ' pose-' + p : '');
-  var btns = $('poseBtns').querySelectorAll('button');
-  for(var i=0;i<btns.length;i++){ btns[i].classList.toggle('on', Number(btns[i].getAttribute('data-pose')) === p); }
-}
-
-function renderThemes(){
-  var chips = THEMES.map(function(t, i){
-    return '<button class="chip'+(t.id === st.theme ? ' on' : '')+'" type="button" data-theme="'+t.id+'"><span>'+t.emoji+'</span>'+esc(t.short)+'</button>';
-  }).join('');
-  $('themeChips').innerHTML = chips;
-  var t = findItem(THEMES, st.theme);
-  $('themeEmoji').textContent = t.emoji;
-  $('themeName').textContent = t.name;
-  $('themeDesc').textContent = t.desc;
-  document.documentElement.style.setProperty('--t1', t.t1);
-  document.documentElement.style.setProperty('--t2', t.t2);
-  document.querySelector('.stage').style.background =
-    'radial-gradient(60% 46% at 50% 104%, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 70%),'+
-    'radial-gradient(50% 40% at 50% 6%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 68%),'+
-    'linear-gradient(168deg, '+t.t1+' 0%, '+t.t2+' 100%)';
-}
-
-var CATS = [
-  { id:'dress',  label:'👗 드레스' },
-  { id:'top',    label:'👚 상의' },
-  { id:'bottom', label:'🩳 하의' },
-  { id:'shoes',  label:'👟 신발' },
-  { id:'hair',   label:'💇 머리' },
-  { id:'face',   label:'😊 표정' },
-  { id:'makeup', label:'💄 메이크업' },
-  { id:'acc',    label:'👑 소품' },
-  { id:'skin',   label:'🎨 피부' }
-];
-function itemsFor(kind){
-  if(kind === 'dress') return DRESSES;
-  if(kind === 'top') return TOPS;
-  if(kind === 'bottom') return BOTTOMS;
-  if(kind === 'shoes') return SHOES;
-  if(kind === 'hair') return HAIRS;
-  if(kind === 'face') return FACES;
-  if(kind === 'acc') return ACCS;
-  if(kind === 'skin') return SKINS;
-  return [];}
-function isOn(kind, item){
-  if(kind === 'skin') return st.skin === item.id;
-  if(kind === 'face') return st.face === item.id;
-  if(kind === 'hair') return st.hair === item.id;
-  if(kind === 'dress') return st.mode === 'dress' && st.dress === item.id;
-  if(kind === 'top') return st.mode === 'two' && st.top === item.id;
-  if(kind === 'bottom') return st.mode === 'two' && st.bottom === item.id;
-  if(kind === 'shoes') return st.shoes === item.id;
-  if(kind === 'acc') return (st.acc || []).indexOf(item.id) >= 0;
-  return false;
-}
-function renderCats(){
-  $('cats').innerHTML = CATS.map(function(c){
-    return '<button class="cat'+(c.id === cat ? ' on' : '')+'" type="button" data-cat="'+c.id+'">'+c.label+'</button>';
-  }).join('');
-}
-var HINTS = {
-  dress:'한 벌 드레스예요. 상의·하의를 고르면 투피스 코디로 바뀌어요!',
-  top:'상의를 고르면 투피스 코디가 돼요. 하의도 같이 골라 주세요.',
-  bottom:'하의를 고르면 투피스 코디가 돼요.',
-  shoes:'신발 색은 옷 색을 따라가요.',
-  hair:'머리 모양을 고르고, 아래 색 동그라미로 머리색을 바꿔 보세요.',
-  face:'표정을 눌러 얼굴을 바꿔 보세요.',
-  makeup:'립스틱·볼터치·아이섀도·손톱까지 꾸밀 수 있어요!',
-  acc:'소품은 여러 개 같이 낄 수 있어요. 고양이 인형·카메라도 들어 보세요!',
-  skin:'피부톤을 골라 보세요.'
-};
-function renderWardrobe(){
-  if(cat === 'makeup'){ renderMakeup(); return; }
-  $('grid').className = 'grid';
-  var list = itemsFor(cat);
-  var html = list.map(function(it){
-    var on = isOn(cat, it);
-    return '<button class="item'+(on ? ' on' : '')+'" type="button" data-id="'+it.id+'">'+
-      '<span class="ck">✓</span>'+
-      '<span class="th">'+thumbSVG(cat, it)+'</span>'+
-      '<span class="nm">'+esc(it.name)+'</span></button>';
-  }).join('');
-  $('grid').innerHTML = html;
-  $('catHint').textContent = HINTS[cat] || '';
-  $('modeTag').textContent = st.mode === 'dress' ? '한 벌 드레스' : '투피스 코디';
-  renderSwatches();
-  renderPatterns();
-}
-function renderPatterns(){
-  var box = $('patterns');
-  if(cat !== 'dress' && cat !== 'top' && cat !== 'bottom'){
-    box.hidden = true; box.innerHTML = ''; return;
-  }
-  box.hidden = false;
-  var cur = st.pattern || 'solid';
-  box.innerHTML = PATTERNS.map(function(p){
-    return '<button class="pat'+(cur === p.id ? ' on' : '')+'" type="button" data-pat="'+p.id+'">'+
-      '<span class="pv">'+patternPreview(p.id)+'</span>'+
-      '<span class="pn">'+p.name+'</span></button>';
-  }).join('');
-}
-var MK_GROUPS = [
-  { key:'mkLip',   name:'💋 립스틱',   cols:['#E8467C','#FF5B8A','#E24B4B','#C2447A','#FF9FB0','#B3385E'] },
-  { key:'mkBlush', name:'🌸 볼터치',   cols:['#FF9FB0','#FF8FB8','#FFB08F','#D9B3FF','#FFD1A1','#F2A0A0'] },
-  { key:'mkEye',   name:'👁️ 아이섀도', cols:['#C8A6FF','#FFB3D1','#9FD8FF','#FFE08A','#B8E3C0','#6B5A78'] },
-  { key:'mkNail',  name:'💅 손톱',      cols:['#FF6BA8','#E24B4B','#FFD166','#B8A8FF','#FFFFFF','#2E2A45'] }
-];
-function renderMakeup(){
-  var sw = $('swatches'); sw.innerHTML = ''; sw.hidden = true;
-  var pt = $('patterns'); pt.innerHTML = ''; pt.hidden = true;
-  $('modeTag').textContent = '메이크업 & 네일';
-  var g = $('grid');
-  g.className = 'grid mk';
-  g.innerHTML = MK_GROUPS.map(function(gr){
-    var cur = st[gr.key] || 'none';
-    var chips = gr.cols.map(function(col){
-      return '<button class="mk-b'+(String(cur).toUpperCase() === col.toUpperCase() ? ' on' : '')+'" type="button" '+
-        'data-mk="'+gr.key+'" data-mkc="'+col+'" style="background:'+col+'" aria-label="'+gr.name+' '+col+'"></button>';
-    }).join('');
-    var none = '<button class="mk-b none'+(cur === 'none' ? ' on' : '')+'" type="button" data-mk="'+gr.key+'" data-mkc="none" aria-label="'+gr.name+' 없음">✕</button>';
-    return '<div class="mk-row"><div class="mh">'+gr.name+'<em>'+(cur === 'none' ? '안 바름' : '적용 중')+'</em></div>'+
-      '<div class="mk-sw">'+chips+none+'</div></div>';
-  }).join('');
-  $('catHint').textContent = HINTS.makeup;
-}
-var HAIR_COLORS = ['#3B2632','#6B4226','#A9793F','#D9B26A','#F2D9A0','#FF96BE','#B79BFF','#8FD3FF','#EDEDF2','#FF7A6B','#5FA86B','#2E3A5C'];
-var OUTFIT_COLORS = ['#FF8FBF','#FF6B8A','#FFD166','#7BE3C3','#7FB8FF','#9F8BFF','#FFFFFF','#2E2A45','#C8A06A','#B9E36A'];
-function renderSwatches(){
-  var wrap = $('swatches');
-  var colors = null, cur = null, key = null;
-  if(cat === 'hair'){ colors = HAIR_COLORS; cur = st.hairColor; key = 'hairColor'; }
-  else if(cat === 'dress' || cat === 'top' || cat === 'bottom'){ colors = OUTFIT_COLORS; cur = st.outfitColor; key = 'outfitColor'; }
-  else if(cat === 'shoes'){ colors = OUTFIT_COLORS; cur = st.shoeColor; key = 'shoeColor'; }
-  if(!colors){ wrap.innerHTML = ''; wrap.hidden = true; return; }
-  wrap.hidden = false;
-  if(cat === 'shoes'){ /* 신발 색은 따로 */ }
-  wrap.innerHTML = colors.map(function(c){
-    var on = String(cur).toUpperCase() === c.toUpperCase() ? ' on' : '';
-    return '<button class="sw'+on+'" type="button" data-color="'+c+'" style="background:'+c+'" aria-label="색 '+c+'"></button>';
-  }).join('');
-}
-
 /* ============================================================
    7. 코디 점수
    ============================================================ */
@@ -1770,7 +1980,6 @@ function renderBoard(){
   $('rwBoard').innerHTML = chips;
   $('rwBoard').hidden = !chips;
 }
-
 /* ============================================================
    8-b. AI 친구 모델 (주제에 맞춰 랜덤 코디)
    ============================================================ */
@@ -1822,26 +2031,6 @@ function aiLook(theme){
   s.mkNail = pick(['#FF6BA8','#E24B4B','#FFD166','#B8A8FF']);
   return s;
 }
-function buildParticipants(){
-  var theme = findItem(THEMES, st.theme);
-  var names = AI_NAMES.slice();
-  for(var i=names.length-1;i>0;i--){
-    var j = Math.floor(Math.random() * (i+1));
-    var tmp = names[i]; names[i] = names[j]; names[j] = tmp;
-  }
-  var out = [];
-  if(versus.on && versus.looks && versus.looks.length > 1){
-    out.push({ name:'윤진', state: JSON.parse(JSON.stringify(versus.looks[0].state)), me:true });
-    out.push({ name:'형원', state: JSON.parse(JSON.stringify(versus.looks[1].state)), me:true });
-    out.push({ name:names[0], state: aiLook(theme), ai:true });
-    out.push({ name:names[1], state: aiLook(theme), ai:true });
-  }else{
-    out.push({ name: activeName, state: JSON.parse(JSON.stringify(st)), me:true });
-    for(var k=0;k<3;k++) out.push({ name:names[k], state: aiLook(theme), ai:true });
-  }
-  return out;
-}
-
 /* ============================================================
    8-c. 내가 주는 ⭐1~5점 투표
    ============================================================ */
@@ -1870,7 +2059,6 @@ function giveVote(v){
   SFX.star(v - 1);
   r(v);
 }
-
 /* ============================================================
    8-d. 런웨이 진행 (참가자 차례 → 시상대)
    ============================================================ */
@@ -1959,24 +2147,6 @@ async function showPodium(theme, token){
   SFX.clap();
 }
 
-function openRunway(){
-  stopTimer();
-  $('overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  runShow();
-}
-function closeRunway(){
-  runToken++;
-  if(voteResolve){ var r = voteResolve; voteResolve = null; r(null); }
-  $('overlay').classList.remove('show');
-  document.body.style.overflow = '';
-  clearStageModels();
-  var cv = $('rwConfetti');
-  if(cv){ var ctx = cv.getContext('2d'); if(ctx) ctx.clearRect(0,0,cv.width,cv.height); }
-  confettiParts.length = 0;
-  resetTimer(180);
-}
-
 /* ============================================================
    8-e. 제한 시간 모드 (3분 도전 / 자유 코디)
    ============================================================ */
@@ -2037,7 +2207,6 @@ function timeUp(){
   toast('⏰ 시간 종료! 바로 런웨이로 갑니다 ✨');
   openRunway();
 }
-
 /* ============================================================
    9. 룩북
    ============================================================ */
@@ -2105,10 +2274,6 @@ function deleteLook(id){
   saveLooks(loadLooks().filter(function(x){ return x.id !== id; }));
   renderLooks(); SFX.off(); toast('룩북에서 지웠어요.');
 }
-
-/* ============================================================
-   10. 토스트 · UI 배선
-   ============================================================ */
 var toastTimer = null;
 function toast(msg){
   var t = $('toast');
@@ -2123,47 +2288,1278 @@ function renderMute(){
   b.setAttribute('aria-pressed', muted ? 'true' : 'false');
   b.title = muted ? '소리 켜기' : '소리 끄기';
 }
-function renderStarsDecor(){
-  var box = $('stageStars');
-  var em = ['✨','⭐','💫','✨','🌟','✨','💖','✨'];
-  var html = '';
-  for(var i=0;i<10;i++){
-    html += '<i style="left:'+(4 + Math.random()*90)+'%; top:'+(6 + Math.random()*76)+'%; animation-delay:'+(Math.random()*3)+'s; font-size:'+(10+Math.random()*10)+'px">'+pick(em)+'</i>';
+/* ============================================================
+   11. 진행 저장 (코인 · 숨은 아이템 · VIP)
+   ============================================================ */
+var PROG_KEY = 'dti_prog_v1';
+var progress = { coins:0, found:{}, vip:{} };
+function loadProgress(){
+  try{
+    var raw = localStorage.getItem(PROG_KEY);
+    if(!raw) return;
+    var o = JSON.parse(raw);
+    if(!o || typeof o !== 'object') return;
+    progress.coins = Math.max(0, Math.floor(Number(o.coins) || 0));
+    progress.found = (o.found && typeof o.found === 'object') ? o.found : {};
+    progress.vip   = (o.vip   && typeof o.vip   === 'object') ? o.vip   : {};
+  }catch(e){}
+}
+function saveProgress(){
+  try{ localStorage.setItem(PROG_KEY, JSON.stringify(progress)); }catch(e){}
+  renderCoins();
+}
+function renderCoins(){
+  var n = document.querySelectorAll('#coinCount');
+  for(var i=0;i<n.length;i++) n[i].textContent = String(progress.coins);
+}
+function addCoins(n, quiet){
+  if(!n) return;
+  progress.coins = Math.max(0, progress.coins + n);
+  saveProgress();
+  var c = $('coinHud');
+  if(c && n > 0){ c.classList.remove('up'); void c.offsetWidth; c.classList.add('up'); }
+  if(!quiet && n > 0) toast('💵 코인 +' + n);
+}
+
+/* ============================================================
+   12. VIP · 히든 아이템
+   ============================================================ */
+var COIN_ICON = '<svg class="cn" viewBox="0 0 20 20" aria-hidden="true">'+
+  '<circle cx="10" cy="10" r="8.6" fill="#FFD75E" stroke="#DF9A00" stroke-width="1.5"/>'+
+  '<circle cx="10" cy="10" r="5.6" fill="#FFEFB8"/>'+
+  '<path d="M10 4.9 l1.6 3.2 3.5 .5 -2.5 2.5 .6 3.5 -3.2 -1.7 -3.2 1.7 .6 -3.5 -2.5 -2.5 3.5 -.5 z" fill="#FFFFFF" stroke="#DF9A00" stroke-width=".6"/>'+
+  '</svg>';
+var VIP_ITEMS = [
+  { kind:'dress', id:'vip-royal', name:'로열 골드 드레스', price:12,
+    tags:['princess','gown','formal','gold','sparkle','party','pretty'], svg:
+    '<path d="M96 190 C72 226 52 272 44 300 Q110 324 176 300 C168 272 148 226 124 190 Z" fill="#E8A93C"/>'+
+    '<path d="M96 190 C80 226 64 268 58 292 Q110 312 162 292 C156 268 140 226 124 190 Z" fill="#F7CB4E"/>'+
+    '<path d="M100 190 C92 226 84 266 80 288 Q110 300 140 288 C136 266 128 226 120 190 Z" fill="#FFE9A3" opacity=".85"/>'+
+    '<ellipse cx="84" cy="152" rx="14" ry="15" fill="#F7CB4E"/><ellipse cx="136" cy="152" rx="14" ry="15" fill="#F7CB4E"/>'+
+    '<path d="M92 140 Q110 132 128 140 L124 194 Q110 200 96 194 Z" fill="#FFDE7A"/>'+
+    '<path d="M92 140 Q110 133 128 140 L127 151 Q110 144 93 151 Z" fill="#FFFFFF" opacity=".85"/>'+
+    '<path d="M96 196 H124" stroke="#B87C10" stroke-width="5"/>'+
+    '<g fill="#FF5B9E"><circle cx="110" cy="196" r="3.4"/></g>'+
+    '<g fill="#FFFFFF" opacity=".9"><circle cx="80" cy="242" r="2.6"/><circle cx="94" cy="270" r="2"/><circle cx="140" cy="248" r="2.4"/><circle cx="128" cy="278" r="2.2"/><circle cx="110" cy="296" r="2.4"/><circle cx="64" cy="286" r="2"/></g>' },
+
+  { kind:'dress', id:'vip-crystal', name:'크리스탈 드레스', price:18,
+    tags:['sparkle','gown','formal','blue','white','princess','night','pretty'], svg:
+    '<path d="M94 190 C74 224 58 266 50 296 Q110 318 170 296 C162 266 146 224 126 190 Z" fill="#A8D6F5"/>'+
+    '<path d="M96 190 C82 226 68 268 62 294 Q110 310 158 294 C152 268 138 226 124 190 Z" fill="#D6ECFF"/>'+
+    '<path d="M100 190 C92 226 82 264 78 288 Q110 300 142 288 C138 264 128 226 120 190 Z" fill="#FFFFFF" opacity=".75"/>'+
+    '<path d="M92 140 Q110 132 128 140 L124 194 Q110 200 96 194 Z" fill="#D6ECFF"/>'+
+    '<path d="M92 140 Q110 133 128 140 L127 149 Q110 143 93 149 Z" fill="#FFFFFF"/>'+
+    '<path d="M104 140 Q110 152 116 140" stroke="#FFFFFF" stroke-width="3" fill="none"/>'+
+    '<g fill="#FFFFFF"><path d="M78 250 l2.6 5.6 6 .8 -4.4 4.2 1.1 6 -5.3 -3 -5.3 3 1.1 -6 -4.4 -4.2 6 -.8 z"/><path d="M142 270 l2.2 4.8 5.2 .6 -3.8 3.6 .9 5.2 -4.5 -2.5 -4.5 2.5 .9 -5.2 -3.8 -3.6 5.2 -.6 z"/><circle cx="110" cy="228" r="2.4"/><circle cx="98" cy="262" r="2"/><circle cx="126" cy="290" r="2.2"/></g>'+
+    '<g fill="#9FD0F5" opacity=".8"><circle cx="86" cy="272" r="2"/><circle cx="134" cy="244" r="1.8"/></g>' },
+
+  { kind:'shoes', id:'vip-goldheel', name:'황금 힐', price:8,
+    tags:['formal','party','gold','princess','pretty','idol'], svg:
+    '<path d="M92 294 q10 -6 19 0 l-2 9 h-17 z" fill="#F7CB4E"/>'+
+    '<path d="M111 294 q10 -6 19 0 l-2 9 h-17 z" fill="#F7CB4E"/>'+
+    '<path d="M94 296 q7 -3 14 0" stroke="#B87C10" stroke-width="2.6" fill="none"/>'+
+    '<path d="M112 296 q7 -3 14 0" stroke="#B87C10" stroke-width="2.6" fill="none"/>'+
+    '<path d="M96 303 v6 h-2" stroke="#B87C10" stroke-width="2.4" fill="none"/>'+
+    '<path d="M114 303 v6 h-2" stroke="#B87C10" stroke-width="2.4" fill="none"/>'+
+    '<circle cx="101" cy="297" r="1.9" fill="#FF5B9E"/><circle cx="119" cy="297" r="1.9" fill="#FF5B9E"/>'+
+    '<g fill="#FFFFFF" opacity=".9"><circle cx="99" cy="295" r="1.2"/><circle cx="117" cy="295" r="1.2"/></g>' },
+
+  { kind:'acc', id:'vip-tiara', name:'다이아 티아라', price:14,
+    tags:['crown','tiara','princess','sparkle','formal','jewelry','gold'], svg:
+    '<path d="M86 60 L90 36 L99 50 L110 24 L121 50 L130 36 L134 60 Z" fill="#F7CB4E" stroke="#B87C10" stroke-width="1.4"/>'+
+    '<path d="M88 58 H132" stroke="#B87C10" stroke-width="2.6"/>'+
+    '<circle cx="110" cy="26" r="3" fill="#FFFFFF"/><circle cx="99" cy="48" r="2.4" fill="#9FE4FF"/>'+
+    '<circle cx="121" cy="48" r="2.4" fill="#9FE4FF"/><circle cx="110" cy="59" r="2.8" fill="#FF5B9E"/>'+
+    '<g fill="#FFFFFF" opacity=".85"><circle cx="95" cy="34" r="1.4"/><circle cx="126" cy="34" r="1.4"/></g>' },
+
+  { kind:'hair', id:'vip-galaxy', name:'은하수 웨이브', price:16,
+    tags:['long','princess','pretty','night','sparkle','formal'], back:
+    '<path d="M110 16 C72 16 64 48 67 86 C70 126 56 158 66 192 C74 220 62 236 76 246 C90 256 100 238 95 222 C87 200 98 180 94 156 C90 132 94 112 96 100 L124 100 C126 112 130 132 126 156 C122 180 133 200 125 222 C120 238 130 256 144 246 C158 236 146 220 154 192 C164 158 150 126 153 86 C156 48 148 16 110 16 Z" fill="#4B3B7A"/>'+
+    '<path d="M84 60 C76 110 82 170 76 226" stroke="#8A6FE0" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/>'+
+    '<path d="M136 60 C144 110 138 170 144 226" stroke="#8A6FE0" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/>'+
+    '<g fill="#FFF3B0"><circle cx="80" cy="130" r="2"/><circle cx="142" cy="148" r="1.8"/><circle cx="74" cy="196" r="2"/><circle cx="148" cy="210" r="1.8"/><circle cx="88" cy="236" r="1.6"/><circle cx="128" cy="118" r="1.6"/></g>', front:
+    '<path d="M77 88 C74 44 90 30 110 30 C130 30 146 44 143 88 C136 62 124 56 118 66 C113 76 107 76 102 66 C96 56 84 62 77 88 Z" fill="#5B4A90"/>'+
+    '<g fill="#FFF3B0"><circle cx="100" cy="46" r="1.8"/><circle cx="124" cy="52" r="1.5"/><circle cx="88" cy="62" r="1.4"/></g>' }
+];
+VIP_ITEMS.forEach(function(it){
+  var arr = it.kind === 'dress' ? DRESSES : it.kind === 'shoes' ? SHOES : it.kind === 'hair' ? HAIRS : it.kind === 'acc' ? ACCS : null;
+  if(arr){ it.vip = true; arr.push(it); }
+});
+/* 숨은 히든 소품 (드레싱룸에서 찾아야 열림) */
+(function(){
+  ['wings','wand','catdoll'].forEach(function(id){
+    var a = findItem(ACCS, id);
+    if(a && a.id === id) a.hidden = true;
+  });
+  ACCS.push({ id:'goldcrown', name:'황금 왕관', hidden:true,
+    tags:['crown','princess','gold','formal','sparkle','jewelry'], svg:
+    '<path d="M82 58 L88 28 L99 45 L110 20 L121 45 L132 28 L138 58 Z" fill="var(--acc)" stroke="#E19B00" stroke-width="1.6"/>'+
+    '<path d="M84 56 H136" stroke="#E19B00" stroke-width="2.4"/>'+
+    '<circle cx="110" cy="22" r="3" fill="#FF5B9E"/><circle cx="99" cy="43" r="2.2" fill="#6FD3FF"/>'+
+    '<circle cx="121" cy="43" r="2.2" fill="#6FD3FF"/><circle cx="110" cy="57" r="2.6" fill="#fff"/>' });
+})();
+var HIDDEN_DEFS = {
+  wings:    { acc:'wings',    name:'천사 날개',  emoji:'🎁', tip:'발판 위 보물상자' },
+  goldcrown:{ acc:'goldcrown',name:'황금 왕관',  emoji:'🎁', tip:'오른쪽 발판 위' },
+  wand:     { acc:'wand',     name:'요술봉',     emoji:'🎁', tip:'헤어 살롱 옆 구석' },
+  catdoll:  { acc:'catdoll',  name:'고양이 인형',emoji:'🎁', tip:'신발장 옆 구석' }
+};
+
+/* ============================================================
+   13. 2.5D 드레싱룸 월드
+   ============================================================ */
+var WORLD = { x0:-3.8, x1:3.8, z0:0, z1:6.6, W:374, H:707, zTop:219, zLen:414, ux:36.6, uy:62.7, figh:104 };
+var PLAYER = { x:0, z:6.05, y:0, vy:0, dir:1, pose:0, grounded:true, target:null, targetZone:null, targetAt:0 };
+var keys = {};
+var roomEl = $('room');
+var worldEl = $('world');
+
+function measureRoom(){
+  var r = roomEl.getBoundingClientRect();
+  WORLD.W = Math.max(220, Math.round(r.width));
+  WORLD.H = Math.max(260, Math.round(r.height));
+  WORLD.zTop = Math.round(WORLD.H * 0.31);
+  WORLD.zLen = Math.round(WORLD.H * 0.585);
+  WORLD.uy = WORLD.zLen / (WORLD.z1 - WORLD.z0);
+  WORLD.ux = (WORLD.W * 0.445) / (WORLD.x1 * 1.20);
+  WORLD.figh = Math.round(1.72 * WORLD.uy * 0.96);
+}
+function proj(x, z, y){
+  var nz = clamp((z - WORLD.z0) / (WORLD.z1 - WORLD.z0), 0, 1);
+  var s = 0.90 + 0.30 * nz;
+  return {
+    x: WORLD.W * 0.5 + x * WORLD.ux * s,
+    y: WORLD.zTop + nz * WORLD.zLen - (y || 0) * WORLD.uy * s,
+    s: s
+  };
+}
+
+/* ---------- 방 구조물 ---------- */
+var ZONES = [
+  { id:'dress',  emoji:'👗', name:'드레스 존',    x:-2.50, z:1.30, w:1.30, d:0.80, h:0.40, base:'#FF9EC6', cats:['dress'] },
+  { id:'cloth',  emoji:'👚', name:'상의·하의 존',  x: 2.50, z:1.30, w:1.30, d:0.80, h:0.40, base:'#8FD0F5', cats:['top','bottom'] },
+  { id:'shoes',  emoji:'👠', name:'신발 존',      x:-3.10, z:2.90, w:1.15, d:0.75, h:0.36, base:'#B6A2F0', cats:['shoes'] },
+  { id:'hair',   emoji:'💇', name:'헤어 살롱',    x: 3.10, z:2.90, w:1.15, d:0.75, h:0.46, base:'#86DFC4', cats:['hair','face','skin'] },
+  { id:'makeup', emoji:'💄', name:'메이크업 바',  x:-2.30, z:4.30, w:1.15, d:0.70, h:0.36, base:'#FFB68F', cats:['makeup'] },
+  { id:'acc',    emoji:'👑', name:'소품 존',      x: 2.30, z:4.30, w:1.15, d:0.70, h:0.36, base:'#FFD166', cats:['acc'] }
+];
+var PLATFORMS = [
+  { x:0,     z:2.55, w:1.85, d:1.00, h:0.52, base:'#EDBEDC' },
+  { x:-1.62, z:5.85, w:1.20, d:0.85, h:0.48, base:'#DFB6D6' },
+  { x: 1.62, z:5.85, w:1.20, d:0.85, h:0.48, base:'#DFB6D6' }
+];
+var CURTAINS = [{ x:-2.05, z:0.55 }, { x:2.05, z:0.55 }];
+var SOLIDS = [];
+function rebuildSolids(){
+  SOLIDS = [];
+  ZONES.forEach(function(z){ SOLIDS.push({ x:z.x, z:z.z, w:z.w, d:z.d, h:z.h }); });
+  PLATFORMS.forEach(function(p){ SOLIDS.push({ x:p.x, z:p.z, w:p.w, d:p.d, h:p.h }); });
+}
+function solidTop(x, z){
+  var top = 0;
+  for(var i=0;i<SOLIDS.length;i++){
+    var s = SOLIDS[i];
+    if(Math.abs(x - s.x) <= s.w/2 + 0.24 && Math.abs(z - s.z) <= s.d/2 + 0.24){
+      if(s.h > top) top = s.h;
+    }
   }
-  box.innerHTML = html;
+  return top;
+}
+function canStand(x, z){ return solidTop(x, z) <= PLAYER.y + 0.20; }
+
+/* ---------- 방 배경(SVG) ---------- */
+function buildRoomSvg(){
+  var W = WORLD.W, H = WORLD.H;
+  var svg = $('roomSvg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  var th = findItem(THEMES, st.theme);
+  var c00 = proj(WORLD.x0, 0), c10 = proj(WORLD.x1, 0);
+  var c01 = proj(WORLD.x0, WORLD.z1), c11 = proj(WORLD.x1, WORLD.z1);
+  var s = '';
+  s += '<defs>';
+  s += '<linearGradient id="dtiWall" x1="0" y1="0" x2="0" y2="1">'+
+       '<stop offset="0%" stop-color="'+mix(th.t2,'#6B3462',.62)+'"/>'+
+       '<stop offset="45%" stop-color="'+darken(th.t1,.22)+'"/>'+
+       '<stop offset="100%" stop-color="'+lighten(th.t2,.04)+'"/></linearGradient>';
+  s += '<linearGradient id="dtiFloor" x1="0" y1="0" x2="0" y2="1">'+
+       '<stop offset="0%" stop-color="'+darken(th.t1,.10)+'"/>'+
+       '<stop offset="35%" stop-color="#FBEFFB"/>'+
+       '<stop offset="100%" stop-color="#FFFDFF"/></linearGradient>';
+  s += '<radialGradient id="dtiGlow" cx="50%" cy="50%" r="50%">'+
+       '<stop offset="0%" stop-color="#FFFFFF" stop-opacity=".85"/>'+
+       '<stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>';
+  s += '<linearGradient id="dtiCone" x1="0" y1="0" x2="0" y2="1">'+
+       '<stop offset="0%" stop-color="#FFF6CF" stop-opacity=".5"/>'+
+       '<stop offset="100%" stop-color="#FFF6CF" stop-opacity="0"/></linearGradient>';
+  s += '<radialGradient id="dtiRug" cx="50%" cy="50%" r="50%">'+
+       '<stop offset="0%" stop-color="#FFFFFF" stop-opacity=".9"/>'+
+       '<stop offset="100%" stop-color="'+darken(th.t1,.08)+'" stop-opacity=".85"/></radialGradient>';
+  s += '<linearGradient id="dtiMirror" x1="0" y1="0" x2="1" y2="1">'+
+       '<stop offset="0%" stop-color="#EAF6FF"/><stop offset="58%" stop-color="#D0E7FF"/>'+
+       '<stop offset="100%" stop-color="#F4FBFF"/></linearGradient>';
+  s += '</defs>';
+
+  s += '<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="url(#dtiWall)"/>';
+  /* 벽 패널 */
+  var pw = Math.max(34, W/7);
+  for(var i=0;i<8;i++){
+    s += '<rect x="'+(i*pw + pw*0.10)+'" y="'+(c00.y*0.05)+'" width="'+(pw*0.80)+'" height="'+(c00.y*0.88)+'" rx="'+(pw*0.12)+'" fill="#FFFFFF" opacity="'+(i%2?'.06':'.12')+'"/>';
+  }
+  /* 벽 상단 조명 띠 */
+  var lt = Math.max(5, c00.y*0.03);
+  s += '<rect x="0" y="0" width="'+W+'" height="'+lt+'" fill="#FFF6D8" opacity=".6"/>';
+  s += '<rect x="0" y="'+lt+'" width="'+W+'" height="'+(lt*0.5)+'" fill="#FFFFFF" opacity=".18"/>';
+  /* 스포트라이트 콘 */
+  var lp = proj(-2.2, 1.0), rp2 = proj(2.2, 1.0);
+  s += '<path d="M'+(lp.x-20)+' 0 L'+(lp.x+20)+' 0 L'+(lp.x+95)+' '+(c01.y*0.94)+' L'+(lp.x-95)+' '+(c01.y*0.94)+' Z" fill="url(#dtiCone)" opacity=".40"/>';
+  s += '<path d="M'+(rp2.x-20)+' 0 L'+(rp2.x+20)+' 0 L'+(rp2.x+95)+' '+(c01.y*0.94)+' L'+(rp2.x-95)+' '+(c01.y*0.94)+' Z" fill="url(#dtiCone)" opacity=".40"/>';
+
+  /* 거울 */
+  var mw = Math.min(W*0.30, 280), mh = Math.min(c00.y*0.42, 96);
+  var mx = W*0.5 - mw/2, my = c00.y - mh - Math.max(4, c00.y*0.035);
+  s += '<rect x="'+mx+'" y="'+my+'" width="'+mw+'" height="'+mh+'" rx="'+(mh*0.5)+'" fill="#FFFDFF" stroke="'+lighten(th.t2,.55)+'" stroke-width="4"/>';
+  s += '<rect x="'+(mx+5)+'" y="'+(my+5)+'" width="'+(mw-10)+'" height="'+(mh-10)+'" rx="'+((mh-10)*0.5)+'" fill="url(#dtiMirror)"/>';
+  s += '<ellipse cx="'+(mx+mw*0.33)+'" cy="'+(my+mh*0.34)+'" rx="'+(mw*0.13)+'" ry="'+(mh*0.17)+'" fill="#FFFFFF" opacity=".55" transform="rotate(-24 '+(mx+mw*0.33)+' '+(my+mh*0.34)+')"/>';
+  for(var b=0;b<9;b++){
+    var ang = Math.PI * (0.07 + 0.86*b/8);
+    var bx = mx + mw/2 - Math.cos(ang)*(mw/2 + 3);
+    var by = my + mh/2 - Math.sin(ang)*(mh/2 + 3);
+    s += '<circle cx="'+bx.toFixed(1)+'" cy="'+by.toFixed(1)+'" r="'+Math.max(2, Math.min(4.2, mh*0.035))+'" fill="#FFF2B8"/>';
+  }
+  s += '<text x="'+(W*0.5)+'" y="'+(my-8)+'" text-anchor="middle" font-size="'+Math.max(8, Math.min(12, W*0.013)) +'" font-weight="900" letter-spacing="4" fill="#FFFFFF" opacity=".7" font-family="Pretendard,sans-serif">DRESSING ROOM</text>';
+  /* 벽 스콘 */
+  [0.10, 0.90].forEach(function(fx){
+    s += '<circle cx="'+(W*fx)+'" cy="'+(c00.y*0.34)+'" r="'+(Math.min(22,W*0.04))+'" fill="url(#dtiGlow)" opacity=".85"/>';
+    s += '<circle cx="'+(W*fx)+'" cy="'+(c00.y*0.34)+'" r="3" fill="#FFF6CF"/>';
+  });
+  /* 몰딩 */
+  s += '<rect x="0" y="'+(c00.y-4)+'" width="'+W+'" height="5" fill="#FFFFFF" opacity=".32"/>';
+
+  /* 바닥 */
+  var floorPath = 'M'+c00.x.toFixed(1)+' '+c00.y.toFixed(1)+' L'+c10.x.toFixed(1)+' '+c10.y.toFixed(1)+
+       ' L'+c11.x.toFixed(1)+' '+c11.y.toFixed(1)+' L'+c01.x.toFixed(1)+' '+c01.y.toFixed(1)+' Z';
+  s += '<path d="'+floorPath+'" fill="url(#dtiFloor)"/>';
+  s += '<path d="M'+c01.x.toFixed(1)+' '+c01.y.toFixed(1)+' L'+c11.x.toFixed(1)+' '+c11.y.toFixed(1)+
+       ' L'+W+' '+H+' L0 '+H+' Z" fill="url(#dtiFloor)"/>';
+  /* 격자 */
+  var g = '';
+  for(var gx=WORLD.x0; gx<=WORLD.x1+0.01; gx+=0.85){
+    var a = proj(gx, WORLD.z0), b2 = proj(gx, WORLD.z1);
+    var dx2 = b2.x - a.x, dy2 = b2.y - a.y;
+    var k2 = dy2 > 0 ? Math.min(1.55, (H - a.y) / dy2) : 1;
+    g += 'M'+a.x.toFixed(1)+' '+a.y.toFixed(1)+' L'+(a.x + dx2*k2).toFixed(1)+' '+(a.y + dy2*k2).toFixed(1)+' ';
+  }
+  for(var gz=WORLD.z0; gz<=WORLD.z1+0.01; gz+=0.6){
+    var a2 = proj(WORLD.x0, gz), b3 = proj(WORLD.x1, gz);
+    g += 'M'+a2.x.toFixed(1)+' '+a2.y.toFixed(1)+' L'+b3.x.toFixed(1)+' '+b3.y.toFixed(1)+' ';
+  }
+  s += '<path d="'+g.trim()+'" stroke="#8B4FA8" stroke-opacity=".14" stroke-width="1.3" fill="none"/>';
+  /* 러그 */
+  var rc = proj(0, 3.35), rx = Math.abs(proj(2.15, 3.35).x - rc.x);
+  var rz0 = proj(0, 1.95), rz1 = proj(0, 4.85);
+  var rcy = (rz0.y + rz1.y)/2, rry = Math.abs((rz1.y - rz0.y)/2);
+  s += '<ellipse cx="'+rc.x.toFixed(1)+'" cy="'+rcy.toFixed(1)+'" rx="'+rx.toFixed(1)+'" ry="'+rry.toFixed(1)+'" fill="url(#dtiRug)"/>';
+  s += '<ellipse cx="'+rc.x.toFixed(1)+'" cy="'+rcy.toFixed(1)+'" rx="'+(rx*0.85).toFixed(1)+'" ry="'+(rry*0.82).toFixed(1)+'" fill="none" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="2.5" stroke-dasharray="9 8"/>';
+  /* 존 발밑 표시 */
+  ZONES.forEach(function(z){
+    var zc = z.z + z.d/2 + 0.55;
+    var p1 = proj(z.x-0.95, zc), p2 = proj(z.x+0.95, zc);
+    var q1 = proj(z.x, zc-0.45), q2 = proj(z.x, zc+0.55);
+    var cx2 = (p1.x+p2.x)/2, cy2 = (q1.y+q2.y)/2;
+    var rx2 = Math.abs(p2.x-p1.x)/2, ry2 = Math.abs(q2.y-q1.y)/2;
+    s += '<ellipse cx="'+cx2.toFixed(1)+'" cy="'+cy2.toFixed(1)+'" rx="'+rx2.toFixed(1)+'" ry="'+ry2.toFixed(1)+'" fill="#FFFFFF" opacity=".42"/>';
+    s += '<ellipse cx="'+cx2.toFixed(1)+'" cy="'+cy2.toFixed(1)+'" rx="'+rx2.toFixed(1)+'" ry="'+ry2.toFixed(1)+'" fill="none" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2"/>';
+  });
+  svg.innerHTML = s;
 }
 
-function renderAll(){
-  renderThemes();
-  renderCats();
-  renderWardrobe();
-  renderAvatar();
-  renderMute();
-  syncWhoUI();
+/* ---------- 2.5D 박스 그리기 ---------- */
+var PROP_SEQ = 0;
+function boxEl(s, opt){
+  opt = opt || {};
+  var base = s.base || '#E8CFE8';
+  var A  = proj(s.x-s.w/2, s.z-s.d/2),  B  = proj(s.x+s.w/2, s.z-s.d/2);
+  var C  = proj(s.x+s.w/2, s.z+s.d/2),  D  = proj(s.x-s.w/2, s.z+s.d/2);
+  var Ah = proj(s.x-s.w/2, s.z-s.d/2, s.h), Bh = proj(s.x+s.w/2, s.z-s.d/2, s.h);
+  var Ch = proj(s.x+s.w/2, s.z+s.d/2, s.h), Dh = proj(s.x-s.w/2, s.z+s.d/2, s.h);
+  var xs = [A.x,B.x,C.x,D.x,Ah.x,Bh.x,Ch.x,Dh.x], ys = [A.y,B.y,C.y,D.y,Ah.y,Bh.y,Ch.y,Dh.y];
+  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+  var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+  var w = Math.max(2, maxX-minX), h = Math.max(2, maxY-minY);
+  function P(p){ return (p.x-minX).toFixed(1)+','+(p.y-minY).toFixed(1); }
+  function poly(pts, fill, op){
+    return '<path d="M'+pts.map(P).join(' L')+' Z" fill="'+fill+'"'+(op!=null?' opacity="'+op+'"':'')+'/>';
+  }
+  var inner = '';
+  inner += '<ellipse cx="'+(((A.x+C.x)/2) - minX).toFixed(1)+'" cy="'+(Math.max(A.y,C.y)-minY).toFixed(1)+'" rx="'+(w*0.48).toFixed(1)+'" ry="'+(h*0.07).toFixed(1)+'" fill="#5A2268" opacity=".13"/>';
+  if(s.x >= 0){ inner += poly([A, Ah, Dh, D], darken(base,.22)); }
+  else { inner += poly([B, Bh, Ch, C], darken(base,.22)); }
+  inner += poly([D, Dh, Ch, C], darken(base,.10));
+  inner += poly([Ah, Bh, Ch, Dh], lighten(base,.28));
+  inner += '<path d="M'+P(Ch)+' L'+P(Dh)+'" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="1.6"/>';
+  var id = 'prop' + (++PROP_SEQ);
+  return '<div class="prop" data-prop="'+id+'" style="left:'+minX.toFixed(1)+'px;top:'+minY.toFixed(1)+'px;width:'+w.toFixed(1)+'px;height:'+h.toFixed(1)+'px;z-index:'+Math.round(100+s.z*10)+'">'+
+    '<svg viewBox="0 0 '+w.toFixed(1)+' '+h.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" preserveAspectRatio="none">'+inner+'</svg></div>';
 }
 
-/* 이벤트 */
+/* ---------- 존 가구 그림 ---------- */
+function zoneArtSvg(z){
+  var c = z.base, d = darken(c,.22), l = lighten(c,.35);
+  if(z.id === 'dress'){
+    return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+      '<ellipse cx="50" cy="133" rx="25" ry="5" fill="#5A2268" opacity=".16"/>'+
+      '<ellipse cx="50" cy="131" rx="16" ry="4" fill="#C9A27E"/>'+
+      '<rect x="46.5" y="98" width="7" height="34" rx="3.5" fill="#C9A27E"/>'+
+      '<path d="M36 42 q14 -8 28 0 l7 58 q-21 10 -42 0 z" fill="'+c+'"/>'+
+      '<path d="M39 36 q11 -6 22 0 l3 12 q-14 6 -28 0 z" fill="'+l+'"/>'+
+      '<path d="M44 30 q6 -7 12 0 q-6 5 -12 0" fill="'+l+'"/>'+
+      '<path d="M37 56 q13 8 26 0" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="2.4" fill="none"/>'+
+      '<path d="M42 76 q8 5 16 0" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="2" fill="none"/>'+
+      '<g fill="#FFFFFF" opacity=".85"><circle cx="44" cy="90" r="1.7"/><circle cx="56" cy="98" r="1.5"/><circle cx="50" cy="106" r="1.4"/></g>'+
+      '</svg>';
+  }
+  if(z.id === 'cloth'){
+    function gm(x, col){
+      return '<g><path d="M'+(x-5)+' 44 q5 -4 10 0" stroke="#B08968" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+        '<path d="M'+(x-11)+' 50 h22 l2 8 h-26 z" fill="'+col+'"/>'+
+        '<path d="M'+(x-9)+' 56 h18 l4 30 h-26 z" fill="'+col+'"/>'+
+        '<path d="M'+(x-9)+' 56 h18" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="1.6"/></g>';
+    }
+    return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+      '<ellipse cx="50" cy="134" rx="33" ry="5" fill="#5A2268" opacity=".14"/>'+
+      '<rect x="13" y="128" width="74" height="5" rx="2.5" fill="#B08968"/>'+
+      '<rect x="18" y="32" width="5" height="98" rx="2.5" fill="#C9A27E"/>'+
+      '<rect x="77" y="32" width="5" height="98" rx="2.5" fill="#C9A27E"/>'+
+      '<rect x="18" y="32" width="64" height="5" rx="2.5" fill="#DBBFA6"/>'+
+      gm(30, '#8FD0F5') + gm(52, '#FFC0DA') + gm(72, '#B6A2F0') +
+      '</svg>';
+  }
+  if(z.id === 'shoes'){
+    return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+      '<ellipse cx="50" cy="134" rx="31" ry="5" fill="#5A2268" opacity=".14"/>'+
+      '<rect x="16" y="82" width="68" height="6" rx="3" fill="#C9A27E"/>'+
+      '<rect x="16" y="126" width="68" height="6" rx="3" fill="#C9A27E"/>'+
+      '<rect x="20" y="88" width="5" height="38" rx="2.5" fill="#DBBFA6"/>'+
+      '<rect x="75" y="88" width="5" height="38" rx="2.5" fill="#DBBFA6"/>'+
+      '<path d="M28 76 q9 -8 18 0 l-2 6 h-16 z" fill="#E86A9A"/>'+
+      '<path d="M28 78 q9 2 16 0" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="1.8" fill="none"/>'+
+      '<path d="M58 76 q9 -8 18 0 l-2 6 h-16 z" fill="#8B6BE0"/>'+
+      '<path d="M58 78 q9 2 16 0" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="1.8" fill="none"/>'+
+      '<path d="M28 120 q9 -8 18 0 l-2 6 h-16 z" fill="#7BC8F0"/>'+
+      '<path d="M58 120 q9 -8 18 0 l-2 6 h-16 z" fill="#FFC94D"/>'+
+      '</svg>';
+  }
+  if(z.id === 'hair'){
+    return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+      '<ellipse cx="50" cy="134" rx="30" ry="5" fill="#5A2268" opacity=".14"/>'+
+      '<ellipse cx="50" cy="50" rx="23" ry="27" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="4"/>'+
+      '<ellipse cx="50" cy="50" rx="18" ry="22" fill="#DCF0FF"/>'+
+      '<path d="M40 40 q9 -7 18 -2" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>'+
+      '<rect x="47" y="84" width="6" height="12" fill="#9EDCC4"/>'+
+      '<rect x="34" y="94" width="32" height="6" rx="3" fill="#7FD0B4"/>'+
+      '<path d="M30 100 q-3 16 4 28" stroke="#7FD0B4" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+      '<path d="M70 100 q3 16 -4 28" stroke="#7FD0B4" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+      '<path d="M34 96 q16 8 32 0" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="2" fill="none"/>'+
+      '<path d="M36 126 q14 6 28 0" stroke="#7FD0B4" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+      '</svg>';
+  }
+  if(z.id === 'makeup'){
+    return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+      '<ellipse cx="50" cy="133" rx="30" ry="5" fill="#5A2268" opacity=".14"/>'+
+      '<ellipse cx="50" cy="54" rx="21" ry="25" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="4"/>'+
+      '<ellipse cx="50" cy="54" rx="16" ry="19" fill="#FFE6F2"/>'+
+      '<g fill="#FFF2B8">'+
+        '<circle cx="30" cy="34" r="2.6"/><circle cx="38" cy="24" r="2.6"/><circle cx="50" cy="20" r="2.6"/>'+
+        '<circle cx="62" cy="24" r="2.6"/><circle cx="70" cy="34" r="2.6"/><circle cx="26" cy="46" r="2.6"/>'+
+        '<circle cx="74" cy="46" r="2.6"/>'+
+      '</g>'+
+      '<rect x="12" y="88" width="76" height="9" rx="4" fill="'+c+'"/>'+
+      '<rect x="18" y="97" width="6" height="32" rx="3" fill="'+d+'"/>'+
+      '<rect x="76" y="97" width="6" height="32" rx="3" fill="'+d+'"/>'+
+      '<rect x="26" y="78" width="6" height="11" rx="2" fill="#FF6BA8"/>'+
+      '<rect x="36" y="82" width="7" height="7" rx="2" fill="#B6A2F0"/>'+
+      '<circle cx="52" cy="84" r="4" fill="#FFC94D"/>'+
+      '<rect x="62" y="79" width="5" height="10" rx="2" fill="#7BC8F0"/>'+
+      '<rect x="70" y="83" width="6" height="6" rx="1.6" fill="#E86A9A"/>'+
+      '</svg>';
+  }
+  return '<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">'+
+    '<ellipse cx="50" cy="134" rx="30" ry="5" fill="#5A2268" opacity=".14"/>'+
+    '<rect x="18" y="66" width="64" height="66" rx="6" fill="'+c+'" stroke="'+d+'" stroke-width="2"/>'+
+    '<rect x="23" y="71" width="54" height="26" rx="4" fill="#FFFDF2" stroke="'+d+'" stroke-width="1.4"/>'+
+    '<path d="M40 84 l6 -8 6 8 -6 8 z" fill="#7BC8F0"/>'+
+    '<path d="M56 86 l5 -6 5 6 -5 6 z" fill="#FF8FBF"/>'+
+    '<rect x="26" y="104" width="48" height="5" rx="2.5" fill="'+d+'" opacity=".55"/>'+
+    '<circle cx="36" cy="118" r="4" fill="#FFE08A" stroke="#DF9A00" stroke-width="1.2"/>'+
+    '<circle cx="52" cy="118" r="4" fill="#FF8FBF"/>'+
+    '<circle cx="68" cy="118" r="4" fill="#9FE4FF"/>'+
+    '<rect x="14" y="130" width="72" height="6" rx="3" fill="'+d+'" opacity=".35"/>'+
+    '</svg>';
+}
+function curtainArtSvg(){
+  return '<svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">'+
+    '<ellipse cx="60" cy="152" rx="46" ry="6" fill="#5A2268" opacity=".16"/>'+
+    '<rect x="2" y="12" width="116" height="6" rx="3" fill="#C9A27E"/>'+
+    '<circle cx="4" cy="15" r="6" fill="#DBBFA6"/><circle cx="116" cy="15" r="6" fill="#DBBFA6"/>'+
+    '<path d="M12 18 q14 66 6 128 h32 q-10 -68 -2 -128 z" fill="#C13A6C"/>'+
+    '<path d="M52 18 q14 66 6 128 h32 q-10 -68 -2 -128 z" fill="#E4608F"/>'+
+    '<path d="M22 22 q6 62 2 120" stroke="#8E2050" stroke-width="2.4" fill="none" opacity=".55"/>'+
+    '<path d="M62 22 q6 62 2 120" stroke="#B2416C" stroke-width="2.4" fill="none" opacity=".5"/>'+
+    '<path d="M86 22 q6 62 2 120" stroke="#B2416C" stroke-width="2.4" fill="none" opacity=".4"/>'+
+    '<path d="M8 18 q26 8 52 0 q26 8 52 0 v6 q-26 8 -52 0 q-26 8 -52 0 z" fill="#F07AA6" opacity=".9"/>'+
+    '<circle cx="46" cy="24" r="3" fill="#FFD166"/><circle cx="74" cy="24" r="3" fill="#FFD166"/>'+
+    '</svg>';
+}
+function artEl(svg, x, z, units, ratio, zoff){
+  var p = proj(x, z, 0);
+  var hpx = units * WORLD.uy * p.s;
+  var wpx = hpx * (ratio || 0.72);
+  return '<div class="prop" data-prop="art" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z*10+(zoff||0))+'">'+svg+'</div>';
+}
+
+function buildStatic(){
+  measureRoom();
+  rebuildSolids();
+  buildRoomSvg();
+  ['prop','zone'].forEach(function(k){
+    var olds = worldEl.querySelectorAll('[data-'+k+']');
+    for(var i=0;i<olds.length;i++) olds[i].parentNode.removeChild(olds[i]);
+  });
+  var html = '';
+  CURTAINS.forEach(function(c){ html += artEl(curtainArtSvg(), c.x, c.z, 1.85, 0.75); });
+  PLATFORMS.forEach(function(p){ html += boxEl(p, {}); });
+  ZONES.forEach(function(z){
+    html += artEl(zoneArtSvg(z), z.x, z.z + z.d/2 + 0.05, 1.55, 0.715, 1);
+  });
+  worldEl.insertAdjacentHTML('beforeend', html);
+
+  ZONES.forEach(function(z){
+    if(z.el && z.el.parentNode) z.el.parentNode.removeChild(z.el);
+    var p = proj(z.x, z.z + z.d/2 + 0.05, 0);
+    var hpx = 1.55 * WORLD.uy * p.s, wpx = hpx * 0.715;
+    var el = document.createElement('div');
+    el.className = 'zone';
+    el.setAttribute('data-zone', z.id);
+    el.style.left = p.x.toFixed(1) + 'px';
+    el.style.top = p.y.toFixed(1) + 'px';
+    el.style.width = wpx.toFixed(1) + 'px';
+    el.style.height = hpx.toFixed(1) + 'px';
+    el.style.zIndex = String(Math.round(105 + (z.z + z.d/2)*10));
+    el.innerHTML = '<span class="lb" style="font-size:'+Math.max(9, Math.min(13, Math.round(WORLD.W*0.022)))+'px">'+esc(z.name)+'</span>';
+    worldEl.appendChild(el);
+    z.el = el;
+  });
+  layoutPicks();
+}
+
+/* ---------- 줍는 아이템 ---------- */
+function pickDefs(){
+  var out = [];
+  function add(x, z, kind, y, gift){ out.push({ x:x, z:z, kind:kind, y:y || 0, gift:gift }); }
+  /* 💵 지폐 */
+  add(-1.50, 2.15,'bill'); add(1.50, 2.15,'bill');
+  add(-3.35, 2.15,'bill'); add(3.35, 2.15,'bill');
+  add(-0.85, 4.05,'bill'); add(0.85, 4.05,'bill');
+  add(-3.20, 4.45,'bill'); add(3.20, 4.45,'bill');
+  add(-0.55, 5.55,'bill'); add(0.55, 5.55,'bill');
+  add(-2.55, 6.10,'bill'); add(2.55, 6.10,'bill');
+  add(0, 4.70,'bill');     add(-0.95, 6.30,'bill'); add(0.95, 6.30,'bill');
+  /* ⭐ 별 코인 */
+  add(0, 1.85,'star');     add(-3.45, 0.95,'star');
+  add(-2.55, 6.30,'star'); add(2.55, 6.30,'star');
+  /* 발판 위 */
+  add(-0.45, 2.55,'bill', 0.5); add(0.45, 2.55,'bill', 0.5);
+  add(-1.62, 5.85,'star', 0.45); add(1.62, 5.85,'star', 0.45);
+  /* 🎁 히든 */
+  add(0, 2.45,'gift', 0.5, 'wings');
+  add(1.62, 5.85,'gift', 0.45, 'goldcrown');
+  add(3.45, 2.20,'gift', 0, 'wand');
+  add(-3.45, 2.20,'gift', 0, 'catdoll');
+  return out;
+}
+var PICKS = [];
+function layoutPicks(){
+  PICKS.forEach(function(pk){ if(pk.taken) return; placePickEl(pk); });
+}
+function pickArt(kind){
+  if(kind === 'bill'){
+    return '<svg viewBox="0 0 44 28" xmlns="http://www.w3.org/2000/svg">'+
+      '<rect x="1.6" y="3.6" width="41" height="21" rx="3.6" fill="#8FE0A8" stroke="#3F9C5E" stroke-width="2"/>'+
+      '<rect x="5" y="7" width="34" height="14" rx="2" fill="none" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="1.4"/>'+
+      '<circle cx="22" cy="14" r="6.2" fill="#FFF6C9" stroke="#3F9C5E" stroke-width="1.2"/>'+
+      '<text x="22" y="17.4" text-anchor="middle" font-size="8.4" font-weight="900" fill="#3F7C52" font-family="Pretendard,sans-serif">₩</text>'+
+      '<circle cx="9" cy="9.4" r="1.5" fill="#FFFFFF" opacity=".9"/><circle cx="35" cy="18.6" r="1.5" fill="#FFFFFF" opacity=".9"/>'+
+      '</svg>';
+  }
+  if(kind === 'star'){
+    return '<svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">'+
+      '<circle cx="17" cy="17" r="14.4" fill="#FFD75E" stroke="#DF9A00" stroke-width="2.6"/>'+
+      '<circle cx="17" cy="17" r="10.4" fill="#FFEFB8" opacity=".8"/>'+
+      '<path d="M17 7.6 l2.9 5.9 6.5 .9 -4.7 4.5 1.2 6.5 -5.9 -3.2 -5.9 3.2 1.2 -6.5 -4.7 -4.5 6.5 -.9 z" fill="#FFFFFF" stroke="#DF9A00" stroke-width="1"/>'+
+      '</svg>';
+  }
+  return '<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">'+
+    '<rect x="4.4" y="14" width="27.2" height="18" rx="3" fill="#FF8FBF" stroke="#CE3E77" stroke-width="2"/>'+
+    '<rect x="2.6" y="8.4" width="30.8" height="7.8" rx="2.6" fill="#FFB3D6" stroke="#CE3E77" stroke-width="2"/>'+
+    '<rect x="15.4" y="8.4" width="5.2" height="23.6" fill="#FFD166"/>'+
+    '<path d="M18 8.6 q-8.6 -7.4 -9.4 .2 q6.4 0 9.4 -.2" fill="#FFD166" stroke="#DF9A00" stroke-width="1.2"/>'+
+    '<path d="M18 8.6 q8.6 -7.4 9.4 .2 q-6.4 0 -9.4 -.2" fill="#FFD166" stroke="#DF9A00" stroke-width="1.2"/>'+
+    '</svg>';
+}
+function placePickEl(pk){
+  var p = proj(pk.x, pk.z, pk.y);
+  var sz = Math.max(15, WORLD.figh * (pk.kind === 'gift' ? 0.34 : 0.26) * p.s);
+  pk.el.style.left = p.x.toFixed(1) + 'px';
+  pk.el.style.top = p.y.toFixed(1) + 'px';
+  pk.el.style.width = sz.toFixed(0) + 'px';
+  pk.el.style.height = sz.toFixed(0) + 'px';
+  pk.el.style.zIndex = String(Math.round(103 + pk.z*10));
+}
+function buildPicks(){
+  PICKS.forEach(function(pk){ if(pk.el && pk.el.parentNode) pk.el.parentNode.removeChild(pk.el); });
+  PICKS = [];
+  pickDefs().forEach(function(d){
+    var el = document.createElement('div');
+    el.className = 'pick' + (d.kind === 'gift' ? ' gift' : '');
+    el.setAttribute('data-pick', d.kind);
+    el.innerHTML = pickArt(d.kind) + '<span class="glow"></span>';
+    worldEl.appendChild(el);
+    var pk = { x:d.x, z:d.z, y:d.y || 0, kind:d.kind, gift:d.gift, el:el, taken:false };
+    PICKS.push(pk);
+    placePickEl(pk);
+  });
+}
+function resetPicks(){
+  PICKS.forEach(function(pk){ if(pk.el && pk.el.parentNode) pk.el.parentNode.removeChild(pk.el); });
+  buildPicks();
+}
+
+/* ---------- 배우 ---------- */
+var me = null, FRIENDS = [];
+var FRIEND_DEFS = [
+  { name:'모모', color:'#FF8FBF' },
+  { name:'보라', color:'#B79BFF' },
+  { name:'하니', color:'#FFD166' }
+];
+function makeActor(label, cls, x, z){
+  var el = document.createElement('div');
+  el.className = 'actor' + (cls ? ' ' + cls : '');
+  var mid = document.createElement('div'); mid.className = 'mid';
+  var nm = document.createElement('div'); nm.className = 'ts nm'; nm.textContent = label;
+  var bub = document.createElement('div'); bub.className = 'ts bub';
+  el.appendChild(mid); el.appendChild(nm); el.appendChild(bub);
+  worldEl.appendChild(el);
+  var a = { el:el, mid:mid, nm:nm, bub:bub, x:x, z:z, y:0, flip:false, label:label };
+  mid.style.width = Math.round(WORLD.figh * 0.647) + 'px';
+  mid.style.height = WORLD.figh + 'px';
+  return a;
+}
+function paintActor(a, state){
+  a.mid.innerHTML = figureSVG(state, { label: a.label });
+}
+function paintMe(){
+  if(!me) return;
+  paintActor(me, st);
+  me.el.className = 'actor me' + (PLAYER.pose ? ' pose' + PLAYER.pose : '');
+}
+function buildActors(){
+  if(me && me.el.parentNode) me.el.parentNode.removeChild(me.el);
+  FRIENDS.forEach(function(f){ if(f.el.parentNode) f.el.parentNode.removeChild(f.el); });
+  me = makeActor(activeName, 'me', PLAYER.x, PLAYER.z);
+  paintMe();
+  var seed = [[-2.7, 2.4],[0.3, 4.1],[2.6, 5.3]];
+  FRIENDS = FRIEND_DEFS.map(function(d, i){
+    var f = makeActor(d.name, 'ai', seed[i][0], seed[i][1]);
+    f.name = d.name; f.color = d.color;
+    f.state = aiLook(findItem(THEMES, st.theme));
+    f.tx = f.x; f.tz = f.z; f.wait = rnd(0.2, 1.6); f.chat = rnd(3, 7); f.flip = false;
+    paintActor(f, f.state);
+    return f;
+  });
+}
+
+/* ---------- 그리기(매 프레임) ---------- */
+function drawActor(a, isMe){
+  var p = proj(a.x, a.z, a.y);
+  a.el.style.left = p.x.toFixed(1) + 'px';
+  a.el.style.top = p.y.toFixed(1) + 'px';
+  a.el.style.transform = 'translate(-50%,-100%)';
+  a.el.style.zIndex = String(Math.round((isMe ? 108 : 106) + a.z*10));
+  var sx = p.s * (a.flip ? -1 : 1);
+  a.mid.style.transform = 'scale(' + sx.toFixed(3) + ',' + p.s.toFixed(3) + ')';
+  a.nm.style.bottom = (p.s * WORLD.figh + 1).toFixed(0) + 'px';
+  a.bub.style.bottom = (p.s * WORLD.figh + 15).toFixed(0) + 'px';
+}
+function drawAll(){
+  if(me) drawActor(me, true);
+  FRIENDS.forEach(function(f){ drawActor(f, false); });
+}
+
+/* ---------- 입력 ---------- */
+var stickVec = { x:0, y:0 };
+function combinedInput(){
+  var x = 0, y = 0;
+  if(keys['ArrowLeft'] || keys['a'] || keys['A']) x -= 1;
+  if(keys['ArrowRight'] || keys['d'] || keys['D']) x += 1;
+  if(keys['ArrowUp'] || keys['w'] || keys['W']) y -= 1;
+  if(keys['ArrowDown'] || keys['s'] || keys['S']) y += 1;
+  x += stickVec.x; y += stickVec.y;
+  var len = Math.hypot(x, y);
+  if(len > 1){ x /= len; y /= len; }
+  return { x:x, y:y };
+}
+
+/* ---------- 자동 길찾기 (BFS) ---------- */
+var PATH = [];
+function findPath(sx, sz, tx, tz){
+  var ST = 0.30;
+  var minX = WORLD.x0 + 0.50, minZ = WORLD.z0 + 0.42;
+  var maxX = WORLD.x1 - 0.50, maxZ = WORLD.z1 - 0.30;
+  var cols = Math.floor((maxX - minX) / ST) + 1;
+  var rows = Math.floor((maxZ - minZ) / ST) + 1;
+  var si = clamp(Math.round((sx - minX)/ST), 0, cols-1);
+  var sj = clamp(Math.round((sz - minZ)/ST), 0, rows-1);
+  var ti = clamp(Math.round((tx - minX)/ST), 0, cols-1);
+  var tj = clamp(Math.round((tz - minZ)/ST), 0, rows-1);
+  var n = cols*rows, start = si + sj*cols, goal = ti + tj*cols;
+  if(solidTop(minX + ti*ST, minZ + tj*ST) > 0.03){
+    /* 목표 칸이 가구로 막혀 있으면 가장 가까운 빈 칸으로 */
+    var best = -1, bd = 1e9;
+    for(var cy2=0; cy2<rows; cy2++){
+      for(var cx2=0; cx2<cols; cx2++){
+        var wx2 = minX + cx2*ST, wz2 = minZ + cy2*ST;
+        if(solidTop(wx2, wz2) > 0.03) continue;
+        var dd = (wx2-tx)*(wx2-tx) + (wz2-tz)*(wz2-tz);
+        if(dd < bd){ bd = dd; best = cx2 + cy2*cols; }
+      }
+    }
+    if(best < 0) return null;
+    goal = best;
+  }
+  if(start === goal){
+    var gx0 = goal % cols, gy0 = (goal - gx0)/cols;
+    return [{ x: minX + gx0*ST, z: minZ + gy0*ST }];
+  }
+  var prev = new Int16Array(n); prev.fill(-1);
+  var seen = new Uint8Array(n);
+  var q = [start]; seen[start] = 1;
+  var dirs = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+  var found = false;
+  for(var h=0; h<q.length; h++){
+    var cur = q[h];
+    if(cur === goal){ found = true; break; }
+    var cx = cur % cols, cy = (cur - cx)/cols;
+    for(var d=0; d<8; d++){
+      var nx = cx + dirs[d][0], ny = cy + dirs[d][1];
+      if(nx<0 || ny<0 || nx>=cols || ny>=rows) continue;
+      var ni = nx + ny*cols;
+      if(seen[ni]) continue;
+      var wx = minX + nx*ST, wz = minZ + ny*ST;
+      if(solidTop(wx, wz) > 0.03) continue;
+      if(d >= 4 && (solidTop(minX+cx*ST, wz) > 0.03 || solidTop(wx, minZ+cy*ST) > 0.03)) continue;
+      seen[ni] = 1; prev[ni] = cur; q.push(ni);
+    }
+  }
+  if(!found) return null;
+  var out = [], k = goal, guard = 0;
+  while(k !== -1 && k !== start && guard++ < 4000){
+    var kx = k % cols, ky = (k - kx)/cols;
+    out.push({ x: minX + kx*ST, z: minZ + ky*ST });
+    k = prev[k];
+  }
+  out.reverse();
+  return out.length ? out : null;
+}
+function walkTo(tx, tz, zone){
+  var p = findPath(PLAYER.x, PLAYER.z, tx, tz);
+  if(!p || !p.length){ toast('가구에 가려 못 갔어요. 조이스틱으로 가까이 가 볼까요?'); return false; }
+  PATH = p;
+  PLAYER.target = { x:tx, z:tz };
+  PLAYER.targetZone = zone || null;
+  PLAYER.targetAt = Date.now();
+  return true;
+}
+function cancelPath(){ PATH = []; PLAYER.target = null; PLAYER.targetZone = null; }
+
+/* ---------- 물리 · AI ---------- */
+var CHAT_LINES = ['이거 어때?','시간 얼마 안 남았어!','난 이 색이 좋아~','반짝이는 게 최고야!','이거 입어 볼까?','너무 예쁘다!','같이 골라 줄까?','헤어 바꿔 볼래'];
+function stepWorld(dt){
+  var v = combinedInput();
+  var moving = false;
+  if(!PLAYER.target){
+    if(Math.abs(v.x) > 0.06 || Math.abs(v.y) > 0.06){
+      if(PATH.length) cancelPath();
+      var sp = 2.45;
+      var nx = PLAYER.x + v.x * sp * dt;
+      var nz = PLAYER.z + v.y * sp * dt;
+      if(canStand(clamp(nx, WORLD.x0+0.50, WORLD.x1-0.50), PLAYER.z)) PLAYER.x = nx;
+      if(canStand(PLAYER.x, clamp(nz, WORLD.z0+0.42, WORLD.z1-0.30))) PLAYER.z = nz;
+      moving = true;
+      if(v.x < -0.2) PLAYER.dir = -1; else if(v.x > 0.2) PLAYER.dir = 1;
+      hidTip();
+    }
+  } else if(PATH.length){
+    var wp = PATH[0];
+    var dx = wp.x - PLAYER.x, dz = wp.z - PLAYER.z;
+    var dist = Math.hypot(dx, dz);
+    if(dist < 0.16){
+      PATH.shift();
+      if(!PATH.length){
+        var zz = PLAYER.targetZone;
+        PLAYER.targetZone = null; PLAYER.target = null;
+        if(zz) openZone(zz);
+      }
+    } else if(Date.now() - PLAYER.targetAt > 7000){
+      cancelPath();
+      toast('가구에 가려 못 갔어요. 조이스틱으로 가까이 가 볼까요?');
+    } else {
+      var stepL = Math.min(2.7 * dt, dist);
+      var ux = dx / dist, uz = dz / dist;
+      if(canStand(PLAYER.x + ux * stepL, PLAYER.z)) PLAYER.x += ux * stepL;
+      if(canStand(PLAYER.x, PLAYER.z + uz * stepL)) PLAYER.z += uz * stepL;
+      moving = true;
+      if(dx < -0.05) PLAYER.dir = -1; else if(dx > 0.05) PLAYER.dir = 1;
+    }
+  }
+  PLAYER.x = clamp(PLAYER.x, WORLD.x0+0.50, WORLD.x1-0.50);
+  PLAYER.z = clamp(PLAYER.z, WORLD.z0+0.42, WORLD.z1-0.30);
+  PLAYER.vy -= 18 * dt;
+  PLAYER.y += PLAYER.vy * dt;
+  var g = solidTop(PLAYER.x, PLAYER.z);
+  if(PLAYER.y <= g + 0.001){ PLAYER.y = g; PLAYER.vy = 0; PLAYER.grounded = true; }
+  else PLAYER.grounded = false;
+  if(PLAYER.y < -4) PLAYER.y = 0;
+
+  if(moving) me.el.classList.add('walk'); else me.el.classList.remove('walk');
+
+  /* AI 친구들 */
+  for(var i=0;i<FRIENDS.length;i++){
+    var f = FRIENDS[i];
+    f.wait -= dt;
+    if(f.wait <= 0){
+      var tries = 0, nx2 = f.x, nz2 = f.z;
+      while(tries++ < 14){
+        nx2 = rnd(WORLD.x0+0.6, WORLD.x1-0.6);
+        nz2 = rnd(0.85, WORLD.z1-0.35);
+        if(solidTop(nx2, nz2) <= 0.02) break;
+      }
+      f.tx = nx2; f.tz = nz2;
+      f.wait = rnd(2.6, 5.2);
+    }
+    var fdx = f.tx - f.x, fdz = f.tz - f.z, fd = Math.hypot(fdx, fdz);
+    if(fd > 0.08){
+      var stp = Math.min(fd, 1.35 * dt);
+      f.x += fdx / fd * stp; f.z += fdz / fd * stp;
+      f.walk = true;
+      if(fdx < -0.03) f.flip = true; else if(fdx > 0.03) f.flip = false;
+    } else { f.walk = false; }
+    if(f.walk) f.el.classList.add('walk'); else f.el.classList.remove('walk');
+
+    f.chat -= dt;
+    if(f.chat <= 0){
+      f.chat = rnd(4.5, 8.5);
+      sayBubble(f, pick(CHAT_LINES));
+      if(Math.random() < 0.55) dressUpFriend(f);
+    }
+  }
+
+  /* 아이템 줍기 */
+  for(var k=0;k<PICKS.length;k++){
+    var pk = PICKS[k];
+    if(pk.taken) continue;
+    var ddx = pk.x - PLAYER.x, ddz = pk.z - PLAYER.z;
+    if(ddx*ddx + ddz*ddz > 0.40) continue;
+    if(Math.abs((PLAYER.y + 0.18) - pk.y) > 0.42) continue;
+    takePick(pk);
+  }
+
+  /* 존 다가가기 */
+  var nz3 = nearestZone();
+  if(nz3 !== nearZone){
+    if(nearZone && nearZone.el) nearZone.el.classList.remove('near');
+    nearZone = nz3;
+    if(nearZone && nearZone.el) nearZone.el.classList.add('near');
+    renderPrompt();
+  }
+  if((PLAYER.x < -3.0 || PLAYER.x > 3.0) && !secretTip){
+    secretTip = true;
+    toast('🕯️ 벽 구석에 반짝이는 게 있어!');
+  }
+  drawAll();
+}
+function nearestZone(){
+  var best = null, bd = 1e9;
+  for(var i=0;i<ZONES.length;i++){
+    var z = ZONES[i];
+    var dx = z.x - PLAYER.x, dz = (z.z + z.d/2 + 0.30) - PLAYER.z;
+    var d = Math.hypot(dx, dz);
+    if(d < bd){ bd = d; best = z; }
+  }
+  return bd < 1.15 ? best : null;
+}
+function sayBubble(f, text){
+  f.bub.textContent = text;
+  f.bub.classList.add('on');
+  clearTimeout(f.bubT);
+  f.bubT = setTimeout(function(){ f.bub.classList.remove('on'); }, 2800);
+}
+function dressUpFriend(f){
+  var s = f.state;
+  var r = Math.random();
+  if(r < 0.34){ s.dress = pick(listFor('dress')).id; s.mode = 'dress'; }
+  else if(r < 0.58){ s.top = pick(listFor('top')).id; s.bottom = pick(listFor('bottom')).id; s.mode = 'two'; }
+  else if(r < 0.76){ s.hair = pick(listFor('hair')).id; }
+  else { s.acc = [pick(listFor('acc')).id]; }
+  if(Math.random() < 0.4){ var c = pick(OUTFIT_COLORS); s.outfitColor = c; s.shoeColor = c; }
+  paintActor(f, s);
+}
+
+/* ---------- 획득 ---------- */
+var secretTip = false, nearZone = null;
+function takePick(pk){
+  pk.taken = true;
+  pk.el.classList.add('got');
+  var el = pk.el;
+  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 380);
+  if(pk.kind === 'bill'){ SFX.pick(); addCoins(1, true); chipMoney('+1'); }
+  else if(pk.kind === 'star'){ SFX.pick(); SFX.star(2); addCoins(3, true); chipMoney('+3'); }
+  else if(pk.kind === 'gift'){
+    var h = HIDDEN_DEFS[pk.gift];
+    if(h){
+      progress.found[h.acc] = 1;
+      saveProgress();
+      SFX.fanfare();
+      showClaim('🎁 ' + h.name + ' 해금!', '소품 존에서 낄 수 있어요');
+      toast('🎁 히든 아이템 「' + h.name + '」을(를) 찾았어요!');
+      confettiBurst(80, 1.1);
+    }
+  }
+}
+function chipMoney(txt){
+  var c = $('coinHud');
+  if(!c) return;
+  c.classList.remove('up'); void c.offsetWidth; c.classList.add('up');
+}
+function showClaim(title, sub){
+  var el = $('claim');
+  el.innerHTML = '<b>'+esc(title)+'</b><i>'+esc(sub)+'</i>';
+  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+}
+
+/* ---------- 프롬프트 ---------- */
+function renderPrompt(){
+  var p = $('prompt');
+  if(!nearZone || anySheetOpen()){ p.classList.remove('on'); return; }
+  $('promptName').textContent = nearZone.name;
+  p.classList.add('on');
+}
+function hidTip(){
+  var t = $('tipBar');
+  if(t && !t.classList.contains('off')) t.classList.add('off');
+}
+
+/* ---------- 루프 ---------- */
+var lastT = 0, rafId = 0;
+function loop(t){
+  rafId = requestAnimationFrame(loop);
+  if(!lastT) lastT = t;
+  var dt = Math.min(0.05, Math.max(0, (t - lastT) / 1000));
+  lastT = t;
+  if(!WORLD.W) return;
+  stepWorld(dt);
+}
+function startLoop(){
+  if(!rafId) rafId = requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   14. 옷장 · 시트 UI
+   ============================================================ */
+var CATS = [
+  { id:'dress',  label:'👗 드레스' },
+  { id:'top',    label:'👚 상의' },
+  { id:'bottom', label:'🩳 하의' },
+  { id:'shoes',  label:'👠 신발' },
+  { id:'hair',   label:'💇 머리' },
+  { id:'face',   label:'😊 표정' },
+  { id:'skin',   label:'🎨 피부' },
+  { id:'makeup', label:'💄 메이크업' },
+  { id:'acc',    label:'👑 소품' }
+];
+var HAIR_COLORS = ['#3B2632','#6B4226','#A9793F','#D9B26A','#F2D9A0','#FF96BE','#B79BFF','#8FD3FF','#EDEDF2','#FF7A6B','#5FA86B','#2E3A5C'];
+var OUTFIT_COLORS = ['#FF8FBF','#FF6B8A','#FFD166','#7BE3C3','#7FB8FF','#9F8BFF','#FFFFFF','#2E2A45','#C8A06A','#B9E36A'];
+var MK_GROUPS = [
+  { key:'mkLip',   name:'💋 립스틱',   cols:['#E8467C','#FF5B8A','#E24B4B','#C2447A','#FF9FB0','#B3385E'] },
+  { key:'mkBlush', name:'🌸 볼터치',   cols:['#FF9FB0','#FF8FB8','#FFB08F','#D9B3FF','#FFD1A1','#F2A0A0'] },
+  { key:'mkEye',   name:'👁️ 아이섀도', cols:['#C8A6FF','#FFB3D1','#9FD8FF','#FFE08A','#B8E3C0','#6B5A78'] },
+  { key:'mkNail',  name:'💅 손톱',      cols:['#FF6BA8','#E24B4B','#FFD166','#B8A8FF','#FFFFFF','#2E2A45'] }
+];
+var HINTS = {
+  dress:'한 벌 드레스예요. 상의·하의 존에서 투피스 코디도 만들 수 있어요!',
+  top:'상의를 고르면 투피스 코디가 돼요. 하의도 같이 골라 주세요.',
+  bottom:'하의를 고르면 투피스 코디가 돼요.',
+  shoes:'신발 색은 옷 색을 따라가요.',
+  hair:'머리 모양을 고르고, 아래 색 동그라미로 머리색을 바꿔 보세요.',
+  face:'표정을 눌러 얼굴을 바꿔 보세요.',
+  makeup:'립스틱·볼터치·아이섀도·손톱까지 꾸밀 수 있어요!',
+  acc:'소품은 여러 개 같이 낄 수 있어요. 🎁 숨은 소품도 찾아보세요!',
+  skin:'피부톤을 골라 보세요.'
+};
+function itemsFor(kind){
+  if(kind === 'dress') return DRESSES;
+  if(kind === 'top') return TOPS;
+  if(kind === 'bottom') return BOTTOMS;
+  if(kind === 'shoes') return SHOES;
+  if(kind === 'hair') return HAIRS;
+  if(kind === 'face') return FACES;
+  if(kind === 'acc') return ACCS;
+  if(kind === 'skin') return SKINS;
+  return [];
+}
+function listFor(kind){
+  return itemsFor(kind).filter(function(it){
+    if(it.vip && !progress.vip[it.id]) return false;
+    if(it.hidden && !progress.found[it.id]) return false;
+    return true;
+  });
+}
+function isOn(kind, item){
+  if(kind === 'skin') return st.skin === item.id;
+  if(kind === 'face') return st.face === item.id;
+  if(kind === 'hair') return st.hair === item.id;
+  if(kind === 'dress') return st.mode === 'dress' && st.dress === item.id;
+  if(kind === 'top') return st.mode === 'two' && st.top === item.id;
+  if(kind === 'bottom') return st.mode === 'two' && st.bottom === item.id;
+  if(kind === 'shoes') return st.shoes === item.id;
+  if(kind === 'acc') return (st.acc || []).indexOf(item.id) >= 0;
+  return false;
+}
+var wdCats = ['dress'], curZone = null;
+function renderCats(){
+  $('cats').innerHTML = wdCats.map(function(id){
+    var c = null;
+    for(var i=0;i<CATS.length;i++){ if(CATS[i].id === id) c = CATS[i]; }
+    if(!c) return '';
+    return '<button class="cat'+(id === cat ? ' on' : '')+'" type="button" data-cat="'+id+'">'+c.label+'</button>';
+  }).join('');
+}
+function renderWardrobe(){
+  var g = $('grid');
+  if(cat === 'makeup'){ renderMakeup(); return; }
+  g.className = 'grid';
+  var rows = listFor(cat).map(function(it){ return { it:it }; });
+  if(cat === 'acc'){
+    itemsFor('acc').forEach(function(it){
+      if(it.hidden && !progress.found[it.id]) rows.push({ lock:it });
+    });
+  }
+  g.innerHTML = rows.map(function(row){
+    if(row.lock){
+      return '<button class="item lock" type="button" data-locked="'+row.lock.id+'">'+
+        '<span class="ck">✓</span>'+
+        '<span class="th" style="place-items:center;font-size:27px">🎁</span>'+
+        '<span class="nm">???</span></button>';
+    }
+    var it = row.it, on = isOn(cat, it);
+    return '<button class="item'+(on?' on':'')+(it.vip?' vip':'')+'" type="button" data-id="'+it.id+'">'+
+      '<span class="ck">✓</span>'+
+      '<span class="th">'+thumbSVG(cat, it)+'</span>'+
+      '<span class="nm">'+esc(it.name)+'</span></button>';
+  }).join('');
+  $('catHint').textContent = HINTS[cat] || '';
+  renderSwatches();
+  renderPatterns();
+}
+function renderPatterns(){
+  var box = $('patterns');
+  if(cat !== 'dress' && cat !== 'top' && cat !== 'bottom'){ box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  var cur = st.pattern || 'solid';
+  box.innerHTML = PATTERNS.map(function(p){
+    return '<button class="pat'+(cur === p.id ? ' on' : '')+'" type="button" data-pat="'+p.id+'">'+
+      '<span class="pv">'+patternPreview(p.id)+'</span>'+
+      '<span class="pn">'+p.name+'</span></button>';
+  }).join('');
+}
+function renderSwatches(){
+  var wrap = $('swatches');
+  var colors = null, cur = null;
+  if(cat === 'hair'){ colors = HAIR_COLORS; cur = st.hairColor; }
+  else if(cat === 'dress' || cat === 'top' || cat === 'bottom'){ colors = OUTFIT_COLORS; cur = st.outfitColor; }
+  else if(cat === 'shoes'){ colors = OUTFIT_COLORS; cur = st.shoeColor; }
+  if(!colors){ wrap.innerHTML = ''; wrap.hidden = true; return; }
+  wrap.hidden = false;
+  wrap.innerHTML = colors.map(function(c){
+    var on = String(cur).toUpperCase() === c.toUpperCase() ? ' on' : '';
+    return '<button class="sw'+on+'" type="button" data-color="'+c+'" style="background:'+c+'" aria-label="색 '+c+'"></button>';
+  }).join('');
+}
+function renderMakeup(){
+  $('swatches').innerHTML = ''; $('swatches').hidden = true;
+  $('patterns').innerHTML = ''; $('patterns').hidden = true;
+  var g = $('grid');
+  g.className = 'grid mk';
+  g.innerHTML = MK_GROUPS.map(function(gr){
+    var cur = st[gr.key] || 'none';
+    var chips = gr.cols.map(function(col){
+      return '<button class="mk-b'+(String(cur).toUpperCase() === col.toUpperCase() ? ' on' : '')+'" type="button" '+
+        'data-mk="'+gr.key+'" data-mkc="'+col+'" style="background:'+col+'" aria-label="'+gr.name+'"></button>';
+    }).join('');
+    var none = '<button class="mk-b none'+(cur === 'none' ? ' on' : '')+'" type="button" data-mk="'+gr.key+'" data-mkc="none" aria-label="없음">✕</button>';
+    return '<div class="mk-row"><div class="mh">'+gr.name+'<em>'+(cur === 'none' ? '안 바름' : '적용 중')+'</em></div>'+
+      '<div class="mk-sw">'+chips+none+'</div></div>';
+  }).join('');
+  $('catHint').textContent = HINTS.makeup;
+}
+
+/* ---------- 시트 관리 ---------- */
+var SHEET_IDS = ['wdSheet','themeSheet','vipSheet','lookSheet','menuSheet'];
+function openSheet(id){
+  SHEET_IDS.forEach(function(s){
+    var el = $(s);
+    if(el) el.classList.toggle('show', s === id);
+  });
+  stickVec.x = 0; setKnob(0,0);
+  renderPrompt();
+}
+function closeSheets(){
+  SHEET_IDS.forEach(function(s){ var el = $(s); if(el) el.classList.remove('show'); });
+  renderPrompt();
+}
+function anySheetOpen(){
+  for(var i=0;i<SHEET_IDS.length;i++){
+    var el = $(SHEET_IDS[i]);
+    if(el && el.classList.contains('show')) return true;
+  }
+  return false;
+}
+function openZone(z){
+  curZone = z;
+  wdCats = z.cats.slice();
+  cat = wdCats[0];
+  $('wdEmoji').textContent = z.emoji;
+  $('wdTitle').textContent = z.name;
+  $('wdSub').textContent = z.id === 'makeup' ? '화장대로 메이크업을 꾸며요' :
+    z.id === 'hair' ? '미용 의자에 앉아 머리·표정·피부를 바꿔요' :
+    '마음에 드는 걸 골라 바로 입어 보세요';
+  renderCats(); renderWardrobe();
+  openSheet('wdSheet');
+  SFX.tap();
+}
+
+/* ---------- 주제 ---------- */
+function renderThemePill(){
+  var t = findItem(THEMES, st.theme);
+  $('themeEmoji').textContent = t.emoji;
+  $('themeName').textContent = t.name;
+  document.documentElement.style.setProperty('--t1', t.t1);
+  document.documentElement.style.setProperty('--t2', t.t2);
+}
+function renderThemeGrid(){
+  $('themeGrid').innerHTML = THEMES.map(function(t){
+    return '<button type="button" class="'+(t.id === st.theme ? 'on' : '')+'" data-theme="'+t.id+'">'+
+      '<span class="e">'+t.emoji+'</span>'+esc(t.short)+'</button>';
+  }).join('');
+}
+function setTheme(id){
+  st.theme = id;
+  saveState();
+  renderThemePill(); renderThemeGrid();
+  buildRoomSvg();
+  /* AI 친구들도 새 주제로 다시 코디 */
+  FRIENDS.forEach(function(f){ f.state = aiLook(findItem(THEMES, id)); paintActor(f, f.state); });
+  SFX.theme();
+  var th = findItem(THEMES, id);
+  toast(th.emoji + ' 오늘의 주제: ' + th.name);
+}
+
+/* ---------- VIP 상점 ---------- */
+function vipShot(it){
+  if(it.kind === 'shoes') return '<svg class="shot" viewBox="88 289 44 26" xmlns="http://www.w3.org/2000/svg">'+it.svg+'</svg>';
+  if(it.kind === 'acc') return '<svg class="shot" viewBox="78 18 64 46" xmlns="http://www.w3.org/2000/svg">'+it.svg+'</svg>';
+  return thumbSVG(it.kind, it);
+}
+function renderVip(){
+  $('vipList').innerHTML = VIP_ITEMS.map(function(it){
+    var own = !!progress.vip[it.id];
+    var can = progress.coins >= it.price;
+    return '<div class="vipCard'+(own?' own':'')+'">'+
+      '<div class="ph'+(it.kind === 'hair' ? ' z2' : '')+'">'+vipShot(it)+'</div>'+
+      '<div class="nm">'+esc(it.name)+'</div>'+
+      (own
+        ? '<button type="button" disabled>✅ 보유 중</button>'
+        : '<button type="button" data-buy="'+it.id+'"'+(can?'':' disabled')+'>'+COIN_ICON+' '+it.price+' 코인 사기</button>')+
+      '</div>';
+  }).join('');
+}
+function buyVip(id){
+  var it = null;
+  VIP_ITEMS.forEach(function(v){ if(v.id === id) it = v; });
+  if(!it) return;
+  if(progress.vip[id]) return;
+  if(progress.coins < it.price){ SFX.oops(); toast('코인이 모자라요. 드레싱룸에서 💵를 더 주워 와요!'); return; }
+  progress.coins -= it.price;
+  progress.vip[id] = 1;
+  saveProgress();
+  SFX.fanfare();
+  toast('💎 「' + it.name + '」을(를) 샀어요! 옷장에서 입어 보세요');
+  showClaim('💎 ' + it.name, '옷장에 추가됐어요!');
+  renderVip();
+  if(curZone) renderWardrobe();
+}
+
+/* ---------- 메뉴 ---------- */
+function renderMenu(){
+  var row = $('whoRow');
+  var btns = row.querySelectorAll('button');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('on', btns[i].getAttribute('data-name') === activeName);
+  $('vsBtn').classList.toggle('on', versus.on);
+}
+function helpInfo(){
+  toast('🕹️ 조이스틱·방향키 이동 · ⤒ 점프 · 존에 가까이 가면 입어보기!');
+  setTimeout(function(){ toast('🎁 숨은 보물: 벽 구석 2곳 · 발판 위 2곳'); }, 2600);
+}
+
+/* ---------- 조이스틱 ---------- */
+function setKnob(x, y){
+  var k = $('knob');
+  if(!k) return;
+  k.style.transform = 'translate(' + (x*30).toFixed(1) + 'px,' + (y*30).toFixed(1) + 'px)';
+}
+(function(){
+  var stick = $('stick'), knob = $('knob'), active = false, cx = 0, cy = 0, R = 40;
+  function pos(e){
+    var r = stick.getBoundingClientRect();
+    var dx = (e.clientX - (r.left + r.width/2));
+    var dy = (e.clientY - (r.top + r.height/2));
+    var len = Math.hypot(dx, dy) || 1;
+    var m = Math.min(len, R);
+    var nx = dx / len * (m / R), ny = dy / len * (m / R);
+    stickVec.x = nx; stickVec.y = ny;
+    setKnob(nx, ny);
+    hidTip();
+  }
+  stick.addEventListener('pointerdown', function(e){
+    active = true; stick.setPointerCapture(e.pointerId);
+    stick.style.background = 'radial-gradient(circle at 50% 38%, rgba(255,255,255,.8), rgba(255,255,255,.3))';
+    pos(e); e.preventDefault();
+  });
+  stick.addEventListener('pointermove', function(e){ if(active) pos(e); });
+  function up(){
+    active = false; stickVec.x = 0; stickVec.y = 0; setKnob(0,0);
+    stick.style.background = '';
+  }
+  stick.addEventListener('pointerup', up);
+  stick.addEventListener('pointercancel', up);
+  stick.addEventListener('pointerleave', function(){ if(active) up(); });
+})();
+
+/* ============================================================
+   15. 런웨이 연결
+   ============================================================ */
+function openRunway(){
+  if($('overlay').classList.contains('show')) return;
+  stopTimer();
+  stickVec.x = 0; stickVec.y = 0; setKnob(0,0);
+  PATH = []; PLAYER.target = null;
+  closeSheets();
+  $('overlay').classList.add('show');
+  runShow().then(function(){
+    if(!$('overlay').classList.contains('show')) return;
+    if(!showVotes.length) return;
+    var sorted = showVotes.slice().sort(function(a,b){ return b.score - a.score; });
+    var win = sorted[0] && sorted[0].me ? 12 : 0;
+    addCoins(8 + win, true);
+    setTimeout(function(){ toast('🎉 런웨이 상금 💵 ' + (8 + win) + ' 코인!'); }, 600);
+  });
+}
+function closeRunway(){
+  runToken++;
+  if(voteResolve){ var r = voteResolve; voteResolve = null; r(null); }
+  $('overlay').classList.remove('show');
+  clearStageModels();
+  var cv = $('rwConfetti');
+  if(cv){ var ctx = cv.getContext('2d'); if(ctx) ctx.clearRect(0,0,cv.width,cv.height); }
+  confettiParts.length = 0;
+  newRound();
+}
+function newRound(){
+  PLAYER.x = 0; PLAYER.z = 6.05; PLAYER.y = 0; PLAYER.vy = 0; PATH = []; PLAYER.target = null; PLAYER.targetZone = null;
+  secretTip = false;
+  resetPicks();
+  resetTimer(180);
+  drawAll();
+}
+
+/* 참가자는 드레싱룸의 AI 친구 3명 그대로 */
+function buildParticipants(){
+  var out = [];
+  if(versus.on && versus.looks && versus.looks.length > 1){
+    out.push({ name:'윤진', state: JSON.parse(JSON.stringify(versus.looks[0].state)), me:true });
+    out.push({ name:'형원', state: JSON.parse(JSON.stringify(versus.looks[1].state)), me:true });
+    out.push({ name:'모모', state: JSON.parse(JSON.stringify(FRIENDS[0].state)), ai:true });
+    out.push({ name:'보라', state: JSON.parse(JSON.stringify(FRIENDS[1].state)), ai:true });
+  } else {
+    out.push({ name: activeName, state: JSON.parse(JSON.stringify(st)), me:true });
+    FRIENDS.forEach(function(f){
+      out.push({ name: f.name, state: JSON.parse(JSON.stringify(f.state)), ai:true });
+    });
+  }
+  return out;
+}
+
+/* ============================================================
+   16. 타이머 UI
+   ============================================================ */
+function updateClock(){
+  var el = $('tmClock');
+  if(TM.mode !== 'challenge'){ el.hidden = true; return; }
+  el.hidden = false;
+  var s = Math.max(0, TM.left);
+  var m = Math.floor(s / 60), ss = s % 60;
+  $('tmTime').textContent = m + ':' + (ss < 10 ? '0' : '') + ss;
+  el.classList.toggle('warn', s <= 30);
+}
+function renderTimerMode(){
+  $('tmClock').hidden = TM.mode !== 'challenge';
+  $('tmToggle').textContent = TM.mode === 'challenge' ? '⏱️ 3분 도전' : '🌿 자유 코디';
+  $('tmToggle').classList.toggle('on', TM.mode === 'challenge');
+  updateClock();
+}
+var TM_LEFT_MODE = 'free';
+
+/* ============================================================
+   17. 이벤트
+   ============================================================ */
 document.addEventListener('click', function(e){
-  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del],[data-pat],[data-mk],[data-tm],[data-v]') : null;
+  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del],[data-pat],[data-mk],[data-v],[data-close],[data-buy],[data-zone],[data-locked]') : null;
   if(!t) return;
 
-  if(t.hasAttribute('data-theme')){
-    st.theme = t.getAttribute('data-theme');
-    saveState(); renderThemes(); SFX.theme();
-    var th = findItem(THEMES, st.theme);
-    toast(th.emoji + ' 오늘의 주제: ' + th.name);
+  if(t.hasAttribute('data-close')){ closeSheets(); SFX.tap(); return; }
+  if(t.hasAttribute('data-zone')){
+    var zid = t.getAttribute('data-zone');
+    var z = null;
+    ZONES.forEach(function(x){ if(x.id === zid) z = x; });
+    if(z){
+      if(nearZone === z){ openZone(z); }
+      else {
+        if(walkTo(z.x, z.z + z.d/2 + 0.75, z)){
+          toast('👣 ' + z.name + '으로 걸어가요…');
+          SFX.tap();
+        }
+      }
+    }
     return;
   }
-  if(t.hasAttribute('data-cat')){
-    cat = t.getAttribute('data-cat');
-    renderCats(); renderWardrobe(); SFX.tap();
-    return;
-  }
+  if(t.hasAttribute('data-theme')){ setTheme(t.getAttribute('data-theme')); return; }
+  if(t.hasAttribute('data-buy')){ buyVip(t.getAttribute('data-buy')); return; }
+  if(t.hasAttribute('data-locked')){ SFX.oops(); toast('🎁 드레싱룸 어딘가에 숨겨져 있어요!'); return; }
+  if(t.hasAttribute('data-cat')){ cat = t.getAttribute('data-cat'); renderCats(); renderWardrobe(); SFX.tap(); return; }
   if(t.hasAttribute('data-id')){
     var id = t.getAttribute('data-id');
-    if(cat === 'skin'){ st.skin = id; }
-    else if(cat === 'face'){ st.face = id; }
-    else if(cat === 'hair'){ st.hair = id; }
+    if(cat === 'skin') st.skin = id;
+    else if(cat === 'face') st.face = id;
+    else if(cat === 'hair') st.hair = id;
     else if(cat === 'dress'){ st.mode = 'dress'; st.dress = id; }
     else if(cat === 'top'){ st.mode = 'two'; st.top = id; }
     else if(cat === 'bottom'){ st.mode = 'two'; st.bottom = id; }
@@ -2174,67 +3570,65 @@ document.addEventListener('click', function(e){
       if(at >= 0) acc.splice(at, 1); else acc.push(id);
       st.acc = acc;
     }
-    saveState();
-    renderWardrobe(); renderAvatar();
+    saveState(); paintMe(); renderWardrobe();
     if(cat === 'acc' && (st.acc||[]).indexOf(id) < 0) SFX.off(); else SFX.pick();
     return;
   }
   if(t.hasAttribute('data-color')){
     var col = t.getAttribute('data-color');
     if(cat === 'hair') st.hairColor = col;
-    else if(cat === 'shoes'){ st.shoeColor = col; }
+    else if(cat === 'shoes') st.shoeColor = col;
     else st.outfitColor = col;
-    saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    saveState(); paintMe(); renderWardrobe(); SFX.pick();
     return;
   }
   if(t.hasAttribute('data-pat')){
     st.pattern = t.getAttribute('data-pat');
-    saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    saveState(); paintMe(); renderWardrobe(); SFX.pick();
     return;
   }
   if(t.hasAttribute('data-mk')){
     st[t.getAttribute('data-mk')] = t.getAttribute('data-mkc');
-    saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    saveState(); paintMe(); renderWardrobe(); SFX.pick();
     return;
   }
-  if(t.hasAttribute('data-tm')){
-    setTimerMode(t.getAttribute('data-tm'));
-    return;
-  }
-  if(t.hasAttribute('data-v')){
-    giveVote(Number(t.getAttribute('data-v')));
-    return;
-  }
-  if(t.hasAttribute('data-pose')){
-    setPose(Number(t.getAttribute('data-pose'))); SFX.tap(); saveState();
-    return;
-  }
+  if(t.hasAttribute('data-v')){ giveVote(Number(t.getAttribute('data-v'))); return; }
   if(t.hasAttribute('data-name')){
     var nm = t.getAttribute('data-name');
     if(versus.on){
       var idx = -1;
       for(var q=0;q<versus.looks.length;q++){ if(versus.looks[q].name === nm) idx = q; }
-      if(idx >= 0){ vsSelect(idx); SFX.tap(); return; }
-      // 대결에 없는 이름을 고르면 대결을 끝낸다
+      if(idx >= 0){ vsSelect(idx); SFX.tap(); renderMenu(); return; }
       turnOffVersus();
     }
     activeName = nm;
     st.name = nm;
-    syncWhoUI(); renderAvatar(); saveState(); SFX.tap();
+    saveState(); paintMe(); renderMenu(); SFX.tap();
+    if(me) me.nm.textContent = nm;
     return;
   }
   if(t.hasAttribute('data-wear')){ wearLook(t.getAttribute('data-wear')); return; }
   if(t.hasAttribute('data-del')){ deleteLook(t.getAttribute('data-del')); return; }
 });
 
+$('prompt').addEventListener('click', function(){ if(nearZone) openZone(nearZone); });
+$('themePill').addEventListener('click', function(){ renderThemeGrid(); openSheet('themeSheet'); SFX.tap(); });
 $('diceBtn').addEventListener('click', function(){
   var others = THEMES.filter(function(t){ return t.id !== st.theme; });
-  st.theme = pick(others).id;
-  saveState(); renderThemes(); SFX.theme();
-  var th = findItem(THEMES, st.theme);
-  toast('🎲 오늘의 주제는 ' + th.emoji + ' ' + th.name + '!');
+  setTheme(pick(others).id);
+  renderThemeGrid();
 });
-
+$('menuBtn').addEventListener('click', function(){ renderMenu(); openSheet('menuSheet'); SFX.tap(); });
+$('vipBtn').addEventListener('click', function(){ renderVip(); openSheet('vipSheet'); SFX.tap(); });
+$('lookBtn2').addEventListener('click', function(){ renderLooks(); openSheet('lookSheet'); SFX.tap(); });
+$('saveBtn').addEventListener('click', function(){ saveToLookbook(); });
+$('helpBtn').addEventListener('click', helpInfo);
+$('resetBtn').addEventListener('click', function(){
+  progress = { coins:0, found:{}, vip:{} };
+  saveProgress(); renderVip(); renderWardrobe();
+  buildActors();
+  toast('♻️ 코인·아이템 진행을 처음부터 다시 시작해요');
+});
 $('muteBtn').addEventListener('click', function(){
   muted = !muted;
   try{ localStorage.setItem('dti_muted', muted ? '1' : '0'); }catch(e){}
@@ -2242,7 +3636,14 @@ $('muteBtn').addEventListener('click', function(){
   if(!muted) SFX.pick(); else SFX.off();
   toast(muted ? '🔇 소리를 껐어요' : '🔊 소리를 켰어요');
 });
-
+$('tmToggle').addEventListener('click', function(){
+  setTimerMode(TM.mode === 'challenge' ? 'free' : 'challenge');
+});
+$('jumpBtn').addEventListener('click', function(){ doJump(); });
+$('poseBtn').addEventListener('click', function(){
+  setPose2((PLAYER.pose + 1) % 4);
+  SFX.tap();
+});
 $('runBtn').addEventListener('click', function(){
   if(versus.on){
     vsSync();
@@ -2252,27 +3653,43 @@ $('runBtn').addEventListener('click', function(){
       SFX.theme();
       return;
     }
-    openRunway();
-    return;
   }
   openRunway();
 });
-
-$('saveBtn').addEventListener('click', function(){ saveToLookbook(); });
-$('lookBtn').addEventListener('click', function(){ renderLooks(); $('lookSheet').classList.add('show'); });
-$('lookClose').addEventListener('click', function(){ $('lookSheet').classList.remove('show'); });
-$('lookSheet').addEventListener('click', function(e){ if(e.target === $('lookSheet')) $('lookSheet').classList.remove('show'); });
 $('rwClose').addEventListener('click', closeRunway);
-$('rwAgain').addEventListener('click', function(){ closeRunway(); toast('옷장에서 다시 꾸며 보세요!'); });
+$('rwAgain').addEventListener('click', function(){ closeRunway(); toast('드레싱룸에서 다시 꾸며 보세요!'); });
 $('rwSave').addEventListener('click', function(){ saveToLookbook(); });
 
-/* 자매 대결 */
+function doJump(){
+  if(PLAYER.grounded){
+    PLAYER.vy = 4.6;
+    PLAYER.grounded = false;
+    tone(520, 0.1, 'sine', 0.07);
+    tone(780, 0.12, 'sine', 0.05, 0.03);
+  }
+}
+function setPose2(p){
+  PLAYER.pose = p;
+  if(!me) return;
+  me.el.classList.remove('pose1','pose2','pose3');
+  if(p) me.el.classList.add('pose' + p);
+}
+function syncWhoUI(){ renderMenu(); }
 function turnOffVersus(){
   versus.on = false;
   versus.looks = [];
   versus.active = 0;
   $('vsBtn').classList.remove('on');
-  $('runBtn').textContent = '👠 런웨이 출발!';
+}
+function renderAll(){
+  renderThemePill();
+  renderCoins();
+  paintMe();
+  renderCats();
+  renderWardrobe();
+  renderMute();
+  renderMenu();
+  buildRoomSvg();
 }
 $('vsBtn').addEventListener('click', function(){
   versus.on = !versus.on;
@@ -2283,22 +3700,75 @@ $('vsBtn').addEventListener('click', function(){
       { name:'형원', state: JSON.parse(JSON.stringify(st)) }
     ];
     activeName = '윤진';
-    toast('👭 자매 대결! 윤진이 먼저 꾸미고, 「형원이 차례」 버튼으로 이어서 꾸며요.');
-  }else{
+    toast('👭 자매 대결! 윤진이 먼저 꾸미고, 「런웨이」 버튼으로 이어서 꾸며요');
+  } else {
     turnOffVersus();
-    toast('대결을 끝내고 혼자 꾸미기로 돌아왔어요.');
+    toast('대결을 끝내고 혼자 꾸미기로 돌아왔어요');
   }
-  syncWhoUI(); renderAvatar(); SFX.tap();
+  if(me) me.nm.textContent = activeName;
+  renderMenu(); paintMe(); SFX.tap();
 });
 
-/* 시작 */
+/* 키보드 */
+window.addEventListener('keydown', function(e){
+  var k = e.key;
+  if(k === 'Escape'){ closeSheets(); return; }
+  if(anySheetOpen()) return;
+  if(k === ' ' || k === 'Spacebar'){ e.preventDefault(); doJump(); return; }
+  if(k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight'){ e.preventDefault(); }
+  keys[k] = true;
+});
+window.addEventListener('keyup', function(e){ keys[e.key] = false; });
+window.addEventListener('blur', function(){ keys = {}; stickVec.x = 0; stickVec.y = 0; setKnob(0,0); });
+
+/* 리사이즈 */
+var rzT = 0;
+window.addEventListener('resize', function(){
+  clearTimeout(rzT);
+  rzT = setTimeout(function(){
+    measureRoom();
+    buildStatic();
+    buildActors();
+    drawAll();
+    lastT = 0;
+  }, 160);
+});
+document.addEventListener('visibilitychange', function(){ lastT = 0; });
+
+/* ============================================================
+   18. 시작
+   ============================================================ */
 loadState();
-if(st.theme) activeName = activeName || '윤진';
-renderStarsDecor();
-renderAll();
+loadProgress();
+SHEET_IDS.forEach(function(s){
+  var el = $(s); if(!el) return;
+  el.addEventListener('click', function(e){ if(e.target === el) closeSheets(); });
+});
+measureRoom();
+rebuildSolids();
+buildStatic();
+buildPicks();
+buildActors();
+renderThemePill();
+renderCoins();
+renderMute();
 renderTimerMode();
+renderMenu();
+drawAll();
+startLoop();
 if(TM.mode === 'challenge') startTimer();
-window.__dti = { get state(){ return st; }, THEMES: THEMES, PATTERNS: PATTERNS, openRunway: openRunway, setTimerMode: setTimerMode, TM: TM, startTimer: startTimer, buildParticipants: buildParticipants };
+window.__dti = {
+  get state(){ return st; },
+  PLAYER: PLAYER, ZONES: ZONES, get PICKS(){ return PICKS; }, FRIENDS: FRIENDS, PATH: function(){ return PATH; },
+  get progress(){ return progress; },
+  teleport: function(x, z){ PLAYER.x = x; PLAYER.z = z; PLAYER.y = solidTop(x,z); PLAYER.vy = 0; drawAll(); },
+  openZone: openZone, openRunway: openRunway, openSheet: openSheet, closeSheets: closeSheets,
+  TM: TM, setTimerMode: setTimerMode, buildParticipants: buildParticipants,
+  THEMES: THEMES, PATTERNS: PATTERNS, aiLook: aiLook, addCoins: addCoins,
+  doJump: doJump, buyVip: buyVip, setTheme: setTheme, startTimer: startTimer,
+  resetPicks: resetPicks,
+  get nearZone(){ return nearZone; }
+};
 window.__ready = true;
 
 })();
