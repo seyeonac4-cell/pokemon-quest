@@ -208,7 +208,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
   .brand b{font-size:18px}
   .brand small{font-size:12.5px}
   .tab{height:44px; font-size:15.5px}
-  .dockCard{padding:10px 12px 11px}
+  .dockCard{padding:10px 12px 11px; max-width:900px; margin:0 auto}
   .sw{width:42px; height:42px}
   .chip{height:38px; font-size:13.5px}
   .btnA{height:44px; font-size:14px}
@@ -1192,7 +1192,7 @@ function drawSlime(t){
   /* 아래쪽 그늘 — 두께감 */
   var dg2 = ctx.createLinearGradient(0, SL.cy + SL.baseR * 0.1, 0, SL.cy + SL.baseR * 1.15);
   dg2.addColorStop(0, rgba(C.dark, 0));
-  dg2.addColorStop(1, rgba(C.dark, 0.26));
+  dg2.addColorStop(1, rgba(C.dark, 0.33));
   ctx.fillStyle = dg2;
   ctx.fillRect(SL.cx - SL.baseR * 1.6, SL.cy, SL.baseR * 3.2, SL.baseR * 1.3);
 
@@ -1274,12 +1274,12 @@ function drawSlime(t){
 
   /* 젤리 같은 흔들림 하이라이트 (위쪽 넓은 빛 + 작은 또렷한 점) */
   var hx = SL.cx - SL.baseR * 0.30, hy = SL.cy - SL.baseR * 0.44;
-  var hg = ctx.createRadialGradient(hx, hy, 1, hx, hy, SL.baseR * 0.34);
-  hg.addColorStop(0, 'rgba(255,255,255,' + (0.52 * T.gloss) + ')');
-  hg.addColorStop(0.55, 'rgba(255,255,255,' + (0.14 * T.gloss) + ')');
+  var hg = ctx.createRadialGradient(hx, hy, 1, hx, hy, SL.baseR * 0.30);
+  hg.addColorStop(0, 'rgba(255,255,255,' + (0.44 * T.gloss) + ')');
+  hg.addColorStop(0.55, 'rgba(255,255,255,' + (0.11 * T.gloss) + ')');
   hg.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = hg;
-  ctx.beginPath(); ctx.ellipse(hx, hy, SL.baseR * 0.32, SL.baseR * 0.19, -0.5, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(hx, hy, SL.baseR * 0.28, SL.baseR * 0.17, -0.5, 0, TAU); ctx.fill();
 
   ctx.fillStyle = 'rgba(255,255,255,' + (0.85 * T.gloss) + ')';
   ctx.beginPath();
@@ -1310,7 +1310,7 @@ function drawSlime(t){
   var eg = ctx.createLinearGradient(SL.cx - SL.baseR, SL.cy - SL.baseR, SL.cx + SL.baseR, SL.cy + SL.baseR);
   eg.addColorStop(0, 'rgba(255,255,255,' + (0.9 * T.gloss) + ')');
   eg.addColorStop(0.45, 'rgba(255,255,255,' + (0.35 * T.gloss) + ')');
-  eg.addColorStop(1, rgba(C.dark, 0.35));
+  eg.addColorStop(1, rgba(C.dark, 0.45));
   ctx.strokeStyle = eg;
   ctx.lineWidth = 2.2;
   ctx.stroke();
