@@ -572,7 +572,7 @@ input{font-family:inherit}
     </div>
   </div>
 
-  <div id="hint">🦊 윤진, 마을을 구경하고 점프맵에 도전해 봐!</div>
+  <div id="hint">🦊 윤진, 마을을 구경하고 키보드 블록도 밟아 봐!</div>
   <div id="otherChip"><span>🟢</span><span id="otherChipTxt">형원이 지금 놀고 있어!</span></div>
 
   <!-- ===================== 터치 조작 ===================== -->
@@ -785,7 +785,11 @@ input{font-family:inherit}
       </div>
       <div class="help-sec">
         <h3>🌉 타자 미션 · 점프맵</h3>
-        <p>마을 동쪽 길로 나가면 점프맵이 있어요. 빛나는 안내판 앞에 서면 타자 미션이 열리고, 낱말을 다 치면 다리가 생겨 건너갈 수 있어요.</p>
+        <p>마을 동쪽 길로 나가면 점프맵이 있어요. 빛나는 안내판 앞에 서면 타자 미션이 열리고, 낱말을 다 치면 다리가 생겨 건너갈 수 있어요.<br>발판이 넓고 구멍도 한 칸뿐이라 가볍게만 점프해도 착지해요. 떨어져도 퐁퐁 쿠션에 받혀서 다시 올라갈 수 있어요!</p>
+      </div>
+      <div class="help-sec">
+        <h3>⌨️ 키보드 블록</h3>
+        <p>시작 광장 바닥과 점프맵 발판에 알록달록 키캡 블록이 있어요. 밟으면 키캡이 <b>쑥 눌리면서</b> 인쇄소 같은 <b>톡! 찰칵!</b> 타자 소리가 나요. 형원이랑 둘이서 걸어 다니며 소리를 들어 봐요.</p>
       </div>
       <div class="help-sec">
         <h3>🪙 블록 코인</h3>
@@ -944,6 +948,27 @@ var AU = (function () {
     tone({ f: 300, to: 150, d: 0.07, type: 'square', g: 0.06 });
   }
 
+  // ⌨️ 키캡 — 밟으면 나는 기계식 타자 소리 (톡! / 찰칵!)
+  function keycap(label) {
+    if (!ctx() || muted) return;
+    var c = AC;
+    var wide = /SPACE|★|↵|←|→|♪/.test(String(label || ''));
+    var src = noise();
+    if (src) {
+      var bp = c.createBiquadFilter();
+      bp.type = wide ? 'lowpass' : 'bandpass';
+      bp.frequency.value = wide ? rnd(850, 1250) : rnd(2100, 3400);
+      bp.Q.value = wide ? 0.9 : 1.35;
+      var g = c.createGain(); var t0 = c.currentTime;
+      g.gain.setValueAtTime(wide ? 0.30 : 0.22, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + (wide ? 0.08 : 0.035));
+      src.connect(bp); bp.connect(g); g.connect(master);
+      src.start(t0); src.stop(t0 + 0.1);
+    }
+    var f0 = wide ? rnd(250, 330) : rnd(720, 1080);
+    tone({ f: f0, to: f0 * 0.55, d: wide ? 0.06 : 0.03, type: 'triangle', g: wide ? 0.10 : 0.065 });
+  }
+
   // 뾰롱 (성공)
   function chime() {
     tone({ f: 1046.5, d: 0.13, g: 0.11 });
@@ -988,7 +1013,7 @@ var AU = (function () {
   function isMuted() { return muted; }
   function unlock() { ctx(); }
 
-  return { click: click, clack: clack, chime: chime, coin: coin, jump: jump, land: land,
+  return { click: click, clack: clack, keycap: keycap, chime: chime, coin: coin, jump: jump, land: land,
     err: err, msg: msg, win: win, pop: pop, setMuted: setMuted, isMuted: isMuted, unlock: unlock };
 })();
 
@@ -1133,8 +1158,12 @@ var TYPES = {
   bounce: { top: '#ff8cc0', right: '#ef63a2', left: '#cd4786' },
   rainbow:{ top: '#ffa6e6', right: '#f27ecb', left: '#d05fa9' },
   lane:   { top: '#ffe08a', right: '#e9c25c', left: '#c8a23f' },
-  wall:   { top: '#f4e6d8', right: '#dcc8b4', left: '#c3ab94' }
+  wall:   { top: '#f4e6d8', right: '#dcc8b4', left: '#c3ab94' },
+  keycap: { top: '#8b97b8', right: '#6d7a9c', left: '#55617f' }
 };
+
+// ⌨️ 키캡 색 (알록달록 기계식 키보드)
+var KEY_COLORS = ['#ff7a9c', '#ffa63d', '#ffd94a', '#7ee081', '#4ec5ff', '#b48bff', '#ff8cd6', '#43d9c4'];
 
 function seedOf(x, y) {
   var s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
@@ -1142,7 +1171,7 @@ function seedOf(x, y) {
 }
 
 function buildMap() {
-  var tiles = [], map = {}, gates = [], coinsArr = [], cps = [], trees = [], flowers = [];
+  var tiles = [], map = {}, gates = [], coinsArr = [], cps = [], trees = [], flowers = [], keyTiles = [];
 
   function add(x, y, z, type, opt) {
     var t = {
@@ -1151,7 +1180,12 @@ function buildMap() {
       seed: seedOf(x, y),
       tall: (opt && opt.tall) || 0,
       tint: (opt && opt.tint) || '',
-      win: (opt && opt.win) || 0
+      win: (opt && opt.win) || 0,
+      key: (opt && opt.key) || '',
+      keyColor: (opt && opt.keyColor) || '',
+      step: (opt && opt.step) || 0,
+      solid: (opt && opt.solid) || 0,
+      press: 0, flash: 0
     };
     tiles.push(t);
     map[x + ',' + y] = t;
@@ -1161,39 +1195,76 @@ function buildMap() {
     for (var x = x0; x <= x1; x++) for (var y = y0; y <= y1; y++) add(x, y, z, type, opt);
   }
   function coin(x, y, z, big) { coinsArr.push({ x: x, y: y, z: z, big: !!big, got: false, bob: Math.random() * 6.28 }); }
+  // ⌨️ 밟으면 눌리는 키캡 블록
+  function keyTile(x, y, z, label) {
+    var t = add(x, y, z, 'keycap', { key: label, keyColor: KEY_COLORS[(x * 3 + y * 5) % KEY_COLORS.length] });
+    keyTiles.push(t);
+    return t;
+  }
+  // 발판 만들기: null 이면 그냥 돌, 글자면 키캡
+  function gridKeys(x0, y0, rows) {
+    for (var r = 0; r < rows.length; r++) {
+      for (var c = 0; c < rows[r].length; c++) {
+        var ch = rows[r][c];
+        if (!ch) add(x0 + c, y0 + r, 0, 'stone');
+        else keyTile(x0 + c, y0 + r, 0, ch);
+      }
+    }
+  }
 
-  /* --- 1) 시작 광장 --- */
+  /* --- 1) 시작 광장 + ⌨️ 키보드 블록 바닥 --- */
   rect(0, -1, 7, 6, 0, 'grass');
+  rect(1, 1, 6, 5, 0, 'keycap');
+  var KEY_ROWS = [
+    ['A', 'S', 'D', 'F', 'J', 'K'],
+    ['Q', 'W', 'E', 'R', 'U', 'I'],
+    ['Z', 'X', 'C', 'V', 'B', 'N'],
+    ['G', 'H', 'L', 'P', 'Y', 'O'],
+    ['SPACE', '★', '↵', '←', '→', '♪']
+  ];
+  for (var kry = 0; kry < KEY_ROWS.length; kry++) {
+    for (var krx = 0; krx < KEY_ROWS[kry].length; krx++) keyTile(1 + krx, 1 + kry, 0, KEY_ROWS[kry][krx]);
+  }
 
   /* --- 2) 노란 벽돌 길 --- */
   rect(8, 2, 12, 3, 0, 'brick');
 
-  /* --- 3) 점프 발판 (사이사이 구멍) --- */
-  rect(14, 2, 15, 2, 0, 'stone');
-  rect(17, 2, 18, 2, 0, 'stone');
-  rect(20, 2, 21, 3, 0, 'stone');
-  rect(23, 3, 23, 3, 0, 'stone');
+  /* --- 3) 점프 발판: 넉넉한 안전 디딤돌 + 가운데 키보드 블록 --- */
+  gridKeys(14, 1, [
+    [null, null, null, null],
+    [null, 'A', 'S', null],
+    [null, 'D', 'F', null],
+    [null, null, null, null]
+  ]);
+  gridKeys(19, 1, [
+    [null, null, null, null, null],
+    [null, 'J', 'K', 'L', null],
+    [null, '←', '→', '★', null],
+    [null, null, null, null, null]
+  ]);
+
+  /* --- 3-1) 안전 쿠션: 점프가 짧아도 죽지 않고 퐁 하고 받아 줘요 --- */
+  rect(13, 1, 13, 4, -1, 'stone', { tint: '#ffd9e8' });
+  rect(18, 1, 18, 4, -1, 'stone', { tint: '#d6f0ff' });
 
   /* --- 4) 첫 번째 타자 섬 --- */
   rect(24, 2, 24, 4, 0, 'wood');
-  rect(25, 3, 29, 3, 0, 'neon', { hidden: true });
+  rect(25, 2, 29, 4, 0, 'neon', { hidden: true });
 
   /* --- 5) 중간 쉼터 --- */
   rect(30, 2, 32, 4, 0, 'grass');
-  rect(33, 3, 36, 3, 0, 'neon', { hidden: true });
+  rect(33, 2, 36, 4, 0, 'neon', { hidden: true });
 
   /* --- 6) 두 번째 쉼터 --- */
   rect(37, 2, 39, 4, 0, 'brick');
 
-  /* --- 7) 계단 & 구름 발판 --- */
-  rect(40, 2, 40, 4, 1, 'stone');
-  rect(41, 2, 41, 4, 2, 'stone');
-  rect(42, 2, 44, 4, 2, 'stone');
-  map['43,3'].type = 'bounce';
+  /* --- 7) 완만한 계단 (반 칸씩 — 그냥 걸어도 올라가요) --- */
+  var STAIR = [0.5, 1.0, 1.5, 2.0, 2.5];
+  for (var si = 0; si < STAIR.length; si++) rect(40 + si, 1, 40 + si, 4, STAIR[si], 'stone', { step: 0.53 });
 
   /* --- 8) 높은 언덕 & 무지개 다리 --- */
-  rect(45, 2, 46, 4, 3, 'grass');
-  rect(47, 3, 48, 3, 3, 'rainbow', { hidden: true });
+  rect(45, 1, 46, 4, 3, 'grass', { solid: 1 });
+  rect(47, 2, 48, 4, 3, 'rainbow', { hidden: true });
 
   /* --- 9) 무지개 성(결승) --- */
   rect(49, 1, 53, 5, 3, 'rainbow');
@@ -1280,30 +1351,35 @@ function buildMap() {
 
   /* --- 타자 미션(게이트) --- */
   var b1 = [], b2 = [], b3 = [];
-  for (var i = 25; i <= 29; i++) b1.push({ x: i, y: 3 });
-  for (var j = 33; j <= 36; j++) b2.push({ x: j, y: 3 });
-  for (var k = 47; k <= 48; k++) b3.push({ x: k, y: 3 });
+  for (var i = 25; i <= 29; i++) { b1.push({ x: i, y: 2 }); b1.push({ x: i, y: 3 }); b1.push({ x: i, y: 4 }); }
+  for (var j = 33; j <= 36; j++) { b2.push({ x: j, y: 2 }); b2.push({ x: j, y: 3 }); b2.push({ x: j, y: 4 }); }
+  for (var k = 47; k <= 48; k++) { b3.push({ x: k, y: 2 }); b3.push({ x: k, y: 3 }); b3.push({ x: k, y: 4 }); }
 
   gates.push({
     id: 'g1', x: 24, y: 3, z: 0, word: 'sun', meaning: '☀️ 해', icon: '🌉',
     title: '타자로 다리를 만들어요!', lead: 'sun 을 치면 반짝 다리가 나타나!',
-    bridge: b1, solved: false, reward: 5
+    bridge: b1, solved: false, reward: 5,
+    zone: { x0: 23.5, x1: 26.2, y0: 0.5, y1: 5.7 }
   });
   gates.push({
     id: 'g2', x: 32, y: 3, z: 0, word: '무지개', meaning: '🌈 무지개', icon: '🌈',
     title: '한글 낱말도 척척!', lead: '무지개 를 치면 무지개 다리가 생겨!',
-    bridge: b2, solved: false, reward: 8
+    bridge: b2, solved: false, reward: 8,
+    zone: { x0: 31.5, x1: 34.2, y0: 0.5, y1: 5.7 }
   });
   gates.push({
     id: 'g3', x: 45, y: 3, z: 3, word: 'jump', meaning: '🦘 폴짝 뛰기', icon: '🚪',
     title: '마지막 문을 열어요!', lead: 'jump 를 치면 성으로 가는 문이 열려!',
-    bridge: b3, solved: false, reward: 10
+    bridge: b3, solved: false, reward: 10,
+    zone: { x0: 44.5, x1: 47.2, y0: 0.5, y1: 5.7 }
   });
 
-  /* --- 체크포인트 --- */
+  /* --- 체크포인트 (점프맵은 발판마다 촘촘하게) --- */
   cps.push({ x: -9, y: 2.5, z: 0, on: true });
   cps.push({ x: 5, y: 2.5, z: 0, on: false });
   cps.push({ x: 10.5, y: 2.5, z: 0, on: false });
+  cps.push({ x: 15.5, y: 2.5, z: 0, on: false });
+  cps.push({ x: 21, y: 2.5, z: 0, on: false });
   cps.push({ x: 31, y: 2.5, z: 0, on: false });
   cps.push({ x: 38, y: 2.5, z: 0, on: false });
   cps.push({ x: 43, y: 2.2, z: 2, on: false });
@@ -1312,15 +1388,15 @@ function buildMap() {
   /* --- 코인 --- */
   coin(4, 2, 0.55); coin(5, 3, 0.55); coin(6, 2, 0.55);
   coin(9, 2.5, 0.55); coin(11, 3.5, 0.55);
-  coin(14.5, 2.5, 0.55); coin(17.5, 2.5, 0.55); coin(20.5, 2.5, 0.55);
-  coin(21.5, 3.5, 0.55); coin(23.5, 3.5, 0.55);
+  coin(14.5, 2.5, 0.55); coin(16.5, 2.5, 0.55); coin(18.5, 2.5, 0.9);
+  coin(20.5, 2.5, 0.55); coin(22.5, 2.5, 0.55);
   coin(26, 3.5, 0.55, true);
   coin(27.5, 3.5, 0.55); coin(29, 3.5, 0.55);
   coin(31, 2.5, 0.55); coin(31, 4, 0.55);
   coin(34.5, 3.5, 0.55, true);
   coin(38, 3.5, 0.55); coin(39, 2.5, 0.55);
-  coin(40, 3.5, 1.55); coin(41, 3.5, 2.55);
-  coin(43, 2.5, 2.55); coin(44, 4, 2.55);
+  coin(40, 3.5, 1.05); coin(41, 3.5, 1.55); coin(42, 3.5, 2.05);
+  coin(43, 3.5, 2.55); coin(44, 3.5, 3.05);
   coin(45.5, 2.5, 3.55); coin(46.5, 4, 3.55);
   coin(47.5, 3.5, 3.55, true);
   coin(50, 3.5, 3.55); coin(52, 3.5, 3.55); coin(51, 1.8, 3.55, true);
@@ -1328,21 +1404,21 @@ function buildMap() {
   /* --- 나무 --- */
   trees.push({ x: 0.5, y: 0.3, z: 0, s: 1 });
   trees.push({ x: 7.2, y: 0.4, z: 0, s: 0.92 });
-  trees.push({ x: 2.2, y: 6.4, z: 0, s: 0.86 });
-  trees.push({ x: 6.6, y: 6.6, z: 0, s: 1.04 });
   trees.push({ x: 30.5, y: 4.4, z: 0, s: 0.9 });
   trees.push({ x: 38.4, y: 4.4, z: 0, s: 0.94 });
   trees.push({ x: 49.5, y: 1.4, z: 3, s: 0.95 });
   trees.push({ x: 52.6, y: 4.6, z: 3, s: 1.02 });
 
-  /* --- 꽃 --- */
-  for (var f = 0; f < 22; f++) {
-    flowers.push({ x: rnd(0.15, 7.85), y: rnd(-0.85, 6.85), z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
+  /* --- 꽃 (키보드 판 위에는 심지 않아요) --- */
+  for (var f = 0; f < 30; f++) {
+    var fx = rnd(0.15, 7.85), fy = rnd(-0.85, 6.85);
+    if (fx > 0.75 && fx < 7.25 && fy > 0.75 && fy < 5.75) continue;
+    flowers.push({ x: fx, y: fy, z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
   }
 
   return {
     tiles: tiles, map: map, gates: gates, coins: coinsArr, cps: cps, trees: trees, flowers: flowers,
-    props: props, spots: spots, houses: houses,
+    props: props, spots: spots, houses: houses, keyTiles: keyTiles,
     spawn: { x: -9, y: 2.5, z: 0 },
     finish: { x: 51, y: 3, z: 3 },
     arch: { x: 51, y: 3, z: 3 }
@@ -1355,7 +1431,7 @@ function buildMap() {
 var G = {
   cv: null, ctx: null, w: 0, h: 0, dpr: 1,
   scale: 1, cam: { x: 0, y: 0 }, t: 0,
-  tiles: [], map: {}, gates: [], coins: [], cps: [], trees: [], flowers: [], props: [], spots: [], houses: [],
+  tiles: [], map: {}, gates: [], coins: [], cps: [], trees: [], flowers: [], props: [], spots: [], houses: [], keyTiles: [],
   spawn: { x: -9, y: 2.5, z: 0 }, finish: { x: 51, y: 3, z: 3 },
   p: { x: -9, y: 2.5, z: 0, vz: 0, air: false, face: 1, walk: 0, move: false, ground: 0, land: 0 },
   ride: 'walk', pet: null, petXY: { x: -9, y: 3.2 }, spot: null,
@@ -1374,6 +1450,7 @@ function buildWorld() {
   G.cps = m.cps; G.trees = m.trees; G.flowers = m.flowers;
   G.props = m.props; G.spots = m.spots; G.houses = m.houses;
   G.spawn = m.spawn; G.finish = m.finish;
+  G.keyTiles = m.keyTiles || [];
 }
 
 /* ============================================================
@@ -1488,6 +1565,8 @@ function drawTile(ctx, t) {
   var p2 = proj(t.x + 1, t.y + 1, t.z);
   var p3 = proj(t.x, t.y + 1, t.z);
   var thick = t.tall ? t.tall : (t.z > 0 ? 0.62 : 1.7);
+  if (t.step) thick = t.step;
+  if (t.solid) thick = Math.max(0.5, t.z);
   if (t.type === 'neon' || t.type === 'rainbow') thick = 0.42;
   var H = thick * BLOCK_H;
 
@@ -1590,7 +1669,77 @@ function drawTile(ctx, t) {
     ctx.globalAlpha = ap;
   }
 
+  // ⌨️ 키캡 (밟으면 쑥 눌리는 입체 키보드 블록)
+  if (t.key) drawKeycap(ctx, t);
+
   ctx.restore();
+}
+
+/* ⌨️ 키보드 키캡 한 칸 */
+function drawKeycap(ctx, t) {
+  var press = clamp(t.press || 0, 0, 1);
+  var lift = 0.18 * (1 - press * 0.9);           // 타일 위로 솟은 높이(타일 단위)
+  var topZ = t.z + lift;
+  var m = 0.055;                                  // 키캡 여백
+  var x0 = t.x + m, y0 = t.y + m, x1 = t.x + 1 - m, y1 = t.y + 1 - m;
+  var a = proj(x0, y0, topZ), b = proj(x1, y0, topZ), c = proj(x1, y1, topZ), d = proj(x0, y1, topZ);
+  var h = Math.max(0.6, lift * BLOCK_H);          // 키캡 옆면 높이(px)
+  var col = t.keyColor || '#ffd94a';
+  var cx = (a.x + c.x) / 2, cy = (a.y + c.y) / 2;
+
+  // 키캡 가운데가 움푹 (얇은 그림자)
+  poly(ctx, [a, b, c, d], 'rgba(0,0,0,.13)');
+
+  // 옆면 → 입체
+  poly(ctx, [d, c, { x: c.x, y: c.y + h }, { x: d.x, y: d.y + h }], shade(col, -0.34));
+  poly(ctx, [b, c, { x: c.x, y: c.y + h }, { x: b.x, y: b.y + h }], shade(col, -0.16));
+  // 윗면
+  poly(ctx, [a, b, c, d], shade(col, 0.12));
+
+  // 윗면 광택
+  var gl = ctx.createLinearGradient(a.x, a.y, d.x, d.y);
+  gl.addColorStop(0, 'rgba(255,255,255,.40)');
+  gl.addColorStop(1, 'rgba(255,255,255,.02)');
+  poly(ctx, [a, b, c, d], gl);
+  poly(ctx, [a, b, c, d], null, 'rgba(255,255,255,.70)', 1.2);
+
+  // 글자 (키캡 윗면에 눕혀서 새김)
+  var e1x = b.x - a.x, e1y = b.y - a.y, e2x = d.x - a.x, e2y = d.y - a.y;
+  var lab = String(t.key);
+  var fs = lab.length <= 1 ? 54 : (lab.length === 2 ? 46 : 30);
+  ctx.save();
+  ctx.transform(e1x, e1y, e2x, e2y, a.x, a.y);
+  ctx.scale(0.01, 0.01);
+  ctx.font = fs + 'px Jua, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  var kc = hexRgb(col);
+  var bright = (0.299 * kc.r + 0.587 * kc.g + 0.114 * kc.b) / 255 > 0.68;
+  ctx.fillStyle = bright ? 'rgba(255,255,255,.65)' : 'rgba(0,0,0,.30)';
+  ctx.fillText(lab, 50, 55);
+  ctx.fillStyle = bright ? '#3c3550' : '#ffffff';
+  ctx.fillText(lab, 50, 51);
+  ctx.restore();
+
+  // 눌릴 때 반짝
+  var fl = t.flash || 0;
+  if (fl > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, fl) * 0.85;
+    var rg = ctx.createRadialGradient(cx, cy, 2, cx, cy, 34);
+    rg.addColorStop(0, 'rgba(255,255,255,.95)');
+    rg.addColorStop(0.45, 'rgba(255,255,255,.32)');
+    rg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 34, 19, 0, 0, 6.2832);
+    ctx.fillStyle = rg;
+    ctx.fill();
+    ctx.globalAlpha = Math.min(1, fl);
+    ctx.fillStyle = '#fff';
+    star(ctx, cx, cy - 2, 4, 13 * fl + 4, 4);
+    ctx.fill();
+    ctx.restore();
+  }
 }
 
 function drawWallShadow(ctx, t) {
@@ -2470,6 +2619,15 @@ function spawnDust(x, y, z, n) {
     });
   }
 }
+function spawnSpark(x, y, z, col, n) {
+  for (var i = 0; i < (n || 4); i++) {
+    G.parts.push({
+      k: 'spark', x: x + rnd(-0.26, 0.26), y: y + rnd(-0.26, 0.26), z: z + rnd(0, 0.25),
+      vx: rnd(-0.7, 0.7), vy: rnd(-0.7, 0.7), vz: rnd(1.2, 2.2),
+      life: rnd(0.4, 0.7), age: 0, r: rnd(2.2, 4.2), c: col || '#ffffff'
+    });
+  }
+}
 function spawnConfetti(n) {
   for (var i = 0; i < (n || 40); i++) {
     G.confetti.push({
@@ -2490,7 +2648,11 @@ function drawParts(ctx) {
     var a = 1 - p.age / p.life;
     ctx.globalAlpha = a;
     if (p.k === 'heart') emo(ctx, p.ch, s.x, s.y, 16);
-    else {
+    else if (p.k === 'spark') {
+      ctx.fillStyle = p.c;
+      star(ctx, s.x, s.y, 4, p.r * 1.9, p.r * 0.75);
+      ctx.fill();
+    } else {
       ctx.beginPath();
       ctx.arc(s.x, s.y, p.r, 0, 6.2832);
       ctx.fillStyle = 'rgba(255,255,255,.7)';
@@ -2554,10 +2716,54 @@ function blockedAt(x, y, z) {
   return t.z > z + 0.05;
 }
 
+/* --- 착지 도우미 -------------------------------------------------
+   아이가 발판 끝을 살짝 스쳐도 떨어지지 않게, 발(반경) 안에 있는
+   가장 높은 발판을 찾아 준다. 발판 가장자리에서 0.34칸까지는 디딜 수
+   있고, 공중에선 0.5칸까지 미끄러져 붙여 준다.                     */
+var FOOT_R = 0.34, LAND_R = 0.5;
+function supportTile(x, y, r, maxZ) {
+  var bx = Math.floor(x), by = Math.floor(y);
+  var best = null, bnx = x, bny = y, bd = 1e9;
+  for (var ox = -1; ox <= 1; ox++) {
+    for (var oy = -1; oy <= 1; oy++) {
+      var t = G.map[(bx + ox) + ',' + (by + oy)];
+      if (!t || t.hidden || t.appear < 0.5) continue;
+      if (maxZ !== undefined && t.z > maxZ + 0.08) continue;
+      var nx = clamp(x, t.x + 0.09, t.x + 0.91);
+      var ny = clamp(y, t.y + 0.09, t.y + 0.91);
+      var d = Math.hypot(nx - x, ny - y);
+      if (d > r + 0.0001) continue;
+      if (!best || t.z > best.z + 0.001 || (Math.abs(t.z - best.z) < 0.001 && d < bd)) {
+        best = t; bnx = nx; bny = ny; bd = d;
+      }
+    }
+  }
+  return best ? { t: best, nx: bnx, ny: bny, d: bd } : null;
+}
+
+/* ⌨️ 키캡 밟기 */
+function pressKey(t) {
+  if (!t || !t.key) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.hitAt && now - t.hitAt < 80) return;
+  t.hitAt = now;
+  t.press = 1;
+  t.flash = 1;
+  AU.keycap(t.key);
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.18, t.keyColor || '#ffd94a', 4);
+}
+function updateKeys(dt) {
+  for (var i = 0; i < G.keyTiles.length; i++) {
+    var t = G.keyTiles[i];
+    t.press = approach(t.press || 0, 0, dt * 6.5);
+    t.flash = Math.max(0, (t.flash || 0) - dt * 3.2);
+  }
+}
+
 var RIDE = {
-  walk: { name: '걷기', emoji: '🚶', speed: 4.6, jump: 6.7 },
-  scooter: { name: '킥보드', emoji: '🛴', speed: 6.6, jump: 6.5 },
-  car: { name: '자동차', emoji: '🚗', speed: 9.4, jump: 6.2 }
+  walk: { name: '걷기', emoji: '🚶', speed: 4.6, jump: 6.9 },
+  scooter: { name: '킥보드', emoji: '🛴', speed: 6.6, jump: 6.8 },
+  car: { name: '자동차', emoji: '🚗', speed: 9.4, jump: 6.6 }
 };
 var GRAV = 16.5;
 
@@ -2579,6 +2785,25 @@ function approach(v, target, step) {
   if (v < target) return Math.min(target, v + step);
   if (v > target) return Math.max(target, v - step);
   return v;
+}
+
+/* 턱 오르기: 반 칸은 걸어서, 한 칸은 자동 점프로 */
+function stepUp(tx, ty) {
+  var p = G.p;
+  if (p.air) return false;
+  var t = tileAt(tx, ty);
+  if (!t || t.hidden) return false;
+  var dz = t.z - p.z;
+  if (dz > 0.05 && dz <= 0.55) {
+    p.z = t.z;
+    p.squash = 0.5;
+    return true;
+  }
+  if (dz > 0.55 && dz <= 1.05) {
+    p.vx *= 0.5; p.vy *= 0.5;
+    doJump();
+  }
+  return false;
 }
 
 function updatePlayer(dt) {
@@ -2604,44 +2829,60 @@ function updatePlayer(dt) {
   p.vy = approach(p.vy || 0, tvy, accel * dt);
 
   var dx = p.vx * dt, dy = p.vy * dt;
-  if (!blockedAt(p.x + dx, p.y, p.z)) p.x += dx; else p.vx = 0;
-  if (!blockedAt(p.x, p.y + dy, p.z)) p.y += dy; else p.vy = 0;
+  // 반 칸 턱은 그냥 걸어 올라가고, 한 칸 턱은 자동으로 폴짝 올라가요
+  if (!blockedAt(p.x + dx, p.y, p.z)) p.x += dx;
+  else if (stepUp(p.x + dx, p.y) && !blockedAt(p.x + dx, p.y, p.z)) p.x += dx;
+  else p.vx = 0;
+  if (!blockedAt(p.x, p.y + dy, p.z)) p.y += dy;
+  else if (stepUp(p.x, p.y + dy) && !blockedAt(p.x, p.y + dy, p.z)) p.y += dy;
+  else p.vy = 0;
 
   var vlen = Math.hypot(p.vx, p.vy);
   p.walk += dt * (2 + vlen * (G.ride === 'walk' ? 2.6 : 1.9));
 
-  // 점프 & 중력
-  var top = tileTop(p.x, p.y);
+  if (p.squash > 0) p.squash = Math.max(0, p.squash - dt * 4);
+  if (p.buf > 0) p.buf = Math.max(0, p.buf - dt);
+
+  // 바닥 지지 판정 — 발끝이 발판 밖으로 조금 나가도 디딜 수 있어요
+  var standsOn = null;
   if (!p.air) {
-    p.coyote = 0.13;
-    if (p.z > top + 0.04) { p.air = true; p.vz = 0; }
+    var sup = supportTile(p.x, p.y, FOOT_R, p.z);
+    if (sup && sup.t.z > p.z - 0.12) {
+      standsOn = sup.t;
+      p.z = sup.t.z;
+      p.coyote = 0.13;
+      if (sup.d > 0.06 && !moving) {
+        p.x = lerp(p.x, sup.nx, Math.min(1, dt * 10));
+        p.y = lerp(p.y, sup.ny, Math.min(1, dt * 10));
+      }
+    } else if (sup && sup.t.z > p.z - 0.6) {
+      // 반 칸 내려가는 계단은 살짝 툭 내려서요
+      standsOn = sup.t;
+      p.z = sup.t.z;
+      p.coyote = 0.13;
+    } else {
+      p.air = true;
+      p.vz = Math.min(p.vz || 0, 0);
+      p.coyote = 0.13;
+    }
   } else {
     p.coyote = Math.max(0, (p.coyote || 0) - dt);
-  }
-  if (p.buf > 0) p.buf = Math.max(0, p.buf - dt);
-  if (p.air) {
     p.vz -= GRAV * dt;
+    var prevZ = p.z;
     p.z += p.vz * dt;
-  }
-  if (p.squash > 0) p.squash = Math.max(0, p.squash - dt * 4);
-  var tHere = tileAt(p.x, p.y);
-  if (p.air) {
-    if (tHere && !tHere.hidden && p.vz <= 0 && p.z <= tHere.z + 0.02) {
-      p.z = tHere.z; p.vz = 0; p.air = false;
-      p.squash = 1;
-      AU.land();
-      spawnDust(p.x, p.y, p.z, 4);
-      if (p.buf > 0) { p.buf = 0; doJump(); }
-      if (tHere.type === 'bounce') {
-        p.vz = 9.4; p.air = true;
-        AU.pop(); spawnHearts(p.x, p.y, 4);
-      }
+    // 착지: 발판을 살짝 벗어나도 끌어다 붙여 착지시켜요
+    if (p.vz <= 0) {
+      var land = supportTile(p.x, p.y, LAND_R, prevZ);
+      if (land && p.z <= land.t.z + 0.02) { doLand(land); standsOn = G.p.air ? null : land.t; }
     }
-  } else if (!tHere || tHere.hidden) {
-    p.air = true;
-  } else {
-    p.z = tHere.z;
+    if (p.air) p.keyId = null;
   }
+
+  // ⌨️ 키캡 밟기 (걸어서 새 키를 밟을 때마다 톡!)
+  if (standsOn && standsOn.key) {
+    var kid2 = standsOn.x + ',' + standsOn.y;
+    if (p.keyId !== kid2) { p.keyId = kid2; pressKey(standsOn); }
+  } else if (!p.air) p.keyId = null;
 
   if (p.z < -4.5) respawn();
 
@@ -2672,14 +2913,18 @@ function updatePlayer(dt) {
     }
   }
 
-  // 타자 게이트
+  // 타자 게이트 — 다리 입구 넓은 구역에 들어오면 열려요 (길 가장자리로 우회해 떨어지는 일 없게)
   if (!G.inGate) {
     for (var g = 0; g < G.gates.length; g++) {
       var ga = G.gates[g];
-      var gd = Math.hypot(ga.x + 0.5 - p.x, ga.y + 0.5 - p.y);
-      if (gd > 1.7) { ga.near = false; continue; }
+      var zn = ga.zone || { x0: ga.x - 0.6, x1: ga.x + 1.6, y0: ga.y - 1.4, y1: ga.y + 2.4 };
+      var inZone = p.x >= zn.x0 && p.x <= zn.x1 && p.y >= zn.y0 && p.y <= zn.y1;
+      if (!inZone && (p.x < zn.x0 - 1.2 || p.x > zn.x1 + 0.6 || p.y < zn.y0 - 0.8 || p.y > zn.y1 + 0.8)) {
+        ga.near = false;
+        continue;
+      }
       if (ga.solved || ga.near) continue;
-      if (Math.abs(ga.z - p.z) < 0.4 && gd < 1.15) {
+      if (Math.abs(ga.z - p.z) < 0.4 && inZone) {
         ga.near = true;
         openGate(ga);
         break;
@@ -2707,6 +2952,29 @@ function updatePlayer(dt) {
   updateActionPrompt();
   p.hintTick = (p.hintTick || 0) + dt;
   if (p.hintTick > 0.6) { p.hintTick = 0; updateHint(); }
+}
+
+/* 착지: 발판에 부드럽게 붙이고, 미끄러지지 않게 속도를 줄여요 */
+function doLand(cand) {
+  var p = G.p, t = cand.t;
+  p.z = t.z;
+  p.vz = 0;
+  p.air = false;
+  p.vx *= 0.5; p.vy *= 0.5;
+  if (cand.d > 0.01) {
+    p.x = lerp(p.x, cand.nx, 0.85);
+    p.y = lerp(p.y, cand.ny, 0.85);
+  }
+  p.squash = 1;
+  p.keyId = null;
+  AU.land();
+  spawnDust(p.x, p.y, p.z, 4);
+  if (t.key) pressKey(t);
+  if (p.buf > 0) { p.buf = 0; doJump(); return; }
+  if (t.type === 'bounce') {
+    p.vz = 9.4; p.air = true;
+    AU.pop(); spawnHearts(p.x, p.y, 4);
+  }
 }
 
 function respawn() {
@@ -2740,9 +3008,9 @@ function doJump() {
 }
 
 function cutJump() {
-  // 버튼을 짧게 누르면 낮게 (가변 점프 높이)
+  // 아이들도 쉽게: 점프 높이는 항상 같아요 (톡 짧게 눌러도 한 칸 턱을 넘을 수 있게)
   var p = G.p;
-  if (p.air && p.vz > 2.2) p.vz *= 0.52;
+  if (p.air && p.vz > 7.0) p.vz = 7.0;
 }
 
 function cycleRide() {
@@ -3318,6 +3586,7 @@ function updateHint() {
   if (G.finished) txt = '🏁 결승했어요! 마을에서 놀아도 좋아요';
   else if (!unsolved.length) txt = '🌈 무지개 성으로 가 보자!';
   else if (G.p.x < 2) txt = '🏘️ 마을을 구경해 봐! 집·카페·학교에 들어갈 수 있어';
+  else if (G.p.x < 7.6) txt = '⌨️ 키보드 블록을 밟아 봐! 쑥 눌리면서 톡톡 소리가 나!';
   else txt = '🌉 안내판 앞에서 타자를 쳐서 다리를 만들어요 (' + (3 - unsolved.length) + '/3)';
   el.textContent = (ME.emoji + ' ' + ME.name + ', ') + txt;
 }
@@ -4173,7 +4442,10 @@ function loop(ts) {
     if (G.elapsedTick === undefined) G.elapsedTick = 0;
   }
   updateCamera(dt);
-  if (G.running) drawWorld();
+  if (G.running) {
+    updateKeys(dt);
+    drawWorld();
+  }
   if (G.running && ts - lastLiveCheck > 320) {
     lastLiveCheck = ts;
     FB.pushLive();
