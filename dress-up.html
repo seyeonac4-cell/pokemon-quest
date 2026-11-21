@@ -611,7 +611,7 @@ body{
 }
 .actor.me .nm{background:linear-gradient(135deg,#FF5B9E,#9B6BFF); box-shadow:0 3px 9px rgba(190,50,160,.4)}
 .actor .bub{
-  background:#fff; color:#5A2C6B; font-size:10.5px; font-weight:900; padding:4px 8px;
+  background:#fff; color:#5A2C6B; font-size:9px; font-weight:900; padding:3px 7px;
   border-radius:11px; box-shadow:0 6px 16px rgba(60,20,70,.28); opacity:0;
   transition:opacity .18s ease; letter-spacing:-.03em;
 }
@@ -2744,7 +2744,7 @@ function buildStatic(){
     el.style.top = p.y.toFixed(1) + 'px';
     el.style.width = wpx.toFixed(1) + 'px';
     el.style.height = hpx.toFixed(1) + 'px';
-    el.style.zIndex = String(Math.round(105 + (z.z + z.d/2)*10));
+    el.style.zIndex = String(Math.round(101 + (z.z + z.d/2)*10));
     el.innerHTML = '<span class="lb" style="font-size:'+Math.max(9, Math.min(13, Math.round(WORLD.W*0.022)))+'px">'+esc(z.name)+'</span>';
     worldEl.appendChild(el);
     z.el = el;
@@ -2884,7 +2884,7 @@ function drawActor(a, isMe){
   a.el.style.left = p.x.toFixed(1) + 'px';
   a.el.style.top = p.y.toFixed(1) + 'px';
   a.el.style.transform = 'translate(-50%,-100%)';
-  a.el.style.zIndex = String(Math.round((isMe ? 108 : 106) + a.z*10));
+  a.el.style.zIndex = String(Math.round((isMe ? 102.5 : 102) + a.z*10));
   var sx = p.s * (a.flip ? -1 : 1);
   a.mid.style.transform = 'scale(' + sx.toFixed(3) + ',' + p.s.toFixed(3) + ')';
   a.nm.style.bottom = (p.s * WORLD.figh + 1).toFixed(0) + 'px';
@@ -3049,7 +3049,11 @@ function stepWorld(dt){
     var fdx = f.tx - f.x, fdz = f.tz - f.z, fd = Math.hypot(fdx, fdz);
     if(fd > 0.08){
       var stp = Math.min(fd, 1.35 * dt);
-      f.x += fdx / fd * stp; f.z += fdz / fd * stp;
+      var nx3 = f.x + fdx / fd * stp, nz3 = f.z + fdz / fd * stp;
+      var bx = solidTop(nx3, f.z) > 0.04, bz = solidTop(f.x, nz3) > 0.04;
+      if(!bx) f.x = nx3;
+      if(!bz) f.z = nz3;
+      if(bx || bz) f.wait = 0;
       f.walk = true;
       if(fdx < -0.03) f.flip = true; else if(fdx > 0.03) f.flip = false;
     } else { f.walk = false; }
@@ -3057,7 +3061,7 @@ function stepWorld(dt){
 
     f.chat -= dt;
     if(f.chat <= 0){
-      f.chat = rnd(4.5, 8.5);
+      f.chat = rnd(5.5, 9.5);
       sayBubble(f, pick(CHAT_LINES));
       if(Math.random() < 0.55) dressUpFriend(f);
     }
@@ -3101,7 +3105,7 @@ function sayBubble(f, text){
   f.bub.textContent = text;
   f.bub.classList.add('on');
   clearTimeout(f.bubT);
-  f.bubT = setTimeout(function(){ f.bub.classList.remove('on'); }, 2800);
+  f.bubT = setTimeout(function(){ f.bub.classList.remove('on'); }, 2200);
 }
 function dressUpFriend(f){
   var s = f.state;
