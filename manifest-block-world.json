@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/block-world.html",
+  "name": "채씨네 블록 월드",
+  "short_name": "블록 월드",
+  "description": "윤진·형원 자매 전용 블록 마을 놀이터 — 마을 역할놀이, 점프맵 타자 미션, 펫 키우기, 실시간 자매 톡방",
+  "start_url": "/pokemon-quest/block-world.html",
+  "scope": "/pokemon-quest/block-world.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#8fdcff",
+  "theme_color": "#69CFFF",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "assets/block-world/block-world-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/block-world/block-world-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/block-world/block-world-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

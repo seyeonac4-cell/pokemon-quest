@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/grow-garden.html",
+  "name": "그로우 어 가든",
+  "short_name": "정원 가꾸기",
+  "description": "씨앗을 심고 물을 주고 수확하는 채씨네 정원 가꾸기 놀이",
+  "start_url": "/pokemon-quest/grow-garden.html",
+  "scope": "/pokemon-quest/grow-garden.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eafaf0",
+  "theme_color": "#7fd7a8",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/grow-garden/grow-garden-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/grow-garden/grow-garden-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/grow-garden/grow-garden-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
