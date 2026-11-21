@@ -134,7 +134,7 @@ img{image-rendering:auto}
 .tipbar .tip-sep{color:var(--muted);font-size:14.5px}
 .tipbar .sp{flex:1 1 auto}
 
-/* ---------- 멜론 북카페 음악 바 ---------- */
+/* ---------- ☕ 북카페 랜덤 음악 바 (게시판 안에서 바로 재생) ---------- */
 .musicbar{
   flex:0 0 auto; display:flex; align-items:center; gap:6px; flex-wrap:wrap; row-gap:4px;
   border:2px solid var(--ink); border-radius:10px;
@@ -145,35 +145,38 @@ img{image-rendering:auto}
   display:flex; align-items:center; gap:5px; text-decoration:none; color:#5a3708;
   border:2px solid var(--ink); border-radius:8px;
   background:linear-gradient(180deg,#ffeeb0,#ffbe4a);
-  font-size:14.5px; font-weight:800; letter-spacing:-.03em; line-height:1.1;
+  font-family:inherit; font-size:14.5px; font-weight:800; letter-spacing:-.03em; line-height:1.1;
   padding:3px 9px; white-space:nowrap; box-shadow:0 2px 0 rgba(40,50,79,.2);
-  transition:transform .1s, box-shadow .1s;
+  transition:transform .1s, box-shadow .1s; cursor:pointer;
 }
 .mb-play .mb-ico{font-size:17px;line-height:1}
 .mb-play .mb-tri{font-size:11px;color:#a35c00;margin-left:1px}
 .mb-play:active{transform:translateY(2px);box-shadow:none}
-.mb-chips{display:flex;gap:4px;flex-wrap:wrap}
-.mb-chip{
-  border:1.5px solid var(--ink); border-radius:999px; background:#fff; color:var(--ink2);
-  font-size:13px; font-weight:700; padding:0 8px; text-decoration:none; white-space:nowrap;
-  box-shadow:0 1.5px 0 rgba(40,50,79,.14);
+.mb-play.playing{background:linear-gradient(180deg,#d8f5d0,#8fd97a)}
+.mb-now{
+  flex:1 1 90px; min-width:0; display:flex; align-items:center; gap:5px;
+  font-size:13px; font-weight:700; color:#7a4a12;
 }
-.mb-chip:hover{background:#fff6e6;color:var(--ink)}
-.mb-chip.on{background:var(--peach);color:#6b3d0c}
-.mb-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
-.mb-hint{font-size:12px;color:#9a6b3c;font-weight:700;white-space:nowrap}
-.mb-hint b{color:#6b3d0c}
-.mb-hint-m{display:none;font-size:12px;color:#8a5f33;font-weight:700;line-height:1.3}
-.mb-search{display:flex;align-items:center;gap:4px;min-width:0}
-.mb-search input{
-  border:1.5px solid var(--ink); border-radius:7px; padding:2px 6px; font-size:13.5px;
-  background:#fff; width:158px; min-width:0;
+.mb-title{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.mb-now.on .mb-title{color:#4a6b1c}
+.mb-ctrls{display:flex; align-items:center; gap:4px}
+.mb-ctrl{
+  border:1.5px solid var(--ink); border-radius:7px; background:#fff; color:var(--ink2);
+  font-family:inherit; font-size:13px; font-weight:700; padding:1px 8px; white-space:nowrap;
+  box-shadow:0 1.5px 0 rgba(40,50,79,.16); cursor:pointer;
 }
-.mb-search button{
-  border:1.5px solid var(--ink); border-radius:7px; background:var(--yellow); font-weight:700;
-  font-size:13px; padding:1px 7px; box-shadow:0 2px 0 rgba(40,50,79,.2); white-space:nowrap;
+.mb-ctrl:active{transform:translateY(1px);box-shadow:none}
+.mb-ctrl#mbToggle{min-width:32px;font-size:14px}
+.mb-ctrl.on{background:var(--peach);color:#6b3d0c}
+.mb-melon{
+  font-size:12px; color:#a37544; font-weight:700; text-decoration:none; white-space:nowrap;
+  border-bottom:1px dotted #d0a578;
 }
-.mb-search button:active{transform:translateY(1px);box-shadow:none}
+.mb-frame-wrap{
+  position:fixed; left:-9999px; top:0; width:320px; height:180px; overflow:hidden;
+  opacity:0; pointer-events:none;
+}
+.mb-frame-wrap iframe{width:320px;height:180px;border:0}
 
 
 
@@ -417,12 +420,10 @@ img{image-rendering:auto}
   /* 생활 루틴 줄이 두 줄로 접히지 않게 버튼 칸을 좁힘 */
   .rt-head,.rt-row{grid-template-columns:1fr 86px 86px}
   .rt-label{font-size:15px}
-  /* 멜론 바: 검색칸을 오른쪽 줄로 내리고 안내문은 숨김 */
-  .mb-hint{display:none}
-  /* 휴대폰(멜론 앱으로 여는 기기)에서만 앱 열기 + 붙여넣기 안내를 한 줄 보여 준다 */
-  body.melon-app .mb-hint-m{display:block;flex:1 1 100%;text-align:center;padding:1px 0 0}
-  .mb-right{margin-left:0;flex:1 1 100%;justify-content:flex-end}
-  .mb-search input{width:auto;flex:1 1 120px}
+  /* 북카페 음악 바: 곡 제목을 아래 한 줄로 내려 버튼이 찌그러지지 않게 */
+  .mb-now{order:4;flex:1 1 100%;justify-content:center;font-size:12.5px;padding:1px 0 0}
+  .mb-ctrls{order:2;margin-left:auto}
+  .mb-melon{order:3}
 }
 @media (max-width:720px){
   .grid{grid-template-columns:1fr}
@@ -451,11 +452,11 @@ img{image-rendering:auto}
   .footbar{flex-wrap:wrap;row-gap:2px}
   .footbar .sp,.footbar .sep{display:none}
   .musicbar{gap:5px}
-  .mb-play{font-size:14.5px;padding:6px 9px;flex:1 1 100%;justify-content:center}
-  .mb-chips{flex:1 1 100%}
-  .mb-chip{flex:1 1 auto;text-align:center}
-  .mb-right{flex:1 1 100%}
-  .mb-search{flex:1 1 100%}
+  .mb-play{order:1;font-size:15px;padding:8px 9px;flex:1 1 100%;justify-content:center}
+  .mb-now{order:2;flex:1 1 100%;justify-content:center;font-size:13px;min-height:19px}
+  .mb-ctrls{order:3;flex:1 1 100%;margin-left:0;gap:6px}
+  .mb-ctrl{flex:1 1 auto;text-align:center;padding:5px 8px;font-size:14px}
+  .mb-melon{order:4;flex:1 1 100%;text-align:center}
 }
 /* 짧은 가로 화면(1280×800 등): 멜론 바가 한 줄 들어가도 아래 카드가 잘리지 않게 */
 @media (min-width:1081px) and (max-height:870px){
@@ -513,28 +514,25 @@ img{image-rendering:auto}
     <span id="tipChips" style="display:flex;gap:4px;flex-wrap:wrap"></span>
   </div>
 
-  <!-- ===== 멜론 북카페 음악 ===== -->
-  <div class="musicbar">
-    <a class="mb-play" id="mbPlay" target="melonCafe" rel="noopener"
-       title="휴대폰은 멜론 앱이 바로 열리고 검색어가 복사돼요 (PC는 멜론 DJ 검색을 새 탭에서)"
-       href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">
-      <span class="mb-ico">☕</span>멜론 북카페 음악<span class="mb-tri">▶</span>
-    </a>
-    <span class="mb-chips" id="mbChips">
-      <a class="mb-chip on" data-q="북카페" href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">북카페</a>
-      <a class="mb-chip" data-q="재즈 카페" href="https://www.melon.com/search/dj/index.htm?q=%EC%9E%AC%EC%A6%88%20%EC%B9%B4%ED%8E%98">재즈 카페</a>
-      <a class="mb-chip" data-q="잔잔한 피아노" href="https://www.melon.com/search/dj/index.htm?q=%EC%9E%94%EC%9E%94%ED%95%9C%20%ED%94%BC%EC%95%84%EB%85%B8">잔잔한 피아노</a>
-      <a class="mb-chip" data-q="비오는 날 카페" href="https://www.melon.com/search/dj/index.htm?q=%EB%B9%84%EC%98%A4%EB%8A%94%20%EB%82%A0%20%EC%B9%B4%ED%8E%98">비오는 날 카페</a>
-    </span>
-    <div class="mb-right">
-      <span class="mb-hint">멜론이 열리면 <b>'전체듣기'</b>를 켜 두고 게시판을 보세요</span>
-      <span class="mb-hint-m">☕ 멜론 앱이 열리면 검색창을 길게 눌러 붙여넣기 — 검색어는 자동 복사돼요</span>
-      <form class="mb-search" id="mbForm">
-        <input type="text" id="mbInput" maxlength="30" placeholder="카페 음악 검색" aria-label="멜론 검색어" autocomplete="off">
-        <button type="submit">🔍 멜론 검색</button>
-      </form>
+  <!-- ===== ☕ 북카페 랜덤 음악 (게시판 안에서 바로 재생) ===== -->
+  <div class="musicbar" id="musicbar">
+    <button class="mb-play" id="mbPlay" type="button"
+            title="누르면 북카페 분위기 음악이 무작위로 바로 재생돼요">
+      <span class="mb-ico">☕</span>북카페 랜덤 음악<span class="mb-tri">▶</span>
+    </button>
+    <div class="mb-now" id="mbNow">
+      <span>♫</span><span class="mb-title" id="mbTitle">버튼을 누르면 잔잔한 음악이 흘러요</span>
     </div>
+    <div class="mb-ctrls">
+      <button class="mb-ctrl" id="mbToggle" type="button" title="재생 / 일시정지" aria-label="재생 또는 일시정지">▶</button>
+      <button class="mb-ctrl" id="mbNext" type="button" title="다른 북카페 곡" aria-label="다른 북카페 곡">🔀 다른 곡</button>
+    </div>
+    <a class="mb-melon" id="mbMelon" target="_blank" rel="noopener"
+       title="멜론에서 직접 골라 들을 때만 (앱이 열립니다)"
+       href="https://www.melon.com/search/dj/index.htm?q=%EB%B6%81%EC%B9%B4%ED%8E%98">멜론에서 듣기 ↗</a>
   </div>
+  <!-- 음악 플레이어(화면엔 안 보이게 두고 소리만) -->
+  <div class="mb-frame-wrap" id="mbFrameWrap"></div>
 
   <!-- ===== 본문 ===== -->
   <main class="grid">
@@ -1571,106 +1569,119 @@ window.__errs=[];addEventListener('error',function(e){try{__errs.push(String(e.m
       delete S.memo[id]; removeAt('memo/' + id); renderNotes();
     });
 
-    /* 멜론 북카페 음악
-       - 안드로이드: intent:// 로 멜론 앱(com.iloen.melon)을 바로 열고 검색어를 클립보드에 복사
-       - 아이폰: melonapp://home 으로 멜론 앱을 열고 검색어를 복사
-       - PC: 멜론 DJ 검색을 새 탭에서 연다 (전곡 재생은 멜론 계정으로) */
+    /* ☕ 북카페 랜덤 음악 — 게시판 안에서 바로 무작위 재생
+       - 유튜브 영상 12곡을 섞어서 바로 튼다 (모두 oembed 200 = 임베드 가능 확인)
+       - 유튜브 앱/멜론을 여는 대신 숨은 iframe 플레이어로 소리만 낸다
+       - 멜론은 "멜론에서 듣기" 작은 링크로만 남긴다 (앱이 바로 열림) */
+    var MB_TRACKS = [
+      { id: 'bPXCOBL6x0s', t: '북카페 힐링 피아노 (10시간)' },
+      { id: 'uNynpwMhf-w', t: '숲속 작은 북카페 피아노' },
+      { id: 'a-yaNxtwfhw', t: '책 한 권과 커피 한 잔 피아노' },
+      { id: '6WZ67f9M3RE', t: '모던 카페 고급 피아노' },
+      { id: 'fJ1ai9OzXEM', t: '빈티지 카페 피아노' },
+      { id: 'WXJgoBxMKVU', t: '책 읽을 때 듣는 북 재즈' },
+      { id: 'QKvsG5lc0m8', t: '잔잔한 재즈와 책 한 권' },
+      { id: 'loCc6eGq1_c', t: '진한 커피에 재즈 한 스푼' },
+      { id: '86gToHFkbiU', t: '스타벅스풍 카페 재즈 피아노' },
+      { id: 'U34kLXjdw90', t: '지브리 OST 피아노' },
+      { id: '8gJ716dhStg', t: '로파이 책방 (Lofi Girl)' },
+      { id: 'u_mbp7-6UAE', t: '어쿠스틱 카페 세션' }
+    ];
+    var mb = { i: -1, playing: false };
+    function mbCommand(func) {
+      var f = $('mbFrame');
+      if (!f || !f.contentWindow) return;
+      try {
+        f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
+      } catch (e) {}
+    }
+    function mbRender() {
+      var tr = MB_TRACKS[mb.i];
+      $('mbTitle').textContent = tr
+        ? (mb.playing ? '♪ ' + tr.t : '⏸ ' + tr.t)
+        : '버튼을 누르면 잔잔한 음악이 흘러요';
+      $('mbNow').classList.toggle('on', !!tr && mb.playing);
+      $('mbToggle').textContent = mb.playing ? '⏸' : '▶';
+      $('mbToggle').classList.toggle('on', mb.playing);
+      $('mbPlay').classList.toggle('playing', mb.playing);
+      $('mbPlay').innerHTML = mb.playing
+        ? '<span class="mb-ico">🎵</span>북카페 음악 나오는 중'
+        : '<span class="mb-ico">☕</span>북카페 랜덤 음악<span class="mb-tri">▶</span>';
+    }
+    // 지금 곡만 빼고 무작위로 하나 고른다
+    function mbPick() {
+      var n = MB_TRACKS.length, i = 0, guard = 0;
+      do { i = Math.floor(Math.random() * n); guard++; } while (n > 1 && i === mb.i && guard < 20);
+      return i;
+    }
+    function mbLoad(i, autoplay) {
+      mb.i = i; mb.playing = !!autoplay;
+      var tr = MB_TRACKS[i];
+      var src = 'https://www.youtube.com/embed/' + tr.id +
+        '?autoplay=' + (autoplay ? 1 : 0) +
+        '&enablejsapi=1&playsinline=1&rel=0&loop=1&playlist=' + tr.id +
+        '&origin=' + encodeURIComponent(location.origin || 'https://seyeonac4-cell.github.io');
+      $('mbFrameWrap').innerHTML =
+        '<iframe id="mbFrame" src="' + src + '" title="북카페 음악 플레이어" frameborder="0" ' +
+        'allow="autoplay; encrypted-media; picture-in-picture" ' +
+        'referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+      mbRender();
+      // 자동재생이 막힌 기기에서 한 번 더 재생을 요청한다
+      setTimeout(function () {
+        if (mb.playing && mb.i === i) mbCommand('playVideo');
+      }, 1200);
+    }
+    function mbPlayRandom() { mbLoad(mbPick(), true); }
+    function mbNext() { mbLoad(mbPick(), true); }
+    function mbToggle() {
+      if (mb.i < 0) { mbPlayRandom(); return; }
+      if (mb.playing) { mbCommand('pauseVideo'); mb.playing = false; }
+      else { mbCommand('playVideo'); mb.playing = true; }
+      mbRender();
+    }
+    $('mbPlay').addEventListener('click', function () {
+      // 처음엔 무작위 재생, 이미 곡이 있으면 재생/일시정지
+      if (mb.i < 0) mbPlayRandom();
+      else if (!mb.playing) { mbCommand('playVideo'); mb.playing = true; mbRender(); }
+      else { mbCommand('pauseVideo'); mb.playing = false; mbRender(); }
+    });
+    $('mbToggle').addEventListener('click', mbToggle);
+    $('mbNext').addEventListener('click', mbNext);
+
+    /* 멜론 바로가기(보조) — 앱이 바로 열리고 검색어는 복사만 해 둔다 */
     var MB_PKG = 'com.iloen.melon';
     function isAndroid() { return /Android/i.test(navigator.userAgent || ''); }
     function isIOS() { return /iPhone|iPad|iPod/i.test(navigator.userAgent || ''); }
-    function isMobileMelon() { return isAndroid() || isIOS(); }
     function melonWebUrl(q) {
       return 'https://www.melon.com/search/dj/index.htm?q=' + encodeURIComponent(q || '북카페');
     }
-    // 안드로이드 크롬/삼성인터넷이 그대로 처리하는 intent URL (앱이 없으면 멜론 웹 검색으로)
-    function melonIntentUrl(q) {
-      return 'intent://home#Intent;scheme=melonapp;package=' + MB_PKG +
-             ';S.browser_fallback_url=' + encodeURIComponent(melonWebUrl(q)) + ';end';
-    }
     function melonHref(q) {
-      if (isAndroid()) return melonIntentUrl(q);
+      if (isAndroid()) {
+        return 'intent://home#Intent;scheme=melonapp;package=' + MB_PKG +
+               ';S.browser_fallback_url=' + encodeURIComponent(melonWebUrl(q)) + ';end';
+      }
       if (isIOS()) return 'melonapp://home';
       return melonWebUrl(q);
     }
-    function melonMarkChip(q) {
-      var chips = document.querySelectorAll('#mbChips .mb-chip');
-      for (var i = 0; i < chips.length; i++) {
-        chips[i].classList.toggle('on', chips[i].getAttribute('data-q') === q);
-      }
-    }
-    // 앱이 열리자마자 붙여넣을 수 있게 검색어를 복사 (동기 복사 우선)
     function melonCopy(q) {
-      var ok = false;
       try {
         var ta = document.createElement('textarea');
         ta.value = q; ta.setAttribute('readonly', '');
         ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
         document.body.appendChild(ta);
         ta.select(); ta.setSelectionRange(0, q.length);
-        ok = document.execCommand('copy');
+        document.execCommand('copy');
         document.body.removeChild(ta);
-      } catch (e) { ok = false; }
-      if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(q).catch(function () {});
+      } catch (e) {}
+    }
+    (function melonPrepare() {
+      var a = $('mbMelon');
+      a.setAttribute('href', melonHref('북카페'));
+      if (isAndroid() || isIOS()) {
+        a.removeAttribute('target');
+        a.addEventListener('click', function () { melonCopy('북카페'); });
       }
-      return ok;
-    }
-    // 바로가기 링크를 기기에 맞게 바꿔 둔다 (JS 없이 눌러도 앱이 열리게)
-    function melonPrepareLinks() {
-      var play = $('mbPlay');
-      var chips = document.querySelectorAll('#mbChips .mb-chip'), i;
-      if (isMobileMelon()) document.body.classList.add('melon-app');
-      if (play) {
-        play.setAttribute('href', melonHref('북카페'));
-        if (isMobileMelon()) play.removeAttribute('target');
-      }
-      for (i = 0; i < chips.length; i++) {
-        chips[i].setAttribute('href', melonHref(chips[i].getAttribute('data-q')));
-        if (isMobileMelon()) chips[i].removeAttribute('target');
-      }
-    }
-    function melonOpenWeb(q) {
-      // 한 번 연 'melonCafe' 탭을 다시 쓰고, 처음이면 새 탭을 연다
-      var w = window.open(melonWebUrl(q), 'melonCafe');
-      if (!w) { toast('새 창이 막혔어요 — 팝업을 허용해 주세요'); return; }
-      toast('☕ 멜론에서 \'전체듣기\'를 눌러 주세요');
-    }
-    var mbPending = '';
-    function melonTap(q) {
-      q = (q || '북카페').trim();
-      melonMarkChip(q);
-      $('mbInput').value = '';
-      if (!isMobileMelon()) { melonOpenWeb(q); return; }
-      // 휴대폰: 복사부터 하고(동기), 링크의 기본 동작(intent:// 또는 melonapp://)이 앱을 연다
-      melonCopy(q);
-      mbPending = q;
-    }
-    // 멜론 앱에서 돌아오면 붙여넣기 안내를 띄운다
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden || !mbPending) return;
-      var q = mbPending; mbPending = '';
-      toast('☕ 멜론 앱 검색창에 「' + q + '」를 붙여넣어 보세요');
-    });
-    melonPrepareLinks();
-    $('mbPlay').addEventListener('click', function (ev) {
-      if (!isMobileMelon()) ev.preventDefault();
-      melonTap('북카페');
-    });
-    $('mbChips').addEventListener('click', function (ev) {
-      var a = ev.target.closest('.mb-chip'); if (!a) return;
-      if (!isMobileMelon()) ev.preventDefault();
-      melonTap(a.getAttribute('data-q'));
-    });
-    $('mbForm').addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      var q = $('mbInput').value.trim();
-      if (!q) { $('mbInput').focus(); return; }
-      melonMarkChip(q);
-      $('mbInput').value = '';
-      if (!isMobileMelon()) { melonOpenWeb(q); return; }
-      melonCopy(q); mbPending = q;
-      window.location.href = melonHref(q);
-    });
+    })();
 
     /* 화면 유지 (Wake Lock) */
     var wake = null;
