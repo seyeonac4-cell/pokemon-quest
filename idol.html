@@ -725,7 +725,7 @@ body{
     var t = $('ovToggle');
     if (t) t.textContent = playing ? '⏸ 잠깐 멈춤' : '▶ 재생';
     var tip = $('ovTip');
-    if (tip) tip.hidden = playing || ovState === 3 || ovState === 5 || ovState === 0;
+    if (tip) tip.hidden = playing || ovState === 2 || ovState === 3 || ovState === 5 || ovState === 0;
   }
   function ovMount() {
     if (!ovNow) return;

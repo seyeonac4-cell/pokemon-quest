@@ -947,7 +947,7 @@ function vCmd(fn, args){
 }
 function vPaint(){
   const tip = document.getElementById('ytTip');
-  if(tip) tip.hidden = (vState === 1);
+  if(tip) tip.hidden = (vState === 1 || vState === 2);
 }
 function vMount(){
   const box = document.getElementById('frame');
