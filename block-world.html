@@ -5097,6 +5097,7 @@ function applyHouseColor(who, color) {
   if (!color) return;
   var h = houseOf(who);
   if (!h) return;
+  if (h.tint === color) return;   // 같은 색이면 또 칠하지 않아요 (실시간 업데이트가 잦으니까)
   h.tint = color;
   for (var j = 0; j < G.tiles.length; j++) {
     var t = G.tiles[j];
