@@ -131,7 +131,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
   scrollbar-width:none; -ms-overflow-style:none}
 .row::-webkit-scrollbar{display:none}
 .row + .row{margin-top:6px}
-#rowTop{flex-wrap:wrap; overflow:visible; row-gap:5px}
+#rowTop,#rowTex{flex-wrap:wrap; overflow:visible; row-gap:5px}
 .row .lab{flex:0 0 auto; font-size:10.5px; font-weight:900; color:var(--muted); padding-right:2px; letter-spacing:-.2px}
 .sw{
   flex:0 0 auto; width:38px; height:38px; border-radius:50%; position:relative;
@@ -407,7 +407,7 @@ var Sound = (function(){
   /* 화면 점검용 계수기 (소리가 실제로 났는지 확인할 때만 씀) */
   var DIAG = window.__slimeDiag = {
     snd: { squish: 0, stretch: 0, pop: 0, crunch: 0, tok: 0, tingle: 0, boing: 0, knead: 0 },
-    ctx: 'none'
+    ctx: 'none', maxDeform: 0, maxDrag: 0
   };
   var knead = { src: null, bp: null, gain: null, lfo: null, pan: null };
 
@@ -1025,6 +1025,15 @@ function slimeStep(dt){
       if (SL.p[i].y > H - pad) SL.p[i].y = H - pad;
     }
   }
+
+  /* 얼마나 늘어났는지 계측 */
+  var md = 0;
+  for (i = 0; i < n; i++) {
+    var ddx = SL.p[i].x - (SL.cx + SL.ox[i]), ddy = SL.p[i].y - (SL.cy + SL.oy[i]);
+    var dl = Math.sqrt(ddx * ddx + ddy * ddy);
+    if (dl > md) md = dl;
+  }
+  if (md > window.__slimeDiag.maxDeform) window.__slimeDiag.maxDeform = Math.round(md);
 
   /* 속도 갱신 */
   for (i = 0; i < n; i++) {
@@ -1811,6 +1820,7 @@ cv.addEventListener('pointermove', function(e){
     var sp = Math.sqrt(dx * dx + dy * dy);
     G.x = p.x; G.y = p.y;
     G.inside = pointInPoly(p.x, p.y, SL.p);
+    if (sp > window.__slimeDiag.maxDrag) window.__slimeDiag.maxDrag = Math.round(sp);
 
     /* 파츠 뿌리기 (파츠 선택 중이고, 슬라임 안을 문지를 때) */
     if (store.topping && sp > 2) {
@@ -2176,6 +2186,7 @@ function boot(){
       saved: store.saved.length, popTotal: store.popTotal, slimeTotal: store.slimeTotal,
       popToday: store.popDays[todayKey()] || 0,
       audio: Sound.state(), audioLevel: Sound.level(), snd: window.__slimeDiag ? window.__slimeDiag.snd : null,
+      maxDeform: window.__slimeDiag.maxDeform, maxDrag: window.__slimeDiag.maxDrag,
       stage: [Math.round(W), Math.round(H)],
       scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth
     };
