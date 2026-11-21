@@ -43,9 +43,9 @@ body{
   transition:background 1.2s ease;
 }
 body[data-wx="rain"]{ --sky1:#93b8cd; --sky2:#aec9d7; --sky3:#d2e2d8; --sky4:#e9f3e5 }
-body[data-wx="storm"]{ --sky1:#61758d; --sky2:#7d8fa4; --sky3:#b4c2c3; --sky4:#e0e8db }
+body[data-wx="storm"]{ --sky1:#8ba0b6; --sky2:#a4b6c7; --sky3:#ced9df; --sky4:#eef4ee }
 body[data-wx="snow"]{ --sky1:#cfe7f6; --sky2:#e7f3fc; --sky3:#f3f9fc; --sky4:#ffffff }
-body[data-wx="star"]{ --sky1:#2f3c66; --sky2:#4c5a86; --sky3:#8e9bb9; --sky4:#dde2ef }
+body[data-wx="star"]{ --sky1:#8695c6; --sky2:#a3afd5; --sky3:#d0d6e9; --sky4:#f1f3fb }
 body[data-wx="rainbow"]{ --sky1:#ffd7ea; --sky2:#fff4cb; --sky3:#d9f8e4; --sky4:#e8f1ff }
 button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 
@@ -239,12 +239,16 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
   border:2px dashed rgba(255,225,185,.55);
 }
 .plot .plant{
-  font-size:calc(clamp(19px,5.9vw,30px) * var(--sz,1));
+  font-size:calc(clamp(21px,6.2vw,34px) * var(--sz,1));
   line-height:1.02; position:relative; z-index:2;
   filter:drop-shadow(0 4px 3px rgba(40,20,0,.45)) drop-shadow(0 1px 0 rgba(255,255,255,.25));
   transition:font-size .3s;
-  transform:translateY(-1px);
+  animation:sway 4.6s ease-in-out infinite;
 }
+@keyframes sway{0%,100%{transform:translateY(-1px) rotate(-1.6deg)}50%{transform:translateY(0) rotate(1.6deg)}}
+.plot:nth-child(2n) .plant{animation-duration:5.4s; animation-delay:-1.2s}
+.plot:nth-child(3n) .plant{animation-duration:4.1s; animation-delay:-2.4s}
+.plot.ripe .plant{animation-name:ripeBounce; animation-duration:.95s; animation-timing-function:ease-in-out}
 .plot.empty .plant{opacity:.9; font-weight:900; color:#ffe9c9; font-size:22px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .plot .pname{
   position:relative; z-index:2; font-size:9.5px; font-weight:900; letter-spacing:-.03em;
@@ -302,13 +306,9 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
   animation:beam 5s ease-in-out infinite;
 }
 @keyframes beam{0%,100%{opacity:.35}50%{opacity:.7}}
-.wx .rbarc{
-  left:-10%; right:-10%; bottom:-30%; height:110%;
-  border-radius:50%; border:14px solid transparent;
-  background:conic-gradient(from 200deg at 50% 120%, #ff8fb1, #ffd166, #7ddc9b, #7dd3fc, #c4b5fd, #ff8fb1) border-box;
-  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 46px), #000 calc(100% - 44px));
-  mask:radial-gradient(farthest-side, transparent calc(100% - 46px), #000 calc(100% - 44px));
-  opacity:.4; animation:beam 6s ease-in-out infinite;
+.wx-rainbow{
+  background:linear-gradient(180deg, rgba(255,188,225,.42) 0%, rgba(255,240,190,.34) 20%, rgba(190,255,215,.28) 44%, rgba(190,215,255,.28) 66%, rgba(255,255,255,0) 86%);
+  animation:beam 6s ease-in-out infinite;
 }
 .wx-storm::after{
   content:""; position:absolute; inset:0; background:#fff; opacity:0;
@@ -431,6 +431,11 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
 }
 .visitbar .vb{flex:1; min-width:0; font-size:12px; font-weight:800; color:#5b4a72; line-height:1.4}
 .visitbar .vb b{display:block; font-size:13px; color:#3a2a5c}
+@media (max-width:440px){
+  .visitbar{flex-wrap:wrap}
+  .visitbar .vb{flex:1 1 100%}
+  .visitbar .vbtn{flex:1 1 0; text-align:center; justify-content:center}
+}
 .vbtn{
   flex:0 0 auto; min-height:38px; padding:7px 11px; border-radius:12px; font-size:12px; font-weight:900;
   background:linear-gradient(180deg,#fff,#f3ecff); border:1.5px solid #cbb6ea; color:#5b3fa0; box-shadow:0 3px 0 #d8c8ee;
@@ -785,6 +790,8 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
 
       <p class="tip" id="tip">다 자란 작물을 콕 눌러서 수확해 봐! 🌾</p>
 
+      <div class="giftbar" id="giftBar"></div>
+
       <div class="visitbar" id="visitBar" hidden>
         <span style="font-size:22px">🏡</span>
         <span class="vb"><b id="visitTitle">놀러 왔어요</b><span id="visitSub">구경만 할 수 있어요</span></span>
@@ -798,8 +805,6 @@ body[data-wx="storm"] .wxpill{background:linear-gradient(180deg,#e7edf5,#d5deea)
         <button class="act3 gift" type="button" data-act="gift"><span>🎁</span><span class="at"><b>선물 보내기</b><small id="giftSub">형원이에게</small></span></button>
         <button class="act3 visit" type="button" data-act="visit"><span>🏡</span><span class="at"><b>놀러 가기</b><small id="visitSub2">형원이 텃밭</small></span></button>
       </div>
-
-      <div class="giftbar" id="giftBar"></div>
 
       <div class="fairy">
         <span class="fe">🧚</span>
@@ -1505,7 +1510,12 @@ function renderWxVisual(id){
     }
   }
   if(id === 'sunny') html += '<i class="sunbeam"></i>';
-  if(id === 'rainbow') html += '<i class="rbarc"></i>';
+  if(id === 'rainbow'){
+    for(let i=0;i<8;i++){
+      html += '<i class="star3" style="left:' + (Math.random()*100).toFixed(1) + '%;top:' +
+        (Math.random()*70).toFixed(1) + '%;animation-delay:' + (Math.random()*2.4).toFixed(2) + 's">✦</i>';
+    }
+  }
   layer.innerHTML = html;
 }
 
@@ -1597,7 +1607,7 @@ function renderGarden(){
   let html = '';
   for(let i=0;i<PLOTS;i++){
     const p = g.plots[i];
-    if(!p){
+    if(!p || !SEED[p.seed]){
       html += '<button class="plot empty" type="button" data-act="' + (mine ? 'plot' : 'visitPlot') + '" data-i="' + i + '" aria-label="빈 밭 ' + (i+1) + '번">' +
               '<span class="plant">＋</span><span class="pname">' + (mine ? '심기' : '빈 밭') + '</span></button>';
       continue;
@@ -1638,6 +1648,10 @@ function renderVisitBar(){
   const bar = $('#visitBar');
   if(!bar) return;
   bar.hidden = !visiting;
+  if(!visiting){
+    const tip0 = $('#tip');
+    if(tip0) tip0.textContent = '다 자란 작물을 콕 눌러서 수확해 봐! 🌾';
+  }
   const act = $('#actRow');
   if(act) act.hidden = !!visiting;
   if(!visiting) return;
@@ -1647,6 +1661,8 @@ function renderVisitBar(){
   const live = pv && (Date.now() - (+pv.at || 0) < 70000);
   const og = safeGarden(remoteGardens[o]);
   const items = og.basket.length;
+  const tip = $('#tip');
+  if(tip) tip.textContent = '구경만 하는 텃밭이에요 👀 🎁 선물은 보낼 수 있어요!';
   $('#visitSub').textContent = live
     ? (KIDS[o].name + '이가 지금 여기 있어요! 🎉 바구니 ' + items + '개 · 코인 ' + nf(og.coins))
     : (NET.on ? ('바구니 ' + items + '개 · 코인 ' + nf(og.coins)) : '가족 연결을 기다리는 중…');
@@ -1852,7 +1868,7 @@ function tickUI(){
     const el = els[i];
     const idx = Number(el.dataset.i);
     const p = g.plots[idx];
-    if(!p) continue;
+    if(!p || !SEED[p.seed]) continue;
     const ripe = isRipe(p);
     const pr = Math.round(progress(p) * 100);
     const bar = el.querySelector('.pb i');

@@ -348,28 +348,6 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
   border-top:1px solid rgba(255,255,255,.12); padding:10px 12px calc(12px + env(safe-area-inset-bottom));
   max-height:52vh; overflow-y:auto;
 }
-.judges{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
-.judge{
-  background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18); border-radius:16px;
-  padding:8px 6px; text-align:center; position:relative;
-}
-.judge .av{font-size:26px; line-height:1; margin-bottom:2px}
-.judge .av svg{height:34px; width:auto}
-.judge .jn{font-size:11px; font-weight:900; color:#FFD9EC; letter-spacing:-.02em}
-.judge .st{font-size:13.5px; letter-spacing:-1px; margin-top:2px; color:#4B3A22; min-height:18px}
-.judge .st .s{opacity:.22; display:inline-block; transition:.2s; color:#fff}
-.judge .st .s.on{opacity:1; color:#FFD23F; text-shadow:0 0 8px rgba(255,196,0,.85); animation:starPop .38s cubic-bezier(.3,1.7,.5,1)}
-@keyframes starPop{0%{transform:scale(.2) rotate(-30deg)}70%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1)}}
-.judge .say{
-  font-size:11px; font-weight:800; color:#F3E6FF; line-height:1.35; margin-top:4px; min-height:28px;
-  background:rgba(255,255,255,.1); border-radius:9px; padding:4px 5px;
-}
-.rw-total{
-  display:flex; align-items:center; gap:9px; margin-top:9px; background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.18); border-radius:15px; padding:9px 12px;
-}
-.rw-total .big{font-size:22px; font-weight:900; color:#FFD23F; letter-spacing:-.03em; white-space:nowrap}
-.rw-total .tt{font-size:11.5px; font-weight:800; color:#E6D6F5; line-height:1.35}
 .rw-btns{display:flex; gap:7px; margin-top:9px}
 .rw-btns .btn{flex:1}
 .btn.white{background:#fff; color:#5A2C6B}
@@ -640,10 +618,6 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
       </div>
       <div class="vboard" id="rwBoard" hidden></div>
       <div class="vs-result" id="rwResult" hidden></div>
-      <div class="rw-total" id="rwTotal" hidden>
-        <span class="big" id="rwScore">0 / 15</span>
-        <span class="tt" id="rwComment"></span>
-      </div>
       <div class="rw-btns">
         <button class="btn line" id="rwAgain" type="button">👗 더 꾸미기</button>
         <button class="btn white" id="rwSave" type="button">💾 룩북 저장</button>
@@ -1607,11 +1581,6 @@ function scoreLook(s, theme){
   pts = clamp(pts, 0, 60);
   return Math.round(pts * 10) / 10;
 }
-function starsFor(pts, judgeIdx){
-  var base = 1.35 + pts / 17.5;            // 0점 ≈ 1.4, 30점 ≈ 3.1, 60점 ≈ 4.8
-  var jitter = [0.35, -0.25, 0.1][judgeIdx] + rnd(-0.45, 0.45);
-  return clamp(Math.round(base + jitter), 1, 5);
-}
 var JUDGES = [
   { id:'luna', name:'루나 토끼', emoji:'🐰', color:'#FFB3C7' },
   { id:'mio', name:'미유 고양이', emoji:'🐱', color:'#FFD9A0' },
@@ -1744,7 +1713,6 @@ function resetRunway(){
   $('rwVote').classList.remove('done');
   $('rwResult').hidden = true;
   $('rwResult').innerHTML = '';
-  $('rwTotal').hidden = true;
   $('rwBoard').innerHTML = '';
   $('rwBoard').hidden = true;
   $('rwStep').textContent = '';

@@ -1714,7 +1714,7 @@ function drawGate(ctx, g) {
   ctx.textBaseline = 'middle';
   ctx.font = '17px Jua, sans-serif';
   ctx.fillStyle = g.solved ? '#1f8b58' : '#8a5a00';
-  ctx.fillText(g.solved ? '✓ 열림!' : '⌨ ' + g.word, 0, -4);
+  ctx.fillText(g.solved ? '✓ 열림!' : g.word, 0, -4);
   ctx.font = '11px Jua, sans-serif';
   ctx.fillStyle = g.solved ? '#4aa87b' : '#b08a33';
   ctx.fillText(g.solved ? '잘했어!' : '타자를 쳐!', 0, 14);
@@ -2705,6 +2705,8 @@ function updatePlayer(dt) {
     if (d < best) { best = d; G.spot = sp2; }
   }
   updateActionPrompt();
+  p.hintTick = (p.hintTick || 0) + dt;
+  if (p.hintTick > 0.6) { p.hintTick = 0; updateHint(); }
 }
 
 function respawn() {
