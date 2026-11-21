@@ -4025,7 +4025,7 @@ var FAM_KEY = 'dti_who';
 var FAM = {
   ready:false, tried:0, db:null, root:null, meId:null,
   actor:null, remote:null, lastSent:0, lastPkt:'', lookKey:'',
-  hiSeen:{}, nearAt:0, staleT:0, online:false
+  hiSeen:{}, nearAt:0, staleT:0, online:false, warnAt:0
 };
 
 function famIdOf(name){
@@ -4188,6 +4188,14 @@ function famOnLive(snap){
   var all = snap && snap.val ? (snap.val() || {}) : {};
   var oid = famOther(FAM.meId);
   var o = oid ? all[oid] : null;
+  /* 같은 이름을 두 폰이 쓰고 있으면 살짝 알려 주기 */
+  try{
+    var mine = FAM.meId ? all[FAM.meId] : null;
+    if(mine && typeof mine.ts === 'number' && mine.ts > FAM.lastSent + 2500 && Date.now() - FAM.warnAt > 20000){
+      FAM.warnAt = Date.now();
+      toast('👭 다른 폰이 같은 이름(' + famNameOf(FAM.meId) + ')을 쓰고 있어요. 「자매랑 같이 놀기」에서 이름을 바꿔 주세요');
+    }
+  }catch(e){}
   famTake(o, oid);
 }
 function famTake(o, oid){
