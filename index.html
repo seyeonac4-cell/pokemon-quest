@@ -5600,7 +5600,7 @@ label.btn{cursor:pointer}
     if (!map) return;
     vRoam.map = map;
     /* 방금 새로 지은 건물만 톡 튀어나오는 애니메이션 — 화면을 다시 그릴 때마다
-       모든 건물이 처음부터 튀어나와 깜박이지 않도록, 이번에 처음 보이는 건물에만 붙였다 띄요. */
+       모든 건물이 처음부터 튀어나와 깜박이지 않도록, 이번에 처음 보이는 건물에만 잠깐 붙여요. */
     var shownBld = vShownBld[state.active] || (vShownBld[state.active] = {});
     Array.prototype.forEach.call(map.querySelectorAll('.cell[data-bld]'), function (cell) {
       var bid = cell.getAttribute('data-bld');
