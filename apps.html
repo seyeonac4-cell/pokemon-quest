@@ -165,12 +165,28 @@ h1 em{font-style:normal; background:linear-gradient(180deg,transparent 62%, #FFE
   flex:0 0 auto; width:30px; height:30px; border-radius:10px; display:grid; place-items:center;
   background:#23263A; color:#fff; font-weight:900; font-size:15px;
 }
-.steps b{display:block; font-size:15px; font-weight:900; letter-spacing:-.01em}
-.steps span{display:block; font-size:13.5px; color:var(--ink2); margin-top:3px}
+.steps li>div>b{display:block; font-size:15px; font-weight:900; letter-spacing:-.01em}
+.steps li>div>span{display:block; font-size:13.5px; color:var(--ink2); margin-top:3px}
+.steps li>div>span b{display:inline; font-size:inherit; font-weight:900; color:var(--ink); letter-spacing:0}
+.steps .kbd{display:inline-block; margin-top:0; vertical-align:1px}
 .notes{margin:16px 0 0; padding:14px 16px; background:#FFFBF0; border:1px solid #FFE9B8; border-radius:18px; font-size:13.8px; color:#6B5410}
 .notes ul{margin:0; padding-left:18px}
 .notes li+li{margin-top:6px}
 .notes b{color:#4A3900}
+
+/* 아이들 폰(안드로이드) 바로가기 강조 박스 */
+.pick{
+  margin:0 0 18px; padding:16px; border-radius:20px; border:2.5px solid #F5A623;
+  background:linear-gradient(180deg,#FFFDF5,#FFF3DC); box-shadow:0 6px 0 rgba(245,166,35,.18);
+}
+.pick .pk-head{font-size:16px; font-weight:900; letter-spacing:-.02em; line-height:1.42; color:#7A4A00}
+.pick .pk-head b{color:#B23A00}
+.pick ol{margin:11px 0 0; padding-left:20px; font-size:14px; color:#5B4300; line-height:1.6}
+.pick ol li+li{margin-top:5px}
+.pick ol b{color:#20233A}
+.pick .pk-why{margin:11px 0 0; font-size:13px; color:#6B5410; line-height:1.55; background:#FFF9E8; border-radius:12px; padding:10px 12px; border:1px solid #FFE9B8}
+.pick .pk-tip{margin:9px 0 0; font-size:13.5px; font-weight:800; color:#8A3B00; line-height:1.55}
+.kbd{display:inline-block; padding:1px 7px; border-radius:7px; background:#23263A; color:#fff; font-size:13px; font-weight:900; line-height:1.55}
 
 footer{margin:26px 0 0; text-align:center; color:#9AA0B4; font-size:12.5px; line-height:1.7}
 footer a{color:#9AA0B4}
@@ -205,7 +221,7 @@ footer a{color:#9AA0B4}
   <header class="hero">
     <span class="kicker">📱 채씨네 앱 모음 · 13개</span>
     <h1>우리 집 앱 <em>13개</em>,<br>한 화면에서 열고 설치하기</h1>
-    <p class="lead">아이들 태블릿·폰에 <b>홈 화면 앱</b>처럼 깔아 두고 쓰는 페이지예요. 아래 카드의 <b>🌐 Chrome으로 열기</b>로 앱을 연 다음, 앱 화면 <b>오른쪽 아래 「📲 앱으로 설치」</b> 버튼을 한 번만 누르면 끝이에요. (버튼이 안 보이면 오른쪽 위 <b>⋮ → 앱 설치</b>)</p>
+    <p class="lead">아이들 태블릿·폰에 <b>홈 화면 아이콘</b>으로 하나씩 만들어 두고 쓰는 페이지예요. 아래 카드의 <b>🌐 Chrome으로 열기</b>로 앱을 연 다음, Chrome <b>⋮ → 홈 화면에 추가 → 바로가기 만들기</b>를 고르면 돼요. <b>‘설치’를 고르면 앱이 하나로 합쳐져요</b> — 자세한 방법은 맨 아래 <a href="#install" style="color:inherit">📲 설치 안내</a>에 있어요.</p>
     <div class="hero-actions">
       <a class="btn btn-hero big" id="chromeNow" href="https://seyeonac4-cell.github.io/pokemon-quest/apps.html" hidden>🌐 현재 페이지 Chrome으로 열기</a>
       <button class="btn btn-ghost big" id="copyPage" type="button">📋 이 모음 페이지 링크 복사</button>
@@ -412,9 +428,21 @@ footer a{color:#9AA0B4}
       </div>
     </section>
 
-  <section class="guide">
+  <section class="guide" id="install">
     <h2>📲 홈 화면에 앱 설치하는 법</h2>
-    <p class="sub">앱마다 따로 설치해요. 한 번만 해 두면 다음부터는 아이콘만 누르면 바로 열려요.</p>
+    <p class="sub">앱마다 따로 만들어 두면, 다음부터는 아이가 아이콘만 눌러 바로 열 수 있어요.</p>
+
+    <div class="pick">
+      <div class="pk-head">⚠️ 아이들 폰(안드로이드)은 <b>‘설치’가 아니라 ‘바로가기 만들기’</b>를 골라 주세요</div>
+      <ol>
+        <li>카드의 <b>🌐 Chrome으로 열기</b>로 앱을 엽니다.</li>
+        <li>Chrome 오른쪽 위 <span class="kbd">⋮</span> → <b>홈 화면에 추가</b>를 누릅니다.</li>
+        <li>아래에 뜬 목록에서 <b>‘바로가기 만들기’</b>를 고릅니다. (<b>‘설치’를 고르면 안 돼요</b>)</li>
+      </ol>
+      <p class="pk-why">‘설치’(앱 설치)를 고르면 크롬이 같은 주소의 앱을 하나로 묶어서, <b>어떤 아이콘을 눌러도 ‘포켓몬 퀘스트’로만 열리는</b> 일이 생겨요. ‘바로가기 만들기’는 앱마다 아이콘이 따로 생기고, 누르면 각자 맞는 화면으로 열려요.</p>
+      <p class="pk-tip">💡 이미 홈 화면에 ‘포켓몬 퀘스트’ 앱이 있다면 → 그 아이콘을 길게 눌러 <b>삭제</b>한 뒤, 필요한 앱만 위 방법으로 <b>바로가기</b>로 다시 만들어 주세요.</p>
+    </div>
+
     <ol class="steps">
       <li>
         <span class="num">1</span>
@@ -422,20 +450,19 @@ footer a{color:#9AA0B4}
       </li>
       <li>
         <span class="num">2</span>
-        <div><b>오른쪽 아래 「📲 앱으로 설치」 누르기</b><span>앱 화면 오른쪽 아래에 뜨는 <b>📲 앱으로 설치</b> 버튼을 한 번 누르면 설치 창이 바로 떠요. 버튼이 안 보이면 Chrome 오른쪽 위 점 3개 <b>⋮ → 앱 설치</b>를 눌러요. (‘홈 화면에 추가’만 보이면 그 안의 ‘설치’를 고르면 돼요.)</span></div>
+        <div><b>오른쪽 위 ⋮ → 홈 화면에 추가</b><span>Chrome 오른쪽 위 <span class="kbd">⋮</span>를 누르고 ‘홈 화면에 추가’를 골라요. 앱 안의 「📲 앱으로 설치」 버튼이 설치 창을 띄우면 취소하고 이 메뉴를 쓰세요.</span></div>
       </li>
       <li>
         <span class="num">3</span>
-        <div><b>‘설치’ 누르기</b><span>‘설치’를 누르면 홈 화면에 진짜 앱 아이콘이 생겨요. ‘바로가기 만들기’는 크롬 로고가 붙은 바로가기라서 꼭 ‘설치’를 골라 주세요!</span></div>
+        <div><b>‘바로가기 만들기’ 선택</b><span>목록에서 ‘바로가기 만들기’를 눌러요. ‘설치’를 고르면 앱들이 하나로 합쳐져요. 바로가기 아이콘에는 작은 크롬 표시가 붙지만, 누르면 그 앱 화면으로 바로 열립니다.</span></div>
       </li>
     </ol>
     <div class="notes">
       <ul>
-        <li><b>카톡·네이버 앱 안에서는 설치 메뉴가 안 보여요.</b> 꼭 Chrome(또는 삼성 인터넷)에서 열어 주세요. 위의 🌐 버튼이 Chrome으로 넘겨 줘요.</li>
+        <li><b>카톡·네이버 앱 안에서는 이 메뉴가 안 보여요.</b> 꼭 Chrome(또는 삼성 인터넷)에서 열어 주세요. 위의 🌐 버튼이 Chrome으로 넘겨 줘요.</li>
         <li><b>유튜브 영상 광고가 나올 때</b> — Chrome에 유튜브 프리미엄 계정으로 로그인돼 있으면 광고가 사라져요.</li>
-        <li><b>아이콘에 작은 크롬 로고가 붙어 있다면</b> ‘바로가기’로 만들어진 거예요. 그 아이콘을 지우고 다시 <b>‘설치’</b>로 만들면 크롬 로고 없는 앱 아이콘이 돼요. (크롬 로고 없는 진짜 앱 설치는 구글 플레이 서비스가 있는 안드로이드 폰에서만 돼요.)</li>
-        <li><b>아이콘이 예전 모양이면</b> 홈 화면의 기존 아이콘을 지우고 다시 ‘앱 설치’를 해 주세요.</li>
-        <li><b>아이폰·아이패드</b>는 Chrome 대신 사파리의 <b>공유 → 홈 화면에 추가</b>로 설치해요.</li>
+        <li><b>아이콘이 예전 모양이거나 엉뚱한 앱으로 열리면</b> 홈 화면의 그 아이콘을 지우고 위 방법으로 다시 만들어 주세요.</li>
+        <li><b>아이폰·아이패드</b>는 Chrome 대신 사파리의 <b>공유 → 홈 화면에 추가</b>로 만들어요.</li>
       </ul>
     </div>
   </section>
@@ -582,8 +609,8 @@ footer a{color:#9AA0B4}
   }else if(isChrome){
     selfBtn.hidden = true;
     setBanner('ok', '✅',
-      '지금 <b>Chrome</b>에서 열려 있어요. 아래 앱을 열고 화면 오른쪽 아래 <b>📲 앱으로 설치</b> 버튼을 누르면(없으면 <b>⋮ → 앱 설치</b>) 크롬 로고 없는 진짜 앱으로 설치돼요.' +
-      '<small>이미 설치한 앱이 있다면 한 번씩 지우고 다시 추가하면 아이콘이 새로 바뀌어요.</small>');
+      '지금 <b>Chrome</b>에서 열려 있어요. 앱을 열고 <b>⋮ → 홈 화면에 추가 → 바로가기 만들기</b>를 고르면 앱마다 아이콘이 따로 생겨요. <b>‘설치’는 앱이 하나로 합쳐지니 고르지 마세요.</b>' +
+      '<small>이미 설치해 둔 아이콘이 엉뚱한 앱으로 열린다면 그 아이콘을 지우고 다시 만들어 주세요.</small>');
   }else if(isIOS){
     selfBtn.hidden = true;
     setBanner('info', '🍎',
@@ -616,7 +643,7 @@ footer a{color:#9AA0B4}
         out += '· ' + mains[k].querySelector('.name').textContent + ' : ' + abs(mains[k].getAttribute('data-open')) + '\n';
       }
     }
-    out += '\nChrome에서 열고 오른쪽 위 ⋮ → 홈 화면에 추가 하면 앱처럼 쓸 수 있어요.';
+    out += '\nChrome에서 열고 오른쪽 위 ⋮ → 홈 화면에 추가 → 바로가기 만들기 를 고르면 앱처럼 쓸 수 있어요.';
     return out;
   }
 

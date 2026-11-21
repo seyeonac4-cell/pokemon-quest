@@ -298,6 +298,29 @@ body{
 }
 .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* 유튜브 탈출 차단: 플레이어 위를 우리 레이어로 덮어 제목·공유·YouTube 로고·추천 영상을 못 누르게 */
+.yt-arm{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.yt-arm[hidden]{display:none}
+.yt-arm .yt-tip{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:9px 16px;border-radius:999px;background:rgba(12,8,20,.72);color:#fff;font-size:13px;font-weight:900;white-space:nowrap;pointer-events:none}
+.yt-arm .yt-tip[hidden]{display:none}
+.yt-pause,.yt-end{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center}
+.yt-pause[hidden],.yt-end[hidden]{display:none}
+.yt-pause{background:rgba(10,7,16,.82);color:#fff}
+.yt-pause .yp-ico{font-size:26px;line-height:1}
+.yt-pause b{font-size:14px;font-weight:900}
+.yp-btn{margin-top:2px;padding:10px 18px;border:0;border-radius:999px;background:#fff;color:#241a33;font-family:inherit;font-size:13.5px;font-weight:900;cursor:pointer}
+.yp-btn:active{transform:scale(.97)}
+.yt-end{background:linear-gradient(160deg,#2a1a46 0%,#150d22 88%);color:#fff}
+.yt-end .ye-ico{font-size:30px;line-height:1}
+.yt-end .ye-t{font-size:15px;font-weight:900}
+.yt-end .ye-s{margin:0;font-size:11.5px;font-weight:600;color:#c9b8e4;line-height:1.45;max-width:22em}
+.ye-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px}
+.ye-btn{padding:10px 15px;border:0;border-radius:999px;background:linear-gradient(180deg,#ffd7ea,#ffb0d3);color:#3a1030;font-family:inherit;font-size:13px;font-weight:900;cursor:pointer}
+.ye-btn.ghost{background:rgba(255,255,255,.16);color:#fff}
+.ye-btn:active{transform:scale(.97)}
+.ov-ctl{display:flex;gap:7px;padding:9px 12px 0}
+.ov-ctl button{flex:1 1 0;min-width:0;min-height:40px;padding:0 6px;border:0;border-radius:11px;background:rgba(255,255,255,.13);color:#fff;font-family:inherit;font-size:12.5px;font-weight:900;white-space:nowrap;cursor:pointer}
+.ov-ctl button:active{background:rgba(255,255,255,.24)}
 .ov-note{padding:9px 12px;font-size:11px;color:#b9a8d6;background:#1d1430;text-align:center}
 
 /* ---------- 시간 종료 ---------- */
@@ -415,8 +438,32 @@ body{
       <div class="c" id="ovChan"></div>
       <button class="ov-close" id="ovClose" type="button" aria-label="영상 창 닫기">✕</button>
     </div>
-    <div class="frame"><iframe id="ovFrame" title="유튜브 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-    <div class="ov-note">영상이 끝나면 ✕ 를 눌러 창을 닫아 주세요 · 다른 영상으로 넘어가지 않아요</div>
+    <div class="frame">
+      <iframe id="ovFrame" title="유튜브 영상" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <button class="yt-arm" id="ovArm" type="button" aria-label="영상 재생 또는 일시정지">
+        <span class="yt-tip" id="ovTip">▶ 눌러서 재생</span>
+      </button>
+      <div class="yt-pause" id="ovPause" hidden role="button" tabindex="0" aria-label="계속 보기">
+        <span class="yp-ico" aria-hidden="true">⏸</span>
+        <b>잠깐 멈췄어요</b>
+        <button class="yp-btn" id="ovResume" type="button">▶ 계속 보기</button>
+      </div>
+      <div class="yt-end" id="ovEnd" hidden role="dialog" aria-label="시청 완료">
+        <span class="ye-ico" aria-hidden="true">🎉</span>
+        <b class="ye-t">시청 완료!</b>
+        <p class="ye-s">영상을 끝까지 봤어요. 다른 영상은 신문으로 돌아가서 골라요.</p>
+        <div class="ye-btns">
+          <button class="ye-btn" id="ovAgain" type="button">🔁 다시 보기</button>
+          <button class="ye-btn ghost" id="ovOther" type="button">📰 다른 영상 고르기</button>
+        </div>
+      </div>
+    </div>
+    <div class="ov-ctl">
+      <button id="ovToggle" type="button">⏸ 잠깐 멈춤</button>
+      <button id="ovRestart" type="button">⏮ 처음부터</button>
+      <button id="ovOther2" type="button">📰 다른 영상</button>
+    </div>
+    <div class="ov-note">영상은 이 창 안에서만 재생돼요 · 유튜브 앱이나 다른 추천 영상으로는 넘어가지 않아요</div>
   </div>
 </div>
 
@@ -651,13 +698,50 @@ body{
      영상 창
      ============================================================ */
   var ov = $('ov'), ovFrame = $('ovFrame');
+  var ovNow = null, ovState = -1;
+
+  /* 유튜브 플레이어 조작은 우리 버튼으로만 (플레이어는 클릭을 못 받는다) */
+  function ovCmd(func, args) {
+    try {
+      var w = ovFrame.contentWindow;
+      if (w) w.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*');
+    } catch (e) {}
+  }
+  function ovPaint() {
+    var playing = (ovState === 1);
+    var t = $('ovToggle');
+    if (t) t.textContent = playing ? '⏸ 잠깐 멈춤' : '▶ 재생';
+    var tip = $('ovTip');
+    if (tip) tip.hidden = playing || ovState === 3 || ovState === 5 || ovState === 0;
+  }
+  function ovMount() {
+    if (!ovNow) return;
+    ovState = -1;
+    $('ovEnd').hidden = true;
+    $('ovPause').hidden = true;
+    $('ovArm').hidden = false;
+    ovFrame.hidden = false;
+    /* youtube-nocookie + 추천·주석·키보드·유튜브 전체화면 모두 끔 */
+    ovFrame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(ovNow.id)
+      + '?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&fs=0&autoplay=1';
+    ovPaint();
+  }
+  function ovEnded() {
+    ovState = 0;
+    try { ovFrame.src = 'about:blank'; } catch (e) {}
+    ovFrame.hidden = true;
+    $('ovArm').hidden = true;
+    $('ovPause').hidden = true;
+    $('ovEnd').hidden = false;
+    ovPaint();
+  }
 
   function openVideo(id, title, chan) {
     if (!id) return;
-    $('ovTitle').textContent = title || '영상';
+    ovNow = { id: id, title: title || '영상' };
+    $('ovTitle').textContent = ovNow.title;
     $('ovChan').textContent = chan || '';
-    ovFrame.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id)
-      + '?rel=0&modestbranding=1&playsinline=1&autoplay=1&fs=1';
+    ovMount();
     ov.classList.add('show');
     ov.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -665,9 +749,51 @@ body{
   function closeVideo() {
     ov.classList.remove('show');
     ov.setAttribute('aria-hidden', 'true');
-    ovFrame.src = 'about:blank';
+    try { ovFrame.src = 'about:blank'; } catch (e) {}
+    $('ovEnd').hidden = true;
+    $('ovPause').hidden = true;
     document.body.style.overflow = '';
+    ovNow = null; ovState = -1;
   }
+
+  /* 플레이어 상태: 1 재생 · 2 일시정지 · 0 끝 → 완료 화면으로 덮기 */
+  window.addEventListener('message', function (e) {
+    if (!ov.classList.contains('show') || !ovNow) return;
+    if (!e.origin || e.origin.indexOf('youtube') < 0) return;
+    var d = e.data, j = null;
+    if (typeof d === 'string') { try { j = JSON.parse(d); } catch (err) { j = null; } }
+    else if (d && typeof d === 'object') { j = d; }
+    if (!j) return;
+    var st = null;
+    if (j.event === 'onStateChange') st = j.info;
+    else if (j.event === 'infoDelivery' && j.info && typeof j.info.playerState === 'number') st = j.info.playerState;
+    if (st === null) return;
+    if (st === 0) { ovEnded(); return; }
+    ovState = st;
+    $('ovPause').hidden = !(st === 2);
+    ovPaint();
+  });
+
+  $('ovArm').addEventListener('click', function () {
+    if (!$('ovEnd').hidden) return;
+    if (ovState === 1) ovCmd('pauseVideo'); else ovCmd('playVideo');
+  });
+  function ovResume() {
+    $('ovPause').hidden = true;
+    ovCmd('playVideo');
+  }
+  $('ovPause').addEventListener('click', ovResume);
+  $('ovPause').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ovResume(); } });
+  $('ovToggle').addEventListener('click', function () {
+    if (ovState === 1) ovCmd('pauseVideo'); else ovCmd('playVideo');
+  });
+  $('ovRestart').addEventListener('click', function () {
+    if (!$('ovEnd').hidden) ovMount();
+    else { ovCmd('seekTo', [0, true]); ovCmd('playVideo'); }
+  });
+  $('ovAgain').addEventListener('click', ovMount);
+  $('ovOther').addEventListener('click', closeVideo);
+  $('ovOther2').addEventListener('click', closeVideo);
 
   document.addEventListener('click', function (e) {
     var t = e.target;

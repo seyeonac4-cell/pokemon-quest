@@ -347,6 +347,11 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .vhit[hidden]{display:none}
 .vend{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,#eaf6ff,#ffffff);text-align:center;padding:14px}
 .vend[hidden]{display:none}
+/* 일시정지하면 유튜브가 '더 많은 동영상'을 깔아 놓는다 → 우리 레이어로 덮어 못 누르게 */
+.vpause{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(12,26,46,.84);text-align:center;padding:14px;cursor:pointer}
+.vpause[hidden]{display:none}
+.vpause p{margin:0;font-size:19px;font-weight:900;color:#fff}
+.vpause .vp-go{min-height:52px;padding:10px 22px;border-radius:16px;border:3px solid var(--ink);background:linear-gradient(180deg,#ffdce9,#ffb3d1);font-size:17px;font-weight:900;box-shadow:var(--shadow-s)}
 .vend p{margin:0;font-size:20px;font-weight:900;color:var(--ink)}
 .vctl{display:flex;gap:7px;padding:0 9px 2px}
 .vctl button{
@@ -575,6 +580,10 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     </div>
     <div class="vframe" id="vFrame">
       <div class="vhit" id="vHit" hidden></div>
+      <div class="vpause" id="vPause" hidden>
+        <p>⏸ 잠깐 멈췄어요</p>
+        <span class="vp-go">▶ 계속 보기</span>
+      </div>
       <div class="vend" id="vEnd" hidden>
         <p>🎉 잘 봤어요!</p>
         <button class="vrb" id="vReplay" type="button">🔁 다시 보기</button>
@@ -1213,12 +1222,13 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     var old = vIframe();
     if(old) old.remove();
     $('vEnd').hidden = true;
+    $('vPause').hidden = true;
     $('vHit').hidden = false;
     vState = -1; vReady = false;
     paintVToggle();
     var f = document.createElement('iframe');
-    f.src = 'https://www.youtube.com/embed/' + vidNow.id +
-      '?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&autoplay=1&fs=0&iv_load_policy=3';
+    f.src = 'https://www.youtube-nocookie.com/embed/' + vidNow.id +
+      '?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&autoplay=1&fs=0';
     f.setAttribute('title', '알파블록스 ' + vidNow.name);
     f.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; picture-in-picture');
     f.setAttribute('allowfullscreen', '');
@@ -1246,6 +1256,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     var f = vIframe();
     if(f) f.remove();
     if($('vEnd')) $('vEnd').hidden = true;
+    if($('vPause')) $('vPause').hidden = true;
     if($('vHit')) $('vHit').hidden = true;
     $('vModal').hidden = true;
     document.body.style.overflow = '';
@@ -1256,6 +1267,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     var f = vIframe();
     if(f) f.remove();
     if($('vHit')) $('vHit').hidden = true;
+    if($('vPause')) $('vPause').hidden = true;
     if($('vEnd')) $('vEnd').hidden = false;
     vState = 0; paintVToggle();
   }
@@ -1272,6 +1284,12 @@ button{font-family:inherit;color:inherit;cursor:pointer}
     if(st === null) return;
     if(st === 0){ videoEnded(); return; }
     if(st === 1 || st === 2 || st === 3 || st === 5){ vState = st; paintVToggle(); }
+    /* 일시정지: 추천 영상이 깔리므로 덮개를 내린다 */
+    if($('vPause')) $('vPause').hidden = (st !== 2);
+  });
+  if($('vPause')) $('vPause').addEventListener('click', function(){
+    $('vPause').hidden = true;
+    vCmd('playVideo');
   });
   $('vHit').addEventListener('click', function(){
     if($('vEnd').hidden === false) return;

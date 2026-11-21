@@ -134,6 +134,22 @@ audio{width:100%;margin-top:9px}
 .mclose{background:#1a2d50;border:1px solid #33507f;border-radius:11px;padding:8px 12px;font-size:13px;font-weight:900}
 .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* 유튜브 탈출 차단: 플레이어 위를 우리 레이어로 덮는다 (제목·공유·YouTube 로고·추천 영상 못 누름) */
+.yt-arm{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.yt-arm[hidden]{display:none}
+.yt-arm span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:9px 16px;border-radius:999px;background:rgba(4,10,20,.72);color:#dbe8ff;font-size:13px;font-weight:900;white-space:nowrap;pointer-events:none}
+.yt-arm span[hidden]{display:none}
+.yt-pause,.yt-end{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center}
+.yt-pause[hidden],.yt-end[hidden]{display:none}
+.yt-pause{background:rgba(4,10,20,.84);color:#dbe8ff}
+.yt-pause b{font-size:14px;font-weight:900}
+.yt-btn{margin-top:2px;padding:10px 18px;border-radius:999px;border:1px solid #33507f;background:#1a2d50;color:#eaf3ff;font-family:inherit;font-size:13px;font-weight:900}
+.yt-end{background:linear-gradient(160deg,#12302c,#07131a 88%);color:#e6fff7}
+.yt-end .ye-ico{font-size:30px;line-height:1}
+.yt-end b{font-size:15px;font-weight:900}
+.yt-end p{margin:0;font-size:11.5px;font-weight:700;color:#9fc7bb;line-height:1.45}
+.yt-end .ye-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px}
+.yt-end .yt-btn{background:var(--em,#2ee6a8);border-color:transparent;color:#04241a}
 .mask{position:fixed;inset:0;z-index:55;display:none}
 .mask.show{display:block}
 
@@ -256,7 +272,22 @@ nav button.on i{filter:drop-shadow(0 0 7px rgba(46,224,166,.8))}
 <div class="modal" id="modal">
   <div class="mbox">
     <div class="mtop"><h4 id="mTitle"></h4><button class="mclose" id="mClose">닫기 ✕</button></div>
-    <div class="frame" id="frame"></div>
+    <div class="frame" id="frame">
+      <button class="yt-arm" id="ytArm" type="button" aria-label="영상 재생 또는 일시정지"><span id="ytTip">▶ 눌러서 재생</span></button>
+      <div class="yt-pause" id="ytPause" hidden role="button" tabindex="0">
+        <b>⏸ 잠깐 멈췄어요</b>
+        <button class="yt-btn" id="ytResume" type="button">▶ 계속 보기</button>
+      </div>
+      <div class="yt-end" id="ytEnd" hidden>
+        <span class="ye-ico">🎉</span>
+        <b>시청 완료!</b>
+        <p>다른 영상은 목록으로 돌아가서 골라요.</p>
+        <div class="ye-btns">
+          <button class="yt-btn" id="ytAgain" type="button">🔁 다시 보기</button>
+          <button class="yt-btn" id="ytBack" type="button">📺 다른 영상</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -907,25 +938,84 @@ document.getElementById('filters').addEventListener('click', e => {
   document.querySelectorAll('.fchip').forEach(x => x.classList.toggle('on', x === c));
   renderVideos();
 });
+let vNow = null, vState = -1;
+function vCmd(fn, args){
+  try{
+    const f = document.querySelector('#frame iframe');
+    if(f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({event:'command', func:fn, args:args||[]}), '*');
+  }catch(_){}
+}
+function vPaint(){
+  const tip = document.getElementById('ytTip');
+  if(tip) tip.hidden = (vState === 1);
+}
+function vMount(){
+  const box = document.getElementById('frame');
+  box.querySelectorAll('iframe').forEach(x => x.remove());
+  vState = -1;
+  const end = document.getElementById('ytEnd'), pause = document.getElementById('ytPause'), arm = document.getElementById('ytArm');
+  if(end) end.hidden = true;
+  if(pause) pause.hidden = true;
+  if(arm) arm.hidden = false;
+  const ifr = document.createElement('iframe');
+  ifr.src = 'https://www.youtube-nocookie.com/embed/' + vNow.id +
+    '?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&fs=0&autoplay=1';
+  ifr.title = vNow.title;
+  ifr.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+  try{ ifr.setAttribute('referrerpolicy', 'origin'); }catch(_){}
+  box.appendChild(ifr);
+  /* 재생 버튼을 눌렀을 때 재생이 막힌 경우에도 우리 레이어가 막고 있으므로 직접 재생 명령 */
+  ifr.addEventListener('load', () => { setTimeout(() => vCmd('playVideo'), 350); });
+  vPaint();
+}
+window.addEventListener('message', e => {
+  if(!vNow) return;
+  if(!e.origin || e.origin.indexOf('youtube') < 0) return;
+  let j = null;
+  if(typeof e.data === 'string'){ try{ j = JSON.parse(e.data); }catch(_){ j = null; } }
+  else if(e.data && typeof e.data === 'object'){ j = e.data; }
+  if(!j) return;
+  let st = null;
+  if(j.event === 'onStateChange') st = j.info;
+  else if(j.event === 'infoDelivery' && j.info && typeof j.info.playerState === 'number') st = j.info.playerState;
+  if(st === null || st === undefined) return;
+  if(st !== 0){ vState = st; }
+  const pause = document.getElementById('ytPause');
+  const end = document.getElementById('ytEnd');
+  const arm = document.getElementById('ytArm');
+  if(st === 0){
+    vNow && (vNow.ended = true);
+    document.querySelectorAll('#frame iframe').forEach(x => x.remove());
+    if(arm) arm.hidden = true;
+    if(pause) pause.hidden = true;
+    if(end) end.hidden = false;
+    vPaint();
+    return;
+  }
+  if(pause) pause.hidden = (st !== 2);
+  vPaint();
+});
+function vResume(){ const p = document.getElementById('ytPause'); if(p) p.hidden = true; vCmd('playVideo'); }
+document.getElementById('ytArm').onclick = () => { if(vState === 1) vCmd('pauseVideo'); else vCmd('playVideo'); };
+document.getElementById('ytPause').onclick = vResume;
+document.getElementById('ytAgain').onclick = () => { if(vNow) vMount(); };
+document.getElementById('ytBack').onclick = closeVideo;
 function openVideo(v){
   stopSpeak();
+  vNow = v;
   document.getElementById('mTitle').textContent = v.ch + ' · ' + v.title;
-  const f = document.getElementById('frame');
-  f.innerHTML = '';
-  const ifr = document.createElement('iframe');
-  ifr.src = 'https://www.youtube.com/embed/' + v.id + '?rel=0&modestbranding=1&playsinline=1&autoplay=1';
-  ifr.title = v.title;
-  ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-  ifr.allowFullscreen = true;
-  try{ ifr.setAttribute('referrerpolicy', 'origin'); }catch(_){}
-  f.appendChild(ifr);
+  vMount();
   document.getElementById('modal').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
 function closeVideo(){
   document.getElementById('modal').classList.remove('show');
-  document.getElementById('frame').innerHTML = '';
+  document.querySelectorAll('#frame iframe').forEach(x => x.remove());
+  const e2 = document.getElementById('ytEnd'), p2 = document.getElementById('ytPause');
+  if(e2) e2.hidden = true;
+  if(p2) p2.hidden = true;
   document.body.style.overflow = '';
+  vNow = null; vState = -1;
 }
 document.getElementById('mClose').onclick = closeVideo;
 document.getElementById('modal').addEventListener('click', e => { if(e.target.id === 'modal') closeVideo(); });
