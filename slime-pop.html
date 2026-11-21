@@ -82,11 +82,10 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .stage{
   position:relative; flex:1 1 auto; min-height:0; border-radius:26px; overflow:hidden;
   background:
-    radial-gradient(560px 380px at 20% 4%, rgba(255,255,255,.92), rgba(255,255,255,0) 66%),
-    radial-gradient(520px 400px at 86% 96%, rgba(255,236,248,.9), rgba(255,236,248,0) 70%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.5) 0 20px, rgba(255,255,255,0) 20px 44px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.4) 0 20px, rgba(255,255,255,0) 20px 44px),
-    linear-gradient(155deg,#FFE9F2 0%, #F5EDFF 46%, #E9F6FF 100%);
+    radial-gradient(620px 420px at 14% 0%, rgba(255,255,255,.95), rgba(255,255,255,0) 62%),
+    radial-gradient(520px 380px at 88% 100%, rgba(255,233,246,.9), rgba(255,233,246,0) 66%),
+    radial-gradient(700px 300px at 50% -10%, rgba(228,240,255,.85), rgba(228,240,255,0) 70%),
+    linear-gradient(150deg,#FFE7F1 0%, #F7ECFF 44%, #E9F7FF 100%);
   box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.95), 0 18px 42px rgba(140,100,165,.18);
   touch-action:none;
 }
@@ -1084,6 +1083,7 @@ function roundRectPath(c, x, y, w, h, r){
 }
 
 function computeTray(){
+  var old = { ix: TRAY.ix, iy: TRAY.iy, iw: TRAY.iw, ih: TRAY.ih };
   var pad = Math.round(clamp(Math.min(W, H) * 0.032, 8, 20));
   TRAY.x = pad;
   TRAY.y = pad - 2;
@@ -1095,6 +1095,14 @@ function computeTray(){
   TRAY.iy = TRAY.y + TRAY.rim;
   TRAY.iw = TRAY.w - TRAY.rim * 2;
   TRAY.ih = TRAY.h - TRAY.rim * 2;
+  /* 무대 크기가 바뀌어도 왁뿌볼이 트레이 안에 남도록 자리를 옮겨 준다 */
+  if (old.iw > 0 && typeof BB !== 'undefined' && BB && BB.list && BB.list.length) {
+    for (var i = 0; i < BB.list.length; i++) {
+      var b = BB.list[i];
+      b.x = TRAY.ix + (b.x - old.ix) / old.iw * TRAY.iw;
+      b.y = TRAY.iy + (b.y - old.iy) / old.ih * TRAY.ih;
+    }
+  }
 }
 
 /* 장면은 크기가 바뀔 때만 한 번 그려 둔다 (매 프레임 비용 0) */
@@ -1111,9 +1119,9 @@ function paintScene(){
 
   /* 1) 테이블에 드리우는 트레이 그림자 */
   sctx.save();
-  sctx.shadowColor = 'rgba(112,74,142,.20)';
-  sctx.shadowBlur = Math.max(16, Math.min(42, w * 0.045));
-  sctx.shadowOffsetX = 0; sctx.shadowOffsetY = thick + 6;
+  sctx.shadowColor = 'rgba(112,74,142,.28)';
+  sctx.shadowBlur = Math.max(22, Math.min(52, w * 0.055));
+  sctx.shadowOffsetX = 0; sctx.shadowOffsetY = thick + 9;
   sctx.fillStyle = 'rgba(255,255,255,.92)';
   roundRectPath(sctx, x, y, w, h, r); sctx.fill();
   sctx.restore();
@@ -1140,11 +1148,25 @@ function paintScene(){
   rrSub(sctx, TRAY.ix, TRAY.iy, TRAY.iw, TRAY.ih, ir);
   var rg = sctx.createLinearGradient(x, y, x + w * 0.78, y + h);
   rg.addColorStop(0, 'rgba(255,255,255,1)');
-  rg.addColorStop(0.34, 'rgba(255,252,254,.98)');
-  rg.addColorStop(0.72, 'rgba(247,242,255,.96)');
-  rg.addColorStop(1, 'rgba(231,222,246,.96)');
+  rg.addColorStop(0.30, 'rgba(255,252,255,.99)');
+  rg.addColorStop(0.62, 'rgba(248,244,255,.98)');
+  rg.addColorStop(0.85, 'rgba(238,230,251,.98)');
+  rg.addColorStop(1, 'rgba(219,206,242,.99)');
   sctx.fillStyle = rg;
   sctx.fill('evenodd');
+
+  /* 바깥 가장자리의 유리 같은 하이라이트 */
+  roundRectPath(sctx, x + 1.2, y + 1.2, w - 2.4, h - 2.4, r);
+  sctx.strokeStyle = 'rgba(255,255,255,.95)';
+  sctx.lineWidth = 1.6;
+  sctx.stroke();
+  /* 아랫변 두께에 맺히는 빛 */
+  sctx.beginPath();
+  sctx.moveTo(x + r * 0.7, y + h + thick - 1.2);
+  sctx.lineTo(x + w - r * 0.7, y + h + thick - 1.2);
+  sctx.strokeStyle = 'rgba(255,255,255,.75)';
+  sctx.lineWidth = 1.6;
+  sctx.stroke();
 
   /* 5) 트레이 안쪽벽 그늘 + 깊이 + 아크릴 반사 */
   sctx.save();
@@ -1241,7 +1263,7 @@ function pointInPoly(x, y, pts){
 function slimeInit(){
   SL.cx = TRAY.ix + TRAY.iw / 2;
   SL.cy = TRAY.iy + TRAY.ih * 0.52;
-  SL.baseR = Math.max(48, Math.min(TRAY.iw * 0.375, TRAY.ih * 0.370, 265));
+  SL.baseR = Math.max(48, Math.min(TRAY.iw * 0.395, TRAY.ih * 0.400, 280));
   var R = SL.baseR;
   SL.p = []; SL.v = []; SL.prev = []; SL.ox = []; SL.oy = []; SL.rest = [];
   for (var i = 0; i < N; i++) {
@@ -1979,50 +2001,59 @@ function drawTextureDetails(cx, cy, rx, ry, C, T, t){
   }
 }
 
-/* 손가락 자국 — 음영이 파인 동그란 홈 + 지문 */
+/* 손가락 자국 — 살짝 파인 동그란 홈 */
 function drawDentMark(d, C, T){
   var k = clamp(d.t / d.life, 0, 1);
   var fade = k < 0.62 ? 1 : Math.max(0, 1 - (k - 0.62) / 0.38);
   var depth = clamp(d.depth, 0, 1.15) * fade;
   if (depth <= 0.01) return;
   var r = d.r;
-  var rot = d.rot || 0;
+  var deep = mixHex(C.base, C.dark, 0.86);
+  var soft = mixHex(C.base, C.dark, 0.48);
 
-  /* 파인 그늘 */
-  var g = ctx.createRadialGradient(d.x + r * 0.04, d.y + r * 0.10, r * 0.05, d.x, d.y + r * 0.04, r * 1.12);
-  g.addColorStop(0, rgba(darken(C.dark, 0.55), 0.50 * depth));
-  g.addColorStop(0.52, rgba(darken(C.dark, 0.30), 0.26 * depth));
-  g.addColorStop(0.82, rgba(C.dark, 0.07 * depth));
-  g.addColorStop(1, rgba(C.dark, 0));
+  /* 홈 테두리의 부드러운 그늘 */
+  var g = ctx.createRadialGradient(d.x, d.y, r * 0.45, d.x, d.y, r * 1.16);
+  g.addColorStop(0, rgba(soft, 0));
+  g.addColorStop(0.55, rgba(soft, 0.10 * depth));
+  g.addColorStop(1, rgba(soft, 0));
   ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(d.x, d.y, r * 1.12, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(d.x, d.y, r * 1.16, 0, TAU); ctx.fill();
 
-  /* 홈 아래쪽에 맺히는 반사 */
-  var bg = ctx.createRadialGradient(d.x, d.y + r * 0.58, r * 0.04, d.x, d.y + r * 0.58, r * 1.0);
-  bg.addColorStop(0, 'rgba(255,255,255,' + (0.62 * depth * T.gloss) + ')');
-  bg.addColorStop(0.6, 'rgba(255,255,255,' + (0.20 * depth * T.gloss) + ')');
-  bg.addColorStop(1, 'rgba(255,255,255,0)');
+  /* 우묵한 그릇 — 위는 어둡고 아래는 환하다 */
+  ctx.save();
+  ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, TAU); ctx.clip();
+  var bg = ctx.createRadialGradient(d.x, d.y - r * 0.20, r * 0.10, d.x, d.y, r * 1.02);
+  bg.addColorStop(0, rgba(deep, 0.40 * depth));
+  bg.addColorStop(0.45, rgba(soft, 0.28 * depth));
+  bg.addColorStop(0.80, rgba(soft, 0.12 * depth));
+  bg.addColorStop(1, rgba(soft, 0.02 * depth));
   ctx.fillStyle = bg;
-  ctx.beginPath(); ctx.ellipse(d.x, d.y + r * 0.52, r * 0.95, r * 0.55, 0, 0, TAU); ctx.fill();
+  ctx.fillRect(d.x - r, d.y - r, r * 2, r * 2);
 
-  /* 테두리 */
-  ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, TAU);
-  ctx.strokeStyle = 'rgba(255,255,255,' + (0.52 * depth * T.gloss) + ')';
-  ctx.lineWidth = 2.6;
-  ctx.stroke();
-  ctx.beginPath(); ctx.arc(d.x, d.y, r * 0.98, Math.PI * 0.15, Math.PI * 0.9);
-  ctx.strokeStyle = rgba(darken(C.dark, 0.2), 0.30 * depth);
-  ctx.lineWidth = 1.8;
-  ctx.stroke();
+  /* 위쪽 벽 그늘 */
+  var tg = ctx.createLinearGradient(0, d.y - r, 0, d.y + r * 0.35);
+  tg.addColorStop(0, rgba(deep, 0.34 * depth));
+  tg.addColorStop(0.6, rgba(deep, 0.06 * depth));
+  tg.addColorStop(1, rgba(deep, 0));
+  ctx.fillStyle = tg;
+  ctx.fillRect(d.x - r, d.y - r, r * 2, r * 2);
 
-  /* 지문 결 */
-  for (var i = 1; i <= 2; i++) {
-    ctx.beginPath();
-    ctx.ellipse(d.x, d.y, r * (0.5 + 0.2 * i), r * (0.44 + 0.17 * i), rot + 0.4, 0.55, 2.5);
-    ctx.strokeStyle = rgba(darken(C.dark, 0.25), 0.11 * depth);
-    ctx.lineWidth = 1.3;
-    ctx.stroke();
-  }
+  /* 바닥에 맺히는 빛 */
+  var hg = ctx.createRadialGradient(d.x, d.y + r * 0.50, r * 0.03, d.x, d.y + r * 0.50, r * 0.78);
+  hg.addColorStop(0, 'rgba(255,255,255,' + (0.50 * depth * T.gloss) + ')');
+  hg.addColorStop(0.6, 'rgba(255,255,255,' + (0.14 * depth * T.gloss) + ')');
+  hg.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = hg;
+  ctx.beginPath(); ctx.ellipse(d.x, d.y + r * 0.46, r * 0.74, r * 0.42, 0, 0, TAU); ctx.fill();
+  ctx.restore();
+
+  /* 아래쪽 반달 하이라이트 — 홈 테두리에 맺힌 빛 */
+  var arc = ctx.createRadialGradient(d.x, d.y + r * 0.35, r * 0.5, d.x, d.y + r * 0.35, r * 1.05);
+  arc.addColorStop(0, 'rgba(255,255,255,0)');
+  arc.addColorStop(0.72, 'rgba(255,255,255,' + (0.30 * depth * T.gloss) + ')');
+  arc.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = arc;
+  ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, TAU); ctx.fill();
 }
 
 /* 표면 공기방울 — 유리처럼 통통 */
@@ -2256,7 +2287,7 @@ function paintJelly(pts, M, C, T, o){
     ctx.beginPath();
     ctx.moveTo(o.cut[0].x, o.cut[0].y);
     ctx.lineTo(o.cut[1].x, o.cut[1].y);
-    ctx.strokeStyle = 'rgba(255,255,255,' + (0.62 * gloss) + ')';
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.50 * gloss) + ')';
     ctx.lineWidth = Math.max(2.5, Math.min(rx, ry) * 0.05);
     ctx.lineCap = 'round';
     ctx.stroke();
@@ -2572,7 +2603,10 @@ function ballsReset(n){
     else tiers.push('normal');
   }
   for (var i = 0; i < count; i++) {
-    var b = makeBall(rand(W * 0.15, W * 0.85), rand(H * 0.2, H * 0.8), order[i % order.length], tiers[i]);
+    var rr = ballRadius() * tierScale(tiers[i]) * rand(0.93, 1.07);
+    var b = makeBall(rand(TRAY.ix + rr * 1.1, TRAY.ix + TRAY.iw - rr * 1.1),
+                     rand(TRAY.iy + rr * 1.1, TRAY.iy + TRAY.ih - rr * 1.1),
+                     order[i % order.length], tiers[i]);
     /* 처음엔 겹치지 않게 밀어 두기 */
     for (var k = 0; k < 60; k++) {
       var ok = true;
@@ -2582,8 +2616,8 @@ function ballsReset(n){
         if (Math.sqrt(dx * dx + dy * dy) < b.r + o.r + 8) { ok = false; break; }
       }
       if (ok) break;
-      b.x = rand(W * 0.14, W * 0.86);
-      b.y = rand(H * 0.15, H * 0.85);
+      b.x = rand(TRAY.ix + b.r * 1.1, TRAY.ix + TRAY.iw - b.r * 1.1);
+      b.y = rand(TRAY.iy + b.r * 1.1, TRAY.iy + TRAY.ih - b.r * 1.1);
     }
     BB.list.push(b);
   }
@@ -2605,7 +2639,10 @@ function ballAddOne(){
   var used = BB.list.map(function(x){ return x.color.base; });
   var fresh = BALLCOLORS.filter(function(c){ return used.indexOf(c.base) < 0; });
   var tier = Math.random() < 0.18 ? 'king' : (Math.random() < 0.34 ? 'mini' : 'normal');
-  var b = makeBall(rand(W * 0.2, W * 0.8), rand(H * 0.2, H * 0.45), fresh.length ? pick(fresh) : null, tier);
+  var rr0 = ballRadius() * tierScale(tier);
+  var b = makeBall(rand(TRAY.ix + rr0 * 1.1, TRAY.ix + TRAY.iw - rr0 * 1.1),
+                   rand(TRAY.iy + rr0 * 1.1, TRAY.iy + TRAY.ih * 0.55),
+                   fresh.length ? pick(fresh) : null, tier);
   BB.list.push(b);
   updateBallChip();
   Sound.tok();
@@ -2802,7 +2839,8 @@ function ballPop(b){
     if (store.mode !== 'ball') return;
     if (BB.list.length < 11) {
       var tier = Math.random() < 0.18 ? 'king' : (Math.random() < 0.3 ? 'mini' : 'normal');
-      var nb = makeBall(rand(W * 0.18, W * 0.82), rand(H * 0.16, H * 0.4), null, tier);
+      var nb = makeBall(rand(TRAY.ix + 40, TRAY.ix + TRAY.iw - 40),
+                        rand(TRAY.iy + 40, TRAY.iy + TRAY.ih * 0.45), null, tier);
       BB.list.push(nb);
       for (var k = 0; k < BB.list.length; k++) {
         var o = BB.list[k];
@@ -3482,6 +3520,7 @@ TEXTURES.forEach(function(tc){
   var b = document.createElement('button');
   b.type = 'button';
   b.className = 'chip' + (store.texture === tc.id ? ' on' : '');
+  b.dataset.texture = tc.id;
   b.innerHTML = '<span class="em">' + tc.em + '</span>' + tc.name;
   b.title = tc.desc;
   b.addEventListener('click', function(){
@@ -3504,6 +3543,7 @@ TOPPINGS.forEach(function(tp){
   var b = document.createElement('button');
   b.type = 'button';
   b.className = 'chip' + (store.topping === tp.id ? ' on' : '');
+  b.dataset.topping = tp.id;
   b.innerHTML = '<span class="em">' + tp.em + '</span>' + tp.name;
   b.addEventListener('click', function(){
     if (store.topping === tp.id) {
