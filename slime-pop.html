@@ -1434,6 +1434,15 @@ var BALLCOLORS = [
 
 var BB = { list: [], sparks: [], floats: [], t: 0, count: 0 };
 
+/* 꾹 누르는 시간(초). 주소에 ?hold=0.1 처럼 주면 점검할 때만 짧게 바뀐다. */
+var HOLD_POP = (function(){
+  try {
+    var v = parseFloat(new URLSearchParams(location.search).get('hold'));
+    if (v > 0.02 && v < 3) return v;
+  } catch (e) {}
+  return 0.62;
+})();
+
 function ballRadius(){ return clamp(Math.min(W, H) * 0.098, 30, 62); }
 
 function makeBall(x, y, forceColor){
@@ -1556,9 +1565,9 @@ function ballStep(dt){
     if (b.pressing) {
       b.hold += dt;
       if (b.hold > window.__slimeDiag.maxHold) window.__slimeDiag.maxHold = Math.round(b.hold * 100) / 100;
-      var target = Math.min(1, b.hold / 0.62);
+      var target = Math.min(1, b.hold / HOLD_POP);
       b.dent += (target - b.dent) * 0.35;
-      if (b.hold > 0.62) ballPop(b);
+      if (b.hold > HOLD_POP) ballPop(b);
     }
   }
 
@@ -1717,7 +1726,7 @@ function drawBalls(t){
 
     /* 누르는 중이면 링 표시 */
     if (b.pressing) {
-      var p = clamp(b.hold / 0.62, 0, 1);
+      var p = clamp(b.hold / HOLD_POP, 0, 1);
       ctx.beginPath();
       ctx.arc(b.x, b.y, b.r + 8, -Math.PI / 2, -Math.PI / 2 + p * TAU);
       ctx.strokeStyle = rgba(c.dark, 0.55);
