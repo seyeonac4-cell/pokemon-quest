@@ -1010,6 +1010,28 @@ function store(k, v) {
   } catch (e) { return null; }
 }
 
+/* ===== 🌍 월드 연결: 지금 노는 아이를 ?who= 로 이어 줘 ===== */
+var WHO_KEY = 'lim_active_kid';
+var WHO_MAP = { yunjin: 'yunjin', hyungwon: 'hyungwon', hyeongwon: 'hyungwon' };
+function whoNorm(v) {
+  if (!v) return null;
+  v = String(v).trim().toLowerCase();
+  return WHO_MAP[v] || null;
+}
+function whoFromUrl() {
+  try {
+    var q = new URLSearchParams(location.search || '');
+    return whoNorm(q.get('who'));
+  } catch (e) { return null; }
+}
+function whoSharedGet() { return whoNorm(store(WHO_KEY)); }
+function whoSharedSet(k) { if (k) store(WHO_KEY, k); }
+function worldHref(href) {
+  if (!href) return href;
+  var id = ME_ID() || 'yunjin';
+  return href + (href.indexOf('?') >= 0 ? '&' : '?') + 'who=' + encodeURIComponent(id);
+}
+
 /* ============================================================
    1. 소리 — 경쾌한 타자 소리 · 효과음 (Web Audio API)
    ============================================================ */
@@ -3931,7 +3953,7 @@ function updatePortalPrompt() {
 function goWorld(href) {
   if (!href) return;
   AU.chime();
-  try { location.href = href; } catch (e) {}
+  try { location.href = worldHref(href); } catch (e) {}
 }
 
 /* 🌋 2탄 시작 지점으로 */
@@ -5185,6 +5207,7 @@ var SPAWN_OFF = { yunjin: { x: -1.3, y: 0.7 }, hyungwon: { x: 1.3, y: -0.7 } };
 function bootWho(who) {
   setProfile(who, true);
   try { store('bw:last', who); } catch (e) {}
+  whoSharedSet(who);
   var off = SPAWN_OFF[who] || { x: 0, y: 0 };
   G.p.x = G.spawn.x + off.x;
   G.p.y = G.spawn.y + off.y;
@@ -5367,6 +5390,7 @@ function bindUI() {
       var w = whoPick.getAttribute('data-switch');
       closeSheet('whoPanel');
       setProfile(w);
+      whoSharedSet(w);
       return;
     }
   });
@@ -5529,10 +5553,17 @@ function init() {
       AU.unlock(); AU.click();
     });
   });
-  var urlWho = (location.hash || '').replace('#', '');
-  if (WHO[urlWho]) {
-    G.pickWho = urlWho;
-    bootWho(urlWho);
+  var urlWho = whoFromUrl();
+  var hashWho = whoNorm((location.hash || '').replace('#', ''));
+  var bootPick = urlWho || hashWho;
+  if (!bootPick) {
+    /* ?who= · 주소에 없으면 이 기기에서 마지막에 고른 아이로 이어서 */
+    var shared = whoSharedGet();
+    if (shared) bootPick = shared;
+  }
+  if (WHO[bootPick]) {
+    G.pickWho = bootPick;
+    bootWho(bootPick);
   } else {
     // 저장된 마지막 프로필이 있으면 미리 골라 두기
     var last = store('bw:last');

@@ -919,6 +919,23 @@ body{
 }
 .pill.sis.on .dot{background:#22CC88; box-shadow:0 0 0 2px rgba(255,255,255,.9), 0 0 8px rgba(34,204,136,.8)}
 .pill.sis.on{border-color:#8DE9C4; background:linear-gradient(135deg,#F0FFF9,#E5FFF4)}
+/* ---------- 🌍 월드 연결 바 ---------- */
+.worldbar{display:flex; gap:5px; align-items:center; flex:0 0 auto; min-width:0; padding:0 1px}
+.wbadge{display:inline-flex; align-items:center; gap:4px; height:28px; padding:0 10px; border-radius:99px;
+  border:1.5px solid #EED6E6; background:rgba(255,255,255,.96); box-shadow:0 3px 9px rgba(120,60,120,.08)}
+.wbadge b{font-size:11.5px; font-weight:900; color:#6B4B72; letter-spacing:-.02em}
+.wbadge .em{font-size:13px; line-height:1}
+.wbadge i{font-style:normal; font-size:9px; color:#BCA9C8}
+.wbadge:active{transform:scale(.96)}
+.wgap{flex:1 1 auto; min-width:2px}
+.wgo{display:inline-flex; align-items:center; gap:3px; height:28px; padding:0 9px; border-radius:99px;
+  border:1.5px solid #E7DAF2; background:linear-gradient(180deg,#FFFFFF,#F8F2FF); color:#5B3D86;
+  font-size:11px; font-weight:900; text-decoration:none; white-space:nowrap; letter-spacing:-.03em;
+  box-shadow:0 3px 9px rgba(120,60,120,.08)}
+.wgo:active{transform:scale(.96)}
+.prop.gate{animation:gatePulse 2.8s ease-in-out infinite; transform-origin:50% 100%}
+@keyframes gatePulse{0%,100%{filter:drop-shadow(0 0 2px rgba(180,140,255,.6))}50%{filter:drop-shadow(0 0 11px rgba(200,160,255,1))}}
+@media (max-width:380px){ .wbadge{padding:0 8px} .wgo{padding:0 7px; font-size:10.5px} }
 .famWho{display:flex; gap:6px; margin-bottom:8px}
 .famWho button{
   flex:1; border:2px solid #EFDFF0; background:#fff; border-radius:14px; padding:10px 4px;
@@ -1006,6 +1023,15 @@ body{
     <button class="pill sis" id="sisPill" type="button" title="자매랑 같이 놀기">
       <span class="dot" id="sisDot"></span><b id="sisMe">👭 같이</b>
     </button>
+  </div>
+
+  <div class="worldbar" id="worldBar">
+    <button class="wbadge" id="kidPill" type="button" title="지금 꾸미는 사람 바꾸기">
+      <span class="em" id="kidPillEmo">🦊</span><b id="kidPillName">윤진</b><i>▾</i>
+    </button>
+    <span class="wgap"></span>
+    <a class="wgo" id="wgoBlock" href="./block-world.html">🧱 블록 월드</a>
+    <a class="wgo" id="wgoGrow" href="./grow-garden.html">🌱 그로우</a>
   </div>
 
   <div class="room" id="room">
@@ -2774,7 +2800,10 @@ var ZONES = [
   { id:'park',    emoji:'🎡', name:'놀이공원',            x:-5.8, z:14.4, w:4.6, d:2.0, h:0.40, base:'#FF9BD0', carpet:'#FFE7B8', cats:['park','acc'],          panel:1.3, artH:2.2, sub:'FUN PARK' },
   { id:'contest', emoji:'🏆', name:'모델대회 홀',          x: 5.8, z:14.4, w:4.6, d:2.0, h:0.42, base:'#FFC53D', carpet:'#FFD9DC', cats:['dress','shoes'],      panel:1.3, artH:2.2, sub:'MODEL CONTEST', act:'contest' },
   { id:'club',    emoji:'🪩', name:'키즈 디스코 클럽',      x: 0,   z:9.3,  w:5.0, d:2.2, h:0,    base:'#B98BFF', carpet:'#2B123A', cats:['park','acc'],         panel:1.35, artH:1.7, sub:'KIDS DISCO', act:'club', noSolid:true },
-  { id:'lobby',   emoji:'✨', name:'로비 & 런웨이 입구',    x: 0,   z:14.6, w:3.2, d:1.8, h:0,    base:'#FFD3E8', carpet:'#FFE3F1', cats:['dress'],              panel:0,   artH:0,   sub:'LOBBY · RUNWAY', act:'runway', noSolid:true }
+  { id:'lobby',   emoji:'✨', name:'로비 & 런웨이 입구',    x: 0,   z:14.6, w:3.2, d:1.8, h:0,    base:'#FFD3E8', carpet:'#FFE3F1', cats:['dress'],              panel:0,   artH:0,   sub:'LOBBY · RUNWAY', act:'runway', noSolid:true },
+  /* 🌍 다른 월드로 가는 반짝이는 문 — 로비 양옆, 걸어가면 바로 이동 */
+  { id:'gate_block', emoji:'🧱', name:'블록 월드',      x:-2.10, z:13.50, w:2.2, d:0.8, h:0, base:'#8FC2FF', carpet:'#D9EBFF', cats:[], panel:0, artH:0, sub:'WORLD GATE · BLOCK',  act:'world', gate:true, noSolid:true, to:'./block-world.html' },
+  { id:'gate_grow',  emoji:'🌱', name:'그로우 어 가든', x: 2.10, z:13.50, w:2.2, d:0.8, h:0, base:'#8BE3B0', carpet:'#DDFBEA', cats:[], panel:0, artH:0, sub:'WORLD GATE · GARDEN', act:'world', gate:true, noSolid:true, to:'./grow-garden.html' }
 ];
 
 var PLATFORMS = [
@@ -3351,6 +3380,44 @@ function artEl(svg, x, z, units, ratio, zoff, up){
   var wpx = hpx * (ratio || 0.72);
   return '<div class="prop" data-prop="art" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z*10+(zoff||0))+'">'+svg+'</div>';
 }
+/* 🌍 다른 월드로 가는 반짝이는 문 (걸어가면 바로 이동) */
+function gateSVG(z){
+  var uid = 'gg_' + z.id;
+  return '<svg viewBox="0 0 120 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<defs><radialGradient id="'+uid+'" cx="50%" cy="40%" r="66%">'
+    + '<stop offset="0%" stop-color="#ffffff" stop-opacity=".97"/>'
+    + '<stop offset="100%" stop-color="'+z.base+'" stop-opacity=".95"/></radialGradient></defs>'
+    + '<ellipse cx="60" cy="182" rx="42" ry="8" fill="#5A2268" opacity=".18"/>'
+    + '<path d="M16 181 V88 A44 44 0 0 1 104 88 V181 Z" fill="url(#'+uid+')" stroke="#ffffff" stroke-width="3.4"/>'
+    + '<path d="M31 181 V90 A29 29 0 0 1 89 90 V181 Z" fill="#ffffff" fill-opacity=".34"/>'
+    + '<path d="M16 181 V88 A44 44 0 0 1 104 88 V181" fill="none" stroke="'+z.base+'" stroke-width="5" stroke-linecap="round" opacity=".9"/>'
+    + '<text x="60" y="118" font-size="40" text-anchor="middle" dominant-baseline="middle">'+z.emoji+'</text>'
+    + '<circle cx="27" cy="58" r="3.1" fill="#fff" opacity=".95"/>'
+    + '<circle cx="94" cy="46" r="2.4" fill="#fff" opacity=".9"/>'
+    + '<circle cx="60" cy="22" r="2.6" fill="#fff" opacity=".85"/>'
+    + '<circle cx="38" cy="28" r="1.8" fill="#fff" opacity=".8"/>'
+    + '</svg>';
+}
+function gateArtEl(z){
+  var p = proj(z.x, z.z, 0);
+  var hpx = 2.15 * WORLD.uy * p.s, wpx = hpx * 0.63;
+  return '<div class="prop gate" data-prop="art" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+z.z*10)+'">'+gateSVG(z)+'</div>';
+}
+function gateLabelEl(z){
+  var p = proj(z.x, z.z, 0);
+  var hpx = 2.15 * WORLD.uy * p.s, wpx = hpx * 0.63;
+  var el = document.createElement('div');
+  el.className = 'zone';
+  el.setAttribute('data-zone', z.id);
+  el.style.left = p.x.toFixed(1) + 'px';
+  el.style.top = p.y.toFixed(1) + 'px';
+  el.style.width = wpx.toFixed(1) + 'px';
+  el.style.height = hpx.toFixed(1) + 'px';
+  el.style.zIndex = String(Math.round(101 + z.z*10));
+  el.innerHTML = '<span class="lb" title="'+esc(z.name)+'" style="bottom:auto;top:-4px;transform:translateX(-50%);font-size:'+Math.max(11, Math.min(15, Math.round(VIEW.W*0.032)))+'px;padding:2px 6px">'+z.emoji+' '+esc(z.name)+'</span>';
+  worldEl.appendChild(el);
+  z.el = el;
+}
 
 function buildStatic(){
   measureRoom();
@@ -3414,6 +3481,8 @@ function buildStatic(){
   html += artEl(podiumArt(),  2.6, 15.0, 1.0, 0.78);
   /* 기둥 화분 */
   DECO_SOLIDS.forEach(function(p){ html += artEl(plantArt(), p.x, p.z + 0.32, 1.2, 0.7); });
+  /* 🌍 다른 월드로 가는 반짝이는 문 */
+  ZONES.forEach(function(z){ if(z.gate) html += gateArtEl(z); });
   worldEl.insertAdjacentHTML('beforeend', html);
 
   /* 구역 클릭 영역 + 이름표 */
@@ -3434,6 +3503,8 @@ function buildStatic(){
     worldEl.appendChild(el);
     z.el = el;
   });
+  /* 🌍 월드 문 이름표 */
+  ZONES.forEach(function(z){ if(z.gate) gateLabelEl(z); });
   layoutPicks();
 }
 
@@ -3883,12 +3954,13 @@ function showClaim(title, sub){
 function renderPrompt(){
   var p = $('prompt');
   if(!nearZone || anySheetOpen()){ p.classList.remove('on'); return; }
-  $('promptName').textContent = nearZone.name;
+  $('promptName').textContent = nearZone.gate ? (roJosa(nearZone.name) + ' 갈까요?') : nearZone.name;
   var ico = $('promptIco'), act = $('promptAct');
   if(ico) ico.textContent = nearZone.emoji || '✨';
   if(act) act.textContent = nearZone.act === 'runway' ? '런웨이 시작'
     : (nearZone.act === 'contest' ? '대회 시작'
-    : (nearZone.act === 'club' ? (CLUB.dancing ? '그만 추기' : '춤추기') : '입어보기'));
+    : (nearZone.act === 'club' ? (CLUB.dancing ? '그만 추기' : '춤추기')
+    : (nearZone.act === 'world' ? '이동 →' : '입어보기')));
   p.classList.add('on');
 }
 function hidTip(){
@@ -4082,6 +4154,7 @@ function anySheetOpen(){
   return false;
 }
 function openZone(z){
+  if(z.gate){ goWorldNow(z.to); return; }
   if(z.act === 'runway'){ openRunway(); return; }
   if(z.act === 'contest'){ openContest(); return; }
   if(z.act === 'club'){ toggleDance(); return; }
@@ -4690,7 +4763,7 @@ document.addEventListener('click', function(e){
     ZONES.forEach(function(x){ if(x.id === t.getAttribute('data-mzone')) mz = x; });
     if(mz){
       if(nearZone === mz) openZone(mz);
-      else if(walkToZone(mz)){ toast('👣 ' + mz.name + '으로 걸어가요…'); SFX.tap(); }
+      else if(walkToZone(mz)){ toast('👣 ' + roJosa(mz.name) + ' 걸어가요…'); SFX.tap(); }
       else toast('가구에 가려 못 갔어요. 조이스틱으로 가까이 가 볼까요?');
     }
     return;
@@ -4703,7 +4776,7 @@ document.addEventListener('click', function(e){
       if(nearZone === z){ openZone(z); }
       else {
         if(walkToZone(z)){
-          toast('👣 ' + z.name + '으로 걸어가요…');
+          toast('👣 ' + roJosa(z.name) + ' 걸어가요…');
           SFX.tap();
         }
       }
@@ -4879,6 +4952,7 @@ $('vsBtn').addEventListener('click', function(){
 });
 
 addPress($('sisPill'), function(){ famRenderSheet(); openSheet('sisSheet'); SFX.tap(); });
+addPress($('kidPill'), function(){ famRenderSheet(); openSheet('sisSheet'); SFX.tap(); });
 addPress($('famHi'), famHiSend);
 addPress($('famWhere'), famWhere);
 (function(){
@@ -4935,6 +5009,53 @@ var FAM_CFG = {
 var FAM_PATH = 'family-lim-7660/dressUp';
 var FAM_EMO = { yunjin:'🦊', hyungwon:'🐣' };
 var FAM_KEY = 'dti_who';
+
+/* ===== 🌍 월드 연결: 지금 노는 아이를 기억하고 ?who= 로 이어 줘 ===== */
+var WHO_KEY = 'lim_active_kid';
+var WHO_MAP = { yunjin:'yunjin', hyungwon:'hyungwon', hyeongwon:'hyungwon' };
+function whoNorm(v){
+  if(!v) return null;
+  v = String(v).trim().toLowerCase();
+  return WHO_MAP[v] || null;
+}
+function whoFromUrl(){
+  try{
+    var q = new URLSearchParams(location.search || '');
+    return whoNorm(q.get('who')) || whoNorm((location.hash || '').replace('#',''));
+  }catch(e){ return null; }
+}
+function whoSharedGet(){ try{ return whoNorm(localStorage.getItem(WHO_KEY)); }catch(e){ return null; } }
+function whoSharedSet(k){ try{ if(k) localStorage.setItem(WHO_KEY, k); }catch(e){} }
+function roJosa(n){
+  var s = String(n || ''); if(!s) return s;
+  var c = s.charCodeAt(s.length-1);
+  var batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+  return s + (batchim ? '으로' : '로');
+}
+var FAM_EMO2 = { yunjin:'🦊', hyungwon:'🐣' };
+function myWhoId(){ return FAM.meId || famStoredId() || whoSharedGet() || 'yunjin'; }
+function worldUrl(base){ return base + '?who=' + encodeURIComponent(myWhoId()); }
+function goWorldNow(base){
+  if(!base) return;
+  try{ famSend(true); }catch(e){}
+  try{ SFX.tap(); }catch(e){}
+  try{ location.href = worldUrl(base); }catch(e){}
+}
+function renderWorldBar(){
+  var id = myWhoId();
+  var e1 = $('kidPillEmo'), n1 = $('kidPillName'), pill = $('kidPill');
+  if(e1) e1.textContent = FAM_EMO2[id] || '👧';
+  if(n1) n1.textContent = famNameOf(id) || '윤진';
+  if(pill) pill.title = '지금 ' + (famNameOf(id) || '윤진') + '이 꾸미는 중 · 눌러서 바꾸기';
+  var ab = $('wgoBlock'), ag = $('wgoGrow');
+  if(ab) ab.setAttribute('href', './block-world.html?who=' + id);
+  if(ag) ag.setAttribute('href', './grow-garden.html?who=' + id);
+  var navA = document.querySelectorAll('.wnRow a.wn');
+  for(var i=0;i<navA.length;i++){
+    var b2 = (navA[i].getAttribute('href') || '').split('?')[0];
+    if(b2) navA[i].setAttribute('href', b2 + '?who=' + id);
+  }
+}
 var FAM = {
   ready:false, tried:0, db:null, root:null, meId:null,
   actor:null, remote:null, lastSent:0, lastPkt:'', lookKey:'',
@@ -5071,7 +5192,7 @@ function famApplyIdentity(id, persist){
   activeName = famNameOf(id);
   st.name = activeName;
   if(me){ me.label = activeName; me.nm.textContent = activeName; }
-  famRenderPill(); famRenderSheet();
+  famRenderPill(); famRenderSheet(); renderWorldBar();
 }
 
 /* 내 자리 차지(접속) + 앱을 닫으면 자동 삭제 */
@@ -5245,6 +5366,8 @@ function famPick(id){
   if(id !== 'yunjin' && id !== 'hyungwon') return;
   var old = FAM.meId;
   famApplyIdentity(id, true);
+  whoSharedSet(id);
+  renderWorldBar();
   if(FAM.ready && FAM.root){
     try{ if(old && old !== id) FAM.root.child('live/' + old).remove(); }catch(e){}
     famClaim();
@@ -5313,8 +5436,17 @@ renderCoins();
 renderMute();
 renderTimerMode();
 renderMenu();
-/* 이 폰의 캐릭터 이름 기억(있으면 바로 적용) */
-if(famStoredId()) famApplyIdentity(famStoredId(), false);
+/* 이 폰의 캐릭터 이름 기억(있으면 바로 적용) — ?who= 로 넘어오면 그 아이 우선 */
+var BOOT_WHO = whoFromUrl();
+if(BOOT_WHO){
+  famApplyIdentity(BOOT_WHO, true);
+  whoSharedSet(BOOT_WHO);
+} else {
+  var SH_WHO = whoSharedGet();
+  if(SH_WHO) famApplyIdentity(SH_WHO, true);
+  else if(famStoredId()) famApplyIdentity(famStoredId(), false);
+}
+renderWorldBar();
 if(Math.abs(PLAYER.x) < 0.05) PLAYER.x = spawnX();
 drawAll();
 famInit();

@@ -614,6 +614,28 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   .abtn{width:46px; height:46px; font-size:15px; border-radius:14px}
   .prompt{font-size:12px; padding:8px 13px}
 }
+/* ---------- 🌍 월드 연결 바 ---------- */
+.worldbar{flex:0 0 auto; display:flex; align-items:center; gap:6px; padding:0 2px; min-width:0}
+.wbadge{display:inline-flex; align-items:center; gap:4px; height:28px; padding:0 10px; border-radius:99px;
+  background:linear-gradient(180deg,#ffffff,#eef8ee); border:1.5px solid #cfe8cd; box-shadow:0 2px 6px rgba(40,90,50,.10)}
+.wbadge b{font-size:12px; font-weight:900; color:#2f5540; letter-spacing:-.02em}
+.wbadge .em{font-size:13px; line-height:1}
+.wbadge i{font-style:normal; font-size:9px; color:#8aa892}
+.wbadge:active{transform:scale(.96)}
+.wgap{flex:1 1 auto; min-width:2px}
+.wgo{display:inline-flex; align-items:center; gap:3px; height:28px; padding:0 10px; border-radius:99px;
+  background:#fff; border:1.5px solid #dbe7ef; box-shadow:0 2px 6px rgba(30,70,90,.08);
+  font-size:11.5px; font-weight:900; color:#31566e; text-decoration:none; white-space:nowrap; letter-spacing:-.03em}
+.wgo:active{transform:scale(.96)}
+/* 반짝이는 월드 문(포털) */
+.prop.gate{animation:gatePulse 2.8s ease-in-out infinite; transform-origin:50% 100%}
+@keyframes gatePulse{0%,100%{filter:drop-shadow(0 0 2px rgba(120,190,255,.55))}50%{filter:drop-shadow(0 0 10px rgba(150,210,255,.95))}}
+.zone.gateLb .lb{background:linear-gradient(135deg,#2e5d80,#1d3f5c); color:#fff}
+@media (max-width:370px){
+  .wbadge{padding:0 8px}
+  .wbadge b{font-size:11px}
+  .wgo{padding:0 8px; font-size:10.5px}
+}
 /* ---------- 🚪 다른 월드 가기 ---------- */
 .worldNav{
   margin:0 0 10px; padding:9px 9px 10px; border-radius:18px;
@@ -667,6 +689,15 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
       <button class="mutebtn" id="muteBtn" type="button" aria-label="소리 끄기">🔊</button>
     </div>
   </header>
+
+  <div class="worldbar" id="worldBar">
+    <button class="wbadge" type="button" data-act="swapKid" id="kidPill" title="지금 노는 아이 바꾸기">
+      <span class="em" id="kidPillEmo">🦊</span><b id="kidPillName">윤진</b><i>▾</i>
+    </button>
+    <span class="wgap"></span>
+    <a class="wgo" id="wgoBlock" href="./block-world.html">🧱 블록 월드</a>
+    <a class="wgo" id="wgoDress" href="./dress-up.html">👗 드레스</a>
+  </div>
 
   <div class="room" id="room">
     <svg id="groundSvg" viewBox="0 0 400 700" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -898,6 +929,53 @@ const LS_KEY = 'growGarden.v2';
 const LS_OLD = 'growGarden.v1';
 const LS_MUTE = 'growGarden.muted';
 
+/* ===== 🌍 월드 연결: 지금 노는 아이를 기억하고 ?who= 로 이어 줘 ===== */
+const WHO_KEY = 'lim_active_kid';
+const WHO_MAP = { yunjin:'yunjin', hyungwon:'hyeongwon', hyeongwon:'hyeongwon' };
+function whoNorm(v){
+  if(!v) return null;
+  v = String(v).trim().toLowerCase();
+  return WHO_MAP[v] || null;
+}
+function whoFromUrl(){
+  try{
+    const q = new URLSearchParams(location.search || '');
+    return whoNorm(q.get('who')) || whoNorm((location.hash || '').replace('#',''));
+  }catch(e){ return null; }
+}
+function whoSharedGet(){ try{ return whoNorm(localStorage.getItem(WHO_KEY)); }catch(e){ return null; } }
+function whoSharedSet(k){ try{ if(k) localStorage.setItem(WHO_KEY, k); }catch(e){} }
+function roJosa(n){
+  const s = String(n || ''); if(!s) return s;
+  const c = s.charCodeAt(s.length-1);
+  const batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+  return s + (batchim ? '으로' : '로');
+}
+function worldUrl(base){ return base + '?who=' + encodeURIComponent(kid || 'yunjin'); }
+function goWorldNow(base){
+  if(!base) return;
+  try{ saveNow(); }catch(e){}
+  try{ Sound.coin(); }catch(e){}
+  try{ location.href = worldUrl(base); }catch(e){}
+}
+function renderWorldBar(){
+  const k = (kid === 'hyeongwon') ? 'hyeongwon' : 'yunjin';
+  const em = (k === 'hyeongwon') ? '🐣' : '🦊';
+  const nm = (KIDS[k] || KIDS.yunjin).name;
+  const e1 = $('#kidPillEmo'), n1 = $('#kidPillName'), pill = $('#kidPill');
+  if(e1) e1.textContent = em;
+  if(n1) n1.textContent = nm;
+  if(pill) pill.title = '지금 ' + nm + '이 텃밭 · 눌러서 바꾸기';
+  const ab = $('#wgoBlock'), ad = $('#wgoDress');
+  if(ab) ab.setAttribute('href', './block-world.html?who=' + k);
+  if(ad) ad.setAttribute('href', './dress-up.html?who=' + k);
+  const navA = document.querySelectorAll('.wnRow a.wn');
+  for(let i=0;i<navA.length;i++){
+    const base = (navA[i].getAttribute('href') || '').split('?')[0];
+    if(base) navA[i].setAttribute('href', base + '?who=' + k);
+  }
+}
+
 const clamp = (n,a,b) => n < a ? a : n > b ? b : n;
 const rnd = (a,b) => a + Math.random()*(b-a);
 const pick = arr => arr[Math.floor(Math.random()*arr.length)];
@@ -1073,7 +1151,17 @@ function load(){
 }
 
 let DB = load();
+/* ?who= 로 넘어왔으면 그 아이로, 아니면 이 기기에서 마지막에 고른 아이로 이어서 */
+const BOOT_WHO = whoFromUrl();
+if(BOOT_WHO){
+  DB.kid = BOOT_WHO;
+  whoSharedSet(BOOT_WHO);
+}else{
+  const SH_WHO = whoSharedGet();
+  if(SH_WHO) DB.kid = SH_WHO;
+}
 let kid = DB.kid;
+try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
 const G = () => DB.gardens[kid];
 const otherKid = () => (kid === 'yunjin' ? 'hyeongwon' : 'yunjin');
 const homeSide = () => SIDE[kid] || -1;
@@ -1594,6 +1682,47 @@ function pickArt(kind){
     + '<circle cx="17" cy="17" r="10.2" fill="#FFEFB8" opacity=".85"/>'
     + '<path d="M17 8.4 l2.7 5.6 6.1 .9 -4.4 4.2 1.1 6.1 -5.5 -3 -5.5 3 1.1 -6.1 -4.4 -4.2 6.1 -.9 z" fill="#FFFFFF" stroke="#DF9A00" stroke-width="0.9"/></svg>';
 }
+/* ---------------- 🌍 월드 문 (다른 월드로 걸어가기) ---------------- */
+const GATES = [
+  { id:'gate_block', gate:true, emoji:'🧱', name:'블록 월드', to:'./block-world.html',
+    x:-2.20, z:4.95, c1:'#d6ebff', c2:'#5b9ded' },
+  { id:'gate_dress', gate:true, emoji:'👗', name:'드레스 투 임프레스', to:'./dress-up.html',
+    x: 2.20, z:4.95, c1:'#f1e0ff', c2:'#a06bff' }
+];
+function gateSvg(g){
+  const uid = 'gg_' + g.id;
+  return '<svg viewBox="0 0 120 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<defs><radialGradient id="'+uid+'" cx="50%" cy="40%" r="66%">'
+    + '<stop offset="0%" stop-color="'+g.c1+'" stop-opacity=".96"/>'
+    + '<stop offset="100%" stop-color="'+g.c2+'" stop-opacity=".84"/></radialGradient></defs>'
+    + '<ellipse cx="60" cy="182" rx="42" ry="8" fill="#123b2a" opacity=".20"/>'
+    + '<path d="M16 181 V88 A44 44 0 0 1 104 88 V181 Z" fill="url(#'+uid+')" stroke="#ffffff" stroke-width="3.4"/>'
+    + '<path d="M31 181 V90 A29 29 0 0 1 89 90 V181 Z" fill="#ffffff" fill-opacity=".3"/>'
+    + '<path d="M16 181 V88 A44 44 0 0 1 104 88 V181" fill="none" stroke="'+g.c2+'" stroke-width="5" stroke-linecap="round" opacity=".85"/>'
+    + '<text x="60" y="118" font-size="40" text-anchor="middle" dominant-baseline="middle">'+g.emoji+'</text>'
+    + '<circle cx="27" cy="58" r="3.1" fill="#fff" opacity=".95"/>'
+    + '<circle cx="94" cy="46" r="2.4" fill="#fff" opacity=".9"/>'
+    + '<circle cx="60" cy="22" r="2.6" fill="#fff" opacity=".85"/>'
+    + '<circle cx="38" cy="28" r="1.8" fill="#fff" opacity=".8"/>'
+    + '</svg>';
+}
+function buildGates(){
+  GATES.forEach(function(g){
+    const p = proj(g.x, g.z, 0);
+    const wpx = 1.62 * WORLD.ux * p.s, hpx = 2.10 * WORLD.uy * p.s;
+    worldEl.insertAdjacentHTML('beforeend',
+      '<div class="prop gate" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+g.z*10)+'">'+gateSvg(g)+'</div>');
+    const top = proj(g.x, g.z, 2.12);
+    const el = document.createElement('div');
+    el.className = 'zone gateLb';
+    el.dataset.zone = g.id;
+    el.style.cssText = 'left:'+top.x.toFixed(1)+'px;top:'+(top.y-4).toFixed(1)+'px;transform:translate(-50%,-100%);';
+    el.innerHTML = '<span class="lb">'+g.emoji+' '+esc(g.name)+'</span>';
+    worldEl.appendChild(el);
+    ZONE_EL[g.id] = el;
+  });
+}
+
 /* ---------------- 9. 월드 만들기 ---------------- */
 let TILE_MINE = {}, TILE_SIS = {}, CROP_MINE = {}, CROP_SIS = {};
 let ZONE_EL = {}, CROP_BOX = {};
@@ -1786,6 +1915,7 @@ function buildWorld(){
   PICKUPS.forEach(function(p){ p.el = null; });
   buildFence();
   buildBooths();
+  buildGates();
   buildPlatforms();
   buildTiles();
   buildDecoProps();
@@ -2347,7 +2477,7 @@ function checkNear(dt){
     updatePrompt();
   }else if(z){
     zoneDwell += dt;
-    if(!armed[z.id] && zoneDwell > 0.48 && !sheetOpen() && !nearTileNow){
+    if(!z.gate && !armed[z.id] && zoneDwell > 0.48 && !sheetOpen() && !nearTileNow){
       armed[z.id] = true;
       openZone(z);
     }
@@ -2368,7 +2498,14 @@ function nearestZone(){
     const d = Math.hypot(Math.max(0, dx), Math.max(0, dz));
     if(d < bd){ bd = d; best = b; }
   });
-  return bd < 0.62 ? best : null;
+  if(bd < 0.62) return best;
+  /* 월드 문은 조금 멀리서도 알아채게 */
+  let gBest = null, gd = 1e9;
+  GATES.forEach(function(g){
+    const d = Math.hypot(PLAYER.x - g.x, PLAYER.z - g.z);
+    if(d < gd){ gd = d; gBest = g; }
+  });
+  return gd < 0.95 ? gBest : null;
 }
 function tileUnder(x, z, side){
   let best = -1, bd = 1e9;
@@ -2424,6 +2561,8 @@ function updatePrompt(){
       if(p) P = {kind:'waterSis', i:t.i, ic:'💧', tx:'대신 물 주기', sub:SEED[p.seed].name, cls:'sis'};
       else P = {kind:'look', i:t.i, ic:'👀', tx:'구경하기', sub:'빈 흙', cls:'sis'};
     }
+  }else if(z && z.gate){
+    P = {kind:'gate', to:z.to, ic:z.emoji, tx:roJosa(z.name) + ' 갈까요?', sub:'이동 ›', cls:'warm'};
   }else if(z){
     if(z.id === 'seed') P = {kind:'zone', zone:'seed', ic:'🛒', tx:'씨앗 사기', sub:nf(g.coins)+'🪙', cls:''};
     else if(z.id === 'market') P = {kind:'zone', zone:'market', ic:'🧺', tx:'작물 팔기', sub:g.basket.length+'개', cls:'warm'};
@@ -2462,6 +2601,7 @@ function promptAct(){
   else if(P.kind === 'waterSis') waterSister(P.i);
   else if(P.kind === 'look') toast(KIDS[otherKid()].name + '이 텃밭이에요 👀 빈 흙이에요!');
   else if(P.kind === 'zone') openZone(P.zone);
+  else if(P.kind === 'gate') goWorldNow(P.to);
 }
 function openZone(id){
   const key = (id && typeof id === 'object') ? id.id : id;
@@ -2911,6 +3051,7 @@ function renderMore(){
   const ky = $('#kidBtnY'), kh = $('#kidBtnH');
   if(ky) ky.classList.toggle('on', kid === 'yunjin');
   if(kh) kh.classList.toggle('on', kid === 'hyeongwon');
+  renderWorldBar();
   renderGiftBar();
   renderHUD();
 }
@@ -2977,11 +3118,13 @@ function resetAll(){
 function switchKid(k){
   if(!KIDS[k]) return;
   kid = k; DB.kid = k;
+  whoSharedSet(k);
   PLAYER.x = homeSide()*1.90; PLAYER.z = 6.35; PLAYER.y = 0; PLAYER.vy = 0;
   cancelPath();
   saveNow();
   buildWorld();
   renderAll();
+  renderWorldBar();
   Sound.plant();
   toast(KIDS[k].name + '이 텃밭으로 왔어요 🌱');
   setFairy('<b>' + KIDS[k].name + '이 텃밭</b>이에요! 흙 타일 위로 걸어가면 심기·물주기·수확 버튼이 떠요.');
@@ -3696,6 +3839,7 @@ function renderAll(){
   paintAll();
   renderCtx();
   updatePrompt();
+  renderWorldBar();
   if(isSheetOpen('#marketSheet')) renderMarket();
   if(isSheetOpen('#moreSheet')) renderMore();
 }
@@ -3711,6 +3855,10 @@ document.addEventListener('click', function(e){
     closeSheets();
     if(k === kid){ toast(KIDS[k].name + '이 텃밭에서 놀고 있어요 🌱'); return; }
     switchKid(k);
+    return;
+  }
+  if(act === 'swapKid'){
+    switchKid(otherKid());
     return;
   }
   if(act === 'closeSheet'){ closeSheets(); return; }
