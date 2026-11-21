@@ -2507,7 +2507,7 @@ label.btn{cursor:pointer}
      고치기 전 화면을 열어 둔 기기가 옛 코드로 서버 기록을 덮어쓰는 일을 막는다.
      version.json 이 바뀌면 열려 있던 화면도 스스로 새로고침한다.
      ============================================================ */
-  var APP_VERSION = '2026-11-22d';
+  var APP_VERSION = '2026-11-22e';
   function checkVersion(delay) {
     if (!window.fetch) return;
     setTimeout(function () {
@@ -4996,7 +4996,7 @@ label.btn{cursor:pointer}
     ];
     document.getElementById('nav').innerHTML = items.map(function (t) {
       var on = view === t.id || (view === 'quiz' && quiz && quiz.k === t.id)
-        || (view === 'battle' && t.id === 'village');
+        || (view === 'battle' && t.id === battleBack);
       return '<button type="button" class="nav-b' + (on ? ' on' : '') + '" data-nav="' + t.id + '"'
         + ' aria-current="' + (on ? 'page' : 'false') + '" aria-label="' + esc(t.label) + '">'
         + (t.badge ? '<span class="nb">' + (t.badge > 9 ? '9+' : t.badge) + '</span>' : '')
@@ -6309,7 +6309,7 @@ label.btn{cursor:pointer}
 
   /* ---------- 대결 준비 ---------- */
   var battle = null;
-  function battleReset() { battle = null; }
+  var battleBack = 'village';   /* 대결을 어디서 열었는지 (마을·도감) */
 
   function battleRoster(k) {
     var ch = state.children[k];
@@ -6353,6 +6353,7 @@ label.btn{cursor:pointer}
   }
 
   function openBattle() {
+    if (view === 'dex') battleBack = 'dex'; else if (view === 'village') battleBack = 'village';
     battle = { phase: 'pick', step: 0, picks: { c1: null, c2: null }, sel: null, log: '', pop: null, lock: false };
     view = 'battle';
     SFX.tap();
@@ -6502,9 +6503,8 @@ label.btn{cursor:pointer}
   }
 
   function battleExit() {
-    var back = 'village';
     battle = null;
-    view = back;
+    view = battleBack || 'village';
     render();
     window.scrollTo({ top: 0, behavior: 'auto' });
   }
