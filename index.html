@@ -2201,8 +2201,15 @@ label.btn{cursor:pointer}
     if (!sync.connected) return;   // 서버와 실제로 연결된 상태에서만
     sync.seeded = true;
     var out = {};
-    ['c1', 'c2'].forEach(function (k) { out['kids/' + KID_SLUG[k]] = childForSend(k); });
-    out.settings = settingsForSend();
+    /* ⚠️ 'kids/<slug>' 나 'settings' 아래에 객체를 통째로 쓰지 않는다.
+       update()는 그 경로의 값을 교체하므로, 이미 값이 있으면 통째로 날아간다.
+       leaf 필드 단위로만 새로 넣는다. */
+    ['c1', 'c2'].forEach(function (k) {
+      var o = childForSend(k);
+      Object.keys(o).forEach(function (f) { out['kids/' + KID_SLUG[k] + '/' + f] = o[f]; });
+    });
+    var so = settingsForSend();
+    Object.keys(so).forEach(function (f) { out['settings/' + f] = so[f]; });
     state.cheers.forEach(function (c) { out['chat/' + c.id] = c; });
     remember();
     sync.ref.update(out).catch(function () { sync.seeded = false; });
