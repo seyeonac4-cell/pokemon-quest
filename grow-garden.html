@@ -251,6 +251,17 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
 .gbtn:active{transform:translateY(2px); box-shadow:none}
 .gbtn[disabled]{background:#f1f3f1; border-color:#e0e6e0; color:#9aa89e; box-shadow:none; pointer-events:none}
 
+/* 단계 안내 */
+.howto{
+  display:flex; align-items:center; justify-content:space-between; gap:2px; margin-top:10px;
+  background:#ffffffcc; border:1px dashed #b9dfc4; border-radius:18px; padding:10px 8px;
+}
+.hs{flex:1; text-align:center}
+.hs span{display:block; font-size:19px; line-height:1.1}
+.hs b{display:block; font-size:11.5px; font-weight:900; margin-top:3px; letter-spacing:-.03em}
+.hs small{display:block; font-size:9.5px; font-weight:800; color:#88a290; margin-top:1px}
+.harrow{color:#a9cbb5; font-weight:900; font-size:12px; flex:0 0 auto}
+
 /* 희귀 안내 */
 .legend{
   margin-top:12px; background:#fffdf6; border:1px dashed #e8d9a8; border-radius:18px; padding:12px 13px;
@@ -464,6 +475,15 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
       </div>
       <p class="tip" id="tip">다 자란 작물을 콕 눌러서 수확해 봐! 🌾</p>
       <div class="homecards" id="homecards"></div>
+      <div class="howto" aria-hidden="true">
+        <div class="hs"><span>🌱</span><b>심기</b><small>빈 밭 콕</small></div>
+        <div class="harrow">→</div>
+        <div class="hs"><span>💧</span><b>물 주기</b><small>3번까지</small></div>
+        <div class="harrow">→</div>
+        <div class="hs"><span>🍓</span><b>수확</b><small>다 자라면</small></div>
+        <div class="harrow">→</div>
+        <div class="hs"><span>🪙</span><b>팔기</b><small>시장에서</small></div>
+      </div>
     </section>
 
     <!-- 씨앗 상점 -->
