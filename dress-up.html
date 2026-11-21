@@ -368,6 +368,7 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 }
 .tm.on{background:#fff; color:#C22E70; box-shadow:0 3px 9px rgba(150,60,140,.16)}
 .tm:active{transform:scale(.975)}
+.tm-hint{margin-left:auto; font-size:11px; font-weight:900; color:#A187A0; letter-spacing:-.02em; text-align:right; white-space:nowrap}
 .tm-clock{
   margin-left:auto; display:flex; align-items:center; gap:7px; border-radius:13px; padding:5px 11px;
   background:linear-gradient(135deg,#FFEFF7,#F1E8FF); border:1.5px solid #F3D8EA;
@@ -508,6 +509,7 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
     <div class="tm-clock" id="tmClock" hidden>
       <b id="tmTime">3:00</b><span>남은 시간</span>
     </div>
+    <span class="tm-hint" id="tmHint">3분 도전을 골라 봐!</span>
   </section>
 
   <section class="theme-bar card">
@@ -1991,6 +1993,7 @@ function renderTimerMode(){
   var btns = document.querySelectorAll('.tm[data-tm]');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('on', btns[i].getAttribute('data-tm') === TM.mode);
   $('tmClock').hidden = TM.mode !== 'challenge';
+  $('tmHint').hidden = TM.mode === 'challenge';
   updateClock();
 }
 function stopTimer(){ if(TM.id){ clearInterval(TM.id); TM.id = null; } }
