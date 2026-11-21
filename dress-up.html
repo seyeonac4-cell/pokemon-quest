@@ -380,6 +380,104 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 .vs-result b{font-size:19px; color:#FFD23F; letter-spacing:-.02em}
 .vs-result span{display:block; font-size:12px; color:#E9DBF6; font-weight:800; margin-top:2px}
 
+/* ---------- 시간 제한 모드 ---------- */
+.timer-bar{display:flex; align-items:center; gap:8px; padding:7px 9px; margin-bottom:10px}
+.tm-modes{display:flex; gap:4px; background:#F7EEFB; border-radius:14px; padding:4px; min-width:0}
+.tm{
+  border:0; background:transparent; color:#7A6688; border-radius:11px; padding:8px 10px;
+  font:inherit; font-size:12.5px; font-weight:900; cursor:pointer; min-height:38px;
+  display:inline-flex; align-items:center; gap:4px; white-space:nowrap;
+}
+.tm.on{background:#fff; color:#C22E70; box-shadow:0 3px 9px rgba(150,60,140,.16)}
+.tm:active{transform:scale(.975)}
+.tm-clock{
+  margin-left:auto; display:flex; align-items:center; gap:7px; border-radius:13px; padding:5px 11px;
+  background:linear-gradient(135deg,#FFEFF7,#F1E8FF); border:1.5px solid #F3D8EA;
+}
+.tm-clock b{
+  font-size:20px; font-weight:900; letter-spacing:-.02em; color:#8B2E63; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.tm-clock span{font-size:10px; font-weight:900; color:#A187A0; letter-spacing:.02em; line-height:1.15}
+.tm-clock.warn{border-color:#FF9E9E; background:linear-gradient(135deg,#FFE2E2,#FFEEF4); animation:tmWarn 1s ease-in-out infinite}
+.tm-clock.warn b{color:#D6243F}
+@keyframes tmWarn{0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(230,50,90,.32)}50%{transform:scale(1.07); box-shadow:0 0 0 9px rgba(230,50,90,0)}}
+@media (max-width:400px){ .tm{padding:7px 8px; font-size:11.5px} .tm-clock b{font-size:18px} .tm-clock{padding:5px 9px} }
+
+/* ---------- 의상 패턴 ---------- */
+.patterns{display:flex; gap:6px; overflow-x:auto; padding:0 2px 9px; scrollbar-width:none; min-width:0}
+.patterns::-webkit-scrollbar{display:none}
+.pat{
+  flex:0 0 auto; border:2px solid #F3E7F1; background:#fff; border-radius:12px; padding:4px 4px 3px;
+  font:inherit; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:1px;
+}
+.pat:active{transform:scale(.96)}
+.pat .pv{width:42px; height:26px; border-radius:7px; overflow:hidden; display:block; border:1px solid #F6E7F1}
+.pat .pv svg{display:block; width:100%; height:100%}
+.pat .pn{font-size:9.5px; font-weight:900; color:#6B5A78; letter-spacing:-.03em}
+.pat.on{border-color:#FF6BA8; background:#FFF4FA; box-shadow:0 5px 14px rgba(230,80,160,.2)}
+.pat.on .pn{color:#C22E70}
+
+/* ---------- 메이크업 ---------- */
+.grid.mk{display:flex; flex-direction:column; gap:8px; max-height:min(46vh,430px); overflow-y:auto}
+.mk-row{background:linear-gradient(180deg,#FFFDFE,#FBF6FF); border:1.5px solid #F3E7F1; border-radius:15px; padding:8px 9px 9px}
+.mk-row .mh{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:900; color:#6B4B72; margin-bottom:7px}
+.mk-row .mh em{font-style:normal; margin-left:auto; font-size:10px; font-weight:900; color:#A187A0; background:#F6EEFA; border-radius:999px; padding:2px 7px}
+.mk-sw{display:flex; gap:6px; flex-wrap:wrap}
+.mk-b{
+  width:31px; height:31px; border-radius:50%; border:2.5px solid #fff; cursor:pointer; position:relative;
+  box-shadow:0 2px 6px rgba(90,40,100,.18); padding:0;
+}
+.mk-b.on{outline:3px solid #FF6BA8; outline-offset:1px}
+.mk-b.on::after{content:"✓"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:13px; font-weight:900; text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.mk-b.none{
+  background:repeating-linear-gradient(45deg,#fff 0 4px,#EFE6F4 4px 8px); display:grid; place-items:center;
+  color:#9B87A8; font-size:12px; font-weight:900;
+}
+.mk-b.none.on::after{content:none}
+
+/* ---------- 런웨이 투표 ---------- */
+.vt-head{display:flex; align-items:center; gap:8px; margin-bottom:7px; min-width:0}
+.vt-head .vn{font-size:12px; font-weight:900; color:#FFD9EC; letter-spacing:-.02em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.vt-head .vstep{margin-left:auto; font-size:10.5px; font-weight:900; color:#E7D6F5; background:rgba(255,255,255,.12); border-radius:999px; padding:3px 9px; white-space:nowrap}
+.vote{background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:8px 10px 9px}
+.vote .vq{font-size:12px; font-weight:900; color:#F6E8FF; text-align:center; margin-bottom:2px; letter-spacing:-.02em}
+.vstars{display:flex; justify-content:center; gap:2px}
+.vstars button{
+  border:0; background:transparent; font-size:clamp(27px,8.6vw,35px); line-height:1.15;
+  color:rgba(255,255,255,.26); cursor:pointer; padding:2px 3px; text-shadow:0 2px 6px rgba(0,0,0,.35);
+  transition:transform .12s ease, color .12s ease;
+}
+.vstars button.on{color:#FFD23F; text-shadow:0 0 13px rgba(255,196,0,.95)}
+.vstars button:active{transform:scale(.88)}
+.vstars button:disabled{pointer-events:none}
+.vote.done .vstars button{cursor:default}
+.vsay{display:flex; align-items:center; gap:7px; margin-top:6px; background:rgba(255,255,255,.1); border-radius:11px; padding:6px 8px; min-height:34px}
+.vsay .jav{width:24px; height:24px; flex:0 0 auto; border-radius:50%; background:rgba(255,255,255,.18); display:grid; place-items:center}
+.vsay .jav svg{height:20px; width:auto}
+.vsay p{margin:0; font-size:11.5px; font-weight:800; color:#F3E6FF; line-height:1.35}
+.vboard{display:flex; gap:5px; flex-wrap:wrap; margin-top:8px}
+.vboard .bchip{font-size:11px; font-weight:900; color:#F0E4FF; background:rgba(255,255,255,.12); border-radius:999px; padding:4px 9px; white-space:nowrap}
+.vboard .bchip.me{background:linear-gradient(135deg,#FF6BA8,#B073FF); color:#fff}
+
+/* ---------- 시상대 ---------- */
+.podium{
+  position:absolute; left:0; right:0; bottom:0; z-index:6; display:flex; align-items:flex-end; justify-content:center;
+  gap:5px; padding:0 8px 4px; pointer-events:none;
+}
+.pod{flex:1 1 0; max-width:32%; display:flex; flex-direction:column; align-items:center; opacity:0; transform:translateY(24px); animation:podIn .55s cubic-bezier(.2,1.35,.4,1) forwards}
+@keyframes podIn{to{opacity:1; transform:translateY(0)}}
+.pod .pa{position:relative; display:flex; align-items:flex-end; justify-content:center; width:100%}
+.pod .pa svg{height:clamp(90px,15.5vh,138px); width:auto; filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
+.pod.p1 .pa svg{height:clamp(112px,19vh,168px)}
+.pod .crown{position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:19px; animation:twinkle 1.5s ease-in-out infinite}
+.pod .pb{width:100%; border-radius:9px 9px 4px 4px; display:grid; place-items:center; font-weight:900; font-size:15px; color:#4A2A55; box-shadow:inset 0 -7px 0 rgba(0,0,0,.1)}
+.pod.p1 .pb{height:clamp(56px,9.5vh,84px); background:linear-gradient(180deg,#FFE27A,#F0AE0E); color:#5B3A00; font-size:18px}
+.pod.p2 .pb{height:clamp(38px,6.6vh,56px); background:linear-gradient(180deg,#EEF2F8,#C2CBD9)}
+.pod.p3 .pb{height:clamp(28px,5.2vh,42px); background:linear-gradient(180deg,#F7CFA9,#D5976A)}
+.pod .pn{font-size:10.5px; font-weight:900; color:#fff; margin-top:4px; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis}
+.pod .ps{font-size:10px; font-weight:900; color:#FFD23F; margin-top:1px; white-space:nowrap}
+
 /* ---------- 토스트 ---------- */
 .toast{
   position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom)); transform:translate(-50%,20px);
@@ -414,6 +512,16 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
       <button class="iconbtn" id="muteBtn" type="button" title="소리 켜기/끄기" aria-pressed="false">🔊</button>
     </div>
   </header>
+
+  <section class="timer-bar card" aria-label="시간 제한 모드">
+    <div class="tm-modes" role="group" aria-label="코디 모드">
+      <button class="tm on" type="button" data-tm="free">🌿 자유 코디</button>
+      <button class="tm" type="button" data-tm="challenge">⏱️ 3분 도전</button>
+    </div>
+    <div class="tm-clock" id="tmClock" hidden>
+      <b id="tmTime">3:00</b><span>남은 시간</span>
+    </div>
+  </section>
 
   <section class="theme-bar card">
     <div class="theme-top">
@@ -464,6 +572,7 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
       </div>
       <div class="cats" id="cats"></div>
       <div class="swatches" id="swatches"></div>
+      <div class="patterns" id="patterns" hidden></div>
       <div class="grid" id="grid"></div>
       <p class="hint" id="catHint">옷을 눌러 갈아입혀 보세요. 액세서리는 여러 개 같이 낄 수 있어요!</p>
     </section>
@@ -505,15 +614,30 @@ footer a{color:#B073FF; text-decoration:none; font-weight:800}
       <div class="rw-flash" id="rwFlash"></div>
     </div>
     <div class="rw-panel">
-      <div class="judges" id="rwJudges"></div>
+      <div class="vt-head">
+        <span class="vn" id="rwNow">🎤 지금 무대</span>
+        <span class="vstep" id="rwStep"></span>
+      </div>
+      <div class="vote" id="rwVote">
+        <div class="vq" id="rwVQ">이 코디, 몇 점을 줄까요?</div>
+        <div class="vstars" id="rwStars">
+          <button type="button" data-v="1" aria-label="1점">★</button>
+          <button type="button" data-v="2" aria-label="2점">★</button>
+          <button type="button" data-v="3" aria-label="3점">★</button>
+          <button type="button" data-v="4" aria-label="4점">★</button>
+          <button type="button" data-v="5" aria-label="5점">★</button>
+        </div>
+        <div class="vsay"><span class="jav" id="rwSayAv"></span><p id="rwSay">런웨이가 끝나면 별을 눌러 점수를 주세요!</p></div>
+      </div>
+      <div class="vboard" id="rwBoard" hidden></div>
+      <div class="vs-result" id="rwResult" hidden></div>
       <div class="rw-total" id="rwTotal" hidden>
         <span class="big" id="rwScore">0 / 15</span>
-        <span class="tt" id="rwComment">심사위원이 별을 세고 있어요…</span>
+        <span class="tt" id="rwComment"></span>
       </div>
       <div class="rw-btns">
         <button class="btn line" id="rwAgain" type="button">👗 더 꾸미기</button>
         <button class="btn white" id="rwSave" type="button">💾 룩북 저장</button>
-        <button class="btn gold" id="rwNext" type="button" hidden>다음 사람 →</button>
       </div>
     </div>
   </div>
@@ -915,7 +1039,7 @@ var ACCS = [
     '<g fill="#fff" opacity=".85"><path d="M84 150 C52 130 24 152 26 186 C28 214 54 226 70 210 C60 196 62 172 84 168 Z"/>'+
     '<path d="M136 150 C168 130 196 152 194 186 C192 214 166 226 150 210 C160 196 158 172 136 168 Z"/></g>'+
     '<g stroke="#EADFFF" stroke-width="1.6" fill="none" opacity=".9"><path d="M78 160 C56 152 40 162 38 182"/><path d="M74 180 C56 176 46 188 48 202"/><path d="M142 160 C164 152 180 162 182 182"/><path d="M146 180 C164 176 174 188 172 202"/></g>' },
-  { id:'bag', name:'핸드백', tags:['princess','formal','party','pretty','bag','pink'], svg:
+  { id:'bag', name:'핸드백', prop:true, tags:['princess','formal','party','pretty','bag','pink'], svg:
     '<path d="M140 224 q12 -14 24 0" stroke="var(--acc2)" stroke-width="3" fill="none"/>'+
     '<rect x="138" y="224" width="26" height="19" rx="5" fill="var(--acc)"/>'+
     '<rect x="138" y="229" width="26" height="4" fill="var(--acc2)" opacity=".55"/>'+
@@ -944,7 +1068,32 @@ var ACCS = [
     '<path d="M122 14 l2.6 5.4 6 .8 -4.4 4.2 1.1 6 -5.3 -3 -5.3 3 1.1 -6 -4.4 -4.2 6 -.8 z" fill="#FFC53D" transform="scale(.7) translate(52 8)"/>' },
   { id:'earring', name:'귀걸이', tags:['jewelry','formal','pretty','gold','party'], svg:
     '<circle cx="79" cy="99" r="2.6" fill="var(--acc)"/><circle cx="79" cy="104" r="2.2" fill="var(--acc2)"/>'+
-    '<circle cx="141" cy="99" r="2.6" fill="var(--acc)"/><circle cx="141" cy="104" r="2.2" fill="var(--acc2)"/>' }
+    '<circle cx="141" cy="99" r="2.6" fill="var(--acc)"/><circle cx="141" cy="104" r="2.2" fill="var(--acc2)"/>' },
+  { id:'catdoll', name:'고양이 인형', prop:true, tags:['cute','cat','soft','pastel','prop','casual'], svg:
+    '<g transform="translate(64 208)">'+
+    '<path d="M-11 -6 L-14 -20 L-3 -12 Z" fill="#FFE1CE"/><path d="M11 -6 L14 -20 L3 -12 Z" fill="#FFE1CE"/>'+
+    '<path d="M-9.4 -6 L-11.6 -16 L-4.4 -10.6 Z" fill="#FFB3C7"/><path d="M9.4 -6 L11.6 -16 L4.4 -10.6 Z" fill="#FFB3C7"/>'+
+    '<circle cx="0" cy="0" r="12" fill="#FFE1CE"/>'+
+    '<ellipse cx="0" cy="20" rx="10.5" ry="11" fill="#FFEFE2"/>'+
+    '<ellipse cx="-4.4" cy="-0.6" rx="1.5" ry="1.9" fill="#4A333F"/><ellipse cx="4.4" cy="-0.6" rx="1.5" ry="1.9" fill="#4A333F"/>'+
+    '<path d="M-2 3.4 q2 2 4 0" stroke="#C98C9C" stroke-width="1.5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M-8 2 h-5 M-8 4.4 h-5 M8 2 h5 M8 4.4 h5" stroke="#E0B49C" stroke-width="1.1" stroke-linecap="round"/>'+
+    '<path d="M-5 26 q5 3 10 0" stroke="#FFB3C7" stroke-width="2" fill="none" stroke-linecap="round"/>'+
+    '</g>' },
+  { id:'camera', name:'카메라', prop:true, tags:['cool','street','stage','idol','prop','party'], svg:
+    '<g transform="translate(52 222)">'+
+    '<path d="M4 18 q-6 12 4 22" stroke="#6B5A78" stroke-width="2.4" fill="none"/>'+
+    '<rect x="0" y="4" width="27" height="18" rx="4.5" fill="#4A3A5C"/>'+
+    '<rect x="4" y="0" width="10" height="6" rx="2" fill="#6B5A78"/>'+
+    '<circle cx="13.5" cy="13" r="6.4" fill="#D8E4F2"/><circle cx="13.5" cy="13" r="3.8" fill="#5C6B84"/><circle cx="11.8" cy="11.2" r="1.2" fill="#fff"/>'+
+    '<rect x="21" y="2.6" width="4" height="3" rx="1" fill="#FFD166"/>'+
+    '</g>' },
+  { id:'balloon', name:'풍선', prop:true, tags:['party','cute','pastel','prop','happy','spring'], svg:
+    '<path d="M150 236 C158 214 156 196 152 182" stroke="#C9B6D6" stroke-width="1.6" fill="none"/>'+
+    '<ellipse cx="151" cy="168" rx="15" ry="18" fill="#FF8FBF"/>'+
+    '<ellipse cx="151" cy="168" rx="15" ry="18" fill="none" stroke="#E0618F" stroke-width="1.4" opacity=".5"/>'+
+    '<ellipse cx="145" cy="161" rx="4.4" ry="6" fill="#fff" opacity=".55" transform="rotate(-18 145 161)"/>'+
+    '<path d="M151 186 l-3 5 6 0 z" fill="#FF8FBF"/>' }
 ];
 
 /* ============================================================
@@ -1008,6 +1157,8 @@ var DEFAULT_STATE = {
   skin:'light', face:'smile', hair:'long', hairColor:'#3B2632',
   mode:'dress', dress:'princess', top:'tee', bottom:'flare', shoes:'mary',
   acc:['crown'], outfitColor:'#FF8FBF', shoeColor:'#FF8FBF',
+  pattern:'solid',
+  mkLip:'#E8467C', mkBlush:'#FF9FB0', mkEye:'none', mkNail:'#FF6BA8',
   theme:'princess', pose:0
 };
 
@@ -1061,6 +1212,98 @@ function syncWhoUI(){
 /* ============================================================
    5. 아바타 그리기
    ============================================================ */
+function lum(hex){
+  var c = hexToRgb(hex);
+  return (0.299*c.r + 0.587*c.g + 0.114*c.b) / 255;
+}
+
+/* --- 의상 패턴(텍스처) --- */
+var PATTERNS = [
+  { id:'solid',  name:'단색' },
+  { id:'dot',    name:'도트' },
+  { id:'check',  name:'체크' },
+  { id:'stripe', name:'줄무늬' },
+  { id:'star',   name:'별빛' },
+  { id:'heart',  name:'하트' }
+];
+var patSeq = 0;
+function patternMotif(kind, motif){
+  if(kind === 'dot'){
+    return '<circle cx="4" cy="4" r="2.1" fill="'+motif+'"/>'+
+           '<circle cx="11" cy="11" r="2.1" fill="'+motif+'"/>';
+  }
+  if(kind === 'stripe'){
+    return '<rect x="0" y="0" width="4.6" height="14" fill="'+motif+'"/>'+
+           '<rect x="8" y="0" width="1.8" height="14" fill="'+motif+'" opacity=".6"/>';
+  }
+  if(kind === 'check'){
+    return '<rect x="0" y="0" width="7" height="7" fill="'+motif+'" opacity=".55"/>'+
+           '<rect x="7" y="7" width="7" height="7" fill="'+motif+'" opacity=".55"/>'+
+           '<rect x="7" y="0" width="7" height="7" fill="'+motif+'" opacity=".22"/>'+
+           '<rect x="0" y="7" width="7" height="7" fill="'+motif+'" opacity=".22"/>';
+  }
+  if(kind === 'star'){
+    return '<path d="M7 1.4 l1.7 3.5 3.9 .5 -2.9 2.7 .8 3.8 -3.5 -1.9 -3.5 1.9 .8 -3.8 -2.9 -2.7 3.9 -.5 z" fill="'+motif+'"/>';
+  }
+  if(kind === 'heart'){
+    return '<path d="M7 12.4 C2.6 9.4 1 7.1 1 5.2 C1 3.4 2.4 2.1 4.2 2.1 C5.4 2.1 6.4 2.8 7 3.7 C7.6 2.8 8.6 2.1 9.8 2.1 C11.6 2.1 13 3.4 13 5.2 C13 7.1 11.4 9.4 7 12.4 Z" fill="'+motif+'"/>';
+  }
+  return '';
+}
+/* 드레스·상의·하의에 쓸 패턴(옷 색에 어울리는 무늬색 자동 선택) */
+function makePattern(kind, base){
+  if(!kind || kind === 'solid') return { id:null, defs:'' };
+  var motif = lum(base) > 0.6 ? darken(base, .42) : lighten(base, .62);
+  var id = 'pat' + (++patSeq);
+  return {
+    id: id,
+    defs: '<defs><pattern id="'+id+'" width="14" height="14" patternUnits="userSpaceOnUse">'+
+          '<rect width="14" height="14" fill="'+base+'"/>' + patternMotif(kind, motif) + '</pattern></defs>'
+  };
+}
+function withPattern(garment, pid){
+  if(!pid || !garment) return garment;
+  return garment.split('fill="var(--o1)"').join('fill="url(#'+pid+')"');
+}
+/* 옷장 패턴 선택지 미리보기 */
+function patternPreview(kind){
+  var base = '#FFE1EF', motif = '#FF6BA8';
+  if(!kind || kind === 'solid'){
+    return '<svg viewBox="0 0 42 26" preserveAspectRatio="none"><rect width="42" height="26" fill="'+base+'"/></svg>';
+  }
+  var id = 'pv' + (++patSeq);
+  return '<svg viewBox="0 0 42 26" preserveAspectRatio="xMidYMid slice">'+
+    '<defs><pattern id="'+id+'" width="14" height="14" patternUnits="userSpaceOnUse">'+
+    '<rect width="14" height="14" fill="'+base+'"/>' + patternMotif(kind, motif) + '</pattern></defs>'+
+    '<rect width="42" height="26" fill="url(#'+id+')"/></svg>';
+}
+
+/* --- 메이크업 --- */
+function makeupOf(s){
+  return {
+    lip:   s.mkLip   || '#E8467C',
+    blush: s.mkBlush || '#FF9FB0',
+    eye:   s.mkEye   || 'none',
+    nail:  s.mkNail  || '#FF6BA8'
+  };
+}
+function eyeMakeupSVG(mk){
+  if(!mk.eye || mk.eye === 'none') return '';
+  var e = mk.eye;
+  return '<g class="mk-eye">'+
+    '<ellipse cx="97" cy="79" rx="8.4" ry="5" fill="'+e+'" opacity=".55"/>'+
+    '<ellipse cx="123" cy="79" rx="8.4" ry="5" fill="'+e+'" opacity=".55"/>'+
+    '<path d="M90 80 Q86 76 84 71" stroke="'+e+'" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+    '<path d="M130 80 Q134 76 136 71" stroke="'+e+'" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+    '<path d="M92 86.5 l-1.8 2.6 M128 86.5 l1.8 2.6" stroke="#3B2632" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>'+
+    '</g>';
+}
+function nailSVG(mk){
+  if(!mk.nail || mk.nail === 'none') return '';
+  return '<g class="mk-nail"><circle cx="72" cy="237" r="3.3" fill="'+mk.nail+'"/>'+
+    '<circle cx="148" cy="237" r="3.3" fill="'+mk.nail+'"/></g>';
+}
+
 function colorsFor(s){
   var skin = findItem(SKINS, s.skin || 'light');
   return {
@@ -1111,9 +1354,19 @@ function figureSVG(s, opt){
   var dress = findItem(DRESSES, s.dress), top = findItem(TOPS, s.top), bottom = findItem(BOTTOMS, s.bottom);
   var shoes = findItem(SHOES, s.shoes);
   var accs = (s.acc || []).map(function(id){ return findItem(ACCS, id); });
+  var mk = makeupOf(s);
+  var pat = makePattern(s.pattern, c.o1);
+
+  // 메이크업: 립스틱·블러셔 색을 얼굴 색에 입힌다
+  var faceSvg = face.svg;
+  if(mk.lip && mk.lip !== 'none'){
+    faceSvg = faceSvg.split('#BC4B62').join(mk.lip).split('#C2556A').join(mk.lip);
+  }
+  faceSvg = faceSvg.split('#FF9FB0').join((mk.blush && mk.blush !== 'none') ? mk.blush : 'none');
 
   var out = '';
   out += '<svg viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg" class="fig" style="'+cssVars(c)+'" role="img" aria-label="'+esc(opt.label || '패션 모델')+'">';
+  out += pat.defs;
   // 무대 그림자
   out += '<ellipse cx="110" cy="312" rx="52" ry="9" fill="rgba(90,40,110,.16)"/>';
   // 날개는 몸 뒤
@@ -1123,21 +1376,24 @@ function figureSVG(s, opt){
   // 다리·신발·몸
   out += '<g style="'+shoeColorVars(s,c)+'">'+shoes.svg+'</g>';
   out += bodySVG();
-  // 하의 또는 드레스
+  // 하의 또는 드레스 (패턴이 골라져 있으면 무늬천으로)
   if(s.mode === 'dress'){
-    out += '<g>'+dress.svg+'</g>';
+    out += '<g>'+withPattern(dress.svg, pat.id)+'</g>';
   }else{
-    out += '<g>'+bottom.svg+'</g>';
-    out += '<g>'+top.svg+'</g>';
+    out += '<g>'+withPattern(bottom.svg, pat.id)+'</g>';
+    out += '<g>'+withPattern(top.svg, pat.id)+'</g>';
   }
   // 팔·손은 옷 위에 (스커트에 팔이 묻히지 않게)
   out += armsSVG();
-  // 얼굴
-  out += '<g>'+face.svg+'</g>';
+  // 얼굴 + 아이섀도·속눈썹
+  out += '<g>'+faceSvg+'</g>';
+  out += eyeMakeupSVG(mk);
   // 앞머리
   out += '<g>'+hair.front+'</g>';
   // 액세서리 (날개 제외)
   accs.forEach(function(a){ if(a.id !== 'wings') out += a.svg; });
+  // 손톱
+  out += nailSVG(mk);
   out += '</svg>';
   return out;
 }
@@ -1198,7 +1454,8 @@ var CATS = [
   { id:'shoes',  label:'👟 신발' },
   { id:'hair',   label:'💇 머리' },
   { id:'face',   label:'😊 표정' },
-  { id:'acc',    label:'👑 액세서리' },
+  { id:'makeup', label:'💄 메이크업' },
+  { id:'acc',    label:'👑 소품' },
   { id:'skin',   label:'🎨 피부' }
 ];
 function itemsFor(kind){
@@ -1210,8 +1467,7 @@ function itemsFor(kind){
   if(kind === 'face') return FACES;
   if(kind === 'acc') return ACCS;
   if(kind === 'skin') return SKINS;
-  return [];
-}
+  return [];}
 function isOn(kind, item){
   if(kind === 'skin') return st.skin === item.id;
   if(kind === 'face') return st.face === item.id;
@@ -1235,10 +1491,13 @@ var HINTS = {
   shoes:'신발 색은 옷 색을 따라가요.',
   hair:'머리 모양을 고르고, 아래 색 동그라미로 머리색을 바꿔 보세요.',
   face:'표정을 눌러 얼굴을 바꿔 보세요.',
-  acc:'액세서리는 여러 개 같이 낄 수 있어요. 다시 누르면 벗어져요.',
+  makeup:'립스틱·볼터치·아이섀도·손톱까지 꾸밀 수 있어요!',
+  acc:'소품은 여러 개 같이 낄 수 있어요. 고양이 인형·카메라도 들어 보세요!',
   skin:'피부톤을 골라 보세요.'
 };
 function renderWardrobe(){
+  if(cat === 'makeup'){ renderMakeup(); return; }
+  $('grid').className = 'grid';
   var list = itemsFor(cat);
   var html = list.map(function(it){
     var on = isOn(cat, it);
@@ -1251,6 +1510,44 @@ function renderWardrobe(){
   $('catHint').textContent = HINTS[cat] || '';
   $('modeTag').textContent = st.mode === 'dress' ? '한 벌 드레스' : '투피스 코디';
   renderSwatches();
+  renderPatterns();
+}
+function renderPatterns(){
+  var box = $('patterns');
+  if(cat !== 'dress' && cat !== 'top' && cat !== 'bottom'){
+    box.hidden = true; box.innerHTML = ''; return;
+  }
+  box.hidden = false;
+  var cur = st.pattern || 'solid';
+  box.innerHTML = PATTERNS.map(function(p){
+    return '<button class="pat'+(cur === p.id ? ' on' : '')+'" type="button" data-pat="'+p.id+'">'+
+      '<span class="pv">'+patternPreview(p.id)+'</span>'+
+      '<span class="pn">'+p.name+'</span></button>';
+  }).join('');
+}
+var MK_GROUPS = [
+  { key:'mkLip',   name:'💋 립스틱',   cols:['#E8467C','#FF5B8A','#E24B4B','#C2447A','#FF9FB0','#B3385E'] },
+  { key:'mkBlush', name:'🌸 볼터치',   cols:['#FF9FB0','#FF8FB8','#FFB08F','#D9B3FF','#FFD1A1','#F2A0A0'] },
+  { key:'mkEye',   name:'👁️ 아이섀도', cols:['#C8A6FF','#FFB3D1','#9FD8FF','#FFE08A','#B8E3C0','#6B5A78'] },
+  { key:'mkNail',  name:'💅 손톱',      cols:['#FF6BA8','#E24B4B','#FFD166','#B8A8FF','#FFFFFF','#2E2A45'] }
+];
+function renderMakeup(){
+  var sw = $('swatches'); sw.innerHTML = ''; sw.hidden = true;
+  var pt = $('patterns'); pt.innerHTML = ''; pt.hidden = true;
+  $('modeTag').textContent = '메이크업 & 네일';
+  var g = $('grid');
+  g.className = 'grid mk';
+  g.innerHTML = MK_GROUPS.map(function(gr){
+    var cur = st[gr.key] || 'none';
+    var chips = gr.cols.map(function(col){
+      return '<button class="mk-b'+(String(cur).toUpperCase() === col.toUpperCase() ? ' on' : '')+'" type="button" '+
+        'data-mk="'+gr.key+'" data-mkc="'+col+'" style="background:'+col+'" aria-label="'+gr.name+' '+col+'"></button>';
+    }).join('');
+    var none = '<button class="mk-b none'+(cur === 'none' ? ' on' : '')+'" type="button" data-mk="'+gr.key+'" data-mkc="none" aria-label="'+gr.name+' 없음">✕</button>';
+    return '<div class="mk-row"><div class="mh">'+gr.name+'<em>'+(cur === 'none' ? '안 바름' : '바르는 중')+'</em></div>'+
+      '<div class="mk-sw">'+chips+none+'</div></div>';
+  }).join('');
+  $('catHint').textContent = HINTS.makeup;
 }
 var HAIR_COLORS = ['#3B2632','#6B4226','#A9793F','#D9B26A','#F2D9A0','#FF96BE','#B79BFF','#8FD3FF','#EDEDF2','#FF7A6B','#5FA86B','#2E3A5C'];
 var OUTFIT_COLORS = ['#FF8FBF','#FF6B8A','#FFD166','#7BE3C3','#7FB8FF','#9F8BFF','#FFFFFF','#2E2A45','#C8A06A','#B9E36A'];
