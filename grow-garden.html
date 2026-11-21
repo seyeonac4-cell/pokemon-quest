@@ -1716,7 +1716,7 @@ function buildGates(){
     const el = document.createElement('div');
     el.className = 'zone gateLb';
     el.dataset.zone = g.id;
-    el.style.cssText = 'left:'+top.x.toFixed(1)+'px;top:'+(top.y-4).toFixed(1)+'px;transform:translate(-50%,-100%);';
+    el.style.cssText = 'left:'+top.x.toFixed(1)+'px;top:'+(top.y-4).toFixed(1)+'px;transform:translate(-50%,-100%);z-index:170;';
     el.innerHTML = '<span class="lb">'+g.emoji+' '+esc(g.name)+'</span>';
     worldEl.appendChild(el);
     ZONE_EL[g.id] = el;
