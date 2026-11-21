@@ -2,7 +2,7 @@
   "id": "/pokemon-quest/apps.html",
   "name": "채씨네 앱 모음",
   "short_name": "앱 모음",
-  "description": "채씨네 15개 가족·학습·생활 웹앱을 한 화면에서 여는 런처",
+  "description": "채씨네 17개 가족·학습·생활 웹앱을 한 화면에서 여는 런처",
   "start_url": "/pokemon-quest/apps.html",
   "scope": "/pokemon-quest/apps.html",
   "display": "standalone",
