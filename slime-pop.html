@@ -250,6 +250,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
     <canvas id="cv"></canvas>
     <div class="hud">
       <span class="tag" id="tagNow">딸기우유 · 물풀</span>
+      <span class="tag bub" id="tagBub" hidden>🫧 기포 <b>0</b></span>
       <span class="tag" id="tagPop" hidden>뽁 <b>0</b></span>
     </div>
     <div class="hint" id="hint">손가락으로 꾹 눌러 당겨 보세요 🫧</div>
@@ -260,6 +261,9 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
     <div class="dockCard">
       <!-- 슬라임 모드 조작 -->
       <div id="dockSlime">
+        <div class="row" id="rowTools">
+          <span class="lab">도구</span>
+        </div>
         <div class="row" id="rowColors">
           <span class="lab">색</span>
         </div>
@@ -270,6 +274,7 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
           <span class="lab">파츠</span>
         </div>
         <div class="row actions">
+          <button class="btnA" id="btnBubble" type="button" title="슬라임 속에 공기방울을 불려요">🫧 기포</button>
           <button class="btnA pri" id="btnSave" type="button">🫙 도감에 담기</button>
           <button class="btnA grape" id="btnNew" type="button">✨ 새 슬라임</button>
         </div>
@@ -309,6 +314,11 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
         <div class="v"><span id="stPopToday">0</span><small>뽁</small></div>
         <div class="k" style="margin-top:4px">지금까지 <span id="stPopAll">0</span>뽁</div>
       </div>
+      <div class="stat" style="grid-column:1/-1; background:linear-gradient(170deg,#fff,#F2FBFF); border-color:#E1F1FA">
+        <div class="k">🫧 오늘 터뜨린 기포</div>
+        <div class="v" style="color:#2C86C4"><span id="stBubToday">0</span><small>뽁</small></div>
+        <div class="k" style="margin-top:4px">지금까지 <span id="stBubAll">0</span>뽁</div>
+      </div>
     </div>
     <div class="sheetSec">
       <h3>🫙 담아 둔 슬라임 <span id="stColN">0개</span></h3>
@@ -317,9 +327,11 @@ button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
     <div class="sheetSec">
       <h3>💡 이렇게 놀아요</h3>
       <div class="empty" style="text-align:left; line-height:1.7">
-        · 슬라임을 <b>꾹 눌러 옆으로 당기면</b> 쫀득하게 늘어나요.<br>
-        · 파츠를 고르고 슬라임을 <b>톡톡 두드리면</b> 반짝이가 뿌려져요.<br>
-        · 색·질감을 바꾸고 <b>도감에 담기</b>를 누르면 내 슬라임이 저장돼요.<br>
+        · <b>✋ 주무르기</b>: 슬라임을 꾹 눌러 옆으로 당기면 쫀득하게 늘어나요.<br>
+        · <b>👆 콕콕</b>: 톡톡 찌르면 손가락 자국이 동그랗게 남고 물결이 퍼져요.<br>
+        · <b>🌀 회오리</b>: 빙글빙글 돌리면 슬라임이 소용돌이쳐요.<br>
+        · <b>🔪 싹둑</b>: 슬라임을 가로질러 그으면 반으로 쪼개졌다가 다시 합쳐져요.<br>
+        · 주무르면 <b>🫧 기포</b>가 통통 부풀어요. 손으로 톡 터뜨리면 뽁!<br>
         · 왁뿌볼은 <b>꾹 누르고 있으면</b> 점점 말랑해지다가 <b>뽁!</b> 터져요.
       </div>
     </div>
@@ -371,7 +383,8 @@ function darken(hex, t){ return mixHex(hex, '#3A2140', t); }
 var KEY = 'slimePop.v1';
 var store = {
   saved: [], slimeTotal: 0, slimeDays: {}, popTotal: 0, popDays: {},
-  mute: false, mode: 'slime', color: 'straw', texture: 'water', topping: null
+  bubbleTotal: 0, bubbleDays: {},
+  mute: false, mode: 'slime', color: 'straw', texture: 'water', topping: null, tool: 'knead'
 };
 function loadStore(){
   try {
@@ -387,6 +400,9 @@ function loadStore(){
         if (typeof o.mute === 'boolean') store.mute = o.mute;
         if (typeof o.color === 'string') store.color = o.color;
         if (typeof o.texture === 'string') store.texture = o.texture;
+        if (typeof o.bubbleTotal === 'number') store.bubbleTotal = o.bubbleTotal;
+        if (o.bubbleDays && typeof o.bubbleDays === 'object') store.bubbleDays = o.bubbleDays;
+        if (typeof o.tool === 'string' && 'knead,poke,swirl,cut'.indexOf(o.tool) >= 0) store.tool = o.tool;
       }
     }
   } catch (e) {}

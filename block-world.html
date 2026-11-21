@@ -4215,6 +4215,18 @@ function init() {
   }
 
   FB.init();
+  if (/[?&]dev=1/.test(location.search)) {
+    window.BWDEV = {
+      G: G,
+      go: function (x, y, z) { G.p.x = x; G.p.y = y; G.p.z = z || 0; G.p.air = false; G.p.vz = 0; G.cam = proj(x, y, z || 0); },
+      goPet: function (x, y, z) { G.petXY.x = x; G.petXY.y = y; G.petXY.z = z || 0; },
+      coins: function (n) { addCoins(n); },
+      stick: function (x, y) { G.stick.x = x; G.stick.y = y; },
+      jump: function () { doJump(); },
+      ride: function (r) { G.ride = r; updateRideUI(); },
+      state: function () { return { p: G.p, coins: SAVE && SAVE.coins, spot: G.spot && G.spot.label, paused: G.paused, gates: G.gates.map(function (g) { return g.solved; }) }; }
+    };
+  }
   requestAnimationFrame(loop);
   updateHint();
 }
