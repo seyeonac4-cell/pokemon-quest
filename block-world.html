@@ -625,7 +625,7 @@ input{font-family:inherit}
         <span id="profEmoji">🦊</span><span id="profName">윤진</span><span class="caret">▾</span>
       </button>
       <div class="pill coin" id="coinPill" title="블록 코인">
-        <span aria-hidden="true">🪙</span><b id="coinNum">0</b>
+        <span aria-hidden="true">🪙</span><b id="coinNum">50</b>
       </div>
     </div>
     <div class="hud-right">
@@ -1356,13 +1356,17 @@ var GIFTS = {
 var ME = WHO.yunjin;      // 현재 프로필
 var SAVE = null;          // 현재 프로필 저장 데이터
 
+/* 처음 시작할 때 드리는 블록 코인 — 그로우어가든·드레스업과 같은 50개로 맞춰요
+   (「🔄 게임 처음부터 리셋」해도 저장을 지우니 다시 50개에서 시작합니다) */
+var START_COINS = 50;
+
 function saveKey(who) { return 'bw:v1:' + who; }
 function loadSave(who) {
   var raw = store(saveKey(who));
   var d = null;
   try { d = raw ? JSON.parse(raw) : null; } catch (e) { d = null; }
   if (!d || typeof d !== 'object') d = {};
-  d.coins = (typeof d.coins === 'number' && isFinite(d.coins)) ? Math.max(0, Math.floor(d.coins)) : 0;
+  d.coins = (typeof d.coins === 'number' && isFinite(d.coins)) ? Math.max(0, Math.floor(d.coins)) : START_COINS;
   d.owned = (d.owned && typeof d.owned === 'object') ? d.owned : {};
   d.look = d.look && typeof d.look === 'object' ? d.look : {};
   d.look.body = d.look.body || LOOK_DEFAULT.body;
@@ -1393,8 +1397,8 @@ function addCoins(n, silent) {
 }
 function updateCoinUI(bump) {
   var el = $('#coinNum'); if (!el) return;
-  el.textContent = SAVE ? SAVE.coins : 0;
-  var sc = $('#shopCoins'); if (sc) sc.textContent = SAVE ? SAVE.coins : 0;
+  el.textContent = SAVE ? SAVE.coins : START_COINS;
+  var sc = $('#shopCoins'); if (sc) sc.textContent = SAVE ? SAVE.coins : START_COINS;
   if (bump) {
     var p = $('#coinPill');
     p.classList.remove('bump');
@@ -5450,8 +5454,9 @@ function bindUI() {
 
 /* ---------------- 보호자용: 게임 처음부터 리셋 ----------------
    - 이 기기 localStorage 의 블록 월드 저장만 지워요 (bw:v1:윤진 · bw:v1:형원)
-   - 가족 저장소 family-lim-7660/blockWorld 아래 coins·live 만 지우고,
-     채팅 기록·선물은 남겨 둡니다. 'kids' 노드는 절대 건드리지 않아요. */
+   - 가족 저장소 family-lim-7660/blockWorld 아래 coins 는 처음 값(START_COINS = 50)으로
+     되돌리고 live(지금 놀던 자리)만 지우며, 채팅 기록·선물은 남겨 둡니다.
+     'kids' 노드는 절대 건드리지 않아요. */
 function openReset() {
   $('#resetOverlay').classList.add('open');
   G.paused = true;
@@ -5466,7 +5471,8 @@ function resetGame() {
   } catch (e) { ok1 = false; }
   try {
     if (FB && FB.root) {
-      FB.root.child('coins').remove();   // 윤진·형원 블록 코인 기록
+      FB.root.child('coins/yunjin').set(START_COINS);    // 윤진 블록 코인 → 처음 값 50
+      FB.root.child('coins/hyungwon').set(START_COINS);  // 형원 블록 코인 → 처음 값 50
       FB.root.child('live').remove();    // 지금 놀던 자리 표시
     }
   } catch (e) {}
