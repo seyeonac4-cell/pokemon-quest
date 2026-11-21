@@ -826,6 +826,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 }
 .mgDone .mgBig{font-size:19px; font-weight:900; letter-spacing:-.04em; color:#22492e}
 .mgDone .mgNum{font-size:26px; font-weight:900; color:#2f8f52; font-variant-numeric:tabular-nums; letter-spacing:-.03em}
+.mgDone .mgSub{font-size:10.5px; font-weight:900; color:#8aa2b0; letter-spacing:-.02em}
 .mgDone .mgNew{font-style:normal; font-size:11.5px; font-weight:900; color:#c18200; background:#fff6d8; border-radius:8px; padding:2px 8px}
 .mgDone em{font-style:normal; font-size:11px; font-weight:900; color:#7d9483}
 .mgDone .mgGet{font-size:16px; font-weight:900; color:#a06a00; margin-top:2px}
@@ -4468,7 +4469,7 @@ function miniCard(kind, ic, name, desc, reward){
 function miniHubHtml(){
   return '<div class="hubWrap"><div class="mgGrid">'
     + miniCard('maze', '🥕', '당근 미로', '울타리 미로를 뚫고 당근을 수확 바구니까지', '🥇 15초 안 +25🪙 · 완주 +12🪙')
-    + miniCard('star', '⭐', '별 그리기', '점선 별을 정확하고 빠르게 그어요', '80%+ 빠르면 +20🪙 · 성공 +10🪙')
+    + miniCard('star', '⭐', '별 그리기', '점선 별을 정확하고 빠르게 그어요', '80%+ 빠르면 +20🪙 · 65%+ +10🪙')
     + miniCard('tree', '⏳', '3.33초 나무 심기', '딱 맞는 순간에 심기 · 5·7.77초도 있어요', '±0.05초 +30🪙 · ±0.20초 +15🪙')
     + '</div>'
     + '<div class="mgHero"><span class="he">🎮</span><b>정원 미니게임 3종</b><span>놀면서 코인도 벌고, 형제와 기록도 겨뤄요!</span></div>'
@@ -4851,7 +4852,8 @@ function mazePaint(now){
    ② ⭐ 별 그리기
    ========================================================= */
 const ST = {pts:[], cx:0, cy:0, R:0, w:0, h:0, dpr:1, ctx:null, raf:0,
-            tracing:false, samples:[], t0:0, done:false, acc:0, time:0, tol:24};
+            tracing:false, samples:[], t0:0, done:false, acc:0, time:0,
+            tol:12, covTol:12, vTol:12.6, maxOk:16, prec:0, cov:0, sharp:0, liveAt:0};
 function starHtml(){
   return '<div class="mgTop">'
     + '<span class="mgBadge" id="stTime">0.00초</span>'
@@ -4860,7 +4862,7 @@ function starHtml(){
     + '</div>'
     + '<div class="mgStage starStage" id="stStage"><canvas id="stCv"></canvas>'
     + '<div class="mgDone hide" id="stDone"></div></div>'
-    + '<p class="mgHint" id="stHint">⭐ 초록 점에서 시작해 별 모양을 한 번에 쭉 그어요 (손을 떼면 끝!)</p>';
+    + '<p class="mgHint" id="stHint">⭐ 초록 점에서 시작해 별 모양을 한 번에 쭉! 꼭짓점은 뾰족하게, 선에서 벗어나면 정확도가 깎여요</p>';
 }
 function starPointsMake(cx, cy, R){
   const pts = [];
@@ -4885,7 +4887,17 @@ function starLayout(){
   ST.R = Math.max(60, Math.min((w - 44) / 1.902, (h - 44) / 1.809));
   ST.cx = w / 2; ST.cy = h / 2 + Math.min(26, h * 0.03) + 2;
   ST.pts = starPointsMake(ST.cx, ST.cy, ST.R);
-  ST.tol = Math.max(11, ST.R * 0.12);
+  /* 채점 기준 (2026-11-22 상향) — 예전엔 약 20.8px까지 "맞음"으로 쳐서 삐뚤빼뚤해도 100점이 나왔다.
+     이제는 선에서 12px 안쪽이 기준이고, 벗어날수록 부드럽게 깎인다(0px=100%, 기준=50%, 2배=20%). */
+  ST.tol = Math.max(9, Math.min(13, ST.R * 0.069));      // 정밀도 기준 반경
+  ST.covTol = ST.tol * 1.14;                             // 빠짐없이 붙여 그렸나
+  ST.vTol = ST.tol * 0.80;                               // 꼭짓점을 뾰족하게 찍었나
+  ST.maxOk = Math.max(12, Math.min(18, ST.R * 0.092));   // 이보다 크게 벗어나면 추가 감점
+}
+/* 0 → 1, 기준거리 → 0.5 : 기준 안쪽은 후하게, 바깥은 확실하게 깎는 곡선 */
+function starSoft(d, t){
+  const r = d / (t || 1);
+  return 1 / (1 + Math.pow(r, 2.3));
 }
 function segDist2(px, py, ax, ay, bx, by){
   const vx = bx - ax, vy = by - ay;
@@ -4922,11 +4934,66 @@ function starPassedVertices(){
     let hit = false;
     for(let j=0; j<ST.samples.length; j++){
       const p = ST.samples[j];
-      if(Math.hypot(p[0] - v.x, p[1] - v.y) <= ST.tol * 1.25){ hit = true; break; }
+      if(Math.hypot(p[0] - v.x, p[1] - v.y) <= ST.vTol){ hit = true; break; }
     }
     out.push(hit);
   }
   return out;
+}
+/* ── 별 채점 (정밀도 · 커버리지 · 꼭짓점 예리함) ──
+   ① 정밀도 : 그린 점 하나하나가 별 선에서 얼마나 벗어났나 (평균)
+   ② 커버리지 : 별 10개 구간을 빠짐없이, 선에 딱 붙여 그었나 (구간별로 본다)
+   ③ 예리함 : 10개 꼭짓점을 뾰족하게 찍었나 — 모서리를 둥글게 깎으면 크게 깎인다 */
+function starScore(samples){
+  const n = samples.length;
+  if(n < 2) return {acc:0, prec:0, cov:0, sharp:0};
+  /* ① 정밀도 */
+  let psum = 0, worst = 0, dsum = 0;
+  for(let i=0; i<n; i++){
+    const d = starDistToPath(samples[i][0], samples[i][1]);
+    psum += starSoft(d, ST.tol);
+    dsum += d;
+    if(d > worst) worst = d;
+  }
+  const prec = psum / n, dmean = dsum / n;
+  /* ② 커버리지 (구간별) */
+  const K = 8;
+  let csum = 0, ctotal = 0, worstSeg = 1;
+  for(let i=0; i<ST.pts.length; i++){
+    const a = ST.pts[i], b = ST.pts[(i + 1) % ST.pts.length];
+    let seg = 0;
+    for(let k=0; k<K; k++){
+      const t = k / K;
+      const v = starSoft(starDistToDrawn(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t), ST.covTol);
+      seg += v; csum += v; ctotal++;
+    }
+    seg /= K;
+    if(seg < worstSeg) worstSeg = seg;
+  }
+  const cov = ctotal ? csum / ctotal : 0;
+  /* ③ 꼭짓점 예리함 */
+  let vsum = 0;
+  for(let i=0; i<ST.pts.length; i++){
+    const v = ST.pts[i];
+    let dv = 1e9;
+    for(let j=0; j<n; j++){
+      const d = Math.hypot(samples[j][0] - v.x, samples[j][1] - v.y);
+      if(d < dv) dv = d;
+    }
+    vsum += starSoft(dv, ST.vTol);
+  }
+  const sharp = vsum / ST.pts.length;
+  let acc = prec * 0.38 + cov * 0.28 + sharp * 0.34;
+  /* 평균이 기준을 넘겨 삐뚤빼뚤하면 한 번 더 깎기 */
+  if(dmean > ST.tol) acc *= Math.max(0.60, 1 - (dmean - ST.tol) / (ST.R * 1.6));
+  /* 한 곳이라도 크게 튀면 감점 */
+  if(worst > ST.maxOk) acc *= Math.max(0.55, 1 - (worst - ST.maxOk) / (ST.R * 0.6));
+  /* 한 구간이 통째로 비면 감점 */
+  if(worstSeg < 0.30) acc *= 0.80;
+  /* 별을 거의 못 그렸으면 55% 상한 */
+  if(cov < 0.72) acc = Math.min(acc, 0.55);
+  acc = Math.max(0, Math.min(1, acc));
+  return {acc: Math.round(acc * 100), prec: Math.round(prec * 100), cov: Math.round(cov * 100), sharp: Math.round(sharp * 100)};
 }
 function startStar(){
   starLayout();
@@ -4970,6 +5037,15 @@ function starLoop(now){
   starPaint(now);
   const tEl = document.getElementById('stTime');
   if(tEl) tEl.textContent = (ST.tracing ? (now - ST.t0) / 1000 : (ST.done ? ST.time : 0)).toFixed(2) + '초';
+  /* 그리는 중에도 지금 선 정확도가 보이게 (0.25초에 한 번) */
+  if(ST.tracing && ST.samples.length > 12 && now - ST.liveAt > 250){
+    ST.liveAt = now;
+    try{
+      const live = starScore(ST.samples).prec;
+      const aEl = document.getElementById('stAcc');
+      if(aEl) aEl.textContent = '선 정확도 ' + live + '%';
+    }catch(e){}
+  }
 }
 function starPaint(now){
   const ctx = ST.ctx;
@@ -5025,7 +5101,7 @@ function starPaint(now){
   if(ST.samples.length > 1){
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.lineWidth = Math.max(5, ST.R * 0.055);
-    ctx.strokeStyle = ST.done ? (ST.acc >= 80 ? '#f5a623' : ST.acc >= 60 ? '#e9b23a' : '#d06a5a') : '#ffb733';
+    ctx.strokeStyle = ST.done ? (ST.acc >= 80 ? '#f5a623' : ST.acc >= 65 ? '#e9b23a' : '#d06a5a') : '#ffb733';
     ctx.beginPath();
     ST.samples.forEach(function(p, i){ if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
     ctx.stroke();
@@ -5040,32 +5116,16 @@ function finishStar(){
     setStarHint('별을 한 번에 쭉 그어 봐요! ✍️');
     return;
   }
-  /* 정확도: 그린 점이 별에서 얼마나 벗어났나(prec) + 별 전체를 다 덮었나(cov) */
-  let good = 0;
-  ST.samples.forEach(function(p){ if(starDistToPath(p[0], p[1]) <= ST.tol) good++; });
-  const prec = ST.samples.length ? good / ST.samples.length : 0;
-  let hit = 0, total = 0;
-  for(let i=0; i<ST.pts.length; i++){
-    const a = ST.pts[i], b = ST.pts[(i + 1) % ST.pts.length];
-    for(let k=0; k<6; k++){
-      const t = k / 6;
-      const x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;
-      total++;
-      if(starDistToDrawn(x, y) <= ST.tol * 1.5) hit++;
-    }
-  }
-  const cov = total ? hit / total : 0;
-  let acc = Math.round(Math.max(0, Math.min(1, prec * 0.55 + cov * 0.45)) * 100);
-  if(cov < 0.75) acc = Math.min(acc, 55);
-  ST.prec = Math.round(prec * 100);
-  ST.cov = Math.round(cov * 100);
+  const sc = starScore(ST.samples);
+  const acc = sc.acc;
+  ST.prec = sc.prec; ST.cov = sc.cov; ST.sharp = sc.sharp;
   ST.acc = acc;
   ST.time = Math.round(t * 10) / 10;
   ST.done = true;
-  let reward = 0, title = '🙂 다시 해 봐요', emo = '🙂';
+  let reward = 0, title = '다시 해 봐요', emo = '🙂';
   if(acc >= 80 && ST.time <= 8){ reward = 20; title = '정확도도 속도도 최고!'; emo = '🌟'; }
-  else if(acc >= 60){ reward = 10; title = '별이 완성됐어요!'; emo = '⭐'; }
-  if(cov < 0.75){ title = '별을 끝까지 그려 봐요!'; }
+  else if(acc >= 65){ reward = 10; title = '별이 완성됐어요!'; emo = '⭐'; }
+  else if(ST.cov < 72){ title = '별을 끝까지 그려 봐요!'; }
   const rec = miniRec().star;
   const isBest = reward > 0 && (!rec.best || ST.time < rec.best);
   if(reward > 0 && (!rec.best || ST.time < rec.best)) rec.best = ST.time;
@@ -5080,7 +5140,8 @@ function finishStar(){
     done.innerHTML = '<div class="mgCard">'
       + '<b class="mgBig">' + emo + ' ' + title + '</b>'
       + '<span class="mgNum">정확도 ' + acc + '%</span>'
-      + '<em>' + ST.time.toFixed(1) + '초 걸렸어요' + (reward === 0 ? ' · 60% 넘으면 성공!' : '') + '</em>'
+      + '<span class="mgSub">선 따라가기 ' + ST.prec + '% · 끝까지 ' + ST.cov + '% · 꼭짓점 ' + ST.sharp + '%</span>'
+      + '<em>' + ST.time.toFixed(1) + '초 걸렸어요' + (reward === 0 ? ' · 65% 넘으면 성공!' : '') + '</em>'
       + (isBest ? '<em class="mgNew">✨ 최고 기록!</em>' : '')
       + '<span class="mgGet">' + (reward > 0 ? '+' + reward + '🪙' : '코인은 다음에!') + '</span>'
       + '<div class="mgBtns"><button type="button" data-act="miniGo" data-g="star">🔄 다시</button>'
@@ -5481,7 +5542,7 @@ window.__gg = {
     get view(){ return MINI.view; },
     get maze(){ return {cols:MZ.cols, rows:MZ.rows, cells: MZ.cells ? Array.prototype.slice.call(MZ.cells) : null,
       cx:MZ.cx, cy:MZ.cy, sx:MZ.sx, sy:MZ.sy, gx:MZ.gx, gy:MZ.gy, done:MZ.done, time:MZ.time, started:MZ.started}; },
-    get star(){ return {pts:ST.pts, cx:ST.cx, cy:ST.cy, R:ST.R, tol:ST.tol, acc:ST.acc, time:ST.time, done:ST.done, n:ST.samples.length}; },
+    get star(){ return {pts:ST.pts, cx:ST.cx, cy:ST.cy, R:ST.R, tol:ST.tol, acc:ST.acc, time:ST.time, done:ST.done, n:ST.samples.length, prec:ST.prec, cov:ST.cov, sharp:ST.sharp}; },
     get tree(){ return {state:TR.state, target:TR.target, blind:TR.blind, err:TR.err, time:TR.time, type:TR.treeType,
       elapsed: TR.state === 'run' ? (performance.now() - TR.t0) / 1000 : TR.time}; },
     step: function(dx, dy){ mazeStep(dx, dy, performance.now()); },
