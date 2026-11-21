@@ -1680,18 +1680,6 @@ function emojiBurst(){
     })(i);
   }
 }
-function buildJudgeCards(){
-  $('rwJudges').innerHTML = JUDGES.map(function(j, i){
-    return '<div class="judge" data-j="'+i+'">'+
-      '<div class="av" style="color:'+j.color+'">'+'<svg viewBox="0 0 40 40" width="34" height="34" style="display:inline-block">'+judgeFaceSVG(j.id)+'</svg>'+'</div>'+
-      '<div class="jn">'+esc(j.name)+'</div>'+
-      '<div class="st" data-stars="'+i+'">'+
-        '<span class="s">★</span><span class="s">★</span><span class="s">★</span><span class="s">★</span><span class="s">★</span>'+
-      '</div>'+
-      '<div class="say"></div>'+
-    '</div>';
-  }).join('');
-}
 function judgeFaceSVG(id){
   if(id === 'luna'){
     return '<ellipse cx="20" cy="24" rx="13" ry="12" fill="#FFF3F7" stroke="#E9A6BE" stroke-width="1.6"/>'+
@@ -1717,25 +1705,39 @@ function judgeFaceSVG(id){
     '<path d="M14 32 q6 4 12 0" stroke="#CBA783" stroke-width="1.4" fill="none"/>';
 }
 
-function resetRunway(){
+/* ---------- 무대 공통 ---------- */
+function clearStageModels(){
   var stage = $('rwStage');
-  var olds = stage.querySelectorAll('.rw-model, .rw-name');
-  for(var i=0;i<olds.length;i++) olds[i].parentNode.removeChild(olds[i]);
+  var olds = stage.querySelectorAll('.rw-model, .rw-name, .podium');
+  for(var i=0;i<olds.length;i++){ if(olds[i].parentNode) olds[i].parentNode.removeChild(olds[i]); }
+}
+function resetStars(){
+  var btns = $('rwStars').querySelectorAll('button');
+  for(var i=0;i<btns.length;i++){ btns[i].disabled = false; btns[i].classList.remove('on'); }
+}
+function setSay(judge, text){
+  $('rwSayAv').innerHTML = judge ? '<svg viewBox="0 0 40 40" width="20" height="20">'+judgeFaceSVG(judge.id)+'</svg>' : '';
+  $('rwSay').textContent = text || '';
+}
+function resetRunway(){
+  runToken++;
+  clearStageModels();
+  confettiParts.length = 0;
+  var cv = $('rwConfetti');
+  if(cv){ var ctx = cv.getContext('2d'); if(ctx) ctx.clearRect(0,0,cv.width,cv.height); }
+  $('rwVote').hidden = false;
+  $('rwVote').classList.remove('done');
+  $('rwResult').hidden = true;
+  $('rwResult').innerHTML = '';
   $('rwTotal').hidden = true;
-  $('rwScore').textContent = '0 / 15';
-  $('rwComment').textContent = '심사위원이 별을 세고 있어요…';
-  var oldBox = document.getElementById('rwResultBox');
-  if(oldBox) oldBox.parentNode.removeChild(oldBox);
-  $('rwJudges').hidden = false;
-  buildJudgeCards();
-  var cards = $('rwJudges').querySelectorAll('.judge');
-  for(var j=0;j<cards.length;j++){
-    var sp = cards[j].querySelectorAll('.s');
-    for(var k=0;k<sp.length;k++) sp[k].classList.remove('on');
-    cards[j].querySelector('.say').textContent = '';
-  }
-  $('rwNext').hidden = true;
-  $('rwAgain').disabled = false;
+  $('rwBoard').innerHTML = '';
+  $('rwBoard').hidden = true;
+  $('rwStep').textContent = '';
+  $('rwNow').textContent = '🎤 지금 무대';
+  $('rwVQ').textContent = '이 코디, 몇 점을 줄까요?';
+  setSay(null, '런웨이가 끝나면 별을 눌러 점수를 주세요!');
+  resetStars();
+  $('rwAgain').disabled = true;
 }
 
 function wait(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
@@ -1754,60 +1756,6 @@ function addModel(s, name, leftPct, label, cls){
   return d;
 }
 
-function showStars(idx, n){
-  var card = $('rwJudges').querySelector('.judge[data-j="'+idx+'"]');
-  if(!card) return;
-  var sp = card.querySelectorAll('.s');
-  for(var i=0;i<sp.length;i++){
-    (function(i){
-      if(i < n){
-        setTimeout(function(){ sp[i].classList.add('on'); SFX.star(i); }, i*110);
-      }else{ sp[i].classList.remove('on'); }
-    })(i);
-  }
-}
-
-async function runSolo(){
-  var theme = findItem(THEMES, st.theme);
-  var s = JSON.parse(JSON.stringify(st));
-  resetRunway();
-  $('rwTheme').textContent = theme.emoji + ' ' + theme.name;
-  var model = addModel(s, activeName);
-  SFX.walk();
-  model.classList.add('walk');
-  await wait(1200);
-  $('rwFlash').classList.add('go'); SFX.flash();
-  setTimeout(function(){ $('rwFlash').classList.remove('go'); }, 620);
-  await wait(1500);
-  model.classList.remove('walk');
-  model.classList.add('pose');
-  SFX.tap();
-  emojiBurst();
-
-  var pts = scoreLook(s, theme);
-  var matched = matchedName(s, theme);
-  var stars = [0,1,2].map(function(i){ return starsFor(pts, i); });
-  for(var i=0;i<3;i++){
-    await wait(i === 0 ? 380 : 620);
-    showStars(i, stars[i]);
-    var say = judgeSay(theme, stars[i], matched);
-    var card = $('rwJudges').querySelector('.judge[data-j="'+i+'"]');
-    if(card) card.querySelector('.say').textContent = say;
-    if(stars[i] >= 4){ confettiBurst(40, 0.8); SFX.star(2); }
-  }
-  var total = stars.reduce(function(a,b){ return a+b; }, 0);
-  $('rwTotal').hidden = false;
-  $('rwComment').textContent = total >= 13 ? '심사위원 모두 반했어요! 🎉' : (total >= 10 ? '아주 좋은 무대였어요!' : '한 번 더 도전해 볼까요?');
-  $('rwScore').textContent = total + ' / 15';
-  if(total >= 11){ confettiBurst(140, 1.15); emojiBurst(); SFX.fanfare(); SFX.clap(); }
-  else if(total >= 8){ confettiBurst(70, 0.9); SFX.clap(); }
-  else { SFX.oops(); }
-  $('rwAgain').disabled = false;
-  $('rwNext').hidden = true;
-  lastResult = { state: s, theme: theme.id, stars: total };
-}
-
-var lastResult = null;
 function matchedName(s, theme){
   var best = null, bestW = 0;
   wornItems(s).forEach(function(it){
@@ -1818,83 +1766,289 @@ function matchedName(s, theme){
   });
   return best;
 }
+function reactLine(p, theme, score){
+  var j = pick(JUDGES);
+  var matched = matchedName(p.state, theme);
+  var text;
+  if(score >= 5) text = (theme.praise || '완벽한 코디야!');
+  else if(score === 4) text = matched ? (matched + ' 잘 어울려! ⭐4') : '아주 멋진 코디야! ⭐4';
+  else if(score === 3) text = '좋아! ' + (theme.hint || '조금만 더 꾸며 볼까?');
+  else if(score === 2) text = '조금만 더 주제에 맞춰 볼까?';
+  else text = '음… 다시 한 번 꾸며 볼까?';
+  return { judge: j, text: j.name + ': ' + text };
+}
+function renderBoard(){
+  var chips = showVotes.map(function(v){
+    return '<span class="bchip'+(v.me ? ' me' : '')+'">'+(v.ai ? '🤖 ' : '')+esc(v.name)+' ⭐'+v.score+'</span>';
+  }).join('');
+  $('rwBoard').innerHTML = chips;
+  $('rwBoard').hidden = !chips;
+}
 
-async function runVersus(){
+/* ============================================================
+   8-b. AI 친구 모델 (주제에 맞춰 랜덤 코디)
+   ============================================================ */
+var AI_NAMES = ['루나','미아','코코','보라','하니','모모','나나','지니'];
+function weightedPick(list, theme){
+  var ws = list.map(function(it){
+    var w = 1;
+    (it.tags || []).forEach(function(tg){
+      if(theme.want && theme.want[tg]) w += theme.want[tg] * 1.8;
+      if(theme.avoid && theme.avoid[tg]) w -= theme.avoid[tg] * 0.8;
+    });
+    return Math.max(0.12, w);
+  });
+  var tot = ws.reduce(function(a,b){ return a + b; }, 0);
+  var r = Math.random() * tot;
+  for(var i=0;i<list.length;i++){ r -= ws[i]; if(r <= 0) return list[i]; }
+  return list[list.length - 1];
+}
+function aiLook(theme){
+  var s = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  s.theme = theme.id;
+  s.skin = pick(SKINS).id;
+  s.hair = weightedPick(HAIRS, theme).id;
+  s.hairColor = pick(HAIR_COLORS);
+  s.face = pick(FACES).id;
+  s.mode = Math.random() < 0.58 ? 'dress' : 'two';
+  s.dress = weightedPick(DRESSES, theme).id;
+  s.top = weightedPick(TOPS, theme).id;
+  s.bottom = weightedPick(BOTTOMS, theme).id;
+  s.shoes = weightedPick(SHOES, theme).id;
+  var col = (Math.random() < 0.62 && theme.colors && theme.colors.length) ? pick(theme.colors) : pick(OUTFIT_COLORS);
+  s.outfitColor = col; s.shoeColor = col;
+  s.pattern = pick(PATTERNS).id;
+  var acc = [];
+  var n = Math.random() < 0.55 ? 2 : 1;
+  for(var i=0;i<n;i++){
+    var a = weightedPick(ACCS, theme);
+    if(acc.indexOf(a.id) < 0) acc.push(a.id);
+  }
+  if(Math.random() < 0.5){
+    var props = ACCS.filter(function(x){ return x.prop; });
+    var pr = pick(props);
+    if(pr && acc.indexOf(pr.id) < 0) acc.push(pr.id);
+  }
+  s.acc = acc;
+  s.mkLip = pick(['#E8467C','#FF5B8A','#C2447A','#E24B4B','#FF9FB0']);
+  s.mkBlush = pick(['#FF9FB0','#FF8FB8','#FFB08F','#D9B3FF']);
+  s.mkEye = Math.random() < 0.7 ? pick(['#C8A6FF','#FFB3D1','#9FD8FF','#FFE08A']) : 'none';
+  s.mkNail = pick(['#FF6BA8','#E24B4B','#FFD166','#B8A8FF']);
+  return s;
+}
+function buildParticipants(){
+  var theme = findItem(THEMES, st.theme);
+  var names = AI_NAMES.slice();
+  for(var i=names.length-1;i>0;i--){
+    var j = Math.floor(Math.random() * (i+1));
+    var tmp = names[i]; names[i] = names[j]; names[j] = tmp;
+  }
+  var out = [];
+  if(versus.on && versus.looks && versus.looks.length > 1){
+    out.push({ name:'윤진', state: JSON.parse(JSON.stringify(versus.looks[0].state)), me:true });
+    out.push({ name:'형원', state: JSON.parse(JSON.stringify(versus.looks[1].state)), me:true });
+    out.push({ name:names[0], state: aiLook(theme), ai:true });
+    out.push({ name:names[1], state: aiLook(theme), ai:true });
+  }else{
+    out.push({ name: activeName, state: JSON.parse(JSON.stringify(st)), me:true });
+    for(var k=0;k<3;k++) out.push({ name:names[k], state: aiLook(theme), ai:true });
+  }
+  return out;
+}
+
+/* ============================================================
+   8-c. 내가 주는 ⭐1~5점 투표
+   ============================================================ */
+var voteResolve = null;
+function askVote(p){
+  return new Promise(function(resolve){
+    voteResolve = resolve;
+    resetStars();
+    $('rwVote').classList.remove('done');
+    $('rwVQ').textContent = p.ai ? '이 AI 친구의 코디, 몇 점일까요?' : ('⭐ ' + p.name + '의 런웨이, 몇 점을 줄까요?');
+    setSay(null, '별을 누르면 점수가 매겨지고 다음 참가자가 나와요!');
+  });
+}
+function giveVote(v){
+  var r = voteResolve;
+  if(!r) return;
+  voteResolve = null;
+  var btns = $('rwStars').querySelectorAll('button');
+  for(var i=0;i<btns.length;i++){
+    var n = Number(btns[i].getAttribute('data-v'));
+    btns[i].disabled = true;
+    if(n <= v) btns[i].classList.add('on'); else btns[i].classList.remove('on');
+  }
+  $('rwVote').classList.add('done');
+  SFX.star(v - 1);
+  r(v);
+}
+
+/* ============================================================
+   8-d. 런웨이 진행 (참가자 차례 → 시상대)
+   ============================================================ */
+var runToken = 0;
+var showVotes = [];
+
+async function runShow(){
   var theme = findItem(THEMES, st.theme);
   resetRunway();
+  var token = ++runToken;
   $('rwTheme').textContent = theme.emoji + ' ' + theme.name;
-  var results = [];
-  for(var i=0;i<versus.looks.length;i++){
-    var look = versus.looks[i];
-    resetRunway();
-    buildJudgeCards();
-    var m = addModel(look.state, look.name, 50, (i+1)+'번 ');
+  var people = buildParticipants();
+  showVotes = [];
+  renderBoard();
+
+  for(var i=0;i<people.length;i++){
+    if(token !== runToken) return;
+    var p = people[i];
+    $('rwStep').textContent = '참가자 ' + (i+1) + ' / ' + people.length;
+    $('rwNow').textContent = '🎤 지금 무대 · ' + (p.ai ? 'AI 친구 ' : '') + p.name;
+    $('rwVQ').textContent = '잠시 후 런웨이가 시작돼요…';
+    setSay(null, p.ai ? '주제에 맞춰 스스로 코디한 AI 친구예요!' : (p.name + '의 코디를 무대에서 만나요!'));
+    resetStars();
+    var model = addModel(p.state, p.name, 50, p.ai ? '🤖 ' : '');
     SFX.walk();
-    m.classList.add('walk');
+    model.classList.add('walk');
     await wait(1150);
+    if(token !== runToken) return;
     $('rwFlash').classList.add('go'); SFX.flash();
-    setTimeout(function(){ $('rwFlash').classList.remove('go'); }, 600);
+    setTimeout(function(){ $('rwFlash').classList.remove('go'); }, 620);
     await wait(1450);
-    m.classList.remove('walk');
-    m.classList.add(i === 0 ? 'pose' : 'pose2');
-    emojiBurst();
-    var pts = scoreLook(look.state, theme);
-    var stars = [0,1,2].map(function(k){ return starsFor(pts, k); });
-    for(var k=0;k<3;k++){
-      await wait(k === 0 ? 360 : 560);
-      showStars(k, stars[k]);
-      var card = $('rwJudges').querySelector('.judge[data-j="'+k+'"]');
-      if(card){
-        var nm = k === 0 ? '루나' : (k === 1 ? '미유' : '콩이');
-        card.querySelector('.say').textContent = nm + ': ' + judgeSay(theme, stars[k], matchedName(look.state, theme));
-      }
-    }
-    var total = stars.reduce(function(a,b){ return a+b; }, 0);
-    $('rwTotal').hidden = false;
-    $('rwScore').textContent = look.name + ' ' + total + ' / 15';
-    $('rwComment').textContent = look.name + '의 무대였어요!';
-    results.push({ name: look.name, total: total, state: look.state });
-    if(total >= 11){ confettiBurst(110, 1.05); SFX.fanfare(); }
-    else { confettiBurst(45, 0.8); SFX.clap(); }
-    await wait(1700);
+    if(token !== runToken) return;
+    model.classList.remove('walk');
+    model.classList.add(i % 2 ? 'pose2' : 'pose');
+    if(!p.ai){ emojiBurst(); }
+
+    var score = await askVote(p);
+    if(score == null || token !== runToken) return;
+    showVotes.push({ name:p.name, score:score, me:!!p.me, ai:!!p.ai, state:p.state });
+    renderBoard();
+    var line = reactLine(p, theme, score);
+    setSay(line.judge, line.text);
+    confettiBurst(score >= 4 ? 70 : 26, score >= 4 ? 1.05 : 0.7);
+    if(score >= 4) SFX.clap();
+    await wait(1150);
+    if(token !== runToken) return;
+    clearStageModels();
   }
-  // 최종 비교
-  resetRunway();
-  var a = addModel(results[0].state, results[0].name, 28, '', 'duo');
-  var b = addModel(results[1].state, results[1].name, 72, '', 'duo');
-  a.classList.add('pose'); b.classList.add('pose2');
-  var box = document.createElement('div');
-  box.className = 'vs-result';
-  box.id = 'rwResultBox';
-  var winner = results[0].total === results[1].total ? null : (results[0].total > results[1].total ? results[0] : results[1]);
-  box.innerHTML = winner
-    ? '<b>🏆 '+esc(winner.name) + ' 승!</b><span>' + esc(results[0].name) + ' ' + results[0].total + '점 · ' + esc(results[1].name) + ' ' + results[1].total + '점</span>'
-    : '<b>🤝 무승부!</b><span>' + esc(results[0].name) + ' ' + results[0].total + '점 · ' + esc(results[1].name) + ' ' + results[1].total + '점</span>';
-  var panel = document.querySelector('.rw-panel');
-  panel.insertBefore(box, panel.querySelector('.rw-btns'));
-  $('rwJudges').hidden = true;
-  $('rwTotal').hidden = true;
-  confettiBurst(160, 1.2); SFX.fanfare(); SFX.clap();
-  $('rwNext').hidden = true;
-  lastResult = { versus:true, results: results, theme: theme.id };
-  $('rwAgain').disabled = false;
+  await showPodium(theme, token);
 }
+
+async function showPodium(theme, token){
+  clearStageModels();
+  var sorted = showVotes.slice().sort(function(a,b){ return b.score - a.score; });
+  if(!sorted.length) return;
+  var top = sorted.slice(0,3);
+  var order = [top[1], top[0], top[2]];
+  var pod = document.createElement('div');
+  pod.className = 'podium';
+  pod.innerHTML = order.map(function(p){
+    if(!p) return '<div class="pod" style="visibility:hidden"></div>';
+    var rank = (p === top[0]) ? 1 : (p === top[1] ? 2 : 3);
+    var delay = rank === 1 ? 0.95 : (rank === 2 ? 0.5 : 0.05);
+    return '<div class="pod p'+rank+'" style="animation-delay:'+delay+'s">'+
+      '<div class="pa">'+(rank === 1 ? '<span class="crown">👑</span>' : '')+figureSVG(p.state, { label:p.name+' '+rank+'등' })+'</div>'+
+      '<div class="pb">'+rank+'</div>'+
+      '<div class="pn">'+esc(p.name)+(p.ai ? ' 🤖' : '')+'</div>'+
+      '<div class="ps">⭐'+p.score+'</div></div>';
+  }).join('');
+  $('rwStage').appendChild(pod);
+
+  $('rwStep').textContent = '시상식';
+  $('rwNow').textContent = '🏆 우승 발표';
+  $('rwVote').hidden = true;
+  $('rwResult').hidden = false;
+  $('rwResult').innerHTML = '<b>🏆 ' + esc(top[0].name) + ' 우승! ⭐' + top[0].score + '</b>' +
+    '<span>' + sorted.map(function(v, i){ return (i+1) + '위 ' + esc(v.name) + ' ⭐' + v.score; }).join('  ·  ') + '</span>';
+  $('rwAgain').disabled = false;
+
+  await wait(380); if(token !== runToken) return; SFX.star(0);
+  await wait(430); if(token !== runToken) return; SFX.star(1);
+  await wait(430); if(token !== runToken) return;
+  SFX.fanfare(); SFX.clap();
+  confettiBurst(180, 1.25); emojiBurst();
+  await wait(520); if(token !== runToken) return;
+  confettiBurst(90, 1.0);
+  SFX.clap();
+}
+
 function openRunway(){
+  stopTimer();
   $('overlay').classList.add('show');
   document.body.style.overflow = 'hidden';
-  if(versus.on){
-    $('rwNext').hidden = true;
-    runVersus();
-  }else{
-    runSolo();
-  }
+  runShow();
 }
 function closeRunway(){
+  runToken++;
+  if(voteResolve){ var r = voteResolve; voteResolve = null; r(null); }
   $('overlay').classList.remove('show');
   document.body.style.overflow = '';
+  clearStageModels();
   var cv = $('rwConfetti');
   if(cv){ var ctx = cv.getContext('2d'); if(ctx) ctx.clearRect(0,0,cv.width,cv.height); }
   confettiParts.length = 0;
+  resetTimer(180);
+}
+
+/* ============================================================
+   8-e. 제한 시간 모드 (3분 도전 / 자유 코디)
+   ============================================================ */
+var TM = { mode:'free', left:180, endAt:0, id:null };
+try { TM.mode = localStorage.getItem('dti_timermode') === 'challenge' ? 'challenge' : 'free'; } catch(e){}
+
+function updateClock(){
+  if(TM.mode !== 'challenge') return;
+  var s = Math.max(0, TM.left);
+  var m = Math.floor(s / 60), ss = s % 60;
+  $('tmTime').textContent = m + ':' + (ss < 10 ? '0' : '') + ss;
+  $('tmClock').classList.toggle('warn', s <= 30);
+}
+function renderTimerMode(){
+  var btns = document.querySelectorAll('.tm[data-tm]');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('on', btns[i].getAttribute('data-tm') === TM.mode);
+  $('tmClock').hidden = TM.mode !== 'challenge';
+  updateClock();
+}
+function stopTimer(){ if(TM.id){ clearInterval(TM.id); TM.id = null; } }
+function startTimer(){
+  stopTimer();
+  if(TM.mode !== 'challenge') return;
+  TM.endAt = Date.now() + Math.max(0, TM.left) * 1000;
+  TM.id = setInterval(function(){
+    var left = Math.max(0, Math.round((TM.endAt - Date.now()) / 1000));
+    if(left !== TM.left){
+      var tick = (left <= 10 && left > 0);
+      TM.left = left;
+      updateClock();
+      if(tick) tone(1046, 0.05, 'square', 0.045);
+    }
+    if(left <= 0){ stopTimer(); timeUp(); }
+  }, 200);
+}
+function resetTimer(sec){
+  TM.left = (typeof sec === 'number') ? sec : 180;
+  updateClock();
+  if(TM.mode === 'challenge' && !$('overlay').classList.contains('show')) startTimer();
+}
+function setTimerMode(mode){
+  TM.mode = mode;
+  try { localStorage.setItem('dti_timermode', mode); } catch(e){}
+  stopTimer();
+  TM.left = 180;
+  renderTimerMode();
+  if(mode === 'challenge'){
+    startTimer();
+    toast('⏱️ 3분 안에 코디 완성! 30초 남으면 알려 줄게요');
+  }else{
+    toast('🕊️ 시간 제한 없이 천천히 꾸며요');
+  }
+}
+function timeUp(){
+  if($('overlay').classList.contains('show')) return;
+  SFX.theme(); SFX.flash();
+  toast('⏰ 시간 종료! 바로 런웨이로 갑니다 ✨');
+  openRunway();
 }
 
 /* ============================================================
@@ -2003,7 +2157,7 @@ function renderAll(){
 
 /* 이벤트 */
 document.addEventListener('click', function(e){
-  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del]') : null;
+  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del],[data-pat],[data-mk],[data-tm],[data-v]') : null;
   if(!t) return;
 
   if(t.hasAttribute('data-theme')){
@@ -2044,6 +2198,24 @@ document.addEventListener('click', function(e){
     else if(cat === 'shoes'){ st.shoeColor = col; }
     else st.outfitColor = col;
     saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    return;
+  }
+  if(t.hasAttribute('data-pat')){
+    st.pattern = t.getAttribute('data-pat');
+    saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    return;
+  }
+  if(t.hasAttribute('data-mk')){
+    st[t.getAttribute('data-mk')] = t.getAttribute('data-mkc');
+    saveState(); renderWardrobe(); renderAvatar(); SFX.pick();
+    return;
+  }
+  if(t.hasAttribute('data-tm')){
+    setTimerMode(t.getAttribute('data-tm'));
+    return;
+  }
+  if(t.hasAttribute('data-v')){
+    giveVote(Number(t.getAttribute('data-v')));
     return;
   }
   if(t.hasAttribute('data-pose')){
@@ -2137,7 +2309,9 @@ loadState();
 if(st.theme) activeName = activeName || '윤진';
 renderStarsDecor();
 renderAll();
-window.__dti = { get state(){ return st; }, THEMES: THEMES };
+renderTimerMode();
+if(TM.mode === 'challenge') startTimer();
+window.__dti = { get state(){ return st; }, THEMES: THEMES, PATTERNS: PATTERNS, openRunway: openRunway, setTimerMode: setTimerMode };
 window.__ready = true;
 
 })();

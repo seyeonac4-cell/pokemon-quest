@@ -1499,16 +1499,6 @@ function drawTile(ctx, t) {
   var right = [p1, p2, { x: p2.x, y: p2.y + H }, { x: p1.x, y: p1.y + H }];
   var top = [p0, p1, p2, p3];
 
-  // 벽 그림자 (바닥에 드리우는 그림자 → 건물이 서 있는 느낌)
-  if (t.tall) {
-    var g0 = proj(t.x, t.y, 0), g1 = proj(t.x + 1, t.y, 0);
-    var g2 = proj(t.x + 1, t.y + 1, 0), g3 = proj(t.x, t.y + 1, 0);
-    var ox = 15, oy = 13;
-    poly(ctx, [{ x: g3.x + ox, y: g3.y + oy }, { x: g2.x + ox, y: g2.y + oy },
-      { x: g2.x + ox * 1.9, y: g2.y + oy * 1.9 }, { x: g3.x + ox * 1.9, y: g3.y + oy * 1.9 }],
-      'rgba(28,52,80,.10)');
-  }
-
   // 두 면에 위→아래 그라데이션 (빛이 위에서 내려오는 느낌)
   if (H > 10) {
     var lg = ctx.createLinearGradient(0, p2.y, 0, p2.y + H);
@@ -1601,6 +1591,16 @@ function drawTile(ctx, t) {
   }
 
   ctx.restore();
+}
+
+function drawWallShadow(ctx, t) {
+  var g0 = proj(t.x, t.y, 0);
+  var g2 = proj(t.x + 1, t.y + 1, 0);
+  var g3 = proj(t.x, t.y + 1, 0);
+  var o1 = 12, o2 = 22;
+  poly(ctx, [{ x: g0.x + o1, y: g0.y + o2 }, { x: g3.x + o1, y: g3.y + o2 },
+    { x: g2.x + o1, y: g2.y + o2 }, { x: g2.x + o1 * 2.0, y: g2.y + o2 * 1.12 }],
+    'rgba(26,52,82,.09)');
 }
 
 function drawWallWindow(ctx, a, b, H) {
