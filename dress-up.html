@@ -2741,9 +2741,9 @@ var PLATFORMS = [
   { x: 2.2, z:12.1, w:1.9, d:1.1, h:0.42, base:'#F3D98A' },
   { x: 2.2, z:11.0, w:1.9, d:1.1, h:0.78, base:'#EBC96A' },
   /* 놀이공원 점프 발판 3개 */
-  { x:-2.6, z:13.3, w:1.2, d:1.0, h:0.42, base:'#FFC7E2' },
-  { x:-2.6, z:14.5, w:1.2, d:1.0, h:0.42, base:'#C7E8FF' },
-  { x:-2.6, z:15.7, w:1.2, d:1.0, h:0.42, base:'#FFE9A8' },
+  { x:-7.4, z:15.95, w:1.3, d:1.0, h:0.14, base:'#FFC7E2' },
+  { x:-5.8, z:15.95, w:1.3, d:1.0, h:0.14, base:'#C7E8FF' },
+  { x:-4.2, z:15.95, w:1.3, d:1.0, h:0.14, base:'#FFE9A8' },
   /* 모델대회 무대 + 양옆 계단 */
   { x: 5.8, z:15.5, w:3.6, d:1.4, h:0.36, base:'#E86A8E' },
   { x: 3.9, z:15.5, w:0.9, d:1.4, h:0.18, base:'#F2A0B6' },
@@ -3418,10 +3418,10 @@ function pickDefs(){
   add(-7.2, 2.0,'star'); add(7.2, 2.0,'star');
   add(-2.6, 10.0,'star'); add(6.4, 8.8,'star');
   /* 발판 위 */
-  add(-3.4, 8.2,'star'); add(-2.6, 13.3,'bill', 0.42); add(-2.6, 14.5,'bill', 0.42); add(-2.6, 15.7,'star', 0.42);
+  add(-3.4, 8.2,'star'); add(-7.4, 15.95,'bill', 0.14); add(-5.8, 15.95,'bill', 0.14); add(-4.2, 15.95,'star', 0.14);
   add(2.2, 12.1,'bill', 0.42); add(5.8, 15.5,'bill', 0.36); add(3.9, 15.5,'bill', 0.18); add(7.7, 15.5,'bill', 0.18);
   /* 🎁 히든 (드레싱룸 곳곳 숨은 보물) */
-  add(-2.6, 13.3,'gift', 0.42, 'wings');
+  add(-5.8, 15.95,'gift', 0.55, 'wings');
   add(2.2, 11.0,'gift', 0.78, 'goldcrown');
   add(8.6, 6.4,'gift', 0, 'wand');
   add(-8.6, 6.4,'gift', 0, 'catdoll');
@@ -3639,6 +3639,22 @@ function walkTo(tx, tz, zone){
   return true;
 }
 function cancelPath(){ PATH = []; PLAYER.target = null; PLAYER.targetZone = null; }
+/* 구역으로 걸어가기 — 앞이 가구/무대로 막혀 있으면 옆·뒤 자리를 찾아 갑니다 */
+function walkToZone(z){
+  var cands = [
+    { x:z.x, z:z.z + z.d/2 + 0.85 },
+    { x:z.x - z.w/2 - 0.90, z:z.z + 0.10 },
+    { x:z.x + z.w/2 + 0.90, z:z.z + 0.10 },
+    { x:z.x, z:z.z - z.d/2 - 0.90 }
+  ];
+  for(var i=0;i<cands.length;i++){
+    var c = cands[i];
+    c.x = clamp(c.x, WORLD.x0+0.55, WORLD.x1-0.55);
+    c.z = clamp(c.z, WORLD.z0+0.45, WORLD.z1-0.32);
+    if(findPath(PLAYER.x, PLAYER.z, c.x, c.z)) return walkTo(c.x, c.z, z);
+  }
+  return false;
+}
 
 /* ---------- 물리 · AI ---------- */
 var CHAT_LINES = ['이거 어때?','시간 얼마 안 남았어!','난 이 색이 좋아~','반짝이는 게 최고야!','이거 입어 볼까?','너무 예쁘다!','같이 골라 줄까?','헤어 바꿔 볼래'];
@@ -4628,7 +4644,8 @@ document.addEventListener('click', function(e){
     ZONES.forEach(function(x){ if(x.id === t.getAttribute('data-mzone')) mz = x; });
     if(mz){
       if(nearZone === mz) openZone(mz);
-      else if(walkTo(mz.x, mz.z + mz.d/2 + 0.85, mz)){ toast('👣 ' + mz.name + '으로 걸어가요…'); SFX.tap(); }
+      else if(walkToZone(mz)){ toast('👣 ' + mz.name + '으로 걸어가요…'); SFX.tap(); }
+      else toast('가구에 가려 못 갔어요. 조이스틱으로 가까이 가 볼까요?');
     }
     return;
   }
@@ -4639,7 +4656,7 @@ document.addEventListener('click', function(e){
     if(z){
       if(nearZone === z){ openZone(z); }
       else {
-        if(walkTo(z.x, z.z + z.d/2 + 0.75, z)){
+        if(walkToZone(z)){
           toast('👣 ' + z.name + '으로 걸어가요…');
           SFX.tap();
         }
@@ -5269,7 +5286,7 @@ window.__dti = {
   resetPicks: resetPicks,
   FAM: FAM, famPick: famPick, famSend: famSend, famHiSend: famHiSend,
   CAM: CAM, VIEW: VIEW, WORLD: WORLD, buildMini: buildMini, snapCam: snapCam,
-  stepCam: stepCam, walkTo: walkTo, screenToWorld: screenToWorld,
+  stepCam: stepCam, walkTo: walkTo, walkToZone: walkToZone, findPath: findPath, screenToWorld: screenToWorld,
   doResetAll: doResetAll, askReset: askReset, snapPhoto: snapPhoto,
   photoSVGString: photoSVGString, onContestStage: onContestStage,
   CLUB: CLUB, toggleDance: toggleDance, clubMusic: clubMusic, buildMini: buildMini,
