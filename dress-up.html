@@ -4317,12 +4317,12 @@ function famOnHi(snap){
 }
 /* 상대가 어디 있는지 안내 */
 function famWhere(){
-  if(!FAM.remote || !FAM.actor){ toast('지금은 ' + (FAM.meId ? famNameOf(famOther(FAM.meId)) : '자매') + '가 안 보여요'); return; }
+  if(!FAM.remote || !FAM.actor){ toast('지금은 ' + (FAM.meId ? famNameOf(famOther(FAM.meId)) + '이가' : '자매가') + ' 안 보여요'); return; }
   var p = proj(FAM.actor.x, FAM.actor.z, 0);
   var dx = FAM.actor.x - PLAYER.x, dz = FAM.actor.z - PLAYER.z;
   var dir = Math.abs(dx) > Math.abs(dz) ? (dx > 0 ? '오른쪽' : '왼쪽') : (dz > 0 ? '앞쪽' : '뒤쪽');
   famHearts(FAM.actor, 4);
-  toast('🧭 ' + famNameOf(famOther(FAM.meId)) + '는 ' + dir + '에 있어요 (' + Math.hypot(dx,dz).toFixed(1) + ' 걸음)');
+  toast('🧭 ' + famNameOf(famOther(FAM.meId)) + '이는 ' + dir + '에 있어요 (' + Math.hypot(dx,dz).toFixed(1) + ' 걸음)');
 }
 
 /* 내 캐릭터 바꾸기 (기기별 저장) */
@@ -4336,7 +4336,7 @@ function famPick(id){
     famSend(true);
   }
   renderMenu();
-  toast(FAM_EMO[id] + ' 이 폰은 ' + famNameOf(id) + '로 놀아요');
+  toast(FAM_EMO[id] + ' 이 폰은 ' + famNameOf(id) + '으로 놀아요');
   SFX.pick();
 }
 
@@ -4368,11 +4368,11 @@ function famRenderSheet(){
     if(lv) lv.textContent = '대기';
   } else if(FAM.online){
     if(av) av.textContent = FAM_EMO[oid] || '👭';
-    if(tx) tx.innerHTML = '<b>' + famNameOf(oid) + '</b>가 놀러 왔어요!<small>방 안에서 같이 걸어 다녀 보세요</small>';
+    if(tx) tx.innerHTML = '<b>' + famNameOf(oid) + '이</b>가 놀러 왔어요!<small>방 안에서 같이 걸어 다녀 보세요</small>';
     if(lv) lv.textContent = '접속 중';
   } else {
     if(av) av.textContent = FAM_EMO[FAM.meId] || '👭';
-    if(tx) tx.innerHTML = '<b>' + famNameOf(FAM.meId) + '</b>으로 놀 준비<small>' + (FAM.ready ? famNameOf(oid) + '의 폰이 들어오길 기다리는 중…' : '연결 중…') + '</small>';
+    if(tx) tx.innerHTML = '<b>' + famNameOf(FAM.meId) + '으로</b> 놀 준비<small>' + (FAM.ready ? famNameOf(oid) + '의 폰이 들어오길 기다리는 중…' : '연결 중…') + '</small>';
     if(lv) lv.textContent = FAM.ready ? '대기' : '연결 중';
   }
 }
