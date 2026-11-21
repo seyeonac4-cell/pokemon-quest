@@ -1531,10 +1531,10 @@ function drawTile(ctx, t) {
 
   // 지붕 이브 (벽 위로 살짝 내민 띠)
   if (t.tall) {
-    var e = 4;
+    var e = 3;
     var ex0 = { x: p0.x, y: p0.y - e }, ex1 = { x: p1.x + e, y: p1.y - e * 0.5 };
     var ex2 = { x: p2.x, y: p2.y + e }, ex3 = { x: p3.x - e, y: p3.y + e * 0.5 };
-    poly(ctx, [ex0, ex1, ex2, ex3], shade(t.tint || '#f4e6d8', -0.28));
+    poly(ctx, [ex0, ex1, ex2, ex3], shade(t.tint || '#f4e6d8', -0.20));
     poly(ctx, [ex0, ex1, ex2, ex3], null, 'rgba(255,255,255,.35)', 1);
   }
 
@@ -1597,10 +1597,10 @@ function drawWallShadow(ctx, t) {
   var g0 = proj(t.x, t.y, 0);
   var g2 = proj(t.x + 1, t.y + 1, 0);
   var g3 = proj(t.x, t.y + 1, 0);
-  var o1 = 12, o2 = 22;
+  var o1 = 9, o2 = 16;
   poly(ctx, [{ x: g0.x + o1, y: g0.y + o2 }, { x: g3.x + o1, y: g3.y + o2 },
     { x: g2.x + o1, y: g2.y + o2 }, { x: g2.x + o1 * 2.0, y: g2.y + o2 * 1.12 }],
-    'rgba(26,52,82,.09)');
+    'rgba(26,52,82,.062)');
 }
 
 function drawWallWindow(ctx, a, b, H) {

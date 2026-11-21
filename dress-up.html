@@ -451,6 +451,7 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 .vstars button.on{color:#FFD23F; text-shadow:0 0 13px rgba(255,196,0,.95)}
 .vstars button:active{transform:scale(.88)}
 .vstars button:disabled{pointer-events:none}
+.vstars button:disabled:not(.on){color:rgba(255,255,255,.18)}
 .vote.done .vstars button{cursor:default}
 .vsay{display:flex; align-items:center; gap:7px; margin-top:6px; background:rgba(255,255,255,.1); border-radius:11px; padding:6px 8px; min-height:34px}
 .vsay .jav{width:24px; height:24px; flex:0 0 auto; border-radius:50%; background:rgba(255,255,255,.18); display:grid; place-items:center}
@@ -463,20 +464,20 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
 /* ---------- 시상대 ---------- */
 .podium{
   position:absolute; left:0; right:0; bottom:0; z-index:6; display:flex; align-items:flex-end; justify-content:center;
-  gap:5px; padding:0 8px 4px; pointer-events:none;
+  gap:5px; padding:0 8px 22px; pointer-events:none;
 }
 .pod{flex:1 1 0; max-width:32%; display:flex; flex-direction:column; align-items:center; opacity:0; transform:translateY(24px); animation:podIn .55s cubic-bezier(.2,1.35,.4,1) forwards}
 @keyframes podIn{to{opacity:1; transform:translateY(0)}}
-.pod .pa{position:relative; display:flex; align-items:flex-end; justify-content:center; width:100%}
+.pod .pa{position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:center; width:100%}
 .pod .pa svg{height:clamp(90px,15.5vh,138px); width:auto; filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
 .pod.p1 .pa svg{height:clamp(112px,19vh,168px)}
 .pod .crown{position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:19px; animation:twinkle 1.5s ease-in-out infinite}
-.pod .pb{width:100%; border-radius:9px 9px 4px 4px; display:grid; place-items:center; font-weight:900; font-size:15px; color:#4A2A55; box-shadow:inset 0 -7px 0 rgba(0,0,0,.1)}
+.pod .pb{position:relative; z-index:1; width:100%; border-radius:9px 9px 4px 4px; display:grid; place-items:center; font-weight:900; font-size:15px; color:#4A2A55; box-shadow:inset 0 -7px 0 rgba(0,0,0,.1)}
 .pod.p1 .pb{height:clamp(56px,9.5vh,84px); background:linear-gradient(180deg,#FFE27A,#F0AE0E); color:#5B3A00; font-size:18px}
 .pod.p2 .pb{height:clamp(38px,6.6vh,56px); background:linear-gradient(180deg,#EEF2F8,#C2CBD9)}
 .pod.p3 .pb{height:clamp(28px,5.2vh,42px); background:linear-gradient(180deg,#F7CFA9,#D5976A)}
-.pod .pn{font-size:10.5px; font-weight:900; color:#fff; margin-top:4px; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis}
-.pod .ps{font-size:10px; font-weight:900; color:#FFD23F; margin-top:1px; white-space:nowrap}
+.pod .pn{font-size:10.5px; font-weight:900; color:#fff; margin-top:4px; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.pod .ps{font-size:10px; font-weight:900; color:#FFD23F; margin-top:1px; white-space:nowrap; text-shadow:0 1px 3px rgba(0,0,0,.6)}
 
 /* ---------- 토스트 ---------- */
 .toast{
@@ -1713,6 +1714,10 @@ function clearStageModels(){
 }
 function resetStars(){
   var btns = $('rwStars').querySelectorAll('button');
+  for(var i=0;i<btns.length;i++){ btns[i].disabled = true; btns[i].classList.remove('on'); }
+}
+function armStars(){
+  var btns = $('rwStars').querySelectorAll('button');
   for(var i=0;i<btns.length;i++){ btns[i].disabled = false; btns[i].classList.remove('on'); }
 }
 function setSay(judge, text){
@@ -1863,7 +1868,7 @@ var voteResolve = null;
 function askVote(p){
   return new Promise(function(resolve){
     voteResolve = resolve;
-    resetStars();
+    armStars();
     $('rwVote').classList.remove('done');
     $('rwVQ').textContent = p.ai ? '이 AI 친구의 코디, 몇 점일까요?' : ('⭐ ' + p.name + '의 런웨이, 몇 점을 줄까요?');
     setSay(null, '별을 누르면 점수가 매겨지고 다음 참가자가 나와요!');
