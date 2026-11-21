@@ -1164,7 +1164,11 @@ function buildMap() {
     // 바닥(안쪽)
     for (x = x0 + 1; x <= x0 + w - 2; x++) for (y = y0; y <= y0 + d - 1; y++) add(x, y, 0, 'wood');
     // 벽: 북쪽 · 서쪽 · 동쪽 (남쪽은 열려 있어요)
-    for (x = x0; x <= x0 + w - 1; x++) add(x, y0, 2, 'wall', { tall: 2.05, tint: tint, win: 1 });
+    var doorX = x0 + Math.floor(w / 2);
+    for (x = x0; x <= x0 + w - 1; x++) {
+      if (x === doorX) continue;                 // 북쪽 가운데는 출입문
+      add(x, y0, 2, 'wall', { tall: 2.05, tint: tint, win: 1 });
+    }
     for (y = y0; y <= y0 + d - 1; y++) {
       add(x0, y, 2, 'wall', { tall: 2.05, tint: tint, win: y === y0 ? 0 : 1 });
       add(x0 + w - 1, y, 2, 'wall', { tall: 2.05, tint: tint, win: y === y0 ? 0 : 1 });
@@ -1190,6 +1194,9 @@ function buildMap() {
   props.push({ k: 'rug', x: hH.cx + 0.5, y: hH.cy + 0.2, z: 0 });
   props.push({ k: 'houseSign', x: hH.x0 + 1.1, y: hH.y0 + hH.d + 0.6, z: 0, who: 'hyungwon', label: '형원이네 집', emoji: '🐣' });
 
+  props.push({ k: 'houseSign', x: -14.2, y: 4.5, z: 0, who: null, label: '카페', emoji: '☕' });
+  props.push({ k: 'houseSign', x: -8.6, y: 4.5, z: 0, who: null, label: '학교', emoji: '🏫' });
+  props.push({ k: 'houseSign', x: -2.6, y: 4.5, z: 0, who: null, label: '병원', emoji: '🏥' });
   props.push({ k: 'counter', x: -13.9, y: 7.0, z: 0 });       // 카페 카운터
   props.push({ k: 'table', x: -12.9, y: 6.2, z: 0 });
   props.push({ k: 'desk', x: -7.7, y: 6.4, z: 0 });           // 학교 책상
@@ -2696,7 +2703,7 @@ function drawMe(ctx) {
   var look = SAVE ? SAVE.look : LOOK_DEFAULT;
   var bubble = null;
   var b = G.bubbles[ME.id];
-  if (b && Date.now() - b.ts < 16000) bubble = b.text;
+  if (b && Date.now() - b.ts < 20000) bubble = b.text;
 
   if (G.ride === 'car') {
     var cp = proj(p.x, p.y, p.z + 0.1);
@@ -2729,7 +2736,7 @@ function drawRemote(ctx) {
   var base = proj(r.x, r.y, r.z || 0);
   var look = r.look || LOOK_DEFAULT;
   var b = G.bubbles[r.who];
-  var bubble = (b && Date.now() - b.ts < 16000) ? b.text : null;
+  var bubble = (b && Date.now() - b.ts < 20000) ? b.text : null;
   if (r.ride === 'car') drawCar(ctx, r.x - 0.9, r.y - 0.9, (r.z || 0) + 0.05, '#7fc9ff', false);
   else if (r.ride === 'scooter') drawScooter(ctx, r.x - 0.4, r.y - 0.4, (r.z || 0) + 0.05, '#ffd24a');
   var lift = (r.ride && r.ride !== 'walk') ? 0.16 : 0;
@@ -3891,29 +3898,6 @@ function init() {
   }
 
   FB.init();
-  if (/[?&]dev=1/.test(location.search)) {
-    window.BWDEV = {
-      G: G,
-      go: function (x, y, z) { G.p.x = x; G.p.y = y; G.p.z = z || 0; G.p.air = false; G.p.vz = 0; G.cam = proj(x, y, z || 0); },
-      coins: function (n) { addCoins(n); },
-      stick: function (x, y) { G.stick.x = x; G.stick.y = y; },
-      jump: function () { doJump(); },
-      sim: function (sec, sx, sy, jumpAt) {
-        var ox = G.stick.x, oy = G.stick.y;
-        G.stick.x = sx; G.stick.y = sy;
-        var n = Math.round(sec * 60), out = [];
-        for (var i = 0; i < n; i++) {
-          if (jumpAt !== undefined && i === jumpAt) doJump();
-          updatePlayer(1 / 60);
-          if (i % 20 === 0) out.push([+G.p.x.toFixed(2), +G.p.y.toFixed(2), +G.p.z.toFixed(2)]);
-        }
-        G.stick.x = ox; G.stick.y = oy;
-        return out;
-      },
-      ride: function (r) { G.ride = r; updateRideUI(); },
-      state: function () { return { p: G.p, coins: SAVE && SAVE.coins, spot: G.spot && G.spot.label, paused: G.paused, gates: G.gates.map(function (g) { return g.solved; }) }; }
-    };
-  }
   requestAnimationFrame(loop);
   updateHint();
 }
