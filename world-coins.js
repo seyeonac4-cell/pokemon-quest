@@ -2,7 +2,9 @@
    🪙 공용 코인 지갑 — world-coins.js
    블록 월드 · 그로우 어 가든 · 드레스 투 임프레스 세 게임이
    *하나의 코인 지갑*을 함께 씁니다.
-   경로: family-lim-7660/worldCoins/{yunjin|hyungwon}
+   경로: family-lim-7660/worldCoins/{yunjin|hyungwon|mom|dad}
+   (윤진·형원은 세 게임 공용, 엄마·아빠는 블록 월드에서도 놀 수 있게
+    같은 지갑 구조로 mom/dad 칸을 더했습니다 — 아이들 값은 그대로예요.)
 
    지키는 것
    1) 코인의 진실(source of truth)은 항상 서버 값입니다.
@@ -19,6 +21,7 @@
      WorldCoins.earn(20);       // +20
      WorldCoins.spend(10);      // -10 (모자라면 false)
      WorldCoins.resetAll(50);   // 보호자 리셋: 두 아이 모두 50
+     WorldCoins.resetWallets(['mom','dad'], 50);  // 엄마·아빠 지갑만 50
    ============================================================ */
 (function (global) {
   'use strict';
@@ -36,7 +39,11 @@
     messagingSenderId: '186869020161',
     appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
   };
-  var ID_MAP = { yunjin: 'yunjin', hyungwon: 'hyungwon', hyeongwon: 'hyungwon' };
+  var ID_MAP = {
+    yunjin: 'yunjin', hyungwon: 'hyungwon', hyeongwon: 'hyungwon',
+    mom: 'mom', 엄마: 'mom', dad: 'dad', 아빠: 'dad'
+  };
+  var WALLETS = ['yunjin', 'hyungwon', 'mom', 'dad'];
 
   function num(v) {
     var n = Number(v);
@@ -73,6 +80,7 @@
   };
   WC._local = readLocal();
   WC.kidKey = kidKey;
+  WC.WALLETS = WALLETS;
 
   function writeLocal() {
     try { global.localStorage.setItem(LS, JSON.stringify(WC._local)); } catch (e) {}
@@ -126,12 +134,12 @@
       WC._ref = db.ref(WC._root);
       WC._ref.on('value', function (snap) {
         var v = snap.val() || {};
-        ['yunjin', 'hyungwon'].forEach(function (k) {
+        WALLETS.forEach(function (k) {
           var n = num(v[k]);
           if (n != null) WC._vals[k] = n;
         });
-        /* 서버에 아직 없는 아이는 처음 값(50)부터 */
-        ['yunjin', 'hyungwon'].forEach(function (k) {
+        /* 서버에 아직 없는 사람은 처음 값(50)부터 */
+        WALLETS.forEach(function (k) {
           if (num(WC._vals[k]) == null) WC._vals[k] = START;
           WC._local[k] = WC._vals[k];
         });
@@ -228,6 +236,24 @@
     try {
       if (!WC._db) { WC.connect(); return; }
       WC._db.ref(WC._root).update({ yunjin: v, hyungwon: v });
+    } catch (e) {}
+  };
+
+  /* 고른 지갑만 v로 되돌리기 (아이들 값은 건드리지 않아요) */
+  WC.resetWallets = function (ids, v) {
+    v = Math.max(0, Math.floor(Number(v) || 0));
+    var upd = {}, any = false;
+    (ids || []).forEach(function (id) {
+      var k = kidKey(id);
+      if (WALLETS.indexOf(k) < 0) return;
+      WC._vals[k] = v; WC._local[k] = v; upd[k] = v; any = true;
+    });
+    if (!any) return;
+    writeLocal();
+    emit();
+    try {
+      if (!WC._db) { WC.connect(); return; }
+      WC._db.ref(WC._root).update(upd);
     } catch (e) {}
   };
 

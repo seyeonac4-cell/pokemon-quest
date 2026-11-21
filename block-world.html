@@ -16,12 +16,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="./assets/block-world/block-world-icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/block-world/block-world-icon-180.png">
 <link rel="manifest" href="./manifest-block-world.json">
-<title>🧱 채씨네 블록 월드 — 자매 놀이터</title>
+<title>🧱 채씨네 블록 월드 — 가족 놀이터</title>
 <script>window.__errs=[];addEventListener('error',function(e){try{__errs.push(String(e.message||(e.error&&e.error.message)||e.type)+' @'+(e.filename||'')+':'+(e.lineno||''))}catch(_){}});addEventListener('unhandledrejection',function(e){try{__errs.push('rejection: '+String(e.reason))}catch(_){}});</script>
 <style>
 /* ============================================================
    🧱 채씨네 블록 월드 (block-world.html)
-   윤진 · 형원 자매 전용 로블록스 스타일 블록 월드
+   윤진 · 형원 · 엄마 · 아빠 온 가족 로블록스 스타일 블록 월드
    한 파일 · 외부 라이브러리 없음 (Firebase 실시간만 사용)
    ============================================================ */
 :root{
@@ -134,6 +134,19 @@ input{font-family:inherit}
 }
 #otherChip.show{display:inline-flex}
 
+/* 🗺️ 지도로 둘러본 뒤 내 위치로 돌아오는 버튼 */
+#btnCenter{
+  position:absolute;right:calc(12px + env(safe-area-inset-right,0px));
+  top:calc(132px + env(safe-area-inset-top,0px));z-index:27;
+  padding:9px 14px;border-radius:999px;
+  background:rgba(255,255,255,.96);border:2px solid #ffd45c;color:#7a5a00;
+  font-size:13.5px;box-shadow:0 6px 16px rgba(20,60,90,.2);
+  opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity .2s,transform .2s
+}
+#btnCenter.show{opacity:1;transform:none;pointer-events:auto}
+#btnCenter:active{transform:scale(.96)}
+
 /* ---------------- 터치 조작 ---------------- */
 #controls{position:absolute;inset:0;z-index:24;pointer-events:none;display:block}
 #stick{
@@ -228,8 +241,22 @@ input{font-family:inherit}
 }
 .msg.me{flex-direction:row-reverse}
 .msg.me .bubble{background:#d9f3ff;border-radius:16px 16px 4px 16px;color:#124f6b}
-.msg .who{font-size:11px;color:var(--muted);margin:0 4px 2px}
+.msg .who{font-size:11px;color:var(--muted);margin:0 4px 2px;font-weight:400}
 .msg.me .who{text-align:right}
+.msg .badge{
+  display:inline-block;padding:1px 7px;border-radius:999px;
+  font-size:11px;line-height:1.5;letter-spacing:-.01em
+}
+/* 받는 사람 고르기 (가족 톡방 · 역할놀이) */
+.gift-to{display:flex;gap:6px;overflow-x:auto;padding:8px 14px 0;flex:0 0 auto;scrollbar-width:none}
+.gift-to::-webkit-scrollbar{display:none}
+.gift-to button{
+  flex:0 0 auto;padding:6px 11px;border-radius:999px;font-size:12.5px;
+  background:#eef4ff;border:2px solid #dbe7fb;color:#4d5f83;white-space:nowrap
+}
+.gift-to button.on{background:#fff3d6;border-color:#ffd45c;color:#8a5c00;font-weight:400}
+.gift-to button:active{transform:scale(.95)}
+.sec-t small{font-size:11.5px;color:#8a5c00;background:#fff3d6;border-radius:999px;padding:1px 8px;margin-left:4px}
 .msg .col{display:flex;flex-direction:column;min-width:0}
 .msg .time{font-size:10px;color:#a9b5cc;margin:3px 5px 0}
 .msg.me .time{text-align:right}
@@ -255,10 +282,10 @@ input{font-family:inherit}
 .chat-input button:active{transform:scale(.96)}
 
 /* ---------------- 상점 ---------------- */
-.tabs{display:flex;gap:7px;padding:10px 14px 2px;flex:0 0 auto}
+.tabs{display:flex;gap:6px;padding:10px 12px 2px;flex:0 0 auto}
 .tabs button{
-  flex:1 1 0;height:40px;border-radius:13px;background:#f2f6fd;color:#5d6c8c;font-size:14.5px;
-  border:2px solid transparent
+  flex:1 1 0;height:40px;border-radius:13px;background:#f2f6fd;color:#5d6c8c;font-size:13px;
+  border:2px solid transparent;white-space:nowrap;padding:0 2px
 }
 .tabs button.on{background:#fff0f7;border-color:#ffb6d3;color:#b9346b}
 .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:10px 0 4px}
@@ -360,16 +387,16 @@ input{font-family:inherit}
   color:#12394f;text-shadow:0 3px 0 #fff,0 6px 14px rgba(20,60,90,.18)
 }
 .starter-in .sub{margin:0 0 16px;font-size:14.5px;color:#2d6480}
-.pick{display:flex;gap:12px;margin:0 0 16px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
 .pick button{
-  flex:1 1 0;background:rgba(255,255,255,.9);border-radius:22px;padding:16px 8px 14px;
+  background:rgba(255,255,255,.9);border-radius:22px;padding:13px 6px 11px;
   border:3px solid #fff;box-shadow:0 10px 24px rgba(20,60,90,.16);
-  display:flex;flex-direction:column;align-items:center;gap:3px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
   transition:transform .12s,box-shadow .15s,border-color .15s
 }
-.pick button .big{font-size:44px;line-height:1.1}
-.pick button b{font-size:19px;font-weight:400}
-.pick button small{font-size:11.5px;color:#6d87a0}
+.pick button .big{font-size:38px;line-height:1.15}
+.pick button b{font-size:17px;font-weight:400}
+.pick button small{font-size:11px;color:#6d87a0}
 .pick button.sel{border-color:#ffb400;box-shadow:0 0 0 4px rgba(255,200,60,.35),0 10px 24px rgba(20,60,90,.16);transform:translateY(-3px)}
 .pick button:active{transform:scale(.97)}
 #startBtn{
@@ -632,13 +659,14 @@ input{font-family:inherit}
       <button class="icobtn" id="btnWorld" type="button" title="월드 이동" aria-label="월드 이동">🌍</button>
       <button class="icobtn" id="btnType" type="button" title="타자 놀이" aria-label="타자 놀이">⌨️</button>
       <button class="icobtn" id="btnShop" type="button" title="꾸미기 상점" aria-label="꾸미기 상점">🛍️</button>
-      <button class="icobtn" id="btnChat" type="button" title="자매 톡방" aria-label="자매 톡방">💬<i id="chatDot">0</i></button>
+      <button class="icobtn" id="btnChat" type="button" title="가족 톡방" aria-label="가족 톡방">💬<i id="chatDot">0</i></button>
       <button class="icobtn" id="btnMenu" type="button" title="메뉴" aria-label="메뉴">☰</button>
     </div>
   </div>
 
   <div id="hint">🦊 윤진, 마을을 구경하고 키보드 블록도 밟아 봐!</div>
   <div id="otherChip"><span>🟢</span><span id="otherChipTxt">형원이 지금 놀고 있어!</span></div>
+  <button id="btnCenter" type="button" aria-label="내 위치로 돌아가기">🎯 내 위치</button>
 
   <!-- ===================== 터치 조작 ===================== -->
   <div id="controls">
@@ -658,16 +686,17 @@ input{font-family:inherit}
     <button id="portalNo" type="button" aria-label="닫기">✕</button>
   </div>
 
-  <!-- ===================== 자매 톡방 ===================== -->
+  <!-- ===================== 가족 톡방 ===================== -->
   <div class="sheet" id="chatPanel" aria-hidden="true">
     <div class="sheet-grip"></div>
     <div class="sheet-head">
-      <b>💬 자매 톡방</b><span class="sub" id="chatOnline">윤진 · 형원 둘만</span>
+      <b>💬 가족 톡방</b><span class="sub" id="chatOnline">채씨네 가족 넷</span>
       <button class="x" data-close="chatPanel" type="button" aria-label="닫기">✕</button>
     </div>
     <div class="sheet-body" id="msgWrap">
       <div class="msgs" id="msgs"></div>
     </div>
+    <div class="gift-to" id="giftTo" aria-label="선물 받을 사람 고르기"></div>
     <div class="gift-row" id="giftRow">
       <button type="button" data-gift="pizza">🍕 피자</button>
       <button type="button" data-gift="coffee">☕ 커피</button>
@@ -689,8 +718,9 @@ input{font-family:inherit}
       <button class="x" data-close="shopPanel" type="button" aria-label="닫기">✕</button>
     </div>
     <div class="tabs" id="shopTabs">
-      <button data-tab="hat" class="on" type="button">🎩 모자</button>
-      <button data-tab="body" type="button">🎨 옷색</button>
+      <button data-tab="hat" class="on" type="button">👑 머리</button>
+      <button data-tab="acc" type="button">🕶️ 장식</button>
+      <button data-tab="body" type="button">👕 옷색</button>
       <button data-tab="face" type="button">😊 표정</button>
     </div>
     <div class="sheet-body">
@@ -709,7 +739,7 @@ input{font-family:inherit}
     <div class="sheet-body">
       <h4 class="sec-t">🎭 오늘의 역할 (모자·소품이 같이 바뀌어요)</h4>
       <div class="role-grid" id="roleGrid"></div>
-      <h4 class="sec-t">🎁 언니·동생에게 선물하기</h4>
+      <h4 class="sec-t">🎁 가족에게 선물하기 <small id="giftToTxt"></small></h4>
       <div class="gift-row" id="giftRow2">
         <button type="button" data-gift="pizza">🍕 피자</button>
         <button type="button" data-gift="coffee">☕ 커피</button>
@@ -737,7 +767,7 @@ input{font-family:inherit}
         <button type="button" data-menu="mute">🔊 소리 켜기 / 끄기<span id="muteState">지금은 소리가 켜져 있어요</span></button>
         <button type="button" data-menu="help">❓ 도움말<span>조작법과 앱 설치 안내</span></button>
         <button type="button" data-menu="home">🏠 우리 집으로 돌아가기<span>마을 내 집 앞으로 이동</span></button>
-        <button type="button" data-menu="reset" class="danger">🔄 게임 처음부터 리셋<span>보호자용 · 윤진·형원 코인·아이템·진행을 지워요</span></button>
+        <button type="button" data-menu="reset" class="danger">🔄 게임 처음부터 리셋<span>보호자용 · 가족 코인·아이템·진행을 지워요</span></button>
       </div>
     </div>
   </div>
@@ -784,8 +814,10 @@ input{font-family:inherit}
       <div class="who-grid">
         <button type="button" data-switch="yunjin"><span>🦊</span><b>윤진</b><small>초3 언니</small></button>
         <button type="button" data-switch="hyungwon"><span>🐣</span><b>형원</b><small>7살 동생</small></button>
+        <button type="button" data-switch="mom"><span>👩</span><b>엄마</b><small>우리 엄마</small></button>
+        <button type="button" data-switch="dad"><span>👨</span><b>아빠</b><small>우리 아빠</small></button>
       </div>
-      <p class="shop-note">바꾸면 코인·옷·펫도 그 사람 것으로 바뀌어요.</p>
+      <p class="shop-note">바꾸면 코인·옷·펫도 그 사람 것으로 바뀌어요. (엄마·아빠도 코인 50개부터!)</p>
     </div>
   </div>
 
@@ -908,6 +940,7 @@ input{font-family:inherit}
       <div class="help-sec">
         <h3>🎮 움직이기</h3>
         <p>폰은 왼쪽 동그라미를 밀고 <b>점프</b> 버튼을 눌러요. 컴퓨터는 <span class="kbd">←</span><span class="kbd">→</span><span class="kbd">↑</span><span class="kbd">↓</span> 나 <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span>, 점프는 <span class="kbd">Space</span>, 상호작용은 <span class="kbd">E</span>!</p>
+        <p><b>🗺️ 지도처럼 둘러보기</b>: 화면을 손가락으로 <b>쓱 끌면</b> 지도 앱처럼 카메라가 따라서 마을·점프맵·2탄 코스·다른 가족을 둘러볼 수 있어요. <b>두 손가락으로 벌리면 확대</b>, 오무리면 축소! 돌아올 땐 <b>🎯 내 위치</b>를 누르거나 왼쪽 조이스틱을 움직이면 돼요.</p>
       </div>
       <div class="help-sec">
         <h3>🌉 타자 미션 · 점프맵</h3>
@@ -930,12 +963,12 @@ input{font-family:inherit}
         <p>시작 광장 바닥과 점프맵 발판에 알록달록 키캡 블록이 있어요. 밟으면 키캡이 <b>쑥 눌리면서</b> 인쇄소 같은 <b>톡! 찰칵!</b> 타자 소리가 나요. 형원이랑 둘이서 걸어 다니며 소리를 들어 봐요.</p>
       </div>
       <div class="help-sec">
-        <h3>🪙 가족 공용 코인</h3>
-        <p>코인을 모아 <b>🛍️ 상점</b>에서 모자·옷색·표정을 바꿀 수 있어요. 코인은 <b>🌱 그로우 어 가든·👗 드레스 투 임프레스와 같이 쓰는 하나의 지갑</b>이라, 어느 게임에서 모아도 세 게임에서 똑같이 보여요. (포켓몬 코인과는 따로예요)</p>
+        <h3>🪙 가족 공용 코인 · 꾸미기 상점</h3>
+        <p>코인을 모아 <b>🛍️ 상점</b>에서 <b>👑 머리(금왕관·고양이 귀·리본)</b> · <b>🕶️ 장식(선글라스·별 가방·천사 날개)</b> · <b>👕 옷색</b> · <b>😊 표정</b>으로 캐릭터를 꾸밀 수 있어요. 코인은 <b>🌱 그로우 어 가든·👗 드레스 투 임프레스와 같이 쓰는 하나의 지갑</b>이라, 어느 게임에서 모아도 세 게임에서 똑같이 보여요. (포켓몬 코인과는 따로예요)</p>
       </div>
       <div class="help-sec">
-        <h3>💬 자매 톡방</h3>
-        <p>윤진이와 형원이만 쓰는 톡방이에요. 메시지를 보내면 캐릭터 머리 위에 말풍선으로 떠요. 둘이 같이 접속하면 서로 걸어 다니는 모습이 보여요!</p>
+        <h3>💬 가족 톡방</h3>
+        <p>윤진·형원·엄마·아빠 넷이 함께 쓰는 톡방이에요. 메시지를 보내면 캐릭터 머리 위에 말풍선으로 떠요. 여럿이 같이 접속하면 서로 걸어 다니는 모습이 보이고, 톡방 위 <b>받는 사람</b>을 골라 🍕 피자·☕ 커피·🎁 선물·🤗 안아줘를 보낼 수 있어요.</p>
       </div>
       <div class="help-sec">
         <h3>📲 홈 화면에 앱으로 설치</h3>
@@ -949,8 +982,8 @@ input{font-family:inherit}
   <div class="modal" id="resetOverlay">
     <div class="modal-card">
       <h2>🔄 게임 처음부터 리셋</h2>
-      <p class="reset-q">윤진·형원 코인·아이템·진행을<br>처음부터 다시 시작할까요?</p>
-      <p class="shop-note">블록 코인 · 상점 아이템 · 펫 · 집 색깔 · 미션 진행이 모두 지워져요. <b>코인은 세 게임이 함께 쓰는 공용 지갑이라 세 게임 모두 50개로</b> 돌아가요. 둘이 주고받은 채팅 기록은 그대로 남아요.</p>
+      <p class="reset-q">윤진·형원·엄마·아빠의<br>코인·아이템·진행을 처음부터 다시 시작할까요?</p>
+      <p class="shop-note">블록 코인 · 상점 아이템 · 펫 · 집 색깔 · 미션 진행이 모두 지워져요. <b>코인은 세 게임이 함께 쓰는 공용 지갑이라 가족 모두 50개로</b> 돌아가요. 채팅 기록은 그대로 남아요.</p>
       <button class="btn danger mt8" id="resetYes" type="button">🔄 처음부터 리셋</button>
       <button class="btn mt8" data-close="resetOverlay" type="button">그냥 둘게요</button>
     </div>
@@ -960,13 +993,15 @@ input{font-family:inherit}
   <div id="starter">
     <div class="starter-in">
       <h1>🧱 블록 월드</h1>
-      <p class="sub">채씨네 자매 놀이터 · 누가 놀 거야?</p>
+      <p class="sub">채씨네 가족 놀이터 · 누구로 놀까요?</p>
       <div class="pick">
         <button type="button" data-who="yunjin"><span class="big">🦊</span><b>윤진</b><small>초3 언니</small></button>
         <button type="button" data-who="hyungwon"><span class="big">🐣</span><b>형원</b><small>7살 동생</small></button>
+        <button type="button" data-who="mom"><span class="big">👩</span><b>엄마</b><small>우리 엄마</small></button>
+        <button type="button" data-who="dad"><span class="big">👨</span><b>아빠</b><small>우리 아빠</small></button>
       </div>
       <button id="startBtn" type="button" disabled>🌍 월드 들어가기</button>
-      <p class="tiny">마을에서 집·카페·학교 놀이도 하고,<br>타자로 다리를 만들고, 언니·동생과 같이 놀아요!</p>
+      <p class="tiny">마을에서 집·카페·학교 놀이도 하고,<br>타자로 다리를 만들고, 가족 넷이 같이 놀아요!</p>
     </div>
   </div>
 
@@ -975,7 +1010,7 @@ input{font-family:inherit}
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
-<script src="./world-coins.js?v=1"></script>
+<script src="./world-coins.js?v=2"></script>
 <script src="./pwa-install.js?v=1" defer></script>
 <script>
 try { navigator.serviceWorker && navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {}); } catch (e) {}
@@ -1013,7 +1048,10 @@ function store(k, v) {
 
 /* ===== 🌍 월드 연결: 지금 노는 아이를 ?who= 로 이어 줘 ===== */
 var WHO_KEY = 'lim_active_kid';
-var WHO_MAP = { yunjin: 'yunjin', hyungwon: 'hyungwon', hyeongwon: 'hyungwon' };
+var WHO_MAP = {
+  yunjin: 'yunjin', hyungwon: 'hyungwon', hyeongwon: 'hyungwon',
+  mom: 'mom', 엄마: 'mom', dad: 'dad', 아빠: 'dad'
+};
 function whoNorm(v) {
   if (!v) return null;
   v = String(v).trim().toLowerCase();
@@ -1363,38 +1401,86 @@ function toast(msg, ms) {
    3. 프로필 · 저장 데이터
    ============================================================ */
 var WHO = {
-  yunjin: { id: 'yunjin', name: '윤진', emoji: '🦊', tag: '초3 언니', color: '#3f8cff' },
-  hyungwon: { id: 'hyungwon', name: '형원', emoji: '🐣', tag: '7살 동생', color: '#ff8fc2' }
+  yunjin: {
+    id: 'yunjin', name: '윤진', emoji: '🦊', tag: '초3 언니', color: '#3f8cff',
+    look: { body: '#3f8cff' }, hair: '#6b4a2f', style: 'kid',
+    house: '#ffd0e6', spawn: { x: -1.3, y: 0.7 }, scale: 1
+  },
+  hyungwon: {
+    id: 'hyungwon', name: '형원', emoji: '🐣', tag: '7살 동생', color: '#ff8fc2',
+    look: { body: '#3f8cff' }, hair: '#6b4a2f', style: 'kid',
+    house: '#c9f2e2', spawn: { x: 1.3, y: -0.7 }, scale: 1
+  },
+  mom: {
+    id: 'mom', name: '엄마', emoji: '👩', tag: '우리 엄마', color: '#e6417f',
+    look: { body: '#ff8fc2' }, hair: '#4a3226', style: 'mom',
+    house: '#dbe6ff', spawn: { x: -2.9, y: -1.6 }, scale: 1.02
+  },
+  dad: {
+    id: 'dad', name: '아빠', emoji: '👨', tag: '우리 아빠', color: '#2f63c4',
+    look: { body: '#3f8cff' }, hair: '#22242e', style: 'dad',
+    house: '#dbe6ff', spawn: { x: 2.9, y: 1.6 }, scale: 1.08
+  }
 };
-var OTHER = { yunjin: 'hyungwon', hyungwon: 'yunjin' };
+var FAMILY = ['yunjin', 'hyungwon', 'mom', 'dad'];   // 프로필 순서
+function othersOf(id) {
+  return FAMILY.filter(function (k) { return k !== id; });
+}
 
 var LOOK_DEFAULT = { body: '#3f8cff', hat: 'none', face: 'smile' };
+/* 엄마·아빠는 처음 옷색이 달라요 (윤진·형원 기본값은 예전 그대로) */
+function whoDefaultLook(who) {
+  var w = WHO[who];
+  return {
+    body: (w && w.look && w.look.body) || LOOK_DEFAULT.body,
+    hat: LOOK_DEFAULT.hat, face: LOOK_DEFAULT.face
+  };
+}
+function houseOf(who) {
+  for (var i = 0; i < G.houses.length; i++) {
+    var h = G.houses[i];
+    if (h.owner === who) return h;
+    if (h.owners && h.owners.indexOf(who) >= 0) return h;
+  }
+  return null;
+}
 
 var SHOP = {
   hat: [
     { id: 'none', nm: '그냥', price: 0, emoji: '🙅' },
     { id: 'cap', nm: '빨간 모자', price: 10, emoji: '🧢' },
+    { id: 'bluecap', nm: '파랑 모자', price: 10, emoji: '🧢' },
+    { id: 'ribbon', nm: '리본', price: 8, emoji: '🎀' },
     { id: 'flower', nm: '꽃핀', price: 12, emoji: '🌸' },
+    { id: 'catears', nm: '고양이 귀', price: 15, emoji: '🐱' },
     { id: 'bunny', nm: '토끼 귀', price: 15, emoji: '🐰' },
     { id: 'headphone', nm: '헤드폰', price: 18, emoji: '🎧' },
     { id: 'party', nm: '파티 모자', price: 20, emoji: '🎉' },
-    { id: 'crown', nm: '왕관', price: 25, emoji: '👑' },
-    { id: 'halo', nm: '천사 링', price: 30, emoji: '😇' },
+    { id: 'crown', nm: '금왕관', price: 25, emoji: '👑' },
+    { id: 'halo', nm: '천사 링', price: 25, emoji: '😇' },
     { id: 'police', nm: '경찰 모자', price: 0, emoji: '👮' },
     { id: 'doctor', nm: '의사 모자', price: 0, emoji: '🩺' },
     { id: 'chef', nm: '요리사 모자', price: 0, emoji: '👩‍🍳' },
     { id: 'princess', nm: '공주 티아라', price: 0, emoji: '🎀' },
     { id: 'student', nm: '학생 모자', price: 0, emoji: '🎒' }
   ],
+  acc: [
+    { id: 'none', nm: '그냥', price: 0, emoji: '🙅' },
+    { id: 'sunglasses', nm: '선글라스', price: 12, emoji: '🕶️' },
+    { id: 'starback', nm: '별 가방', price: 15, emoji: '🎒' },
+    { id: 'wings', nm: '천사 날개', price: 25, emoji: '🪽' }
+  ],
   body: [
     { id: '#3f8cff', nm: '파랑', price: 0, sw: '#3f8cff' },
+    { id: '#7fd8ff', nm: '하늘', price: 8, sw: '#7fd8ff' },
+    { id: '#ffd94a', nm: '노랑', price: 8, sw: '#ffd94a' },
     { id: '#4cc85f', nm: '초록', price: 6, sw: '#4cc85f' },
     { id: '#ff5566', nm: '빨강', price: 6, sw: '#ff5566' },
     { id: '#a06bff', nm: '보라', price: 8, sw: '#a06bff' },
     { id: '#ff9a2e', nm: '주황', price: 8, sw: '#ff9a2e' },
     { id: '#ff8fc2', nm: '핑크', price: 10, sw: '#ff8fc2' },
     { id: '#3fd6c0', nm: '민트', price: 10, sw: '#3fd6c0' },
-    { id: '#3b3f52', nm: '검정', price: 12, sw: '#3b3f52' },
+    { id: '#3b3f52', nm: '검정', price: 10, sw: '#3b3f52' },
     { id: '#ffcc33', nm: '금색', price: 20, sw: '#ffcc33' }
   ],
   face: [
@@ -1437,9 +1523,11 @@ function loadSave(who) {
   d.coins = (typeof d.coins === 'number' && isFinite(d.coins)) ? Math.max(0, Math.floor(d.coins)) : START_COINS;
   d.owned = (d.owned && typeof d.owned === 'object') ? d.owned : {};
   d.look = d.look && typeof d.look === 'object' ? d.look : {};
-  d.look.body = d.look.body || LOOK_DEFAULT.body;
-  d.look.hat = d.look.hat || LOOK_DEFAULT.hat;
-  d.look.face = d.look.face || LOOK_DEFAULT.face;
+  var ldef = whoDefaultLook(who);
+  d.look.body = d.look.body || ldef.body;
+  d.look.hat = d.look.hat || ldef.hat;
+  d.look.acc = d.look.acc || 'none';
+  d.look.face = d.look.face || ldef.face;
   d.practice = d.practice || { best: 0, done: 0 };
   d.best = d.best || {};
   return d;
@@ -1658,7 +1746,7 @@ function buildMap() {
   rect(-4, 2, -2, 2, 0, 'lane');               // 공원 길
   rect(-1, 1, -1, 2, 0, 'lane');               // 포켓몬 광장으로 이어지는 길
 
-  function house(x0, y0, w, d, tint, who, label, emoji) {
+  function house(x0, y0, w, d, tint, who, label, emoji, owners) {
     var x, y;
     // 바닥(안쪽)
     for (x = x0 + 1; x <= x0 + w - 2; x++) for (y = y0; y <= y0 + d - 1; y++) add(x, y, 0, 'wood');
@@ -1674,13 +1762,15 @@ function buildMap() {
     }
     // 문 매트
     for (x = x0 + 1; x <= x0 + w - 2; x++) add(x, y0 + d, 0, 'lane');
-    houses.push({ owner: who, x0: x0, y0: y0, w: w, d: d, tint: tint, label: label, emoji: emoji,
+    houses.push({ owner: who, owners: owners || (who ? [who] : []), x0: x0, y0: y0, w: w, d: d, tint: tint, label: label, emoji: emoji,
       door: { x: x0 + w / 2, y: y0 + d + 0.1 } });
     return { x0: x0, y0: y0, w: w, d: d, cx: x0 + (w - 1) / 2, cy: y0 + (d - 1) / 2 };
   }
 
   var hY = house(-15, -4, 5, 3, '#ffd0e6', 'yunjin', '윤진이네 집', '🦊');
   var hH = house(-9, -4, 5, 3, '#c9f2e2', 'hyungwon', '형원이네 집', '🐣');
+  /* 👨‍👩‍👧‍👦 엄마·아빠가 같이 사는 우리 집 */
+  var hP = house(-4, -4, 4, 3, '#dbe6ff', null, '우리 집', '🏠', ['mom', 'dad']);
   house(-15, 5, 5, 4, '#ffe0b8', null, '카페', '☕');
   house(-9, 5, 5, 4, '#cfe4ff', null, '학교', '🏫');
   house(-4, 5, 4, 4, '#f0d9ff', null, '병원', '🏥');
@@ -1692,6 +1782,9 @@ function buildMap() {
   props.push({ k: 'bed', x: hH.cx - 0.7, y: hH.cy, z: 0 });
   props.push({ k: 'rug', x: hH.cx + 0.5, y: hH.cy + 0.2, z: 0 });
   props.push({ k: 'houseSign', x: hH.x0 + 1.1, y: hH.y0 + hH.d + 0.6, z: 0, who: 'hyungwon', label: '형원이네 집', emoji: '🐣' });
+  props.push({ k: 'bed', x: hP.cx - 0.6, y: hP.cy, z: 0 });
+  props.push({ k: 'rug', x: hP.cx + 0.4, y: hP.cy + 0.3, z: 0 });
+  props.push({ k: 'houseSign', x: hP.x0 + 1.0, y: hP.y0 + hP.d + 0.6, z: 0, who: null, label: '우리 집', emoji: '🏠' });
 
   props.push({ k: 'houseSign', x: -13.4, y: 8.6, z: 0, who: null, label: '카페', emoji: '☕' });
   props.push({ k: 'houseSign', x: -7.3, y: 8.6, z: 0, who: null, label: '학교', emoji: '🏫' });
@@ -1717,6 +1810,7 @@ function buildMap() {
   // 역할놀이 스팟
   spots.push({ x: hY.cx + 0.2, y: hY.y0 + 1.9, z: 0, icon: '🏠', label: '우리 집 색 바꾸기', act: 'house', who: 'yunjin' });
   spots.push({ x: hH.cx + 0.2, y: hH.y0 + 1.9, z: 0, icon: '🏠', label: '우리 집 색 바꾸기', act: 'house', who: 'hyungwon' });
+  spots.push({ x: hP.cx, y: hP.y0 + 1.9, z: 0, icon: '🏠', label: '우리 집 색 바꾸기', act: 'house', who: 'mom' });
   spots.push({ x: -13.6, y: 7.7, z: 0, icon: '☕', label: '카페에서 커피 만들기', act: 'cafe' });
   spots.push({ x: -7.7, y: 6.9, z: 0, icon: '⌨️', label: '학교에서 타자 숙제', act: 'school' });
   spots.push({ x: -2.6, y: 7.6, z: 0, icon: '🩺', label: '의사 선생님 되기', act: 'doctor' });
@@ -1947,8 +2041,9 @@ var G = {
   finish2: { x: 97, y: 13.5, z: 6 }, finished2: false, cp2Start: 9,
   p: { x: -9, y: 2.5, z: 0, vz: 0, air: false, face: 1, walk: 0, move: false, ground: 0, land: 0 },
   ride: 'walk', pet: null, petXY: { x: -9, y: 3.2 }, spot: null,
+  zoom: 1, zoomBase: 1, camFree: false, camOff: { x: 0, y: 0 }, bounds: null,
   keys: {}, stick: { x: 0, y: 0, active: false },
-  remote: null, bubbles: {},
+  remote: null, remotes: {}, giftTo: '', bubbles: {},
   running: false, paused: false, finished: false,
   coinsGot: 0, gatesSolved: 0, startAt: 0, elapsed: 0,
   parts: [], confetti: [],
@@ -1967,6 +2062,16 @@ function buildWorld() {
   G.crmTiles = m.crmTiles || []; G.finish2 = m.finish2 || G.finish2;
   // 2탄 코스 첫 체크포인트 위치 (마지막 6개가 2탄)
   G.cp2Start = Math.max(0, G.cps.length - 6);
+  // 🗺️ 지도 둘러보기 제한 범위
+  var b = { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 };
+  for (var bi = 0; bi < G.tiles.length; bi++) {
+    var bt = G.tiles[bi];
+    if (bt.x < b.x0) b.x0 = bt.x;
+    if (bt.x > b.x1) b.x1 = bt.x;
+    if (bt.y < b.y0) b.y0 = bt.y;
+    if (bt.y > b.y1) b.y1 = bt.y;
+  }
+  G.bounds = b;
 }
 
 /* ============================================================
@@ -2818,6 +2923,10 @@ function limb3(ctx, x, y, w, h, d, col) {
 function drawAvatar(ctx, sx, sy, look, o) {
   o = o || {};
   var body = look.body || '#3f8cff';
+  var hair = o.hair || '#6b4a2f';
+  var style = o.style || '';
+  var scl = o.scale || 1;
+  var acc = look.acc || 'none';
   var bodyD = shade(body, -0.22);
   var bodyL = shade(body, 0.22);
   var walk = o.walk || 0;
@@ -2841,6 +2950,8 @@ function drawAvatar(ctx, sx, sy, look, o) {
     ctx.fillStyle = 'rgba(20,50,30,' + al.toFixed(3) + ')';
     ctx.fill();
   }
+  /* 아바타 크기 — 가족마다 키가 조금씩 달라요 (아빠가 제일 큼) */
+  if (scl !== 1) ctx.scale(scl, scl);
   if (o.squash) {
     var q = Math.min(1, o.squash) * 0.17;
     ctx.scale(1 + q * 0.8, 1 - q);
@@ -2853,6 +2964,45 @@ function drawAvatar(ctx, sx, sy, look, o) {
 
   ctx.save();
   if (faceDir === -1) ctx.scale(-1, 1);
+
+  /* 🪽 천사 날개 · 🎒 별 가방 — 몸 뒤에 그려요 */
+  if (acc === 'wings') {
+    ctx.save();
+    ctx.translate(0, -56);
+    ctx.fillStyle = 'rgba(255,255,255,.96)';
+    ctx.strokeStyle = 'rgba(170,210,255,.95)';
+    ctx.lineWidth = 1.6;
+    [-1, 1].forEach(function (sd) {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(20 * sd, -22, 31 * sd, -6);
+      ctx.quadraticCurveTo(22 * sd, 8, 0, 5);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, 5);
+      ctx.quadraticCurveTo(17 * sd, 8, 22 * sd, 20);
+      ctx.quadraticCurveTo(10 * sd, 17, 0, 10);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
+  } else if (acc === 'starback') {
+    ctx.save();
+    ctx.fillStyle = '#ffd24a';
+    ctx.strokeStyle = '#e0a800'; ctx.lineWidth = 2;
+    roundRect(ctx, 9, -47, 21, 27, 8); ctx.fill(); ctx.stroke();
+    ctx.translate(19.5, -33.5);
+    ctx.beginPath();
+    for (var si = 0; si < 10; si++) {
+      var sr = (si % 2 === 0) ? 7 : 3.2;
+      var sa = -Math.PI / 2 + si * Math.PI / 5;
+      if (si === 0) ctx.moveTo(Math.cos(sa) * sr, Math.sin(sa) * sr);
+      else ctx.lineTo(Math.cos(sa) * sr, Math.sin(sa) * sr);
+    }
+    ctx.closePath();
+    ctx.fillStyle = '#fff6c9'; ctx.fill();
+    ctx.strokeStyle = 'rgba(224,168,0,.85)'; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.restore();
+  }
 
   // 다리
   var l1 = air ? -5 : -swing * 5;
@@ -2877,6 +3027,12 @@ function drawAvatar(ctx, sx, sy, look, o) {
   // 몸통 테두리 (만화 느낌)
   roundRect(ctx, -15, -49, 30, 30, 6);
   ctx.strokeStyle = 'rgba(30,40,70,.16)'; ctx.lineWidth = 1.4; ctx.stroke();
+  if (acc === 'starback') {
+    /* 🎒 별 가방 줄 */
+    ctx.strokeStyle = 'rgba(224,168,0,.8)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-2, -48); ctx.lineTo(-6, -30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(9, -48); ctx.lineTo(4, -30); ctx.stroke();
+  }
 
   // 팔
   var a1 = air ? -16 : swing * 12;
@@ -2915,12 +3071,49 @@ function drawAvatar(ctx, sx, sy, look, o) {
   ctx.strokeStyle = 'rgba(60,44,30,.18)'; ctx.lineWidth = 1.4; ctx.stroke();
 
   // 머리카락 (앞머리)
-  ctx.fillStyle = '#6b4a2f';
+  ctx.fillStyle = hair;
   roundRect(ctx, -hw / 2, hy - 1, hw, 9, 5); ctx.fill();
-  poly(ctx, [{ x: -hw / 2, y: hy + 8 }, { x: -hw / 2 - 5, y: hy + 4 }, { x: -hw / 2 - 3, y: hy + 16 }, { x: -hw / 2, y: hy + 14 }], '#6b4a2f');
-  poly(ctx, [{ x: hw / 2, y: hy + 8 }, { x: hw / 2 + 5, y: hy + 4 }, { x: hw / 2 + 3, y: hy + 16 }, { x: hw / 2, y: hy + 14 }], '#6b4a2f');
+  poly(ctx, [{ x: -hw / 2, y: hy + 8 }, { x: -hw / 2 - 5, y: hy + 4 }, { x: -hw / 2 - 3, y: hy + 16 }, { x: -hw / 2, y: hy + 14 }], hair);
+  poly(ctx, [{ x: hw / 2, y: hy + 8 }, { x: hw / 2 + 5, y: hy + 4 }, { x: hw / 2 + 3, y: hy + 16 }, { x: hw / 2, y: hy + 14 }], hair);
+
+  if (style === 'mom') {
+    // 긴 머리 — 어깨까지 흘러내리는 머리 + 위로 묶은 동그란 번
+    ctx.fillStyle = hair;
+    roundRect(ctx, -hw / 2 - 5, hy + 2, 8, 36, 5); ctx.fill();
+    roundRect(ctx, hw / 2 - 3, hy + 2, 8, 36, 5); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, hy - 5, 8.5, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.22)';
+    ctx.beginPath(); ctx.arc(-2.6, hy - 7.5, 3.2, 0, 6.2832); ctx.fill();
+  } else if (style === 'dad') {
+    // 짧은 머리 — 귀 옆만 살짝 덮는 스타일
+    ctx.fillStyle = hair;
+    roundRect(ctx, -hw / 2 - 2, hy + 1, 5, 9, 3); ctx.fill();
+    roundRect(ctx, hw / 2 - 3, hy + 1, 5, 9, 3); ctx.fill();
+  }
 
   drawFace(ctx, look.face || 'smile', 0, hy + 8);
+  if (style === 'dad' && acc !== 'sunglasses') {
+    // 동그란 안경
+    ctx.strokeStyle = 'rgba(38,46,64,.85)'; ctx.lineWidth = 2;
+    roundRect(ctx, -15, hy + 10, 13, 10, 4); ctx.stroke();
+    roundRect(ctx, 2, hy + 10, 13, 10, 4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-2, hy + 15); ctx.lineTo(2, hy + 15); ctx.stroke();
+  } else if (style === 'mom') {
+    // 발그레 볼
+    ctx.fillStyle = 'rgba(255,140,175,.38)';
+    ctx.beginPath(); ctx.arc(-13, hy + 21, 4.6, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(13, hy + 21, 4.6, 0, 6.2832); ctx.fill();
+  }
+  if (acc === 'sunglasses') {
+    // 🕶️ 선글라스
+    ctx.fillStyle = 'rgba(26,30,42,.93)';
+    roundRect(ctx, -17, hy + 10, 15, 10, 4); ctx.fill();
+    roundRect(ctx, 2, hy + 10, 15, 10, 4); ctx.fill();
+    roundRect(ctx, -2, hy + 13, 4, 3, 1.5); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.42)';
+    roundRect(ctx, -14, hy + 12, 5, 3, 1.5); ctx.fill();
+    roundRect(ctx, 5, hy + 12, 5, 3, 1.5); ctx.fill();
+  }
   drawHat(ctx, look.hat || 'none', 0, hy - 4);
 
   ctx.restore(); // faceDir
@@ -3520,6 +3713,8 @@ function resize() {
   cv.style.width = w + 'px';
   cv.style.height = h + 'px';
   G.scale = clamp(Math.min(w, h * 0.55) / 420, 0.85, 1.3);
+  G.zoomBase = G.scale;
+  G.scale = G.zoomBase * (G.zoom || 1);
 }
 
 function unproj(px, py) {
@@ -3960,7 +4155,7 @@ function respawn() {
   G.p.walk = 0;
   G.p.keyId = null;
   G.petXY.x = cp.x - 0.8; G.petXY.y = cp.y + 0.8; G.petXY.z = cp.z;
-  G.cam = proj(cp.x, cp.y, cp.z);
+  snapCamera(cp.x, cp.y, cp.z);
   AU.err();
   toast('😵 앗! 다시 체크포인트에서 출발!');
   spawnDust(cp.x, cp.y, cp.z, 8);
@@ -4041,7 +4236,7 @@ function gotoStage2(silent) {
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
   G.p.face = 1; G.p.walk = 0; G.p.keyId = null;
   G.petXY.x = cp.x - 0.9; G.petXY.y = cp.y + 0.9; G.petXY.z = cp.z;
-  G.cam = proj(cp.x, cp.y, cp.z);
+  snapCamera(cp.x, cp.y, cp.z);
   G.finished = true;          // 1탄 결승은 이미 지난 것으로 (서쪽으로 돌아가면 다시 결승)
   G.finished2 = false;
   G.st2At = Date.now();
@@ -4154,9 +4349,11 @@ function drawWorld() {
   items.push({ d: p.x + p.y + 0.05, k: 2, o: 'me' });
   // 펫
   if (G.pet && G.pet.type) items.push({ d: G.petXY.x + G.petXY.y + 0.045, k: 10, o: 'pet' });
-  // 상대 자매
-  if (G.remote && (Date.now() - G.remote.ts) < 40000 && G.remote.who !== ME.id) {
-    items.push({ d: G.remote.x + G.remote.y + 0.05, k: 11, o: 'remote' });
+  // 상대 가족 (여러 명 동시 접속)
+  for (var rk in G.remotes) {
+    var rr2 = G.remotes[rk];
+    if (!rr2 || (Date.now() - (rr2.ts || 0)) >= 40000 || rr2.who === ME.id) continue;
+    items.push({ d: rr2.x + rr2.y + 0.05, k: 11, o: rr2 });
   }
 
   items.sort(function (a, b) { return a.d - b.d || a.k - b.k; });
@@ -4174,7 +4371,7 @@ function drawWorld() {
       case 8: drawArch(ctx); break;
       case 9: drawFlower(ctx, it.o); break;
       case 10: drawMyPet(ctx); break;
-      case 11: drawRemote(ctx); break;
+      case 11: drawRemote(ctx, it.o); break;
       case 12: drawSpin(ctx, it.o); break;
       case 13: drawChamp(ctx); break;
       case 14: drawPortal(ctx, it.o); break;
@@ -4233,6 +4430,7 @@ function drawMe(ctx) {
     z: p.z, walk: p.walk, moving: p.move, air: p.air, face: p.face,
     name: ME.name, me: true, bubble: bubble, prop: SAVE ? SAVE.prop : '',
     shadowY: shadowY, height: Math.max(0, p.z - gz), squash: p.squash,
+    hair: ME.hair || '#6b4a2f', style: ME.style || '', scale: ME.scale || 1,
     roleEmoji: roleEmoji
   });
 }
@@ -4248,10 +4446,12 @@ function drawMyPet(ctx) {
   });
 }
 
-function drawRemote(ctx) {
-  var r = G.remote;
+function drawRemote(ctx, r) {
+  if (!r) r = G.remote;
+  if (!r) return;
   var base = proj(r.x, r.y, r.z || 0);
   var look = r.look || LOOK_DEFAULT;
+  var w = WHO[r.who] || {};
   var b = G.bubbles[r.who];
   var bubble = (b && Date.now() - b.ts < 20000) ? b.text : null;
   if (r.ride === 'car') drawCar(ctx, r.x - 0.9, r.y - 0.9, (r.z || 0) + 0.05, '#7fc9ff', false);
@@ -4261,8 +4461,9 @@ function drawRemote(ctx) {
   if (rgz < -50) rgz = r.z || 0;
   drawAvatar(ctx, base.x, base.y - lift * BLOCK_H, look, {
     z: r.z, walk: r.walk || 0, moving: !!r.moving, air: !!r.air, face: r.face || 1,
-    name: (WHO[r.who] || {}).name || '자매', me: false, bubble: bubble, prop: r.prop || '',
+    name: w.name || '가족', me: false, bubble: bubble, prop: r.prop || '',
     shadowY: proj(r.x, r.y, rgz).y, height: Math.max(0, (r.z || 0) - rgz),
+    hair: w.hair || '#6b4a2f', style: w.style || '', scale: w.scale || 1,
     roleEmoji: r.role ? (function () { for (var q = 0; q < ROLES.length; q++) if (ROLES[q].id === r.role) return ROLES[q].emoji; return ''; })() : ''
   });
   if (r.pet && PETS[r.pet]) {
@@ -4703,7 +4904,8 @@ function openSheet(id) {
   $('#actionPrompt').classList.remove('on');
   $('#portalPrompt').classList.remove('on');
   if (id === 'shopPanel') renderShop();
-  if (id === 'playPanel') { renderRoles(); renderProps(); renderHouseColors(); }
+  if (id === 'playPanel') { renderRoles(); renderProps(); renderHouseColors(); renderGiftTo(); }
+  if (id === 'chatPanel') renderGiftTo();
   if (id === 'petPanel') renderPet();
   if (id === 'menuPanel') $('#muteState').textContent = AU.isMuted() ? '지금은 소리가 꺼져 있어요' : '지금은 소리가 켜져 있어요';
 }
@@ -4810,7 +5012,7 @@ function setRole(id) {
     SAVE.prop = r.prop;
     AU.chime();
     spawnHearts(G.p.x, G.p.y, 6);
-    toast(r.emoji + ' ' + r.nm + '가 되었어요! 동생에게 인사해 봐');
+    toast(r.emoji + ' ' + r.nm + '가 되었어요! 가족에게 인사해 봐');
   }
   persist();
   renderRoles(); renderProps(); renderShop();
@@ -4828,22 +5030,45 @@ function playGift(kind, fromWho, mine) {
     var msg = { who: ME.id, text: g.emoji + ' ' + g.say, ts: Date.now() };
     if (!FB.pushChat(msg)) onChatMsg(msg, true);
   } else {
-    var w = WHO[fromWho] || { name: '자매' };
+    var w = WHO[fromWho] || { name: '가족' };
     spawnHearts(G.p.x, G.p.y, 9);
     AU.msg();
     if (kind === 'hug') spawnConfetti(14);
-    toast(g.emoji + ' ' + w.name + '이가 ' + g.get + ' 고마워 💕', 3200);
-    if (G.remote && G.remote.who === fromWho) {
+    toast(g.emoji + ' ' + w.name + '이(가) ' + g.get + ' 고마워 💕', 3200);
+    if (G.remotes[fromWho]) {
       G.bubbles[fromWho] = { text: g.say, ts: Date.now() };
     }
   }
 }
 
+/* 선물 받을 사람 고르기 (엄마·아빠도 받을 수 있어요) */
+function giftTarget() {
+  var list = othersOf(ME.id);
+  return (G.giftTo && list.indexOf(G.giftTo) >= 0) ? G.giftTo : list[0];
+}
+function renderGiftTo() {
+  if (!ME) return;
+  var list = othersOf(ME.id);
+  var cur = giftTarget();
+  G.giftTo = cur;
+  var box = $('#giftTo');
+  if (box) {
+    box.innerHTML = list.map(function (k) {
+      var w = WHO[k] || {};
+      return '<button type="button" data-gifto="' + k + '" class="' + (k === cur ? 'on' : '') + '">' +
+        (w.emoji || '🎁') + ' ' + esc(w.name || '가족') + '에게</button>';
+    }).join('');
+  }
+  var txt = $('#giftToTxt');
+  if (txt) txt.textContent = ((WHO[cur] || {}).emoji || '') + ' ' + ((WHO[cur] || {}).name || '가족') + '에게';
+}
+
 function sendGift(kind) {
   if (!GIFTS[kind] || !ME) return;
   if (!G.running) { toast('먼저 월드에 들어와야 해요!'); return; }
+  var to = giftTarget();
   playGift(kind, ME.id, true);
-  FB.pushGift({ from: ME.id, to: OTHER[ME.id], kind: kind, ts: Date.now() });
+  FB.pushGift({ from: ME.id, to: to, kind: kind, ts: Date.now() });
 }
 
 function renderProps() {
@@ -4859,7 +5084,7 @@ function renderProps() {
 function renderHouseColors() {
   var g = $('#swGrid');
   if (!g || !SAVE) return;
-  var cur = SAVE.house || (ME.id === 'yunjin' ? '#ffd0e6' : '#c9f2e2');
+  var cur = SAVE.house || (WHO[ME.id] && WHO[ME.id].house) || '#ffd0e6';
   g.innerHTML = HOUSE_COLORS.map(function (c) {
     return '<button type="button" class="sw' + (c === cur ? ' on' : '') + '" data-house="' + c +
       '" style="background:' + c + '"></button>';
@@ -4870,8 +5095,7 @@ function renderPlayLook() { /* 예비 */ }
 
 function applyHouseColor(who, color) {
   if (!color) return;
-  var h = null;
-  for (var i = 0; i < G.houses.length; i++) if (G.houses[i].owner === who) h = G.houses[i];
+  var h = houseOf(who);
   if (!h) return;
   h.tint = color;
   for (var j = 0; j < G.tiles.length; j++) {
@@ -5031,7 +5255,7 @@ function updateReveal(dt) {
 }
 
 /* ============================================================
-   16. 자매 톡방 (Firebase 실시간 · 독립 경로)
+   16. 가족 톡방 (Firebase 실시간 · 독립 경로)
    ============================================================ */
 var FB_CFG = {
   apiKey: 'AIzaSyCy_TrcTcwRusSeQH4x3yrGv1bwzi7wBhI',
@@ -5093,13 +5317,20 @@ var FB = {
     try {
       FB.root.child('live').on('value', function (snap) {
         var all = snap.val() || {};
-        var o = all[OTHER[ME.id]];
-        if (o && (Date.now() - (o.ts || 0)) < 40000) {
-          G.remote = o;
-          if (o.house) applyHouseColor(OTHER[ME.id], o.house);
-        } else {
-          G.remote = null;
-        }
+        var now = Date.now();
+        var next = {};
+        FAMILY.forEach(function (k) {
+          if (k === ME.id) return;
+          var o = all[k];
+          if (!o || (now - (o.ts || 0)) >= 40000) return;
+          next[k] = o;
+          if (o.house) applyHouseColor(k, o.house);
+        });
+        G.remotes = next;
+        /* 예전 코드 호환: 첫 번째 접속 친구 */
+        var first = null;
+        for (var k in next) { first = next[k]; break; }
+        G.remote = first;
         updateOtherChip();
       });
     } catch (e) {}
@@ -5135,7 +5366,7 @@ var FB = {
       x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, z: Math.round(p.z * 100) / 100,
       face: p.face, walk: Math.round(p.walk * 10) / 10, moving: p.move ? 1 : 0, air: p.air ? 1 : 0,
       ride: G.ride, ts: now,
-      look: { body: SAVE.look.body, hat: SAVE.look.hat, face: SAVE.look.face },
+      look: { body: SAVE.look.body, hat: SAVE.look.hat, face: SAVE.look.face, acc: SAVE.look.acc || 'none' },
       prop: SAVE.prop || '', pet: (SAVE.pet && SAVE.pet.type) || '', house: SAVE.house || '',
       role: SAVE.role || ''
     };
@@ -5155,18 +5386,29 @@ var FB = {
   }
 };
 
+function liveNames() {
+  var names = [];
+  for (var k in G.remotes) {
+    var o = G.remotes[k];
+    if (!o || (Date.now() - (o.ts || 0)) >= 40000) continue;
+    var w = WHO[k] || WHO[o.who];
+    if (w) names.push(w.emoji + ' ' + w.name);
+  }
+  return names;
+}
+
 function updateOtherChip() {
   var el = $('#otherChip');
-  var o = G.remote;
-  if (o && o.who !== ME.id) {
-    var w = WHO[o.who] || { name: '자매' };
+  var names = liveNames();
+  if (names.length) {
     el.classList.add('show');
-    $('#otherChipTxt').textContent = w.name + '이가 지금 놀고 있어! 같이 놀자';
+    $('#otherChipTxt').textContent = names.join(' · ') +
+      (names.length === 1 ? ' 지금 놀고 있어! 같이 놀자' : ' 같이 놀고 있어! 같이 놀자');
   } else {
     el.classList.remove('show');
   }
   var sub = $('#chatOnline');
-  if (sub) sub.textContent = (o && o.who !== ME.id) ? ((WHO[o.who] || {}).name + ' 접속 중 🟢') : '윤진 · 형원 둘만';
+  if (sub) sub.textContent = names.length ? (names.join(' · ') + ' 접속 중 🟢') : '채씨네 가족 넷';
 }
 
 function onChatMsg(m, local) {
@@ -5187,14 +5429,16 @@ function renderMsg(m) {
   if (!list) return;
   var empty = list.querySelector('.empty');
   if (empty) empty.remove();
-  var w = WHO[m.who] || { emoji: '💬', name: '자매' };
+  var w = WHO[m.who] || { emoji: '💬', name: '가족', color: '#7b8aa6' };
   var d = new Date(m.ts || Date.now());
   var hh = d.getHours(), mm = d.getMinutes();
   var time = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+  var tint = (w.color || '#7b8aa6') + '26';
   var div = document.createElement('div');
-  div.className = 'msg' + (m.who === ME.id ? ' me' : '');
-  div.innerHTML = '<span class="av">' + w.emoji + '</span>' +
-    '<span class="col"><span class="who">' + esc(w.name) + '</span>' +
+  div.className = 'msg w-' + esc(m.who) + (m.who === ME.id ? ' me' : '');
+  div.innerHTML = '<span class="av" style="background:' + tint + ';border-color:' + tint + '">' + w.emoji + '</span>' +
+    '<span class="col"><span class="who"><span class="badge" style="color:' + (w.color || '#7b8aa6') +
+    ';background:' + tint + '">' + esc(w.name) + '</span></span>' +
     '<span class="bubble">' + esc(m.text) + '</span><span class="time">' + time + '</span></span>';
   list.appendChild(div);
   var all = list.querySelectorAll('.msg');
@@ -5234,7 +5478,7 @@ function setProfile(who, silent) {
   /* 공용 지갑도 이 아이로 — 코인의 진실은 서버(worldCoins) 값이에요 */
   WorldCoins.setKid(ME.id);
   SAVE.coins = WorldCoins.get(ME.id);
-  if (!SAVE.house) SAVE.house = (ME.id === 'yunjin') ? '#ffd0e6' : '#c9f2e2';
+  if (!SAVE.house) SAVE.house = (WHO[ME.id] && WHO[ME.id].house) || '#ffd0e6';
   if (!SAVE.ride) SAVE.ride = 'walk';
   G.ride = SAVE.ride || 'walk';
   updateRideUI();
@@ -5253,6 +5497,7 @@ function setProfile(who, silent) {
   if (!silent) toast(ME.emoji + ' ' + ME.name + '으로 놀아요!');
   FB.pushLive(true);
   FB.watchOther();
+  renderGiftTo();
 }
 
 function ME_ID() { return ME ? ME.id : ''; }
@@ -5273,7 +5518,7 @@ function startWorld() {
   G.running = true;
   G.paused = false;
   G.startAt = Date.now();
-  G.cam = proj(G.p.x, G.p.y, G.p.z);
+  snapCamera(G.p.x, G.p.y, G.p.z);
   AU.unlock();
   setTimeout(function () { window.scrollTo(0, 0); }, 30);
   updateHint();
@@ -5281,7 +5526,8 @@ function startWorld() {
   toast('🌍 블록 월드에 온 걸 환영해요, ' + ME.name + '!');
 }
 
-var SPAWN_OFF = { yunjin: { x: -1.3, y: 0.7 }, hyungwon: { x: 1.3, y: -0.7 } };
+var SPAWN_OFF = {};
+FAMILY.forEach(function (k) { if (WHO[k] && WHO[k].spawn) SPAWN_OFF[k] = WHO[k].spawn; });
 
 function bootWho(who) {
   setProfile(who, true);
@@ -5296,7 +5542,7 @@ function bootWho(who) {
   G.running = true;
   G.paused = false;
   G.startAt = Date.now();
-  G.cam = proj(G.p.x, G.p.y, G.p.z);
+  snapCamera(G.p.x, G.p.y, G.p.z);
   AU.unlock();
   updateHint();
   toast('🌍 블록 월드에 온 걸 환영해요, ' + ME.name + '!');
@@ -5310,6 +5556,7 @@ function bindUI() {
   var active = false, cx = 0, cy = 0, R = 44;
 
   function stickMove(e) {
+    if (G.camFree) recenterCamera(true);   // 조이스틱을 잡으면 내 캐릭터로 돌아와요
     var r = stick.getBoundingClientRect();
     var dx = e.clientX - (r.left + r.width / 2);
     var dy = e.clientY - (r.top + r.height / 2);
@@ -5347,25 +5594,109 @@ function bindUI() {
     jb.addEventListener(ev, function () { jb.classList.remove('pressed'); cutJump(); });
   });
 
-  // 캔버스 탭(펫 쓰다듬기)
-  $('#game').addEventListener('pointerdown', function (e) {
+  /* 🗺️ 캔버스 — 끌면 지도 앱처럼 카메라 이동 · 두 손가락으로 줌 · 톡 누르면 펫 쓰다듬기 */
+  var cv = $('#game');
+  var pts = {}, pinch = null;
+  function cvPos(e) {
+    var r = cv.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function ptList() { var a = []; for (var k in pts) a.push(pts[k]); return a; }
+  function pinchDist() {
+    var a = ptList();
+    if (a.length < 2) return 0;
+    return Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+  }
+  function petUnder(x, y) {
+    if (!G.pet || !G.pet.type) return false;
+    var ps = proj(G.petXY.x, G.petXY.y, G.petXY.z || 0);
+    var sx = G.w / 2 + (ps.x - G.cam.x) * G.scale;
+    var sy = G.h * 0.56 + (ps.y - G.cam.y) * G.scale;
+    return Math.hypot(x - sx, y - (sy - 20)) < 46;
+  }
+
+  cv.addEventListener('pointerdown', function (e) {
     if (G.paused) return;
     AU.unlock();
-    var rect = $('#game').getBoundingClientRect();
-    var cx2 = e.clientX - rect.left, cy2 = e.clientY - rect.top;
-    if (G.pet && G.pet.type) {
-      var ps = proj(G.petXY.x, G.petXY.y, G.petXY.z || 0);
-      var sx = G.w / 2 + (ps.x - G.cam.x) * G.scale;
-      var sy = G.h * 0.56 + (ps.y - G.cam.y) * G.scale;
-      if (Math.hypot(cx2 - sx, cy2 - (sy - 20)) < 46) {
-        spawnHearts(G.petXY.x, G.petXY.y, 5);
-        AU.pop();
-        G.pet.happy = 1;
-        setTimeout(function () { if (G.pet) G.pet.happy = 0; }, 2200);
-        if (SAVE && SAVE.pet) { SAVE.pet.mood = clamp(SAVE.pet.mood + 3, 0, 100); persist(); }
-        return;
+    var q = cvPos(e);
+    pts[e.pointerId] = {
+      x: q.x, y: q.y, sx: q.x, sy: q.y, moved: 0, mode: '',
+      cam0: { x: G.cam.x, y: G.cam.y }
+    };
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    if (ptList().length === 2) { pinch = { d: pinchDist(), z: G.zoom || 1 }; return; }
+  });
+
+  cv.addEventListener('pointermove', function (e) {
+    var P = pts[e.pointerId];
+    if (!P || G.paused) return;
+    var q = cvPos(e);
+    var dx = q.x - P.sx, dy = q.y - P.sy;
+    P.x = q.x; P.y = q.y;
+    P.moved = Math.max(P.moved, Math.hypot(dx, dy));
+    if (pinch) {
+      var a = ptList();
+      var d = pinchDist();
+      if (a.length >= 2 && d > 10 && pinch.d > 10) {
+        setZoom(pinch.z * (d / pinch.d), (a[0].x + a[1].x) / 2, (a[0].y + a[1].y) / 2);
+        G.camFree = true;
+        updateCenterBtn();
       }
+      if (e.cancelable) e.preventDefault();
+      return;
     }
+    if (P.moved > 8) {
+      if (!P.mode) {
+        P.mode = 'pan';
+        G.camFree = true;
+        updateCenterBtn();
+        if (!G.panTipShown) {
+          G.panTipShown = 1;
+          toast('🗺️ 지도처럼 둘러보는 중! 🎯 내 위치를 누르면 돌아와요', 2800);
+        }
+      }
+      G.cam.x = P.cam0.x - dx;
+      G.cam.y = P.cam0.y - dy;
+      clampCamera();
+      if (e.cancelable) e.preventDefault();
+    }
+  });
+
+  function endPointer(e) {
+    var P = pts[e.pointerId];
+    if (!P) return;
+    var wasPinch = !!pinch;
+    var tap = (P.moved <= 8 && !wasPinch);
+    delete pts[e.pointerId];
+    if (ptList().length < 2) pinch = null;
+    if (!tap) return;
+    /* 톡 누르면 펫 쓰다듬기 */
+    if (petUnder(P.sx, P.sy)) {
+      spawnHearts(G.petXY.x, G.petXY.y, 5);
+      AU.pop();
+      G.pet.happy = 1;
+      setTimeout(function () { if (G.pet) G.pet.happy = 0; }, 2200);
+      if (SAVE && SAVE.pet) { SAVE.pet.mood = clamp(SAVE.pet.mood + 3, 0, 100); persist(); }
+    }
+  }
+  cv.addEventListener('pointerup', endPointer);
+  cv.addEventListener('pointercancel', function (e) {
+    delete pts[e.pointerId];
+    if (ptList().length < 2) pinch = null;
+  });
+  cv.addEventListener('wheel', function (e) {
+    if (G.paused) return;
+    e.preventDefault();
+    var q = cvPos(e);
+    setZoom((G.zoom || 1) * (e.deltaY > 0 ? 0.92 : 1.08), q.x, q.y);
+    G.camFree = true;
+    updateCenterBtn();
+  }, { passive: false });
+
+  /* 🎯 내 위치로 돌아오기 */
+  $('#btnCenter').addEventListener('click', function () {
+    AU.pop();
+    recenterCamera();
   });
 
   // HUD
@@ -5420,6 +5751,13 @@ function bindUI() {
     }
     var giftBtn = e.target.closest('[data-gift]');
     if (giftBtn) { sendGift(giftBtn.getAttribute('data-gift')); return; }
+    var gto = e.target.closest('[data-gifto]');
+    if (gto) {
+      G.giftTo = gto.getAttribute('data-gifto');
+      renderGiftTo(); AU.click();
+      toast(((WHO[G.giftTo] || {}).emoji || '') + ' ' + ((WHO[G.giftTo] || {}).name || '가족') + '에게 선물해요!');
+      return;
+    }
     var roleBtn = e.target.closest('[data-role]');
     if (roleBtn) { setRole(roleBtn.getAttribute('data-role')); return; }
     var item = e.target.closest('.item');
@@ -5495,7 +5833,7 @@ function bindUI() {
   $('#care_pat').addEventListener('click', function () { carePet('pat'); });
 
   // 빠른 말 버튼
-  var quicks = ['언니 뭐해?', '같이 점프하자!', '여기 봐봐!', 'ㅋㅋㅋ', '형원아 잘했어!', '내 집에 놀러 와!', '펫 보고 싶어!', '고마워 💕'];
+  var quicks = ['뭐 해?', '같이 점프하자!', '여기 봐봐!', 'ㅋㅋㅋ', '잘했어!', '우리 집에 놀러 와!', '펫 보고 싶어!', '고마워 💕', '엄마 아빠 같이 놀자!'];
   $('#quick').innerHTML = quicks.map(function (q) {
     return '<button type="button" data-q="' + esc(q) + '">' + esc(q) + '</button>';
   }).join('');
@@ -5510,6 +5848,7 @@ function bindUI() {
   window.addEventListener('keydown', function (e) {
     if (e.target && /input|textarea/i.test(e.target.tagName)) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'Spacebar'].indexOf(e.key) >= 0) e.preventDefault();
+    if (G.camFree && (e.key.indexOf('Arrow') === 0 || /^[wasdWASD]$/.test(e.key))) recenterCamera(true);
     G.keys[e.key] = true;
     if (e.key === ' ' || e.key === 'Spacebar') doJump();
     if (e.key === 'e' || e.key === 'E') doAction();
@@ -5542,14 +5881,15 @@ function openReset() {
 function resetGame() {
   var ok1 = true;
   try {
-    localStorage.removeItem(saveKey('yunjin'));
-    localStorage.removeItem(saveKey('hyungwon'));
+    FAMILY.forEach(function (k) { localStorage.removeItem(saveKey(k)); });
   } catch (e) { ok1 = false; }
   try {
     if (FB && FB.root) {
-      FB.root.child('coins/yunjin').set(START_COINS);    // 윤진 블록 코인 → 처음 값 50
-      FB.root.child('coins/hyungwon').set(START_COINS);  // 형원 블록 코인 → 처음 값 50
+      FAMILY.forEach(function (k) {
+        FB.root.child('coins/' + k).set(START_COINS);   // 가족 모두 블록 코인 50부터
+      });
       WorldCoins.resetAll(START_COINS);                  // 공용 지갑(세 게임)도 50으로
+      WorldCoins.resetWallets(['mom', 'dad'], START_COINS);  // 엄마·아빠 지갑도 50
       FB.root.child('live').remove();    // 지금 놀던 자리 표시
     }
   } catch (e) {}
@@ -5565,11 +5905,17 @@ function resetGame() {
 }
 
 function goHome() {
-  var h = null;
-  for (var i = 0; i < G.houses.length; i++) if (G.houses[i].owner === ME.id) h = G.houses[i];
-  if (!h) return;
+  var h = houseOf(ME.id);
+  if (!h) {
+    G.p.x = G.spawn.x; G.p.y = G.spawn.y; G.p.z = 0; G.p.vz = 0; G.p.air = false;
+    snapCamera(G.p.x, G.p.y, G.p.z);
+    G.petXY.x = G.p.x - 0.8; G.petXY.y = G.p.y + 0.8; G.petXY.z = 0;
+    closeAllSheets();
+    toast('🏠 마을 광장에 왔어요');
+    return;
+  }
   G.p.x = h.door.x; G.p.y = h.door.y + 0.4; G.p.z = 0; G.p.vz = 0; G.p.air = false;
-  G.cam = proj(G.p.x, G.p.y, G.p.z);
+  snapCamera(G.p.x, G.p.y, G.p.z);
   G.petXY.x = G.p.x - 0.8; G.petXY.y = G.p.y + 0.8; G.petXY.z = 0;
   closeAllSheets();
   AU.pop();
@@ -5582,10 +5928,52 @@ function goHome() {
 var lastT = 0, lastLiveCheck = 0;
 
 function updateCamera(dt) {
+  /* 🗺️ 지도 둘러보기: 손으로 화면을 끌고 있는 동안은 카메라가 그 자리에 머물러요 */
+  if (G.camFree) return;
   var tgt = proj(G.p.x, G.p.y, G.p.z * 0.35);
   var k = 1 - Math.pow(0.001, dt);
   G.cam.x = lerp(G.cam.x, tgt.x, k);
   G.cam.y = lerp(G.cam.y, tgt.y, k);
+}
+
+/* 내 캐릭터 자리로 카메라를 바로 옮깁니다 (지도 둘러보기 해제) */
+function snapCamera(x, y, z) {
+  G.cam = proj(x, y, z || 0);
+  G.camFree = false; G.camOff.x = 0; G.camOff.y = 0;
+  updateCenterBtn();
+}
+
+/* 내 캐릭터로 부드럽게 돌아오기 */
+function recenterCamera(silent) {
+  G.camFree = false;
+  G.camOff.x = 0; G.camOff.y = 0;
+  updateCenterBtn();
+  if (!silent) toast('🎯 ' + (ME ? ME.name : '내') + ' 위치로 돌아왔어요!');
+}
+function updateCenterBtn() {
+  var el = $('#btnCenter');
+  if (el) el.classList.toggle('show', !!G.camFree);
+}
+/* 줌 (손가락 두 개) — 손가락 사이 지점이 그 자리에 남도록 */
+function setZoom(z, mx, my) {
+  var s1 = G.scale;
+  G.zoom = clamp(z, 0.55, 2.2);
+  G.scale = (G.zoomBase || s1) * G.zoom;
+  var s2 = G.scale;
+  if (mx !== undefined && my !== undefined && s1) {
+    G.cam.x += (mx - G.w / 2) * (1 / s1 - 1 / s2);
+    G.cam.y += (my - G.h * 0.56) * (1 / s1 - 1 / s2);
+    clampCamera();
+  }
+}
+function clampCamera() {
+  var b = G.bounds;
+  if (!b) return;
+  var w = unproj(G.cam.x, G.cam.y);
+  w.x = clamp(w.x, b.x0 - 4, b.x1 + 5);
+  w.y = clamp(w.y, b.y0 - 6, b.y1 + 6);
+  var pr = proj(w.x, w.y, 0);
+  G.cam.x = pr.x; G.cam.y = pr.y;
 }
 
 function loop(ts) {
@@ -5620,7 +6008,7 @@ function init() {
   G.ctx = G.cv.getContext('2d');
   buildWorld();
   G.revealing = [];
-  G.cam = proj(G.spawn.x, G.spawn.y, 0);
+  snapCamera(G.spawn.x, G.spawn.y, 0);
   G.petXY = { x: G.spawn.x - 0.9, y: G.spawn.y + 0.9, z: 0 };
   resize();
   bindUI();
@@ -5639,11 +6027,8 @@ function init() {
   var urlWho = whoFromUrl();
   var hashWho = whoNorm((location.hash || '').replace('#', ''));
   var bootPick = urlWho || hashWho;
-  if (!bootPick) {
-    /* ?who= · 주소에 없으면 이 기기에서 마지막에 고른 아이로 이어서 */
-    var shared = whoSharedGet();
-    if (shared) bootPick = shared;
-  }
+  /* 🚪 ?who=나 #해시로 다른 월드에서 건너온 때만 바로 입장하고,
+     그냥 열었으면 "누구로 놀까요?" 화면을 먼저 보여 줘요 */
   if (WHO[bootPick]) {
     G.pickWho = bootPick;
     bootWho(bootPick);
