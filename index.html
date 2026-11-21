@@ -2507,7 +2507,7 @@ label.btn{cursor:pointer}
      고치기 전 화면을 열어 둔 기기가 옛 코드로 서버 기록을 덮어쓰는 일을 막는다.
      version.json 이 바뀌면 열려 있던 화면도 스스로 새로고침한다.
      ============================================================ */
-  var APP_VERSION = '2026-11-22e';
+  var APP_VERSION = '2026-11-22f';
   function checkVersion(delay) {
     if (!window.fetch) return;
     setTimeout(function () {
@@ -6322,6 +6322,7 @@ label.btn{cursor:pointer}
     (ch.dex || []).forEach(function (id) {
       var c = creatureById(id);
       if (!c) return;
+      if (c.dex === p.spec.dex) return;   /* 파트너와 같은 포켓몬은 카드가 겹치지 않게 */
       out.push({ id: c.id, partner: false, c: c });
     });
     return out;
