@@ -433,11 +433,16 @@ h1 small{display:block; font-size:9.5px; font-weight:900; letter-spacing:.22em; 
   box-shadow:0 0 0 3px #fff, 0 0 0 5px #FFD9EC, 0 8px 18px rgba(180,90,170,.22);
 }
 .mkFace svg{width:100%; height:100%; display:block}
+/* 신발 거울 · 전신 거울 — 같은 거울 자리에서 모드만 바뀝니다 */
+.mkPrev[data-mode="feet"] .mkFace{width:104px; height:104px; border-radius:18px}
+.mkPrev[data-mode="full"] .mkFace{width:92px; height:142px; border-radius:16px}
 .mkSay{min-width:0}
 .mkSay b{display:block; font-size:12.5px; font-weight:900; color:#8B2E63; letter-spacing:-.02em}
 .mkSay span{display:block; margin-top:2px; font-size:11px; font-weight:800; color:#8A6E92; line-height:1.35}
 @media (max-width:360px){
   .mkFace{width:88px; height:88px}
+  .mkPrev[data-mode="feet"] .mkFace{width:90px; height:90px}
+  .mkPrev[data-mode="full"] .mkFace{width:82px; height:126px}
   .mkSay b{font-size:11.5px}
 }
 
@@ -1102,7 +1107,7 @@ body{
     </div>
     <div class="mkPrev" id="mkPrev" hidden>
       <div class="mkFace" id="mkFace" aria-hidden="true"></div>
-      <div class="mkSay"><b>🪞 화장실 거울 · 지금 내 얼굴</b><span id="mkSay">색을 누르면 얼굴에 바로 발려요</span></div>
+      <div class="mkSay"><b id="mkTitle">🪞 화장실 거울 · 지금 내 얼굴</b><span id="mkSay">색을 누르면 얼굴에 바로 발려요</span></div>
     </div>
     <div class="cats" id="cats"></div>
     <div class="swatches" id="swatches"></div>
@@ -1620,32 +1625,32 @@ var BOTTOMS = [
 
 /* --- 신발 --- */
 var SHOES = [
-  { id:'mary', name:'메리제인', tags:['cute','school','formal','pretty','pink'], svg:
+  { id:'mary', name:'메리제인', tags:['cute','school','formal','pretty','pink'], shot:'91 280.5 42 42', peek:'89 288 44 28', svg:
     '<path d="M93 297 q9 -4 18 0 v7 q0 4 -5 4 h-13 z" fill="var(--o1)"/><path d="M111 297 q9 -4 18 0 v7 q0 4 -5 4 h-13 z" fill="var(--o1)"/>'+
     '<path d="M95 301 h14" stroke="var(--o2)" stroke-width="2.4"/><path d="M113 301 h14" stroke="var(--o2)" stroke-width="2.4"/>' },
-  { id:'heel', name:'하이힐', tags:['formal','party','princess','pretty','idol'], svg:
+  { id:'heel', name:'하이힐', tags:['formal','party','princess','pretty','idol'], shot:'91 281 40 40', peek:'90 287 42 28', svg:
     '<path d="M94 296 q9 -5 17 0 l-2 8 h-15 z" fill="var(--o1)"/><path d="M111 296 q9 -5 17 0 l-2 8 h-15 z" fill="var(--o1)"/>'+
     '<path d="M96 304 v4 M96 308 h-2" stroke="var(--o3)" stroke-width="2.4"/>'+
     '<path d="M113 304 v4 M113 308 h-2" stroke="var(--o3)" stroke-width="2.4"/>' },
-  { id:'boots', name:'롱부츠', tags:['winter','boots','cool','street','idol'], svg:
+  { id:'boots', name:'롱부츠', tags:['winter','boots','cool','street','idol'], shot:'72.5 233 75 75', peek:'88 230 44 84', svg:
     '<path d="M95 236 H109 V298 q0 5 -4 5 H99 q-4 0 -4 -5 Z" fill="var(--o3)"/><path d="M111 236 H125 V298 q0 5 -4 5 H115 q-4 0 -4 -5 Z" fill="var(--o3)"/>'+
     '<path d="M95 240 H109" stroke="var(--o1)" stroke-width="3"/><path d="M111 240 H125" stroke="var(--o1)" stroke-width="3"/>'+
     '<path d="M95 250 H109 M95 262 H109 M111 250 H125 M111 262 H125" stroke="var(--o1)" stroke-width="1.4" opacity=".55"/>'+
     '<path d="M96 300 h12 v5 h-12 z" fill="var(--o1)"/><path d="M112 300 h12 v5 h-12 z" fill="var(--o1)"/>' },
-  { id:'sneaker', name:'스니커즈', tags:['casual','sporty','street','summer'], svg:
+  { id:'sneaker', name:'스니커즈', tags:['casual','sporty','street','summer'], shot:'87.5 276.5 45 45', peek:'86 288 48 24', svg:
     '<path d="M92 296 q10 -5 19 0 q3 4 0 9 H92 q-3 -5 0 -9 z" fill="#fff"/>'+
     '<path d="M109 296 q10 -5 19 0 q3 4 0 9 h-19 q-3 -5 0 -9 z" fill="#fff"/>'+
     '<path d="M92 301 H111 M111 301 H129" stroke="var(--o1)" stroke-width="4"/>'+
     '<g stroke="var(--o3)" stroke-width="1.4"><path d="M96 296 l3 4"/><path d="M101 295 l3 4"/><path d="M114 296 l3 4"/><path d="M119 295 l3 4"/></g>' },
-  { id:'sandal', name:'샌들', tags:['summer','beach','casual','light'], svg:
+  { id:'sandal', name:'샌들', tags:['summer','beach','casual','light'], shot:'91 282 39 39', peek:'90 290 42 22', svg:
     '<path d="M94 302 h15 v4 h-15 z" fill="var(--o1)"/><path d="M112 302 h15 v4 h-15 z" fill="var(--o1)"/>'+
     '<path d="M96 300 q6 -6 12 0" stroke="var(--o1)" stroke-width="3.2" fill="none"/><path d="M113 300 q6 -6 12 0" stroke="var(--o1)" stroke-width="3.2" fill="none"  />'+
     '<circle cx="102" cy="303" r="1.6" fill="var(--acc)"/><circle cx="119" cy="303" r="1.6" fill="var(--acc)"/>' },
-  { id:'ballet', name:'발레 슈즈', tags:['ballet','princess','pink','formal','pretty'], svg:
+  { id:'ballet', name:'발레 슈즈', tags:['ballet','princess','pink','formal','pretty'], shot:'86 259 50 50', peek:'90 255 40 55', svg:
     '<path d="M94 298 q9 -4 17 0 v5 q0 3 -4 3 h-13 z" fill="var(--o2)"/><path d="M111 298 q9 -4 17 0 v5 q0 3 -4 3 h-13 z" fill="var(--o2)"/>'+
     '<path d="M98 298 L100 262 M106 298 L104 264" stroke="var(--o2)" stroke-width="2.2" fill="none" opacity=".9"/>'+
     '<path d="M115 298 L117 262 M123 298 L121 264" stroke="var(--o2)" stroke-width="2.2" fill="none" opacity=".9"/>' },
-  { id:'furboot', name:'털부츠', tags:['winter','boots','cozy','cute','snow'], svg:
+  { id:'furboot', name:'털부츠', tags:['winter','boots','cozy','cute','snow'], shot:'76.4 238.4 67.6 67.6', peek:'87 235 46 73', svg:
     '<path d="M94 250 H110 V298 q0 5 -5 5 h-6 q-5 0 -5 -5 Z" fill="var(--o1)"/><path d="M110 250 H126 V298 q0 5 -5 5 h-6 q-5 0 -5 -5 Z" fill="var(--o1)"/>'+
     '<g fill="#fff"><circle cx="96" cy="250" r="5"/><circle cx="102" cy="247" r="5.6"/><circle cx="108" cy="250" r="5"/><circle cx="114" cy="247" r="5.6"/><circle cx="120" cy="250" r="5"/><circle cx="125" cy="247" r="4.4"/></g>'+
     '<path d="M94 268 H110 M110 268 H126" stroke="var(--o2)" stroke-width="2" opacity=".6"/>' }
@@ -1904,12 +1909,14 @@ function patternPreview(kind){
 
 /* --- 메이크업 --- */
 function makeupOf(s){
+  var hasLip = !!(s.mkLip && s.mkLip !== 'none');
   return {
-    lip:    (s.mkLip && s.mkLip !== 'none') ? s.mkLip : '#E8467C',
+    lip:    hasLip ? s.mkLip : '#C0707A',   /* 립 없음 = 자연스러운 입술색 */
+    hasLip: hasLip,
     blush:  s.mkBlush || '#FF9FB0',
     eye:    s.mkEye || 'none',
     liner:  (s.mkLiner && s.mkLiner !== 'none') ? s.mkLiner : '#2B1B2B',
-    gloss:  s.mkGloss || 'gloss',
+    gloss:  hasLip ? (s.mkGloss || 'gloss') : 'matte',
     sparkle:(s.mkSparkle && s.mkSparkle !== 'none') ? s.mkSparkle : 'none',
     nail:   s.mkNail || '#FF6BA8'
   };
@@ -1921,14 +1928,15 @@ function nailSVG(mk){
 }
 
 /* ============================================================
-   얼굴 · 이목구비 (v5) — 큰 눈망울 + 홍채 그라데이션 + 2중 반짝이
-   · 눈: 흰자·홍채(그라데이션)·동공·큰 원 하이라이트 + 작은 별 하이라이트
-        두꺼운 속눈썹 라인·윙·아랫속눈썹·눈꺼풀 주름
-   · 눈썹·콧날 하이라이트·도톰한 입술(큐피드 보우 + 아랫입술 광택)
-   · 메이크업: 아이섀도 그라데이션+펄 / 볼터치 그라데이션+하이라이터 /
-     립 매트·글로스 / 아이라인 색 / 페이스 스파클
+   얼굴 · 이목구비 (v6) — 레고 · 로블록스(블록 월드) 스타일
+   · 둥근 사각 블록 머리(앞면 + 윗면 + 옆면으로 가벼운 입체감)
+   · 단순하고 또렷한 짙은 눈 + 작은 하이라이트 1개, 짧고 깔끔한 눈썹
+   · 귀엽고 깔끔한 입 (웃음·신남·윙크·시크·부끄·놀람·노래 7종 표정)
+   · 화장: 아이섀도 밴드 / 볼터치 / 아이라인 윙 / 립 컬러·글로스 / 작은 스파클
    ============================================================ */
 var FACE_SEQ = 0;
+var FACE_INK = '#2B2B38';
+var HEAD = { x:78, y:54, w:64, h:64, rx:18 };
 
 function starD(cx, cy, r, w){
   /* 4갈래 반짝이 별 */
@@ -1940,152 +1948,145 @@ function starD(cx, cy, r, w){
 }
 function mkFaceDefs(seq, mk, ex){
   var d = '';
-  /* 홍채: 위는 진하고 아래는 밝은 장밋빛 갈색 */
-  d += '<linearGradient id="iris'+seq+'" x1="0" y1="0" x2="0" y2="1">'+
-       '<stop offset="0%" stop-color="#3A2230"/>'+
-       '<stop offset="46%" stop-color="#6E4152"/>'+
-       '<stop offset="100%" stop-color="#C98FA2"/></linearGradient>';
-  if(mk.eye && mk.eye !== 'none'){
-    d += '<linearGradient id="es'+seq+'" x1="0" y1="0" x2="0" y2="1">'+
-         '<stop offset="0%" stop-color="'+mk.eye+'" stop-opacity=".92"/>'+
-         '<stop offset="70%" stop-color="'+mk.eye+'" stop-opacity=".34"/>'+
-         '<stop offset="100%" stop-color="'+mk.eye+'" stop-opacity="0"/></linearGradient>';
-  }
   if(mk.blush && mk.blush !== 'none'){
     d += '<radialGradient id="bl'+seq+'">'+
-         '<stop offset="0%" stop-color="'+mk.blush+'" stop-opacity=".92"/>'+
-         '<stop offset="62%" stop-color="'+mk.blush+'" stop-opacity=".42"/>'+
+         '<stop offset="0%" stop-color="'+mk.blush+'" stop-opacity=".5"/>'+
+         '<stop offset="55%" stop-color="'+mk.blush+'" stop-opacity=".26"/>'+
          '<stop offset="100%" stop-color="'+mk.blush+'" stop-opacity="0"/></radialGradient>';
+  }
+  if(mk.eye && mk.eye !== 'none'){
+    d += '<linearGradient id="es'+seq+'" x1="0" y1="0" x2="0" y2="1">'+
+         '<stop offset="0%" stop-color="'+mk.eye+'" stop-opacity=".7"/>'+
+         '<stop offset="55%" stop-color="'+mk.eye+'" stop-opacity=".34"/>'+
+         '<stop offset="100%" stop-color="'+mk.eye+'" stop-opacity="0"/></linearGradient>';
   }
   return d;
 }
 
+/* 표정별 눈 크기 */
+function eyeGeom(kind){
+  if(kind === 'wide') return { w:10.4, h:15.2, y:77.2, r:5.2 };
+  if(kind === 'half') return { w:9.4, h:6, y:83.4, r:3 };
+  if(kind === 'shy')  return { w:8.8, h:11.4, y:79.8, r:4.4 };
+  return { w:9.2, h:13.4, y:78.4, r:4.6 };
+}
+
 /* 눈 하나 — dir: 바깥쪽 방향(+1 오른쪽 / -1 왼쪽) */
 function eyeArt(seq, side, cx, dir, kind, mk){
-  var lash = mk.liner || '#2B1B2B';
-  var g = '';
-  var ry = 8.4, rx = 7.5, iy = 86.4;
-  if(kind === 'wide'){ rx = 8.2; ry = 9.4; iy = 86.6; }
-  if(kind === 'half'){ ry = 6.4; iy = 86.9; }
-  if(kind === 'shy'){ iy = 88.2; }
+  var ink = FACE_INK;
   if(kind === 'happy' || kind === 'wink'){
-    /* 감은 눈: 둥근 속눈썹 라인 + 바깥쪽 잔속눈썹 */
-    g += '<path d="M'+(cx+dir*9)+' 84.4 Q'+cx+' 80.6 '+(cx-dir*7.4)+' 87.4" stroke="'+lash+'" stroke-width="2.1" fill="none" stroke-linecap="round"/>';
-    g += '<path d="M'+(cx-4.6)+' 91.2 Q'+cx+' 93.2 '+(cx+4.6)+' 91.2" stroke="'+lash+'" stroke-width=".9" fill="none" opacity=".3" stroke-linecap="round"/>';
-    g += '<path d="M'+(cx-5.4)+' 83.2 Q'+cx+' 80 '+(cx+5.4)+' 83.2" stroke="#E7B9C2" stroke-width="1" fill="none" opacity=".55" stroke-linecap="round"/>';
-    return g;
+    /* 감은 눈: 둥근 눈썹 모양 한 획 */
+    return '<path d="M'+(cx-4.9)+' 87.4 Q'+cx+' 81.2 '+(cx+4.9)+' 87.4" stroke="'+ink+
+           '" stroke-width="3" fill="none" stroke-linecap="round"/>';
   }
-  /* 눈꺼풀 그림자 */
-  g += '<ellipse cx="'+cx+'" cy="82.6" rx="'+(rx+1.7)+'" ry="'+(ry-0.6)+'" fill="#8A5A68" opacity=".10"/>';
-  /* 흰자 */
-  g += '<ellipse cx="'+cx+'" cy="86" rx="'+rx+'" ry="'+ry+'" fill="#FFFDFE"/>';
-  g += '<clipPath id="ec'+seq+side+'"><ellipse cx="'+cx+'" cy="86" rx="'+rx+'" ry="'+ry+'"/></clipPath>';
-  g += '<g clip-path="url(#ec'+seq+side+')">';
-  /* 홍채 */
-  g += '<circle cx="'+cx+'" cy="'+iy+'" r="6.4" fill="url(#iris'+seq+')"/>';
-  g += '<circle cx="'+cx+'" cy="'+iy+'" r="6.4" fill="none" stroke="#2A1520" stroke-width=".9" opacity=".45"/>';
-  g += '<circle cx="'+cx+'" cy="'+(iy+1.9)+'" r="4.4" fill="#FFFFFF" opacity=".13"/>';
-  /* 동공 */
-  g += '<circle cx="'+cx+'" cy="'+iy+'" r="2.7" fill="#1B1022"/>';
-  /* 2중 하이라이트: 큰 원 + 작은 별 */
-  g += '<circle cx="'+(cx-2.4)+'" cy="'+(iy-3)+'" r="2.3" fill="#FFFFFF"/>';
-  g += '<path d="'+starD(cx+2.7, iy+2.7, 2.1)+'" fill="#FFFFFF" opacity=".95"/>';
-  g += '<circle cx="'+(cx-0.4)+'" cy="'+(iy+3.6)+'" r=".9" fill="#FFE9F3" opacity=".8"/>';
-  g += '</g>';
-  /* 위 속눈썹 라인 — 바깥으로 살짝 올라가는 라인 하나로 */
-  g += '<path d="M'+(cx+dir*9.4)+' '+(kind==='half'?82.2:81.2)+' Q'+(cx+dir*4)+' '+(kind==='half'?79.4:77.4)+' '+cx+' '+(kind==='half'?79.8:78.2)+' Q'+(cx-dir*4)+' '+(kind==='half'?79.6:78.4)+' '+(cx-dir*7.8)+' '+(kind==='half'?84:84.8)+'" stroke="'+lash+'" stroke-width="'+(kind==='half'?2.4:2.1)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
-  /* 아랫속눈썹 */
-  g += '<path d="M'+(cx-5.4)+' 91.6 Q'+cx+' 94 '+(cx+5.4)+' 91.6" stroke="'+lash+'" stroke-width=".9" fill="none" opacity=".42" stroke-linecap="round"/>';
-  /* 쌍꺼풀 주름 */
-  g += '<path d="M'+(cx-6.4)+' 79.4 Q'+cx+' 74.6 '+(cx+6.4)+' 79.4" stroke="#B9838F" stroke-width=".8" fill="none" opacity=".5" stroke-linecap="round"/>';
+  var gm = eyeGeom(kind), w = gm.w, h = gm.h, y = gm.y, r = gm.r;
+  var hr = (kind === 'half') ? 1.2 : (kind === 'wide' ? 1.85 : 1.65);
+  var g = '<rect x="'+(cx-w/2)+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'" fill="'+ink+'"/>';
+  /* 하이라이트는 딱 하나, 왼쪽 위에 작게 */
+  g += '<circle cx="'+(cx-2.2)+'" cy="'+(y+2.9)+'" r="'+hr+'" fill="#FFFFFF" opacity=".95"/>';
+  return g;
+}
+
+/* 아이라인(화장) — 눈 위 라인 + 바깥쪽 짧은 윙 */
+function linerArt(mk, kind, cx, dir){
+  if(!mk.liner || mk.liner === 'none') return '';
+  var c = mk.liner;
+  if(kind === 'happy' || kind === 'wink'){
+    return '<path d="M'+(cx-4.9)+' 87.4 Q'+cx+' 81.2 '+(cx+4.9)+' 87.4" stroke="'+c+
+           '" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  }
+  var gm = eyeGeom(kind);
+  var yy = gm.y + gm.r, rr = gm.r;
+  var g = '';
+  /* 눈 테두리를 따라가는 라인 */
+  if(kind === 'half'){
+    g += '<path d="M'+(cx-gm.w/2)+' '+(gm.y+gm.r)+' L'+(cx-gm.w/2+gm.r)+' '+gm.y+
+         ' L'+(cx+gm.w/2-gm.r)+' '+gm.y+' L'+(cx+gm.w/2)+' '+(gm.y+gm.r)+
+         '" stroke="'+c+'" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>';
+  } else {
+    g += '<path d="M'+(cx-rr)+' '+yy+' A'+rr+' '+rr+' 0 0 1 '+(cx+rr)+' '+yy+
+         '" stroke="'+c+'" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".9"/>';
+  }
+  /* 바깥쪽 짧은 윙 */
+  g += '<path d="M'+(cx+dir*(gm.w/2))+' '+(yy-.2)+' Q'+(cx+dir*(gm.w/2+1.8))+' '+(gm.y+1.5)+' '+(cx+dir*(gm.w/2+2.9))+' '+(gm.y+.3)+
+       '" stroke="'+c+'" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".88"/>';
   return g;
 }
 
 function browsArt(ex, c){
   var col = darken(c.hair || '#3B2632', .06);
-  var p1 = 'M88.2 72.4 Q97 67.8 105.6 71.2';
-  var p2 = 'M114.4 71.2 Q123 67.8 131.8 72.4';
-  if(ex === 'cool'){
-    p1 = 'M88.2 71.8 Q97 68.8 105.6 70.4'; p2 = 'M114.4 70.4 Q123 68.8 131.8 71.8';
-  } else if(ex === 'wow'){
-    p1 = 'M88.2 70.6 Q97 65.6 105.6 69.8'; p2 = 'M114.4 69.8 Q123 65.6 131.8 70.6';
-  } else if(ex === 'shy'){
-    p1 = 'M88.2 73.4 Q97 71 105.6 71.8'; p2 = 'M114.4 71.8 Q123 71 131.8 73.4';
-  } else if(ex === 'happy'){
-    p1 = 'M88.2 71.6 Q97 67 105.6 70.8'; p2 = 'M114.4 70.8 Q123 67 131.8 71.6';
-  }
-  return '<g stroke="'+col+'" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".85">'+
+  var p1 = 'M91 72.6 Q97.5 70.2 104 72.4';
+  var p2 = 'M116 72.4 Q122.5 70.2 129 72.6';
+  if(ex === 'cool'){ p1 = 'M91 73.2 Q97.5 72 104 72.9'; p2 = 'M116 72.9 Q122.5 72 129 73.2'; }
+  else if(ex === 'wow'){ p1 = 'M91 70 Q97.5 66.9 104 70'; p2 = 'M116 70 Q122.5 66.9 129 70'; }
+  else if(ex === 'shy'){ p1 = 'M91 73.4 Q97.5 71.7 104 72.9'; p2 = 'M116 72.9 Q122.5 71.7 129 73.4'; }
+  else if(ex === 'happy'){ p1 = 'M91 71.8 Q97.5 69.4 104 71.6'; p2 = 'M116 71.6 Q122.5 69.4 129 71.8'; }
+  return '<g stroke="'+col+'" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".9">'+
          '<path d="'+p1+'"/><path d="'+p2+'"/></g>';
 }
 
-function noseArt(){
-  return '<path d="M108.7 92.6 Q110 94.3 111.3 92.6" stroke="#DC9F95" stroke-width="1.05" fill="none" stroke-linecap="round" opacity=".8"/>'+
-         '<ellipse cx="110" cy="90.2" rx="1.6" ry=".95" fill="#FFFFFF" opacity=".6"/>';
-}
+function noseArt(){ return ''; }
 
 function lipArt(mk, kind){
   var col = mk.lip || '#E8467C';
-  var up = darken(col, .14), lo = lighten(col, .16), line = darken(col, .34);
+  var deep = darken(col, .3), light = lighten(col, .22);
   var gloss = (mk.gloss !== 'matte');
   var g = '';
   if(kind === 'o'){
-    g += '<ellipse cx="110" cy="101.8" rx="4.3" ry="5.1" fill="'+up+'"/>';
-    g += '<ellipse cx="110" cy="103.2" rx="3" ry="3.2" fill="'+line+'"/>';
-    if(gloss) g += '<ellipse cx="108.5" cy="100.4" rx="1.5" ry="1" fill="#FFFFFF" opacity=".85"/>';
+    g += '<ellipse cx="110" cy="101.4" rx="4.4" ry="5.2" fill="'+darken(col, .5)+'"/>';
+    g += '<ellipse cx="110" cy="101.4" rx="4.4" ry="5.2" fill="none" stroke="'+col+'" stroke-width="2.1"/>';
+    g += '<ellipse cx="110" cy="104.8" rx="2.5" ry="1.6" fill="#F2748A"/>';
+    if(gloss) g += '<ellipse cx="107.7" cy="99.2" rx="1.15" ry=".6" fill="#FFFFFF" opacity=".65"/>';
+    return g;
+  }
+  if(kind === 'grin'){
+    g += '<path d="M102 97.6 Q110 95.9 118 97.6 Q116 107.4 110 107.4 Q104 107.4 102 97.6 Z" fill="'+deep+'"/>';
+    g += '<path d="M103.6 98.4 Q110 97 116.4 98.4 Q115.4 101.3 110 101.3 Q104.6 101.3 103.6 98.4 Z" fill="#FFFFFF" opacity=".96"/>';
+    if(gloss) g += '<ellipse cx="110" cy="105.4" rx="2" ry=".75" fill="#FFFFFF" opacity=".32"/>';
     return g;
   }
   if(kind === 'flat'){
-    g += '<path d="M101.4 100.2 C106 98.4 114 98.4 118.6 100.2 C114 102.3 106 102.3 101.4 100.2 Z" fill="'+up+'"/>';
-    g += '<path d="M101.4 100.4 C106 102.2 114 102.2 118.6 100.4 C117.6 104.9 114.2 106.7 110 106.7 C105.8 106.7 102.4 104.9 101.4 100.4 Z" fill="'+lo+'"/>';
-  } else if(kind === 'pout'){
-    g += '<path d="M103.2 100.4 C105.4 97.4 108 97.4 110 99.2 C112 97.4 114.6 97.4 116.8 100.4 C113.8 101.8 106.2 101.8 103.2 100.4 Z" fill="'+up+'"/>';
-    g += '<path d="M103.2 100.4 C106.2 101.8 113.8 101.8 116.8 100.4 C116 104.2 113.2 105.8 110 105.8 C106.8 105.8 104 104.2 103.2 100.4 Z" fill="'+lo+'"/>';
-  } else if(kind === 'grin'){
-    g += '<path d="M100.6 99.4 C104 96 107.4 95.6 110 98.2 C112.6 95.6 116 96 119.4 99.4 C114.6 101.4 105.4 101.4 100.6 99.4 Z" fill="'+up+'"/>';
-    g += '<path d="M100.6 99.4 C105.4 101.4 114.6 101.4 119.4 99.4 C118.6 105.4 114.8 108 110 108 C105.2 108 101.4 105.4 100.6 99.4 Z" fill="'+lo+'"/>';
-    g += '<path d="M103.4 101.8 C106.6 102.8 113.4 102.8 116.6 101.8 C115.6 104 113.2 105 110 105 C106.8 105 104.4 104 103.4 101.8 Z" fill="#FFFFFF" opacity=".92"/>';
-  } else {
-    g += '<path d="M101.2 100 C103.9 96.6 107 96.3 110 98.6 C113 96.3 116.1 96.6 118.8 100 C114.6 101.7 105.4 101.7 101.2 100 Z" fill="'+up+'"/>';
-    g += '<path d="M101.2 100 C105.4 101.7 114.6 101.7 118.8 100 C118 104.8 114.4 107.1 110 107.1 C105.6 107.1 102 104.8 101.2 100 Z" fill="'+lo+'"/>';
+    g += '<path d="M103.8 100.8 L116.2 100.8" stroke="'+col+'" stroke-width="3.4" stroke-linecap="round"/>';
+    g += '<path d="M103.8 100.8 L116.2 100.8" stroke="'+deep+'" stroke-width="1.1" stroke-linecap="round" opacity=".45"/>';
+    if(gloss) g += '<path d="M105.6 99.5 L114.4 99.5" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity=".5"/>';
+    return g;
   }
-  /* 입술 결 + 아랫입술 도톰한 빛 */
-  g += '<path d="M104 100.3 Q110 101.7 116 100.3" stroke="'+line+'" stroke-width=".7" fill="none" opacity=".5"/>';
-  if(gloss){
-    g += '<ellipse cx="107.8" cy="104.3" rx="2.5" ry="1.15" fill="#FFFFFF" opacity=".9"/>';
-    g += '<circle cx="113.6" cy="102.6" r=".85" fill="#FFFFFF" opacity=".75"/>';
-  } else {
-    g += '<ellipse cx="110" cy="104.2" rx="3.2" ry=".85" fill="#FFFFFF" opacity=".2"/>';
+  if(kind === 'pout'){
+    g += '<ellipse cx="110" cy="100.7" rx="3.7" ry="2.5" fill="'+col+'"/>';
+    g += '<path d="M106.9 99.7 Q110 102.9 113.1 99.7" stroke="'+deep+'" stroke-width="1.1" fill="none" stroke-linecap="round" opacity=".8"/>';
+    if(gloss) g += '<ellipse cx="108.6" cy="99.8" rx="1.05" ry=".55" fill="#FFFFFF" opacity=".8"/>';
+    return g;
   }
+  /* smile — 한 획으로 그린 깔끔한 웃음 */
+  g += '<path d="M102.8 98.6 Q110 106.4 117.2 98.6" stroke="'+col+'" stroke-width="3.3" fill="none" stroke-linecap="round"/>';
+  g += '<path d="M102.8 99.4 Q110 106 117.2 99.4" stroke="'+deep+'" stroke-width="1" fill="none" stroke-linecap="round" opacity=".35"/>';
+  if(gloss) g += '<path d="M104.9 100.7 Q109.6 103.7 114.6 100.4" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".72"/>';
   return g;
 }
 
 function blushArt(seq, mk){
   if(!mk.blush || mk.blush === 'none') return '';
-  return '<ellipse cx="88" cy="96.2" rx="9.8" ry="6.6" fill="url(#bl'+seq+')"/>'+
-         '<ellipse cx="132" cy="96.2" rx="9.8" ry="6.6" fill="url(#bl'+seq+')"/>'+
-         '<g fill="#FFFFFF" opacity=".75"><circle cx="85.4" cy="94.2" r=".9"/><circle cx="90.6" cy="98.2" r=".7"/>'+
-         '<circle cx="129.4" cy="94.2" r=".9"/><circle cx="134.6" cy="98.2" r=".7"/></g>';
+  return '<g class="mk-blush">'+
+    '<ellipse cx="88" cy="97.4" rx="9.6" ry="6.2" fill="url(#bl'+seq+')"/>'+
+    '<ellipse cx="132" cy="97.4" rx="9.6" ry="6.2" fill="url(#bl'+seq+')"/></g>';
 }
 
 function eyeshadowArt(seq, mk){
   if(!mk.eye || mk.eye === 'none') return '';
-  return '<g opacity=".62">'+
-    '<ellipse cx="96.6" cy="81.4" rx="9" ry="3.9" fill="url(#es'+seq+')" transform="rotate(-7 96.6 81.4)"/>'+
-    '<ellipse cx="123.4" cy="81.4" rx="9" ry="3.9" fill="url(#es'+seq+')" transform="rotate(7 123.4 81.4)"/></g>'+
-    '<g fill="'+lighten(mk.eye, .62)+'" opacity=".95">'+
-    '<circle cx="93.2" cy="80.6" r=".9"/><circle cx="96.6" cy="79.4" r=".75"/><circle cx="99.8" cy="80.4" r=".8"/>'+
-    '<circle cx="120.2" cy="80.4" r=".8"/><circle cx="123.4" cy="79.4" r=".75"/><circle cx="126.8" cy="80.6" r=".9"/></g>';
+  return '<g class="mk-shadow">'+
+    '<ellipse cx="98" cy="78.2" rx="8.6" ry="3.5" fill="url(#es'+seq+')" transform="rotate(-6 98 78.2)"/>'+
+    '<ellipse cx="122" cy="78.2" rx="8.6" ry="3.5" fill="url(#es'+seq+')" transform="rotate(6 122 78.2)"/></g>'+
+    '<g fill="'+lighten(mk.eye, .6)+'" opacity=".8"><circle cx="94.6" cy="77.4" r=".75"/><circle cx="125.4" cy="77.4" r=".75"/></g>';
 }
 
 function sparkleArt(mk){
   if(!mk.sparkle || mk.sparkle === 'none') return '';
   var c = mk.sparkle;
   return '<g fill="'+c+'" opacity=".95">'+
-    '<path d="'+starD(84.2, 88.6, 2.9)+'"/>'+
-    '<path d="'+starD(135.8, 91.2, 2.4)+'"/>'+
-    '<path d="'+starD(110.4, 64.6, 2.1)+'"/>'+
-    '<path d="'+starD(93.6, 108.4, 1.5)+'"/>'+
-    '<path d="'+starD(127.2, 106.6, 1.6)+'"/>'+
+    '<path d="'+starD(84.6, 88.4, 2.4)+'"/>'+
+    '<path d="'+starD(135.4, 90.6, 2)+'"/>'+
+    '<path d="'+starD(110, 63.6, 1.7)+'"/>'+
+    '<path d="'+starD(96, 106.8, 1.2)+'"/>'+
     '</g>';
 }
 
@@ -2095,24 +2096,19 @@ function faceArt(s, mk, c){
   var kind = ex.e || 'open', mouth = ex.m || 'smile';
   var g = '';
   g += '<defs>'+mkFaceDefs(seq, mk, ex)+'</defs>';
-  g += eyeshadowArt(seq, mk);
   g += blushArt(seq, mk);
+  g += eyeshadowArt(seq, mk);
   g += browsArt(kind === 'wink' ? 'smile' : kind, c);
-  if(kind === 'wink'){
-    g += eyeArt(seq, 'L', 97, -1, 'open', mk);
-    g += eyeArt(seq, 'R', 123, 1, 'wink', mk);
-  } else if(kind === 'happy'){
-    g += eyeArt(seq, 'L', 97, -1, 'happy', mk);
-    g += eyeArt(seq, 'R', 123, 1, 'happy', mk);
-  } else {
-    g += eyeArt(seq, 'L', 97, -1, kind, mk);
-    g += eyeArt(seq, 'R', 123, 1, kind, mk);
-  }
+  var eyes = (kind === 'wink')
+    ? [['L', 98.2, -1, 'open'], ['R', 121.8, 1, 'wink']]
+    : [['L', 98.2, -1, kind], ['R', 121.8, 1, kind]];
+  eyes.forEach(function(e){ g += eyeArt(seq, e[0], e[1], e[2], e[3], mk); });
+  eyes.forEach(function(e){ g += linerArt(mk, e[3], e[1], e[2]); });
   g += noseArt();
   g += lipArt(mk, mouth);
   g += sparkleArt(mk);
   if(mouth === 'o' && ex.id === 'sing'){
-    g += '<g fill="#FFD23F"><path d="'+starD(146, 76, 4.4)+'"/><path d="'+starD(132, 62, 3)+'"/></g>';
+    g += '<g fill="#FFD23F"><path d="'+starD(146, 76, 4)+'"/><path d="'+starD(133, 62, 2.7)+'"/></g>';
   }
   return g;
 }
@@ -2139,18 +2135,39 @@ function cssVars(c){
   return '--skin:'+c.skin+';--skin2:'+c.skin2+';--hair:'+c.hair+';--hair2:'+c.hair2+
     ';--o1:'+c.o1+';--o2:'+c.o2+';--o3:'+c.o3+';--acc:'+c.acc+';--acc2:'+c.acc2;
 }
-function bodySVG(){
+/* 다리·발 — 신발을 그 위에 그려서 신발이 또렷하게 보이게 */
+function legsSVG(){
+  return '<g class="legs">'+
+    '<rect x="96" y="188" width="13" height="110" rx="6.5" fill="var(--skin)"/>'+
+    '<rect x="111" y="188" width="13" height="110" rx="6.5" fill="var(--skin)"/>'+
+    '<ellipse cx="102" cy="299" rx="6" ry="4" fill="var(--skin)"/>'+
+    '<ellipse cx="118" cy="299" rx="6" ry="4" fill="var(--skin)"/>'+
+    '</g>';
+}
+/* 목·몸통·머리 */
+function upperSVG(fid){
   return '<g class="body">'+
-    '<rect x="96" y="188" width="13" height="112" rx="6.5" fill="var(--skin)"/>'+
-    '<rect x="111" y="188" width="13" height="112" rx="6.5" fill="var(--skin)"/>'+
-    '<ellipse cx="102" cy="303" rx="9" ry="6" fill="var(--skin)"/>'+
-    '<ellipse cx="118" cy="303" rx="9" ry="6" fill="var(--skin)"/>'+
     '<rect x="103" y="106" width="14" height="26" rx="6" fill="var(--skin)"/>'+
     '<path d="M92 140 Q110 133 128 140 L126 196 Q110 203 94 196 Z" fill="var(--skin)"/>'+
-    '<ellipse cx="110" cy="84" rx="31" ry="34" fill="var(--skin)"/>'+
-    '<circle cx="79" cy="89" r="6" fill="var(--skin)"/>'+
-    '<circle cx="141" cy="89" r="6" fill="var(--skin)"/>'+
+    '<circle cx="80.5" cy="94" r="5.2" fill="var(--skin)"/>'+
+    '<circle cx="139.5" cy="94" r="5.2" fill="var(--skin)"/>'+
+    /* 레고·로블록스 블록 머리: 네모난 이마 + 둥근 턱, 위에서 비추는 부드러운 빛 */
+    '<defs><radialGradient id="hd'+fid+'" cx="42%" cy="24%" r="88%">'+
+      '<stop offset="35%" stop-color="var(--skin)"/>'+
+      '<stop offset="100%" stop-color="var(--skin2)"/></radialGradient></defs>'+
+    '<path d="M97 54 H123 C136 54 142 60 142 72 L142 92 C142 108 138 118 128 118 H92 C82 118 78 108 78 92 L78 72 C78 60 84 54 97 54 Z" fill="url(#hd'+fid+')" stroke="rgba(90,54,40,.10)" stroke-width="1.2"/>'+
     '</g>';
+}
+/* 신발만 크게 보는 발 거울 */
+function feetPreviewSVG(s){
+  var c = colorsFor(s);
+  var shoes = findItem(SHOES, s.shoes);
+  var vb = shoes.peek || shoes.shot || '86 276 48 48';
+  return '<svg viewBox="'+vb+'" xmlns="http://www.w3.org/2000/svg" class="fig" style="'+cssVars(c)+'" role="img" aria-label="'+
+    esc(shoes.name)+' 미리보기">'+
+    '<ellipse cx="110" cy="311" rx="30" ry="5" fill="rgba(90,40,110,.12)"/>'+
+    legsSVG()+
+    '<g style="'+shoeColorVars(s,c)+'">'+shoes.svg+'</g></svg>';
 }
 function armsSVG(){
   return '<g class="arms">'+
@@ -2166,8 +2183,10 @@ function shoeColorVars(s, c){
   return '--o1:'+sc+';--o2:'+lighten(sc,.34)+';--o3:'+darken(sc,.26)+';--acc:'+c.acc+';--acc2:'+c.acc2;
 }
 
+var FIG_SEQ = 0;
 function figureSVG(s, opt){
   opt = opt || {};
+  var fid = ++FIG_SEQ;
   var c = colorsFor(s);
   var hair = findItem(HAIRS, s.hair);
   var dress = findItem(DRESSES, s.dress), top = findItem(TOPS, s.top), bottom = findItem(BOTTOMS, s.bottom);
@@ -2185,9 +2204,10 @@ function figureSVG(s, opt){
   accs.forEach(function(a){ if(a.id === 'wings') out += a.svg; });
   // 뒤머리
   out += '<g>'+hair.back+'</g>';
-  // 다리·신발·몸
+  // 다리 → 신발 → 몸 (신발이 다리에 묻히지 않게)
+  out += legsSVG();
   out += '<g style="'+shoeColorVars(s,c)+'">'+shoes.svg+'</g>';
-  out += bodySVG();
+  out += upperSVG(fid);
   // 하의 또는 드레스 (패턴이 골라져 있으면 무늬천으로)
   if(s.mode === 'dress'){
     out += '<g>'+withPattern(dress.svg, pat.id)+'</g>';
@@ -2210,6 +2230,14 @@ function figureSVG(s, opt){
 }
 
 /* 썸네일용: 지금 코디에 해당 옷 하나만 갈아입힌 모습 */
+/* 신발은 신발만 큼직하게 보여 주는 제품 사진 */
+function shoeShot(item, s){
+  var sc = s.shoeColor || s.outfitColor || '#FF8FBF';
+  var vb = item.shot || '86 276 48 48';
+  return '<svg class="shot shoe" viewBox="'+vb+'" xmlns="http://www.w3.org/2000/svg" '+
+    'style="--o1:'+sc+';--o2:'+lighten(sc,.34)+';--o3:'+darken(sc,.26)+';--acc:#FFC53D;--acc2:#E19B00">'+
+    '<ellipse cx="110" cy="309" rx="24" ry="3.4" fill="rgba(90,40,110,.13)"/>'+item.svg+'</svg>';
+}
 /* 소품은 그림만 크게 보여 주는 제품 사진 */
 function accShot(item){
   var vb = item.shot || '68 10 92 66';
@@ -2225,7 +2253,7 @@ function thumbSVG(kind, item){
   else if(kind === 'dress'){ s.mode = 'dress'; s.dress = item.id; }
   else if(kind === 'top'){ s.mode = 'two'; s.top = item.id; }
   else if(kind === 'bottom'){ s.mode = 'two'; s.bottom = item.id; }
-  else if(kind === 'shoes') s.shoes = item.id;
+  else if(kind === 'shoes') return shoeShot(item, s);
   else if(kind === 'acc' || kind === 'park'){ s.acc = [item.id]; }
   return figureSVG(s, { label:item.name });
 }
@@ -4238,6 +4266,9 @@ var CATS = [
 ];
 var HAIR_COLORS = ['#3B2632','#6B4226','#A9793F','#D9B26A','#F2D9A0','#FF96BE','#B79BFF','#8FD3FF','#EDEDF2','#FF7A6B','#5FA86B','#2E3A5C'];
 var OUTFIT_COLORS = ['#FF8FBF','#FF6B8A','#FFD166','#7BE3C3','#7FB8FF','#9F8BFF','#FFFFFF','#2E2A45','#C8A06A','#B9E36A'];
+var COLOR_NAMES = { '#FF8FBF':'분홍', '#FF6B8A':'산호', '#FFD166':'노랑', '#7BE3C3':'민트',
+  '#7FB8FF':'하늘', '#9F8BFF':'보라', '#FFFFFF':'흰색', '#2E2A45':'검정', '#C8A06A':'골드', '#B9E36A':'연두' };
+function colorName(hex){ return COLOR_NAMES[String(hex || '').toUpperCase()] || '내 색'; }
 var MK_GROUPS = [
   { key:'mkLip',    name:'💋 립스틱',    cols:['#E8467C','#FF5B8A','#E24B4B','#C2447A','#FF9FB0','#B3385E'] },
   { key:'mkGloss',  name:'💧 립 광택',   type:'choice', opts:[{v:'gloss',label:'글로스'},{v:'matte',label:'매트'}] },
@@ -4348,7 +4379,7 @@ function renderSwatches(){
   wrap.hidden = false;
   wrap.innerHTML = colors.map(function(c){
     var on = String(cur).toUpperCase() === c.toUpperCase() ? ' on' : '';
-    return '<button class="sw'+on+'" type="button" data-color="'+c+'" style="background:'+c+'" aria-label="색 '+c+'"></button>';
+    return '<button class="sw'+on+'" type="button" data-color="'+c+'" style="background:'+c+'" aria-label="'+colorName(c)+' 색"></button>';
   }).join('');
 }
 function renderMakeup(){
@@ -4376,16 +4407,45 @@ function renderMakeup(){
   $('catHint').textContent = HINTS.makeup;
   renderMkPrev();
 }
-/* 화장실 거울 — 지금 내 얼굴만 큼직하게 */
+/* 거울 미리보기 — 얼굴 / 신발(다리·발) / 전신 코디를 큼직하게 */
+var PREVIEW_VB = {
+  face: '63 38 94 94',
+  feet: '82 232 56 88',
+  full: '0 0 220 340'
+};
+var PREVIEW_MODE = {
+  makeup:'face', face:'face', hair:'face', skin:'face',
+  shoes:'feet',
+  dress:'full', top:'full', bottom:'full', acc:'full', park:'full'
+};
+function dressNameOf(){
+  if(st.mode === 'dress') return findItem(DRESSES, st.dress).name;
+  return findItem(TOPS, st.top).name + ' + ' + findItem(BOTTOMS, st.bottom).name;
+}
 function renderMkPrev(){
-  var box = $('mkPrev'), f = $('mkFace'), tip = $('mkSay');
+  var box = $('mkPrev'), f = $('mkFace'), tip = $('mkSay'), ttl = $('mkTitle');
   if(!box || !f) return;
-  var show = (cat === 'makeup' || cat === 'face' || cat === 'hair' || cat === 'skin');
-  box.hidden = !show;
-  if(!show) return;
-  f.innerHTML = faceCloseupSVG(st);
+  var mode = PREVIEW_MODE[cat];
+  if(!mode){ box.hidden = true; return; }
+  box.hidden = false;
+  box.setAttribute('data-mode', mode);
+  if(mode === 'feet'){
+    f.innerHTML = feetPreviewSVG(st);
+  } else {
+    var raw = figureSVG(st, { label: '' });
+    f.innerHTML = raw.replace('viewBox="0 0 220 340"', 'viewBox="' + PREVIEW_VB[mode] + '"');
+  }
+  if(!tip) return;
   var ex = findItem(FACES, st.face) || FACES[0];
-  if(tip){
+  if(mode === 'feet'){
+    if(ttl) ttl.textContent = '👠 신발 거울 · 지금 내 신발';
+    tip.textContent = findItem(SHOES, st.shoes).name + ' · ' +
+      colorName(st.shoeColor || st.outfitColor) + ' · 색은 아래 색 칩에서 바꿔요';
+  } else if(mode === 'full'){
+    if(ttl) ttl.textContent = '🪞 전신 거울 · 지금 내 코디';
+    tip.textContent = dressNameOf() + ' · ' + colorName(st.outfitColor) + ' · ' + findItem(SHOES, st.shoes).name;
+  } else {
+    if(ttl) ttl.textContent = '🪞 화장실 거울 · 지금 내 얼굴';
     var bits = [];
     if(st.mkLip && st.mkLip !== 'none') bits.push('립 ' + (st.mkGloss === 'matte' ? '매트' : '글로스'));
     if(st.mkBlush && st.mkBlush !== 'none') bits.push('볼터치');
