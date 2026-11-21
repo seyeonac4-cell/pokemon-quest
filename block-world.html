@@ -1038,6 +1038,7 @@ function worldHref(href) {
 var AU = (function () {
   var AC = null, master = null, muted = (store('bw:mute') === '1');
   var noiseBuf = null, kicked = false, nudgeShown = false;
+  var hitCount = 0, hitTimer = 0;   // 연타 몰림 감지(겹침 완화)
   var VOL = 0.85;               // 전체 음량 (폰 스피커에서도 들리게 크게)
 
   function ctx() {
@@ -1089,11 +1090,52 @@ var AU = (function () {
     osc.type = opt.type || 'sine';
     osc.frequency.setValueAtTime(opt.f, t0);
     if (opt.to) osc.frequency.exponentialRampToValueAtTime(Math.max(20, opt.to), t0 + opt.d);
+    // 어택(a)을 아주 짧게 줄 수 있게 — 타건음은 1ms 만에 확 올라가야 '찰칵' 이 돼요
+    var atk = opt.a === undefined ? 0.006 : opt.a;
+    if (atk > opt.d * 0.5) atk = opt.d * 0.5;
+    if (atk < 0.0004) atk = 0.0004;
     g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, opt.g || 0.12), t0 + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + opt.d);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, opt.g || 0.12), t0 + atk);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + Math.max(opt.d, atk + 0.004));
     osc.connect(g); g.connect(master);
     osc.start(t0); osc.stop(t0 + opt.d + 0.02);
+  }
+
+  /* 짧은 노이즈 조각 — 필터로 대역만 잘라 '틱'·'탁' 같은 질감을 만들어요.
+     opt: at(시각) bp(대역통과 Hz) q / lp(로우패스 Hz) lpQ / hp(하이패스 Hz)
+          d(감쇠 초) a(어택 초) hold(피크 유지) g(세기)
+     ※ 좁은 대역통과(Q 높음)일수록 지나가는 소리 양이 적어서, 부르는 쪽 g 에는
+        그만큼 키워 둔 값이 들어가요. 같은 세기로 들리게 맞춘 숫자입니다. */
+  function hit(opt) {
+    var c = AC; if (!c) return;
+    var src = noise(); if (!src) return;
+    var node = src, f;
+    if (opt.lp) {
+      f = c.createBiquadFilter(); f.type = 'lowpass';
+      f.frequency.value = opt.lp; f.Q.value = opt.lpQ === undefined ? 0.9 : opt.lpQ;
+      node.connect(f); node = f;
+    }
+    if (opt.bp) {
+      f = c.createBiquadFilter(); f.type = 'bandpass';
+      f.frequency.value = opt.bp; f.Q.value = opt.q === undefined ? 1.2 : opt.q;
+      node.connect(f); node = f;
+    }
+    if (opt.hp) {
+      f = c.createBiquadFilter(); f.type = 'highpass';
+      f.frequency.value = opt.hp; f.Q.value = 0.7;
+      node.connect(f); node = f;
+    }
+    var g = c.createGain();
+    var peak = Math.max(0.0003, opt.g || 0.3);
+    var a = opt.a === undefined ? 0.0015 : opt.a;
+    var hold = opt.hold || 0;
+    var end = opt.at + a + hold + Math.max(opt.d, 0.002);
+    g.gain.setValueAtTime(0.0001, opt.at);
+    g.gain.exponentialRampToValueAtTime(peak, opt.at + a);
+    if (hold) g.gain.setValueAtTime(peak, opt.at + a + hold);
+    g.gain.exponentialRampToValueAtTime(0.0001, end);
+    node.connect(g); g.connect(master);
+    src.start(opt.at); src.stop(end + 0.02);
   }
 
   // 기계식 키보드 톡
@@ -1132,43 +1174,68 @@ var AU = (function () {
     tone({ f: 300, to: 150, d: 0.085, type: 'square', g: 0.13 });
   }
 
-  // ⌨️ 키캡 — 밟으면 나는 기계식 타자 소리 (타닥! 톡! 찰칵!)
-  //   폰 스피커에서도 바로 들리게 세 단계로 쌓아요
-  //   ① 노이즈 어택(찰!) ② 키캡 공명 2단(톡-칵) ③ 낮은 바디 울림(톡)
-  //   약 70~95ms, 겹쳐도 찢어지지 않게 컴프레서를 거칩니다.
+  /* ⌨️ 키캡 — 실제 기계식 키보드 타건음 (청축 계열 '타닥 · 찰칵 · 톡')
+     진짜 키보드는 한 번 칠 때 소리가 두 번 나요. 누를 때 한 번, 뗄 때 한 번.
+       ① 스위치 걸림 틱 — 4~5ms 짧은 고역 노이즈 (스위치 날이 걸리는 '찔끔')
+       ② 키캡 바닥 '탁' — 로우패스 노이즈 + Q 높은 공명(하우징 울림)
+       ③ 낮은 바디 펀치 — 110~170Hz 사인 '툭' (키캡이 바닥을 치는 무게)
+       ④ 스프링 링 — 아주 약한 고역 사인 (금속 스프링이 우는 소리)
+       ⑤ 업스트로크 — 60~90ms 뒤, 조금 작고 밝은 '톡' (손을 떼는 소리)
+     키(글자)마다 피치가 ±7% 고정으로 다르고, 누를 때마다 ±1.5% 흔들려요.
+     그래서 연타해도 로봇 소리 같지 않고 '타다다닥' 손맛이 살아요. */
   function keycap(label) {
     if (!ctx() || muted) return;
     var c = AC;
-    var wide = /SPACE|★|↵|←|→|♪/.test(String(label || ''));
-    var t0 = c.currentTime + 0.002;
+    var lab = String(label == null ? '' : label);
+    var wide = /SPACE|ENTER|★|↵|←|→|↑|↓|♪|⌫|SHIFT/.test(lab) || lab.length > 2;
 
-    // ① 노이즈 어택 — 키를 눌러 딸깍 하는 순간
-    var src = noise();
-    if (src) {
-      var bp = c.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = wide ? rnd(1400, 1900) : rnd(2500, 3600);
-      bp.Q.value = wide ? 0.9 : 1.15;
-      var hp = c.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = wide ? 480 : 950;
-      var g = c.createGain();
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(wide ? 0.55 : 0.48, t0 + 0.0025);
-      g.gain.exponentialRampToValueAtTime(0.10, t0 + 0.022);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + (wide ? 0.055 : 0.042));
-      src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(master);
-      src.start(t0); src.stop(t0 + 0.09);
-    }
+    // 키마다 다른 피치 — 글자에서 뽑은 고정 시드(±7%) + 칠 때마다 미세 흔들림(±1.5%)
+    //   (FNV-1a 해시: 옆 글자끼리도 값이 잘 흩어져 키마다 높낮이가 확실히 달라져요)
+    var seed = 2166136261, i;
+    for (i = 0; i < lab.length; i++) { seed ^= lab.charCodeAt(i); seed = (seed * 16777619) >>> 0; }
+    var kf = 1 + ((seed % 1000) / 1000 - 0.5) * 0.14 + rnd(-0.015, 0.015);
+    var wf = wide ? 0.74 : 1;      // 넓은 키(스페이스·엔터)는 더 낮고 묵직하게
 
-    // ② 키캡 공명 1단 — 키캡이 내려앉는 나무/플라스틱 톤
-    var f0 = wide ? rnd(300, 360) : rnd(760, 1040);
-    tone({ at: t0, f: f0, to: f0 * 0.62, d: wide ? 0.10 : 0.075, type: 'triangle', g: wide ? 0.46 : 0.40 });
-    //    2단 — 상판이 살짝 울리는 맑은 '칵' (12ms 뒤)
-    tone({ at: t0 + 0.012, f: f0 * 2.6, to: f0 * 2.1, d: 0.045, type: 'sine', g: wide ? 0.18 : 0.22 });
-    // ③ 낮은 바디 울림 — '톡' 하고 무게가 느껴지게
-    var lf = wide ? 155 : 225;
-    tone({ at: t0, f: lf, to: lf * 0.8, d: wide ? 0.095 : 0.065, type: 'sine', g: wide ? 0.26 : 0.17 });
+    // 빠르게 몰아칠 때는 살짝만 줄여 겹침이 찢어지지 않게
+    hitCount++;
+    if (hitTimer) clearTimeout(hitTimer);
+    hitTimer = setTimeout(function () { hitCount = 0; }, 200);
+    var lv = hitCount > 14 ? 0.7 : (hitCount > 8 ? 0.85 : 1);
+
+    var t0 = c.currentTime + 0.001 + rnd(0, 0.0015);
+
+    // ① 스위치 걸림 틱 — '찰칵' 하고 걸리는 순간 (2~6ms)
+    hit({ at: t0, bp: (wide ? 2600 : 3800) * kf, q: 1.25, a: 0.0004, hold: 0.0013, d: 0.005, g: (wide ? 1.8 : 2.3) * lv });
+    //    청축의 '지직' — 아주 짧은 금속 링
+    tone({ at: t0 + 0.0008, f: (wide ? 2000 : 2650) * kf, to: (wide ? 1420 : 1850) * kf, d: 0.011, type: 'triangle', g: (wide ? 0.17 : 0.26) * lv, a: 0.0008 });
+
+    // ② 키캡이 바닥에 닿는 '탁' — 노이즈 + 하우징 공명
+    hit({ at: t0 + 0.0016, lp: (wide ? 1000 : 1500) * wf, lpQ: 1.0, a: 0.0008, hold: 0.0015, d: wide ? 0.045 : 0.032, g: (wide ? 2.0 : 1.7) * lv });
+    hit({ at: t0 + 0.0020, bp: (wide ? 360 : 480) * kf * wf, q: 6, a: 0.001, hold: 0.002, d: wide ? 0.055 : 0.042, g: (wide ? 3.7 : 3.1) * lv });
+
+    // ③ 낮은 바디 펀치 — 무게가 느껴지는 '툭'
+    var lf = (wide ? 116 : 160) * kf * wf;
+    tone({ at: t0 + 0.0016, f: lf, to: lf * 0.72, d: wide ? 0.09 : 0.066, type: 'sine', g: (wide ? 0.51 : 0.34) * lv, a: 0.0012 });
+
+    // ④ 스프링 링 — 금속 스프링이 살짝 우는 소리
+    var ring = (3600 + (seed % 90) * 11) * kf;
+    tone({ at: t0 + 0.0028, f: ring, to: ring * 0.96, d: 0.028, type: 'sine', g: 0.085 * lv, a: 0.002 });
+
+    // ⑤ 업스트로크 — 손을 떼는 순간의 작은 '톡' (60~90ms 뒤, 아래 칠 때의 1/3 정도)
+    var up = t0 + (wide ? rnd(0.082, 0.098) : rnd(0.058, 0.086));
+    hit({ at: up, bp: (wide ? 2900 : 4200) * kf, q: 1.4, a: 0.0004, hold: 0.0007, d: 0.0035, g: (wide ? 0.16 : 0.21) * lv });
+    hit({ at: up + 0.0008, bp: (wide ? 520 : 700) * kf * wf, q: 5, a: 0.001, d: wide ? 0.026 : 0.019, g: (wide ? 0.22 : 0.17) * lv });
+    tone({ at: up, f: lf * 1.3, to: lf * 1.04, d: wide ? 0.04 : 0.028, type: 'sine', g: (wide ? 0.040 : 0.030) * lv, a: 0.002 });
+  }
+
+  // ⌨️ 자판 입력(채팅·타자 연습) — 누른 글자에 맞는 키캡 소리
+  function typeKey(ch) {
+    var k = String(ch == null ? '' : ch);
+    if (k === ' ' || k === 'Spacebar' || k === 'Space') k = 'SPACE';
+    else if (k === 'Enter') k = 'ENTER';
+    else if (k === 'Backspace' || k === 'Delete') k = '⌫';
+    else if (k === 'Shift') k = 'SHIFT';
+    keycap(k);
   }
 
   // 뾰롱 (성공)
@@ -1274,7 +1341,7 @@ var AU = (function () {
     if (typeof toast === 'function') toast('🔈 화면을 한 번 톡 눌러 주면 소리가 켜져요');
   }
 
-  return { click: click, clack: clack, keycap: keycap, chime: chime, coin: coin, jump: jump, land: land,
+  return { click: click, clack: clack, keycap: keycap, typeKey: typeKey, chime: chime, coin: coin, jump: jump, land: land,
     err: err, msg: msg, win: win, pop: pop, setMuted: setMuted, isMuted: isMuted, unlock: unlock,
     isRunning: isRunning, watchUnlock: watchUnlock, nudge: nudge };
 })();
@@ -4324,8 +4391,8 @@ function makeTyping(cfg) {
     if (st.input) { st.input.value = ''; }
     paintTypingWord(st.el, st.word, '');
     buildVK(st.keys, st.lang, st.lang === 'en' ? function (ch) {
-      if (ch === '__BACK__') { st.input.value = st.input.value.slice(0, -1); }
-      else { st.input.value = st.input.value + ch; AU.click(); }
+      if (ch === '__BACK__') { st.input.value = st.input.value.slice(0, -1); AU.typeKey('Backspace'); }
+      else { st.input.value = st.input.value + ch; AU.typeKey(ch); }
       st.input.dispatchEvent(new Event('input'));
     } : null);
     lightKeys(st.keys, '', st.lang);
@@ -4344,9 +4411,9 @@ function makeTyping(cfg) {
 
   if (st.input) {
     st.input.addEventListener('keydown', function (e) {
-      if (e.key === ' ' || e.key === 'Enter') AU.clack();
-      else if (e.key.length === 1) AU.click();
-      else if (e.key === 'Backspace') AU.click();
+      if (e.key === ' ' || e.key === 'Enter') AU.typeKey(e.key);
+      else if (e.key.length === 1) AU.typeKey(e.key);
+      else if (e.key === 'Backspace') AU.typeKey('Backspace');
     });
     st.input.addEventListener('input', paint);
     st.input.addEventListener('paste', function (e) { e.preventDefault(); });
@@ -5408,9 +5475,10 @@ function bindUI() {
   $('#finAgain').addEventListener('click', function () { resetRun(); AU.pop(); });
   $('#chatSend').addEventListener('click', sendChat);
   $('#chatInput').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
-    else if (e.key === ' ') AU.clack();
-    else if (e.key.length === 1) AU.click();
+    if (e.key === 'Enter') { e.preventDefault(); AU.typeKey('Enter'); sendChat(); }
+    else if (e.key === 'Backspace') AU.typeKey('Backspace');
+    else if (e.key === ' ' || e.key === 'Spacebar') AU.typeKey('SPACE');
+    else if (e.key.length === 1) AU.typeKey(e.key);
   });
   $('#eggBtn').addEventListener('click', petTapEgg);
   $('#resetYes').addEventListener('click', resetGame);
