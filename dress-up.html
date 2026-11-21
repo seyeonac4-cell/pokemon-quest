@@ -2500,7 +2500,7 @@ var HIDDEN_DEFS = {
    13. 2.5D 드레싱룸 월드
    ============================================================ */
 var WORLD = { x0:-3.8, x1:3.8, z0:0, z1:6.6, W:374, H:707, zTop:219, zLen:414, ux:36.6, uy:62.7, figh:104 };
-var PLAYER = { x:0, z:6.05, y:0, vy:0, dir:1, pose:0, grounded:true, jumpQ:0, target:null, targetZone:null, targetAt:0 };
+var PLAYER = { x:0, z:5.05, y:0, vy:0, dir:1, pose:0, grounded:true, jumpQ:0, target:null, targetZone:null, targetAt:0 };
 var keys = {};
 var roomEl = $('room');
 var worldEl = $('world');
@@ -3737,7 +3737,7 @@ function closeRunway(){
   newRound();
 }
 function newRound(){
-  PLAYER.x = spawnX(); PLAYER.z = 6.05; PLAYER.y = 0; PLAYER.vy = 0; PATH = []; PLAYER.target = null; PLAYER.targetZone = null;
+  PLAYER.x = spawnX(); PLAYER.z = 5.05; PLAYER.y = 0; PLAYER.vy = 0; PATH = []; PLAYER.target = null; PLAYER.targetZone = null;
   secretTip = false;
   resetPicks();
   resetTimer(180);
@@ -4139,7 +4139,7 @@ function famAutoPick(all){
   if(yBusy && !hBusy) id = 'hyungwon';
   else if(hBusy && !yBusy) id = 'yunjin';
   famApplyIdentity(id, true);
-  if(Math.abs(PLAYER.x) < 0.05 && PLAYER.z > 5.8) PLAYER.x = spawnX();
+  if(Math.abs(PLAYER.x) < 0.05 && PLAYER.z > 4.6) PLAYER.x = spawnX();
   famClaim();
   famSend(true);
 }
