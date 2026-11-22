@@ -351,6 +351,23 @@
 
           started = true;
           this.announce();
+          /* 1시간 넘은 옛 시그널 자국(앱이 강제 종료된 경우 등)은 조용히 치워요 */
+          try {
+            root.child('sig').once('value', function (snap) {
+              var v = snap.val() || {}, t = now();
+              Object.keys(v).forEach(function (pid) {
+                if (pid === S.pid) return;
+                var box = v[pid] || {}, latest = 0;
+                Object.keys(box).forEach(function (from) {
+                  var b = box[from] || {};
+                  ['offer', 'answer'].forEach(function (k) { if (b[k] && b[k].ts > latest) latest = b[k].ts; });
+                });
+                if (latest && t - latest > 60 * 60 * 1000) {
+                  try { root.child('sig/' + pid).remove().catch(function () { }); } catch (e) { }
+                }
+              });
+            });
+          } catch (e) { }
           return true;
         } catch (e) {
           return false;
@@ -376,6 +393,12 @@
           root.child('sig/' + to + '/' + S.pid + '/' + kind)
             .set({ sid: data.sid, sdp: data.sdp, ts: now() }).catch(function () { });
         } catch (e) { }
+      },
+      /* 그 가족과 주고받던 시그널 자국을 지워요 (SDP 에는 IP 가 들어 있어요) */
+      dropPeer: function (pid) {
+        if (!root || !pid) return;
+        try { root.child('sig/' + pid + '/' + S.pid).remove().catch(function () { }); } catch (e) { }
+        try { root.child('sig/' + S.pid + '/' + pid).remove().catch(function () { }); } catch (e) { }
       },
       close: function () {
         try { if (root) { root.child('peers').off(); root.child('sig/' + S.pid).off(); } } catch (e) { }
@@ -424,6 +447,7 @@
       announce: state,
       remove: function () { post({ t: 'bye', pid: S.pid }); },
       send: function (to, kind, data) { post({ t: 'sig', to: to, from: S.pid, kind: kind, sid: data.sid, sdp: data.sdp }); },
+      dropPeer: function () { },
       close: function () { try { clearInterval(beat); } catch (e) { } try { if (bc) bc.close(); } catch (e) { } }
     };
   }
@@ -448,7 +472,7 @@
       if (!p) {
         /* 잠깐 안 보이는 것일 수 있어요(백그라운드 탭 등) — 20초는 기다려요 */
         if (!c.goneAt) c.goneAt = now();
-        if (now() - c.goneAt > 20000) closeConn(pid);
+        if (now() - c.goneAt > 20000) { try { if (S.transport && S.transport.dropPeer) S.transport.dropPeer(pid); } catch (e) { } closeConn(pid); }
         return;
       }
       if (!desired(p) || c.key !== pairKey(p)) { S.attempts[pid] = 0; closeConn(pid); }
@@ -841,6 +865,11 @@
   });
 
   function cleanup() {
+    try {
+      if (S.transport && S.transport.dropPeer) {
+        Object.keys(S.peers).forEach(function (pid) { try { S.transport.dropPeer(pid); } catch (e) { } });
+      }
+    } catch (e) { }
     try { if (S.micOn || !S.idled) { if (S.transport) S.transport.remove(); } } catch (e) { }
     try { closeAllConns(); } catch (e) { }
     try { if (S.stream) S.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) { } }); } catch (e) { }
