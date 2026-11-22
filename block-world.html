@@ -2266,10 +2266,18 @@ function buildMap() {
   /* 층 사이 구슬 계단 3칸 (반 칸씩 — 그냥 걸어도 올라가요) */
   function jstep(k, dx, dy, zz) { jbead(bx4(k) + dx, by4(k) + dy, zz, k, { edge: 1 }); }
   function jstairs(k) {
-    jstep(k, -1, 0, bz4(k) + 0.5);
-    jstep(k, -1, -1, bz4(k) + 1.0);
-    jstep(k, -1, -2, bz4(k) + 1.35);
-    // 마지막 한 칸은 위층 모서리(4,4)가 이어 받아요
+    // 2칸 너비 구슬 계단 — 아이가 삐끗해도 옆 칸이 받아 줘요
+    var z0 = bz4(k);
+    jstep(k, -1, 0, z0 + 0.45);
+    jstep(k, -2, 0, z0 + 0.45);
+    jstep(k, -1, -1, z0 + 0.9);
+    jstep(k, -2, -1, z0 + 0.9);
+    jstep(k, -1, -2, z0 + 1.35);
+    // 계단 바깥 안전 난간 (옆·앞으로 떨어지지 않게)
+    railTile(bx4(k) - 3, by4(k), z0 + 0.45, { tint: '#ffcfe8' });
+    railTile(bx4(k) - 3, by4(k) - 1, z0 + 0.9, { tint: '#ffcfe8' });
+    railTile(bx4(k) - 1, by4(k) - 3, z0 + 1.35, { tint: '#ffcfe8' });
+    // 마지막 한 칸은 위층 모서리(x-2, y-2)가 이어 받아요
   }
   /* 난간 — 계단 자리(서쪽 위)만 열어 두고 둘러쳐요 */
   function jrails(k) {
@@ -2292,6 +2300,7 @@ function buildMap() {
   trees.push({ x: JX + 8.4, y: JY - 2.2, z: 0, s: 0.95 });
   trees.push({ x: JX - 3.2, y: JY + 8.4, z: 0, s: 0.9 });
   props.push({ k: 'houseSign', x: JX - 2.4, y: JY + 8.2, z: 0, who: null, label: '4탄 왁뿌볼 타워', emoji: '🫧' });
+  props.push({ k: 'houseSign', x: 149.3, y: -39.4, z: 0, who: null, label: '계단은 이쪽 ↑', emoji: '🫧' });
 
   /* ② 6개 층 — 파스텔 구슬 바닥 + 계단 + 난간 + 층마다 안전 깃발 */
   for (var jk = 0; jk <= 5; jk++) {
@@ -2382,9 +2391,9 @@ function buildMap() {
   }
 
   /* --- 🫧 4탄 왁뿌볼 타워 체크포인트 — 목록 맨 뒤 (G.cp4Start) --- */
-  cps.push({ x: JX + 2.5, y: JY + 6.5, z: 0, on: false, s4: 1 });
+  cps.push({ x: 150.4, y: -41.2, z: 0, on: false, s4: 1 });      // 계단 바로 앞
   for (var jcp = 1; jcp <= 5; jcp++) {
-    cps.push({ x: bx4(jcp) + 4.4, y: by4(jcp) + 4.4, z: bz4(jcp), on: false, s4: 1 });
+    cps.push({ x: bx4(jcp) + 0.45, y: by4(jcp) + 0.45, z: bz4(jcp), on: false, s4: 1 });   // 층마다 계단 앞
   }
 
   /* --- 코인 --- */
@@ -5753,7 +5762,7 @@ function updateHint() {
   var unsolved = G.gates.filter(function (g) { return !g.solved; });
   var p = G.p, txt;
   if (G.at4 && !G.finished4) {
-    if (p.z < 0.8) txt = '🫧 1층 딸기 젤리! 말랑 구슬을 밟으며 올라가요';
+    if (p.z < 0.8) txt = '🫧 1층 딸기 젤리! 왼쪽 위 모서리 구슬 계단으로 올라가요';
     else if (p.z < 2.4) txt = '🫧 2층 포도 젤리! 위층 계단은 왼쪽 위 모서리에 있어요';
     else if (p.z < 4.0) txt = '🫧 3층 민트 젤리! 가운데 홈은 가장자리로 돌아가요';
     else if (p.z < 5.6) txt = '🫧 4층 하늘 젤리! 사그락 구슬은 오래 서 있으면 사라져요';
