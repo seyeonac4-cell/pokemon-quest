@@ -8933,8 +8933,8 @@ function updatePlayer(dt) {
   // 🎻 8탄 마에스트로 지휘자 단상 — 올라서면 관현악 팡파르!
   if (!G.finished8) {
     var fc8 = G.finish8;
-    /* 단상 위에 두 발로 올라섰을 때만 (공중에서 스치면 아직) */
-    if (!p.air && Math.abs(fc8.z - p.z) < 0.6 && Math.abs(p.x - fc8.x) < 1.5 && Math.abs(p.y - fc8.y) < 1.6) {
+    /* 지휘자 단상(17.4) 위에 두 발로 올라섰을 때만 (옆을 스치면 아직) */
+    if (!p.air && Math.abs(fc8.z - p.z) < 0.35 && Math.abs(p.x - fc8.x) < 1.6 && Math.abs(p.y - fc8.y) < 1.9) {
       finishStage8();
     }
   }
