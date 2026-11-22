@@ -4019,6 +4019,29 @@ function drawHat(ctx, kind, cx, cy) {
     roundRect(ctx, cx - 19, cy - 13, 38, 6, 5); ctx.fill();
     ctx.fillStyle = '#e03a4c';
     roundRect(ctx, cx + 4, cy - 3, 24, 7, 4); ctx.fill();
+  } else if (kind === 'bluecap') {
+    ctx.fillStyle = '#3f8cff';
+    roundRect(ctx, cx - 19, cy - 13, 38, 15, 7); ctx.fill();
+    ctx.fillStyle = '#8fc4ff';
+    roundRect(ctx, cx - 19, cy - 13, 38, 6, 5); ctx.fill();
+    ctx.fillStyle = '#2b6fd6';
+    roundRect(ctx, cx + 4, cy - 3, 24, 7, 4); ctx.fill();
+  } else if (kind === 'ribbon') {
+    /* 🎀 리본 머리핀 — 정수리 위에 통통한 나비 리본 */
+    var rby = cy - 4;
+    poly(ctx, [{ x: cx, y: rby }, { x: cx - 13, y: rby - 9 }, { x: cx - 13, y: rby + 7 }], '#ff5f9e');
+    poly(ctx, [{ x: cx, y: rby }, { x: cx + 13, y: rby - 9 }, { x: cx + 13, y: rby + 7 }], '#ff5f9e');
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    poly(ctx, [{ x: cx - 11, y: rby - 6 }, { x: cx - 11, y: rby + 2 }, { x: cx - 4, y: rby - 1 }], 'rgba(255,255,255,.35)');
+    poly(ctx, [{ x: cx + 11, y: rby - 6 }, { x: cx + 11, y: rby + 2 }, { x: cx + 4, y: rby - 1 }], 'rgba(255,255,255,.35)');
+    ctx.fillStyle = '#ff8fbd';
+    ctx.beginPath(); ctx.arc(cx, rby, 4.6, 0, 6.2832); ctx.fill();
+  } else if (kind === 'catears') {
+    /* 🐱 고양이 귀 */
+    poly(ctx, [{ x: cx - 16, y: cy + 3 }, { x: cx - 12, y: cy - 14 }, { x: cx - 1, y: cy - 1 }], '#5a4636');
+    poly(ctx, [{ x: cx + 16, y: cy + 3 }, { x: cx + 12, y: cy - 14 }, { x: cx + 1, y: cy - 1 }], '#5a4636');
+    poly(ctx, [{ x: cx - 12.4, y: cy }, { x: cx - 10.6, y: cy - 9 }, { x: cx - 5, y: cy - 2.6 }], '#ffb3d1');
+    poly(ctx, [{ x: cx + 12.4, y: cy }, { x: cx + 10.6, y: cy - 9 }, { x: cx + 5, y: cy - 2.6 }], '#ffb3d1');
   } else if (kind === 'crown') {
     ctx.fillStyle = '#ffcc33';
     poly(ctx, [{ x: cx - 17, y: cy }, { x: cx - 17, y: cy - 13 }, { x: cx - 9, y: cy - 6 },
