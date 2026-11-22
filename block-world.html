@@ -9920,7 +9920,7 @@ var FR_SELF = {
   school: ['나는 학교에서 미술 시간이 제일 좋아! 너는 무슨 시간이 좋아?'],
   friend: ['나는 같이 웃어 주는 친구가 좋아! 너는 어떤 친구가 좋아?'],
   game: ['나는 로블록스랑 그림 그리기를 좋아해! 너는 뭐 할 때 제일 신나?'],
-  like: ['나는 그네 타기랑 딸기 우유가 제일 좋아! 너는 뭐가 좋아?'],
+  like: ['나는 노래 부르기랑 딸기 우유가 좋아! 너는 뭐가 좋아?'],
   sad: ['나는 무서운 꿈을 꾸면 엄마한테 이야기해. 너는 무서울 때 어떻게 해?'],
   thanks: ['나는 고맙다고 말해 주는 친구가 좋아! 너는 오늘 누구한테 고마웠어?'],
   sorry: ['나는 실수해도 괜찮다고 말해 주는 게 좋아. 너는 어떤 말이 기분 좋아?'],
@@ -9968,7 +9968,7 @@ function frReply(raw) {
     return { say: say, chips: chips };
   }
   /* "너는 뭐 좋아해?" 처럼 나한테 물으면 내가 먼저 답하고 다시 물어봐요 */
-  if (askMe && isQ) return frSelfAnswer(topic);
+  if (askMe && isQ) return frSelfAnswer(topic, t);
 
   if (!topic && agree && FR.topic) topic = frTopicById(FR.topic);       /* 맞장구면 하던 이야기를 이어가요 */
   if (!topic && !isQ && FR.topic && t.length <= 24) topic = frTopicById(FR.topic);  /* 짧은 대답도 대화를 이어가요 */
@@ -9998,14 +9998,19 @@ function frReply(raw) {
 }
 
 /* 친구가 "너는?" 하고 물어보면 내가 먼저 솔직하게 답해요 (되묻는 연습) */
-function frSelfAnswer(topic) {
+function frSelfAnswer(topic, t) {
   var key = topic ? topic.id : '';
   var list = (key && FR_SELF[key]) ? FR_SELF[key] : FR_ME_GEN;
   var lk = 'self:' + (key || 'gen');
   var n = FR.li[lk] || 0;
   FR.li[lk] = n + 1;
   var say = list[n % list.length];
-  var chips = (topic && topic.chips) ? topic.chips : ['나도 그거 좋아해', '청룡열차 탔어', '같이 놀자!'];
+  var pool = (topic && topic.chips) ? topic.chips : ['나도 그거 좋아해', '청룡열차 탔어', '같이 놀자!'];
+  var chips = pool.filter(function (c) { return c !== t; });
+  var extra = ['그다음엔?', '나도 그거 좋아해', '너는 뭐가 좋아?'];
+  for (var ei = 0; chips.length < 3 && ei < extra.length; ei++) {
+    if (chips.indexOf(extra[ei]) < 0) chips.push(extra[ei]);
+  }
   return { say: say, chips: chips.slice(0, 3) };
 }
 
@@ -11100,7 +11105,7 @@ try {
       topUp: function (n) { var cur = WorldCoins.get(); if (cur < n) WorldCoins.earn(n - cur); return WorldCoins.get(); },
       openModal: function (id) { var el = document.getElementById(id); if (el) el.classList.add('open'); },
       closedModals: function () { return ['champOverlay', 'towerOverlay', 'jellyOverlay', 'finishOverlay'].filter(function (id) { var el = document.getElementById(id); return !el || !el.classList.contains('open'); }); },
-      /* 🐰 하은이(또래 친구) 음성 핑톁 대화 */
+      /* 🐰 하은이(또래 친구) 음성 핑퐁 대화 */
       friend: function () {
         return {
           x: FRIEND.x, y: FRIEND.y, name: FRIEND.name,
