@@ -905,10 +905,11 @@ body{
 .menuList button .em{ont-size:18px; font-size:18px}
 .menuList button small{display:block; font-size:10.5px; color:#9A8BA8; font-weight:700; margin-top:1px}
 .menuList button.end{color:#B9325F; border-color:#FFDDE8; background:#FFF6F9}
-.whoRow{display:flex; gap:6px; margin-bottom:4px}
+.whoRow{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-bottom:4px}
 .whoRow button{
-  flex:1; border:1.5px solid #EFDFF0; background:#fff; border-radius:13px; padding:10px 4px;
-  font:inherit; font-size:12px; font-weight:900; color:#6B5A78; cursor:pointer;
+  min-width:0; border:1.5px solid #EFDFF0; background:#fff; border-radius:13px; padding:10px 2px;
+  font:inherit; font-size:11.5px; font-weight:900; color:#6B5A78; cursor:pointer;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .whoRow button.on{background:linear-gradient(135deg,#FFE8F3,#EFE4FF); border-color:#F3B9D8; color:#B02A72}
 
@@ -938,7 +939,7 @@ body{
   .wn b{font-size:10px}
 }
 
-/* ---------- 자매 실시간(같이 놀기) ---------- */
+/* ---------- 가족 실시간(같이 놀기) ---------- */
 .pill.sis{
   flex:0 0 auto; gap:4px; padding:0 9px; color:#2C6E58; background:#F0FFF9;
   border-color:#BDEBD8; font-size:11.5px; max-width:112px;
@@ -967,12 +968,14 @@ body{
 .prop.gate{animation:gatePulse 2.8s ease-in-out infinite; transform-origin:50% 100%}
 @keyframes gatePulse{0%,100%{filter:drop-shadow(0 0 2px rgba(180,140,255,.6))}50%{filter:drop-shadow(0 0 11px rgba(200,160,255,1))}}
 @media (max-width:380px){ .wbadge{padding:0 8px} .wgo{padding:0 7px; font-size:10.5px} }
-.famWho{display:flex; gap:6px; margin-bottom:8px}
+.famWho{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-bottom:8px}
 .famWho button{
-  flex:1; border:2px solid #EFDFF0; background:#fff; border-radius:14px; padding:10px 4px;
+  min-width:0; border:2px solid #EFDFF0; background:#fff; border-radius:14px; padding:10px 4px;
   font:inherit; font-size:13px; font-weight:900; color:#6B5A78; cursor:pointer; line-height:1.2;
 }
 .famWho button small{display:block; font-size:9.5px; color:#A292B0; font-weight:700; margin-top:2px}
+.famWho button[data-who="mom"].on{background:linear-gradient(135deg,#FFF0F6,#FFE4EE); border-color:#F3B9D8; color:#B02A72}
+.famWho button[data-who="dad"].on{background:linear-gradient(135deg,#EEF4FF,#E4ECFF); border-color:#B9CBF3; color:#25509E}
 .famWho button.on{background:linear-gradient(135deg,#E9FFF6,#EFE4FF); border-color:#8DE9C4; color:#1F7A5C}
 .famState{
   display:flex; align-items:center; gap:8px; background:#F7FAFF; border:1.5px solid #E4ECFA;
@@ -1051,7 +1054,7 @@ body{
     <div class="pill clock" id="tmClock" hidden><b id="tmTime">3:00</b></div>
     <span id="tmHint" hidden></span>
     <button class="pill mode" id="tmToggle" type="button">⏱️ 3분 도전</button>
-    <button class="pill sis" id="sisPill" type="button" title="자매랑 같이 놀기">
+    <button class="pill sis" id="sisPill" type="button" title="가족이랑 같이 놀기">
       <span class="dot" id="sisDot"></span><b id="sisMe">👭 같이</b>
     </button>
   </div>
@@ -1161,13 +1164,15 @@ body{
   <div class="box">
     <div class="sh-head">
       <span class="em" style="background:linear-gradient(150deg,#E6FFF5,#EFE4FF)">👭</span>
-      <div class="t"><b id="sisTitle">자매랑 같이 놀기</b><span>윤진이·형원이가 각자 폰으로 같은 드레싱룸에 들어와요</span></div>
+      <div class="t"><b id="sisTitle">가족이랑 같이 놀기</b><span>윤진·형원·엄마·아빠가 각자 폰으로 같은 드레싱룸에 들어와요</span></div>
       <button class="x" type="button" data-close="sisSheet" aria-label="닫기">✕</button>
     </div>
     <div class="sub" style="margin:0 0 6px;font-size:11.5px;color:#95879F;font-weight:800">내 캐릭터 (이 폰에서 쓸 이름)</div>
     <div class="famWho" id="famWho">
       <button type="button" data-who="yunjin">🦊 윤진<small>초3 언니 폰</small></button>
       <button type="button" data-who="hyungwon">🐣 형원<small>7살 동생 폰</small></button>
+      <button type="button" data-who="mom">👩 엄마<small>우리 엄마 폰 · 제한 없음</small></button>
+      <button type="button" data-who="dad">👨 아빠<small>우리 아빠 폰 · 제한 없음</small></button>
     </div>
     <div class="famState off" id="famState">
       <span class="av" id="famStateAv">🦊</span>
@@ -1179,7 +1184,7 @@ body{
       <button class="btn ghost" type="button" id="famWhere">🧭 어디 있지?</button>
     </div>
     <p class="hint" style="margin-top:9px">
-      • 두 폰에서 <b>서로 다른 이름</b>을 골라 주세요 (한 명은 윤진, 한 명은 형원).<br>
+      • 폰마다 <b>서로 다른 사람</b>을 골라 주세요 (윤진·형원·엄마·아빠).<br>
       • 상대가 접속하면 방 안에 <b>이름표와 입은 옷 그대로</b> 나타나 같이 걸어 다닐 수 있어요.<br>
       • 가까이 가면 하트가 팡! 하고 터지고, <b>👋 인사</b>를 보내면 상대 화면에도 말풍선이 떠요.
     </p>
@@ -1203,9 +1208,10 @@ body{
       </div>
     </div>
     <div class="whoRow" id="whoRow">
-      <button type="button" data-name="윤진" class="on">👧 윤진</button>
-      <button type="button" data-name="형원">👧 형원</button>
-      <button type="button" data-name="세연">👩 세연</button>
+      <button type="button" data-name="윤진" data-who="yunjin" class="on">🦊 윤진</button>
+      <button type="button" data-name="형원" data-who="hyungwon">🐣 형원</button>
+      <button type="button" data-name="엄마" data-who="mom">👩 엄마</button>
+      <button type="button" data-name="아빠" data-who="dad">👨 아빠</button>
     </div>
     <div class="menuList">
       <button type="button" id="vsBtn"><span class="em">👭</span><span>자매 대결<small>윤진이 먼저, 형원이가 이어서 런웨이 대결</small></span></button>
@@ -1311,7 +1317,7 @@ body{
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- 자매 같이 놀기(Firebase RTDB · family-lim-7660/dressUp) 전용 SDK -->
+<!-- 가족 같이 놀기(Firebase RTDB · family-lim-7660/dressUp) 전용 SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 <script src="./world-coins.js?v=1"></script>
@@ -1467,6 +1473,21 @@ var HAIRS = [
     '<path d="M150 70 Q154 104 140 112 Q129 118 126 106 Q138 96 136 70 Z" fill="var(--hair)"/>', front:
     '<path d="M77 82 C76 40 94 28 112 28 C132 28 146 42 144 82 C138 58 126 50 112 54 C100 46 84 54 77 82 Z" fill="var(--hair)"/>'+
     '<path d="M140 52 Q152 40 158 28" stroke="var(--hair)" stroke-width="8" fill="none" stroke-linecap="round"/>' },
+  { id:'bun', name:'엄마 번머리', tags:['bun','mom','pretty','casual','formal','pink'], back:
+    '<ellipse cx="110" cy="66" rx="37" ry="32" fill="var(--hair)"/>'+
+    '<path d="M74 74 C66 112 70 152 78 172 C82 181 92 179 90 169 C84 144 82 112 86 84 Z" fill="var(--hair)"/>'+
+    '<path d="M146 74 C154 112 150 152 142 172 C138 181 128 179 130 169 C136 144 138 112 134 84 Z" fill="var(--hair)"/>'+
+    '<circle cx="110" cy="28" r="15" fill="var(--hair)"/>'+
+    '<circle cx="105" cy="23" r="5.4" fill="var(--hair2)" opacity=".5"/>'+
+    '<path d="M96 40 Q110 33 124 40" stroke="var(--o2)" stroke-width="4.6" fill="none" stroke-linecap="round"/>', front:
+    '<path d="M77 86 C75 44 90 30 110 30 C130 30 145 44 143 86 C137 62 126 54 118 62 C113 72 107 72 102 62 C94 54 83 62 77 86 Z" fill="var(--hair)"/>'+
+    '<path d="M120 38 Q136 46 140 62" stroke="var(--hair2)" stroke-width="4" fill="none" stroke-linecap="round" opacity=".4"/>' },
+  { id:'neat', name:'단정 컷', tags:['short','casual','formal','cool','dad'], back:
+    '<ellipse cx="110" cy="64" rx="37" ry="30" fill="var(--hair)"/>'+
+    '<path d="M76 72 Q72 96 82 104 Q92 110 94 100 Q86 92 88 70 Z" fill="var(--hair)"/>'+
+    '<path d="M144 72 Q148 96 138 104 Q128 110 126 100 Q134 92 132 70 Z" fill="var(--hair)"/>', front:
+    '<path d="M77 84 C76 42 93 28 111 28 C131 28 145 43 144 84 C141 60 130 50 118 52 C106 54 92 52 87 62 C83 68 79 76 77 84 Z" fill="var(--hair)"/>'+
+    '<path d="M118 50 Q134 54 141 66" stroke="var(--hair2)" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".4"/>' },
   { id:'braid', name:'땋은 머리', tags:['long','princess','pretty','cute'], back:
     '<ellipse cx="110" cy="78" rx="37" ry="37" fill="var(--hair)"/>'+
     '<path d="M72 84 Q68 130 74 168 Q78 186 88 186 Q95 186 94 174 Q84 140 86 86 Z" fill="var(--hair)"/>'+
@@ -1668,11 +1689,15 @@ var ACCS = [
     '<g fill="#7BCF9E"><ellipse cx="92" cy="52" rx="3.4" ry="1.8" transform="rotate(-30 92 52)"/><ellipse cx="120" cy="44" rx="3.4" ry="1.8" transform="rotate(24 120 44)"/><ellipse cx="132" cy="52" rx="3.2" ry="1.6" transform="rotate(38 132 52)"/></g>' },
   { id:'ribbon', name:'헤어 리본', tags:['ribbon','cute','princess','pretty','party','pink'], svg:
     '<g transform="translate(140 50)"><path d="M0 0 l-15 -9 2 16 -2 16 15 -9 z" fill="var(--acc)"/><path d="M0 0 l15 -9 -2 16 2 16 -15 -9 z" fill="var(--acc)"/><circle cx="0" cy="0" r="5" fill="var(--acc2)"/></g>' },
-  { id:'glasses', name:'선글라스', tags:['cool','summer','idol','beach','stage'], svg:
+  { id:'glasses', name:'선글라스', shot:'64 52 92 66', tags:['cool','summer','idol','beach','stage'], svg:
     '<g fill="#33223F" opacity=".92"><rect x="83" y="78" width="23" height="15" rx="7"/><rect x="114" y="78" width="23" height="15" rx="7"/></g>'+
     '<path d="M106 85 h8" stroke="#33223F" stroke-width="3"/>'+
     '<path d="M84 80 q8 -3 14 0" stroke="#fff" stroke-width="1.6" opacity=".55" fill="none"/>'+
     '<path d="M115 80 q8 -3 14 0" stroke="#fff" stroke-width="1.6" opacity=".55" fill="none"/>' },
+  { id:'specs', name:'동그란 안경', shot:'64 52 92 66', tags:['glasses','dad','formal','school','cute'], svg:
+    '<g fill="none" stroke="#5B4A3F" stroke-width="2.6" opacity=".92"><circle cx="98" cy="85" r="11.5"/><circle cx="122" cy="85" r="11.5"/><path d="M109.5 85 h3"/><path d="M86.5 83.4 l-6.5 -2.6"/><path d="M133.5 83.4 l6.5 -2.6"/></g>'+
+    '<g fill="#BFE7FF" opacity=".2"><circle cx="98" cy="85" r="10"/><circle cx="122" cy="85" r="10"/></g>'+
+    '<g fill="#fff" opacity=".5"><circle cx="93.4" cy="80.6" r="1.8"/><circle cx="117.4" cy="80.6" r="1.8"/></g>' },
   { id:'wings', name:'천사 날개', tags:['fairy','sparkle','magic','formal','white','angel'], svg:
     '<g fill="#fff" opacity=".85"><path d="M84 150 C52 130 24 152 26 186 C28 214 54 226 70 210 C60 196 62 172 84 168 Z"/>'+
     '<path d="M136 150 C168 130 196 152 194 186 C192 214 166 226 150 210 C160 196 158 172 136 168 Z"/></g>'+
@@ -1821,6 +1846,8 @@ function loadState(){
 }
 function saveState(){
   try{ localStorage.setItem('dti_state', JSON.stringify(st)); }catch(e){}
+  /* 지금 사람의 코디로도 따로 담아 둡니다 (한 폰을 가족이 같이 써도 안 섞이게) */
+  try{ if(typeof FAM !== 'undefined' && FAM && FAM.meId) lookSet(FAM.meId); }catch(e){}
   vsSync();
 }
 function vsSync(){
@@ -3000,13 +3027,31 @@ function applyCam(){
     mm.style.top  = (((PLAYER.z - WORLD.z0) / (WORLD.z1 - WORLD.z0)) * 100).toFixed(2) + '%';
   }
   var ms = $('mSis');
+  var others = (FAM && FAM.others) ? Object.keys(FAM.others) : [];
+  /* 지도에도 가족 모두(최대 3명)를 초록 점으로 표시 */
   if(ms){
-    if(FAM && FAM.actor){
-      ms.hidden = false;
-      ms.style.left = (((FAM.actor.x - WORLD.x0) / (WORLD.x1 - WORLD.x0)) * 100).toFixed(2) + '%';
-      ms.style.top  = (((FAM.actor.z - WORLD.z0) / (WORLD.z1 - WORLD.z0)) * 100).toFixed(2) + '%';
-    } else ms.hidden = true;
+    for(var i=0;i<others.length;i++){
+      var a = FAM.others[others[i]].actor;
+      if(!a) continue;
+      var dot = (i === 0) ? ms : dotFor(i);
+      dot.hidden = false;
+      dot.title = a.label || famNameOf(others[i]);
+      dot.style.left = (((a.x - WORLD.x0) / (WORLD.x1 - WORLD.x0)) * 100).toFixed(2) + '%';
+      dot.style.top  = (((a.z - WORLD.z0) / (WORLD.z1 - WORLD.z0)) * 100).toFixed(2) + '%';
+    }
+    ms.hidden = !others.length;
+    for(var j=others.length;j<3;j++){ var d2 = $('mSis' + j); if(d2) d2.hidden = true; }
   }
+}
+function dotFor(i){
+  var el = $('mSis' + i);
+  if(!el){
+    el = document.createElement('span');
+    el.className = 'mSis'; el.id = 'mSis' + i;
+    var map = $('miniMap');
+    if(map) map.appendChild(el);
+  }
+  return el;
 }
 function snapCam(){
   var c = camClamp(camTarget());
@@ -3901,8 +3946,14 @@ function paintMe(){
 function buildActors(){
   if(me && me.el.parentNode) me.el.parentNode.removeChild(me.el);
   FRIENDS.forEach(function(f){ if(f.el.parentNode) f.el.parentNode.removeChild(f.el); });
-  if(FAM && FAM.actor && FAM.actor.el && FAM.actor.el.parentNode) FAM.actor.el.parentNode.removeChild(FAM.actor.el);
-  if(FAM) FAM.actor = null;
+  if(FAM && FAM.others){
+    Object.keys(FAM.others).forEach(function(id){
+      var r = FAM.others[id];
+      if(r && r.actor && r.actor.el && r.actor.el.parentNode) r.actor.el.parentNode.removeChild(r.actor.el);
+      if(r){ r.actor = null; r.lookKey = ''; }   /* 접속 정보(pkt)는 남겨 두고 화면만 다시 그립니다 */
+    });
+  }
+  if(FAM){ FAM.actor = null; FAM.remote = null; }
   me = makeActor(activeName, 'me', PLAYER.x, PLAYER.z);
   paintMe();
   var seed = [[-2.9, 7.2],[2.8, 4.9],[0.0, 12.4]];
@@ -3936,7 +3987,9 @@ function drawAll(){
     drawActor(me, true);
   }
   FRIENDS.forEach(function(f){ drawActor(f, false); });
-  if(FAM && FAM.actor) drawActor(FAM.actor, false);
+  if(FAM && FAM.others){
+    Object.keys(FAM.others).forEach(function(id){ var r = FAM.others[id]; if(r && r.actor) drawActor(r.actor, false); });
+  }
   fadeProps();
 }
 
@@ -4833,7 +4886,9 @@ function setDancing(on){
   CLUB.dancing = !!on;
   if(me) me.el.classList.toggle('dance', CLUB.dancing);
   FRIENDS.forEach(function(f){ if(f.el) f.el.classList.toggle('dance', CLUB.dancing); });
-  if(FAM && FAM.actor && FAM.actor.el) FAM.actor.el.classList.toggle('dance', CLUB.dancing);
+  if(FAM && FAM.others){
+    Object.keys(FAM.others).forEach(function(id){ var r = FAM.others[id]; if(r && r.actor && r.actor.el) r.actor.el.classList.toggle('dance', CLUB.dancing); });
+  }
   if(CLUB.dancing){
     /* AI 친구들도 댄스플로어로 모여요 */
     FRIENDS.forEach(function(f, i){
@@ -4850,7 +4905,7 @@ function toggleDance(){
   if(CLUB.dancing){
     SFX.theme();
     showClaim('🪩 파티 타임!', '음악에 맞춰 춤춰요');
-    toast('💃 신나게 춤춰요! (형원이도 같이 🕺)');
+    toast('💃 신나게 춤춰요! (가족도 같이 🕺)');
   } else {
     toast('🕺 춤을 잠깐 멈췄어요');
   }
@@ -4896,8 +4951,12 @@ function photoSVGString(){
   var list = [];
   if(me) list.push({ x:PLAYER.x, z:PLAYER.z, y:PLAYER.y, st:st, label:activeName });
   FRIENDS.forEach(function(f){ list.push({ x:f.x, z:f.z, y:0, st:f.state, label:f.name }); });
-  if(FAM && FAM.actor){
-    list.push({ x:FAM.actor.x, z:FAM.actor.z, y:FAM.actor.y, st:(FAM.remote && FAM.remote.look) ? famState(FAM.remote.look) : st, label:FAM.actor.label });
+  if(FAM && FAM.others){
+    Object.keys(FAM.others).forEach(function(id){
+      var r = FAM.others[id];
+      if(!r || !r.actor) return;
+      list.push({ x:r.actor.x, z:r.actor.z, y:r.actor.y, st:r.pkt && r.pkt.look ? famState(r.pkt.look) : st, label:r.actor.label });
+    });
   }
   list.sort(function(p,q){ return p.z - q.z; });
   list.forEach(function(o){
@@ -4961,7 +5020,7 @@ function askReset(){
     '<b>코인 ' + (progress.coins || 0) + '개 · 숨은 보물 ' + nf + '개 · VIP 의상 ' + nv + '벌</b>이 사라지고, ' +
     '코인은 <b>' + START_COINS + '개</b>부터 다시 시작해요(세 게임 공용 지갑이라 블록 월드·그로우도 함께 50개).<br>' +
     '코디·패턴·메이크업·주제·룩북·타이머 설정도 기본값이 돼요.<br>' +
-    '<span style="color:#C22E70;font-weight:900">이 기기에 저장된 자매 접속(내 캐릭터) 상태도 함께 지워요.</span>';
+    '<span style="color:#C22E70;font-weight:900">이 기기에 저장된 가족 접속(내 캐릭터) 상태도 함께 지워요.</span>';
   openSheet('confirmSheet');
   SFX.tap();
 }
@@ -4970,6 +5029,8 @@ function doResetAll(){
   ['dti_state','dti_prog_v1','dti_lookbook_v1','dti_timermode','dti_who'].forEach(function(k){
     try{ localStorage.removeItem(k); }catch(e){}
   });
+  /* 사람마다 담아 둔 코디(dti_look_v1_*)도 함께 지워요 */
+  try{ FAMILY.forEach(function(id){ localStorage.removeItem(LOOK_NS + id); }); }catch(e){}
   st = JSON.parse(JSON.stringify(DEFAULT_STATE));
   progress = { coins:START_COINS, found:{}, vip:{} };
   WorldCoins.resetAll(START_COINS);   /* 🪙 공용 지갑(세 게임)도 50으로 */
@@ -4999,9 +5060,9 @@ function doResetAll(){
 function famResetDevice(){
   try{ if(FAM.ready && FAM.root && FAM.meId) FAM.root.child('live/' + FAM.meId).remove(); }catch(e){}
   try{ localStorage.removeItem(FAM_KEY); }catch(e){}
-  FAM.meId = null; FAM.lastPkt = ''; FAM.lookKey = '';
+  FAM.meId = null; FAM.lastPkt = ''; FAM.lookReady = false;
   FAM.remote = null; FAM.online = false;
-  famDropActor();
+  Object.keys(FAM.others).forEach(function(id){ famDropActor(id); });
   activeName = '윤진';
   if(me){ me.label = activeName; me.nm.textContent = activeName; }
   famRenderPill(); famRenderSheet();
@@ -5172,9 +5233,15 @@ document.addEventListener('click', function(e){
       if(idx >= 0){ vsSelect(idx); SFX.tap(); renderMenu(); return; }
       turnOffVersus();
     }
+    var _wk = famIdOf(nm) || t.getAttribute('data-who');
+    if(_wk && FAMILY.indexOf(_wk) >= 0 && _wk !== FAM.meId){
+      /* 사람을 바꾸면 그 사람 지갑·코디·실시간 접속까지 함께 바뀝니다 */
+      famPick(_wk);
+      return;
+    }
     activeName = nm;
     st.name = nm;
-    var _wk = famIdOf(nm); if(_wk) WorldCoins.setKid(_wk);   /* 🪙 코인도 내 캐릭터 지갑으로 */
+    if(_wk) WorldCoins.setKid(_wk);   /* 🪙 코인도 내 캐릭터 지갑으로 */
     saveState(); paintMe(); renderMenu(); SFX.tap();
     if(me) me.nm.textContent = nm;
     return;
@@ -5334,7 +5401,7 @@ window.addEventListener('resize', function(){
 document.addEventListener('visibilitychange', function(){ lastT = 0; });
 
 /* ============================================================
-   19. 자매 같이 놀기 — 윤진 ↔ 형원 실시간 드레싱룸
+   19. 가족 같이 놀기 — 윤진 · 형원 · 엄마 · 아빠 실시간 드레싱룸
    · 경로: family-lim-7660/dressUp  (기존 kids 노드는 절대 안 건드림)
    ============================================================ */
 var FAM_CFG = {
@@ -5346,13 +5413,41 @@ var FAM_CFG = {
   messagingSenderId: '186869020161',
   appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
 };
-var FAM_PATH = 'family-lim-7660/dressUp';
-var FAM_EMO = { yunjin:'🦊', hyungwon:'🐣' };
+var FAM_TEST = (function(){
+  try{ return (new URLSearchParams(location.search || '')).get('dtest') === '1'; }catch(e){ return false; }
+})();
+/* ?dtest=1 이면 실제 가족 방(live) 대신 테스트 칸(dressUpTest)에만 씁니다 — kids·실제 접속 기록은 건드리지 않아요 */
+var FAM_PATH = FAM_TEST ? 'family-lim-7660/dressUpTest' : 'family-lim-7660/dressUp';
 var FAM_KEY = 'dti_who';
 
-/* ===== 🌍 월드 연결: 지금 노는 아이를 기억하고 ?who= 로 이어 줘 ===== */
+/* 👦👧👩👨 채씨네 네 사람 — 윤진·형원·엄마·아빠 */
+var FAMILY = ['yunjin','hyungwon','mom','dad'];
+var FAM_NAMES = { yunjin:'윤진', hyungwon:'형원', mom:'엄마', dad:'아빠' };
+var FAM_EMO = { yunjin:'🦊', hyungwon:'🐣', mom:'👩', dad:'👨' };
+var ADULT_WHO = { mom:1, dad:1 };   /* 엄마·아빠는 놀이 시간 제한 없음(world-timer.js) */
+
+/* 엄마·아빠가 처음 들어올 때의 기본 모습 — 엄마는 번 머리·핑크, 아빠는 단정한 짧은 머리·동그란 안경 */
+var WHO_LOOK = {
+  mom: { skin:'light', face:'smile', hair:'bun', hairColor:'#4A3226',
+    mode:'two', top:'knit', bottom:'flare', shoes:'mary', acc:['earring'],
+    outfitColor:'#FF8FBF', shoeColor:'#FF8FBF', pattern:'solid',
+    mkLip:'#E8467C', mkBlush:'#FF9FB0', mkEye:'none', mkNail:'#FF6BA8',
+    mkLiner:'#2B1B2B', mkGloss:'gloss', mkSparkle:'#FFF3B8', theme:'princess', pose:0 },
+  dad: { skin:'beige', face:'smile', hair:'neat', hairColor:'#22242E',
+    mode:'two', top:'jacket', bottom:'jeans', shoes:'sneaker', acc:['specs'],
+    outfitColor:'#3F6FD8', shoeColor:'#2F63C4', pattern:'solid',
+    mkLip:'#B4614A', mkBlush:'none', mkEye:'none', mkNail:'#F2C9A8',
+    mkLiner:'#2B1B2B', mkGloss:'none', mkSparkle:'none', theme:'princess', pose:0 }
+};
+
+/* ===== 🌍 월드 연결: 지금 노는 사람을 기억하고 ?who= 로 이어 줘 ===== */
 var WHO_KEY = 'lim_active_kid';
-var WHO_MAP = { yunjin:'yunjin', hyungwon:'hyungwon', hyeongwon:'hyungwon' };
+var WHO_MAP = {
+  yunjin:'yunjin', 윤진:'yunjin',
+  hyungwon:'hyungwon', hyeongwon:'hyungwon', 형원:'hyungwon',
+  mom:'mom', '엄마':'mom',
+  dad:'dad', '아빠':'dad'
+};
 function whoNorm(v){
   if(!v) return null;
   v = String(v).trim().toLowerCase();
@@ -5372,7 +5467,7 @@ function roJosa(n){
   var batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
   return s + (batchim ? '으로' : '로');
 }
-var FAM_EMO2 = { yunjin:'🦊', hyungwon:'🐣' };
+var FAM_EMO2 = FAM_EMO;
 function myWhoId(){ return FAM.meId || famStoredId() || whoSharedGet() || 'yunjin'; }
 function worldUrl(base){ return base + '?who=' + encodeURIComponent(myWhoId()); }
 function goWorldNow(base){
@@ -5386,7 +5481,7 @@ function renderWorldBar(){
   var e1 = $('kidPillEmo'), n1 = $('kidPillName'), pill = $('kidPill');
   if(e1) e1.textContent = FAM_EMO2[id] || '👧';
   if(n1) n1.textContent = famNameOf(id) || '윤진';
-  if(pill) pill.title = '지금 ' + (famNameOf(id) || '윤진') + '이 꾸미는 중 · 눌러서 바꾸기';
+  if(pill) pill.title = '지금 ' + nameGa(famNameOf(id) || '윤진') + ' 꾸미는 중 · 눌러서 바꾸기';
   var ab = $('wgoBlock'), ag = $('wgoGrow');
   if(ab) ab.setAttribute('href', './block-world.html?who=' + id);
   if(ag) ag.setAttribute('href', './grow-garden.html?who=' + id);
@@ -5397,31 +5492,79 @@ function renderWorldBar(){
   }
 }
 var FAM = {
-  ready:false, tried:0, db:null, root:null, meId:null,
-  actor:null, remote:null, lastSent:0, lastPkt:'', lookKey:'',
+  ready:false, tried:0, db:null, root:null, meId:null, lookReady:false,
+  actor:null, remote:null, others:{}, lastSent:0, lastPkt:'',
   hiSeen:{}, nearAt:0, staleT:0, online:false, warnAt:0
 };
 
 function famIdOf(name){
-  if(name === '형원') return 'hyungwon';
-  if(name === '윤진') return 'yunjin';
-  return null;
+  var s = String(name || '').trim();
+  for(var i=0;i<FAMILY.length;i++){ if(FAM_NAMES[FAMILY[i]] === s) return FAMILY[i]; }
+  return whoNorm(s);
 }
-function famNameOf(id){ return id === 'hyungwon' ? '형원' : (id === 'yunjin' ? '윤진' : ''); }
-/* 시작 자리: 윤진이는 살짝 왼쪽, 형원이는 오른쪽 — 둘이 부닥치지 않고 나란히 */
+function famNameOf(id){ return FAM_NAMES[id] || ''; }
+/* 받침에 맞춰 '윤진이가 / 엄마가' 처럼 붙여 줘요 */
+function nameGa(n){ return String(n || '') + gaOf(n); }
+function nameRo(n){
+  var s = String(n || ''); if(!s) return s;
+  var c = s.charCodeAt(s.length-1);
+  var batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+  return s + (batchim ? '이로' : '로');
+}
+function gaOf(n){
+  var s = String(n || ''); if(!s) return '가';
+  var c = s.charCodeAt(s.length-1);
+  var batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+  return batchim ? '이가' : '가';
+}
+/* 시작 자리: 윤진·엄마는 왼쪽, 형원·아빠는 오른쪽 — 서로 부닥치지 않게 */
 function spawnX(){
   if(FAM.meId === 'hyungwon') return 0.78;
   if(FAM.meId === 'yunjin') return -0.78;
+  if(FAM.meId === 'dad') return 0.42;
+  if(FAM.meId === 'mom') return -0.42;
   return 0;
 }
-function famOther(id){ return id === 'yunjin' ? 'hyungwon' : (id === 'hyungwon' ? 'yunjin' : null); }
 function famLoadId(){
   var v = null;
   try{ v = localStorage.getItem(FAM_KEY); }catch(e){ v = null; }
-  if(v === 'yunjin' || v === 'hyungwon') return v;
-  return famIdOf(activeName);
+  if(FAMILY.indexOf(v) >= 0) return v;
+  return famIdOf(activeName) || 'yunjin';
 }
 function famSaveId(id){ try{ localStorage.setItem(FAM_KEY, id); }catch(e){} }
+
+/* ---------- 사람마다 입고 있던 모습 기억 (한 폰을 가족이 같이 써도 서로 안 덮어쓰게) ---------- */
+var LOOK_NS = 'dti_look_v1_';
+function lookGet(id){
+  if(!id) return null;
+  try{
+    var raw = localStorage.getItem(LOOK_NS + id);
+    if(!raw) return null;
+    var o = JSON.parse(raw);
+    return (o && typeof o === 'object') ? o : null;
+  }catch(e){ return null; }
+}
+function lookSet(id){
+  if(!id) return;
+  try{ localStorage.setItem(LOOK_NS + id, JSON.stringify(st)); }catch(e){}
+}
+function applyStateObj(obj){
+  st = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  if(obj && typeof obj === 'object'){
+    Object.keys(DEFAULT_STATE).forEach(function(k){ if(obj[k] !== undefined && obj[k] !== null) st[k] = obj[k]; });
+    if(Object.prototype.toString.call(obj.acc) === '[object Array]') st.acc = obj.acc.slice();
+  }
+  st.name = activeName;
+}
+/* 이 사람의 모습을 불러오기: 저장된 코디 → 엄마·아빠 기본 모습 → 처음 모습 */
+function applyLookFor(id){
+  var saved = lookGet(id);
+  if(saved) applyStateObj(saved);
+  else if(WHO_LOOK[id]) applyStateObj(WHO_LOOK[id]);
+  else applyStateObj(DEFAULT_STATE);
+  try{ saveState(); }catch(e){}
+  try{ paintMe(); renderCats(); renderWardrobe(); }catch(e){}
+}
 
 /* 내 모습 중 상대에게 보여 줄 값만 (가볍게) */
 function famLook(){
@@ -5521,18 +5664,23 @@ function famAutoPick(all){
 function famStoredId(){
   try{
     var v = localStorage.getItem(FAM_KEY);
-    return (v === 'yunjin' || v === 'hyungwon') ? v : null;
+    return (FAMILY.indexOf(v) >= 0) ? v : null;
   }catch(e){ return null; }
 }
-/* 이름 적용(화면·저장) */
+/* 사람 적용(화면·저장·지갑·코디) */
 function famApplyIdentity(id, persist){
-  if(id !== 'yunjin' && id !== 'hyungwon') return;
+  if(FAMILY.indexOf(id) < 0) return;
+  var same = (FAM.meId === id);
   FAM.meId = id;
   if(persist) famSaveId(id);
-  activeName = famNameOf(id);
+  activeName = FAM_NAMES[id];
   st.name = activeName;
+  if(!same || !FAM.lookReady){
+    applyLookFor(id);
+    FAM.lookReady = true;
+  }
   if(me){ me.label = activeName; me.nm.textContent = activeName; }
-  WorldCoins.setKid(id);   /* 🪙 공용 지갑도 이 아이 지갑으로 */
+  try{ WorldCoins.setKid(id); }catch(e){}   /* 🪙 공용 지갑도 이 사람 지갑으로 */
   famRenderPill(); famRenderSheet(); renderWorldBar();
 }
 
@@ -5562,50 +5710,59 @@ function famSend(force){
 
 function famOnLive(snap){
   var all = snap && snap.val ? (snap.val() || {}) : {};
-  var oid = famOther(FAM.meId);
-  var o = oid ? all[oid] : null;
-  /* 같은 이름을 두 폰이 쓰고 있으면 살짝 알려 주기 */
+  var now = Date.now(), live = {};
+  /* 지금 방에 있는 가족 모두(최대 3명)를 각자 아바타로 보여 줘요 */
+  Object.keys(all).forEach(function(id){
+    if(!id || id === FAM.meId) return;
+    var o = all[id];
+    if(!o || typeof o.ts !== 'number' || (now - o.ts) >= 12000) return;
+    live[id] = 1;
+    famSyncActor(id, o);
+  });
+  Object.keys(FAM.others).forEach(function(id){ if(!live[id]) famDropActor(id); });
+  /* 같은 사람을 두 폰이 쓰고 있으면 살짝 알려 주기 */
   try{
     var mine = FAM.meId ? all[FAM.meId] : null;
-    if(mine && typeof mine.ts === 'number' && mine.ts > FAM.lastSent + 2500 && Date.now() - FAM.warnAt > 20000){
-      FAM.warnAt = Date.now();
-      toast('👭 다른 폰이 같은 이름(' + famNameOf(FAM.meId) + ')을 쓰고 있어요. 「자매랑 같이 놀기」에서 이름을 바꿔 주세요');
+    if(mine && typeof mine.ts === 'number' && mine.ts > FAM.lastSent + 2500 && now - FAM.warnAt > 20000){
+      FAM.warnAt = now;
+      toast('👪 다른 폰이 같은 이름(' + famNameOf(FAM.meId) + ')을 쓰고 있어요. 「가족이랑 같이 놀기」에서 다른 사람을 골라 주세요');
     }
   }catch(e){}
-  famTake(o, oid);
-}
-function famTake(o, oid){
-  if(o && typeof o.ts === 'number' && (Date.now() - o.ts) < 12000 && oid){
-    FAM.remote = o; FAM.online = true;
-    famSyncActor(oid);
-  } else {
-    if(FAM.online || FAM.remote){ FAM.remote = null; FAM.online = false; }
-    famDropActor();
-  }
+  famRefreshOnline();
   famRenderPill(); famRenderSheet();
+}
+function famRefreshOnline(){
+  var ids = Object.keys(FAM.others);
+  FAM.online = ids.length > 0;
+  FAM.actor = ids.length ? FAM.others[ids[0]].actor : null;
+  FAM.remote = ids.length ? FAM.others[ids[0]].pkt : null;
 }
 function famCheckStale(){
   if(!FAM.ready) return;
-  if(FAM.remote && (Date.now() - (FAM.remote.ts || 0)) > 12000){
-    FAM.remote = null; FAM.online = false;
-    famDropActor(); famRenderPill(); famRenderSheet();
-  }
+  var now = Date.now(), dropped = false;
+  Object.keys(FAM.others).forEach(function(id){
+    var p = FAM.others[id].pkt;
+    if(!p || now - (p.ts || 0) > 12000){ famDropActor(id); dropped = true; }
+  });
+  if(dropped){ famRefreshOnline(); famRenderPill(); famRenderSheet(); }
   /* 내 접속도 살아 있다고 알려 주기 */
   if(Date.now() - FAM.lastSent > 3500) famSend(true);
 }
-function famDropActor(){
-  if(FAM.actor && FAM.actor.el && FAM.actor.el.parentNode) FAM.actor.el.parentNode.removeChild(FAM.actor.el);
-  FAM.actor = null; FAM.lookKey = '';
+function famDropActor(id){
+  var rec = FAM.others[id];
+  if(!rec) return;
+  if(rec.actor && rec.actor.el && rec.actor.el.parentNode) rec.actor.el.parentNode.removeChild(rec.actor.el);
+  delete FAM.others[id];
 }
-function famSyncActor(oid){
-  var o = FAM.remote;
+function famSyncActor(oid, o){
   if(!o) return;
   var label = (typeof o.n === 'string' && o.n.length && o.n.length < 12) ? o.n : famNameOf(oid);
-  if(!FAM.actor){
-    FAM.actor = makeActor(label, 'sis', o.x, o.z);
-    FAM.lookKey = '';
+  var rec = FAM.others[oid];
+  if(!rec || !rec.actor || !rec.actor.el || !rec.actor.el.parentNode){
+    rec = FAM.others[oid] = { actor: makeActor(label, 'sis', Number(o.x) || 0, Number(o.z) || 1), pkt: o, lookKey: '', nearAt: 0 };
   }
-  var a = FAM.actor;
+  rec.pkt = o;
+  var a = rec.actor;
   a.label = label;
   if(a.nm.textContent !== label) a.nm.textContent = label;
   a.x = clamp(Number(o.x) || 0, WORLD.x0 + 0.4, WORLD.x1 - 0.4);
@@ -5614,8 +5771,8 @@ function famSyncActor(oid){
   a.flip = (o.d === -1);
   a.pose = Number(o.p) || 0;
   var lk = JSON.stringify(o.look || {});
-  if(lk !== FAM.lookKey){
-    FAM.lookKey = lk;
+  if(lk !== rec.lookKey){
+    rec.lookKey = lk;
     paintActor(a, famState(o.look));
   }
   a.el.classList.remove('pose1','pose2','pose3');
@@ -5627,20 +5784,26 @@ function famSyncActor(oid){
 /* 가까이 가면 하트 팡! · 말풍선 */
 var FAM_HELLO = ['같이 놀자!', '안녕! 👋', '여기 있어!', '만나서 반가워!', '내 옷 어때?'];
 function famStep(dt){
-  if(!FAM.remote) return;
-  /* 화면 회전·크기 변화로 아바타가 지워졌으면 다시 만들어 둔다 */
-  famSyncActor(famOther(FAM.meId));
-  if(!FAM.actor) return;
-  var dx = FAM.actor.x - PLAYER.x, dz = FAM.actor.z - PLAYER.z;
-  if(Math.hypot(dx, dz) < 0.95 && Date.now() - FAM.nearAt > 12000){
-    FAM.nearAt = Date.now();
-    famSay(pick(FAM_HELLO));
-    famHearts(FAM.actor, 6);
+  var ids = Object.keys(FAM.others);
+  if(!ids.length) return;
+  for(var i=0;i<ids.length;i++){
+    var rec = FAM.others[ids[i]];
+    if(!rec) continue;
+    /* 화면 회전·크기 변화로 아바타가 지워졌으면 다시 만들어 둔다 */
+    if(!rec.actor || !rec.actor.el || !rec.actor.el.parentNode){ famSyncActor(ids[i], rec.pkt); rec = FAM.others[ids[i]]; }
+    if(!rec || !rec.actor) continue;
+    var a = rec.actor;
+    var dx = a.x - PLAYER.x, dz = a.z - PLAYER.z;
+    if(Math.hypot(dx, dz) < 0.95 && Date.now() - (rec.nearAt || 0) > 12000){
+      rec.nearAt = Date.now();
+      famSay(a, pick(FAM_HELLO));
+      famHearts(a, 6);
+    }
   }
 }
-function famSay(text){
-  if(!FAM.actor) return;
-  sayBubble(FAM.actor, text);
+function famSay(actor, text){
+  if(!actor) return;
+  sayBubble(actor, text);
 }
 function famHearts(actor, n){
   if(!actor || !roomEl) return;
@@ -5679,7 +5842,13 @@ function famHiSend(){
   }catch(e){}
   famHearts(me ? { x:PLAYER.x, z:PLAYER.z, y:PLAYER.y } : null, 5);
   SFX.pick();
-  toast(FAM.online ? '👋 ' + famNameOf(famOther(FAM.meId)) + '에게 인사를 보냈어요!' : '👋 인사를 남겨 뒀어요 (상대가 들어오면 보여요)');
+  toast(FAM.online ? '👋 ' + famOnlineNames() + '에게 인사를 보냈어요!' : '👋 인사를 남겨 뒀어요 (가족이 들어오면 보여요)');
+}
+/* 지금 방에 있는 가족 이름 ("윤진·엄마") */
+function famOnlineNames(){
+  var ids = Object.keys(FAM.others);
+  if(!ids.length) return '';
+  return ids.map(function(id){ return famNameOf(id) || (FAM.others[id].actor && FAM.others[id].actor.label) || id; }).join('·');
 }
 function famOnHi(snap){
   var v = snap && snap.val ? snap.val() : null;
@@ -5688,24 +5857,37 @@ function famOnHi(snap){
   FAM.hiSeen[snap.key] = 1;
   if(Date.now() - (v.ts || 0) > 15000) return;
   if(!FAM.online) return;
-  famSay('인사 왔어! 👋');
-  famHearts(FAM.actor || { x:PLAYER.x, z:PLAYER.z, y:PLAYER.y }, 7);
+  var rec = FAM.others[v.from];
+  var target = (rec && rec.actor) || FAM.actor || { x:PLAYER.x, z:PLAYER.z, y:PLAYER.y };
+  famSay(target, '인사 왔어! 👋');
+  famHearts(target, 7);
   SFX.fanfare();
 }
-/* 상대가 어디 있는지 안내 */
+/* 가족이 어디 있는지 안내 */
 function famWhere(){
-  if(!FAM.remote || !FAM.actor){ toast('지금은 ' + (FAM.meId ? famNameOf(famOther(FAM.meId)) + '이가' : '자매가') + ' 안 보여요'); return; }
-  var p = proj(FAM.actor.x, FAM.actor.z, 0);
-  var dx = FAM.actor.x - PLAYER.x, dz = FAM.actor.z - PLAYER.z;
+  var ids = Object.keys(FAM.others);
+  if(!ids.length){ toast('지금은 ' + (FAM.meId ? '같이 놀고 있는 가족이' : '가족이') + ' 안 보여요'); return; }
+  var best = null, bd = 1e9, names = [];
+  ids.forEach(function(id){
+    var a = FAM.others[id].actor;
+    if(!a) return;
+    names.push(famNameOf(id) || a.label);
+    var d = Math.hypot(a.x - PLAYER.x, a.z - PLAYER.z);
+    if(d < bd){ bd = d; best = a; }
+  });
+  if(!best){ toast('지금은 가족이 안 보여요'); return; }
+  var dx = best.x - PLAYER.x, dz = best.z - PLAYER.z;
   var dir = Math.abs(dx) > Math.abs(dz) ? (dx > 0 ? '오른쪽' : '왼쪽') : (dz > 0 ? '앞쪽' : '뒤쪽');
-  famHearts(FAM.actor, 4);
-  toast('🧭 ' + famNameOf(famOther(FAM.meId)) + '이는 ' + dir + '에 있어요 (' + Math.hypot(dx,dz).toFixed(1) + ' 걸음)');
+  famHearts(best, 4);
+  toast('🧭 ' + names.join('·') + (names.length > 1 ? ' 중 가장 가까운 ' : '') + '가 ' + dir + '에 있어요 (' + bd.toFixed(1) + ' 걸음)');
 }
 
 /* 내 캐릭터 바꾸기 (기기별 저장) */
 function famPick(id){
-  if(id !== 'yunjin' && id !== 'hyungwon') return;
+  if(FAMILY.indexOf(id) < 0) return;
   var old = FAM.meId;
+  if(old && old !== id) lookSet(old);   /* 바꾸기 전 모습은 그 사람 것으로 보관 */
+  FAM.lookReady = false;
   famApplyIdentity(id, true);
   whoSharedSet(id);
   renderWorldBar();
@@ -5714,8 +5896,8 @@ function famPick(id){
     famClaim();
     famSend(true);
   }
-  renderMenu();
-  toast(FAM_EMO[id] + ' 이 폰은 ' + famNameOf(id) + '으로 놀아요');
+  renderMenu(); renderAll();
+  toast(FAM_EMO[id] + ' 이 폰은 ' + nameRo(famNameOf(id)) + (ADULT_WHO[id] ? ' 놀아요 · 시간 제한 없음' : ' 놀아요'));
   SFX.pick();
 }
 
@@ -5723,12 +5905,11 @@ function famPick(id){
 function famRenderPill(){
   var pill = $('sisPill'), me2 = $('sisMe');
   if(!pill || !me2) return;
-  var oid = famOther(FAM.meId);
-  me2.textContent = FAM.meId ? (FAM_EMO[FAM.meId] + ' ' + famNameOf(FAM.meId)) : '👭 같이';
+  me2.textContent = FAM.meId ? (FAM_EMO[FAM.meId] + ' ' + famNameOf(FAM.meId)) : '👪 같이';
   pill.classList.toggle('on', !!FAM.online);
   pill.title = FAM.online
-    ? famNameOf(oid) + ' 접속 중! 같은 방에서 만날 수 있어요'
-    : '자매랑 같이 놀기 — 내 캐릭터를 골라 주세요';
+    ? famOnlineNames() + ' 접속 중! 같은 방에서 만날 수 있어요'
+    : '가족이랑 같이 놀기 — 내 캐릭터를 골라 주세요';
 }
 function famRenderSheet(){
   var who = $('famWho');
@@ -5738,20 +5919,21 @@ function famRenderSheet(){
   }
   var st2 = $('famState');
   if(!st2) return;
-  var oid = famOther(FAM.meId);
   var av = $('famStateAv'), tx = $('famStateTx'), lv = $('famStateLive');
+  var ids = Object.keys(FAM.others);
   st2.classList.toggle('off', !FAM.online);
   if(!FAM.meId){
-    if(av) av.textContent = '👭';
-    if(tx) tx.innerHTML = '<b>내 캐릭터를 골라 주세요</b><small>윤진 또는 형원 중 하나</small>';
+    if(av) av.textContent = '👪';
+    if(tx) tx.innerHTML = '<b>내 캐릭터를 골라 주세요</b><small>윤진·형원·엄마·아빠 중 하나</small>';
     if(lv) lv.textContent = '대기';
-  } else if(FAM.online){
-    if(av) av.textContent = FAM_EMO[oid] || '👭';
-    if(tx) tx.innerHTML = '<b>' + famNameOf(oid) + '이</b>가 놀러 왔어요!<small>방 안에서 같이 걸어 다녀 보세요</small>';
-    if(lv) lv.textContent = '접속 중';
+  } else if(ids.length){
+    var firstId = ids[0];
+    if(av) av.textContent = FAM_EMO[firstId] || '👪';
+    if(tx) tx.innerHTML = '<b>' + famOnlineNames() + '</b>' + gaOf(famOnlineNames()) + ' 같이 놀고 있어요!<small>방 안에서 같이 걸어 다녀 보세요</small>';
+    if(lv) lv.textContent = ids.length + '명 접속';
   } else {
-    if(av) av.textContent = FAM_EMO[FAM.meId] || '👭';
-    if(tx) tx.innerHTML = '<b>' + famNameOf(FAM.meId) + '으로</b> 놀 준비<small>' + (FAM.ready ? famNameOf(oid) + '의 폰이 들어오길 기다리는 중…' : '연결 중…') + '</small>';
+    if(av) av.textContent = FAM_EMO[FAM.meId] || '👪';
+    if(tx) tx.innerHTML = '<b>' + nameRo(famNameOf(FAM.meId)) + '</b> 놀 준비<small>' + (FAM.ready ? '다른 가족의 폰이 들어오길 기다리는 중…' : '연결 중…') + '</small>';
     if(lv) lv.textContent = FAM.ready ? '대기' : '연결 중';
   }
 }
@@ -5785,7 +5967,12 @@ WorldCoins.init({
 renderMute();
 renderTimerMode();
 renderMenu();
-/* 이 폰의 캐릭터 이름 기억(있으면 바로 적용) — ?who= 로 넘어오면 그 아이 우선 */
+/* 이 폰의 캐릭터 이름 기억(있으면 바로 적용) — ?who= 로 넘어오면 그 사람 우선 */
+/* 지금 입고 있던 코디를, 그동안 쓰던 사람(아이)의 것으로 먼저 담아 둡니다 — 업데이트해도 아이 옷이 안 사라지게 */
+(function(){
+  var prev = famStoredId() || whoSharedGet() || 'yunjin';
+  if(prev && !ADULT_WHO[prev] && !lookGet(prev)) lookSet(prev);
+})();
 var BOOT_WHO = whoFromUrl();
 if(BOOT_WHO){
   famApplyIdentity(BOOT_WHO, true);
