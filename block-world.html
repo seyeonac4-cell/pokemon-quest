@@ -824,7 +824,7 @@ input{font-family:inherit}
           <span class="go">바로 가기 ›</span>
         </button>
       </div>
-      <p class="shop-note">마을 광장 북쪽에 나란히 선 빛나는 <b>🌱 그로우 어 가든</b> · <b>👗 드레스 투 임프레스</b> 문이 있어요. 마을 서쪽 <b>🏰 3탄 타워 입구</b> · <b>🫧 4탄 왁뿌볼 타워 입구</b> 문 앞에서 「이동」을 누르면 돼요!</p>
+      <p class="shop-note">문은 코스 끝에 있어요! 🌱 <b>그로우 어 가든</b>은 1탄 무지개 성 안, 👗 <b>드레스 투 임프레스</b>는 2탄 왕관 앞, 🏰 <b>3탄</b>은 2탄 왕관 앞, 🫧 <b>4탄</b>은 3탄 꼭대기에 있는 문으로 들어가요. 급할 땐 여기 <b>바로 가기</b>를 눌러요!</p>
     </div>
   </div>
 
@@ -942,8 +942,8 @@ input{font-family:inherit}
         <div><span>체크포인트</span><b id="champCps">0</b></div>
         <div><span>받은 상</span><b id="champPrize">+40</b></div>
       </div>
-      <button class="btn primary" id="champAgain" type="button">🔁 2탄 다시 도전</button>
-      <button class="btn blue mt8" id="champNext3" type="button">🏰 3탄 무지개 타워 도전!</button>
+      <button class="btn primary" id="champNext3" type="button">🏰 바로 3탄 무지개 타워로 이어서 도전!</button>
+      <button class="btn blue mt8" id="champAgain" type="button">🔁 2탄 다시 도전</button>
       <button class="btn ghost mt8" data-close="champOverlay" type="button">마을로 돌아갈래</button>
     </div>
   </div>
@@ -964,8 +964,8 @@ input{font-family:inherit}
         <div><span>최단 기록</span><b id="twBest">0:00</b></div>
         <div><span>받은 상</span><b id="twPrize">+50</b></div>
       </div>
-      <button class="btn primary" id="twAgain" type="button">🔁 타워 다시 도전</button>
-      <button class="btn blue mt8" id="twNext4" type="button">🫧 4탄 왁뿌볼 타워 도전!</button>
+      <button class="btn primary" id="twNext4" type="button">🫧 바로 4탄 왁뿌볼 타워로 이어서 도전!</button>
+      <button class="btn blue mt8" id="twAgain" type="button">🔁 타워 다시 도전</button>
       <button class="btn ghost mt8" id="twHome" type="button">🏠 마을로 돌아갈래</button>
     </div>
   </div>
@@ -1740,7 +1740,9 @@ var TYPES = {
   lava:   { top: '#ff6a2a', right: '#cf3d10', left: '#9e2b07' },
   mover:  { top: '#a9e2ff', right: '#63b6e8', left: '#3d8cc2' },
   // 🫧 4탄 왁뿌볼(젤리 구슬) 발판 — 실제 색은 타일마다 tint 로 들어가요
-  jelly:  { top: '#ffd4e8', right: '#ef8fc2', left: '#d9709f' }
+  jelly:  { top: '#ffd4e8', right: '#ef8fc2', left: '#d9709f' },
+  // 🧊 미끄러운 젤리 발판 (4탄 2층)
+  slip:   { top: '#d6f2ff', right: '#a9dcf2', left: '#7cc0dd' }
 };
 
 // ⌨️ 키캡 색 (알록달록 기계식 키보드)
@@ -1753,7 +1755,7 @@ function seedOf(x, y) {
 
 function buildMap() {
   var tiles = [], map = {}, gates = [], coinsArr = [], cps = [], trees = [], flowers = [], keyTiles = [];
-  var movers = [], spins = [], portals = [], crmTiles = [], jellyTiles = [];
+  var movers = [], spins = [], portals = [], crmTiles = [], jellyTiles = [], rollers = [], enemies = [];
 
   function add(x, y, z, type, opt) {
     var t = {
@@ -1823,32 +1825,37 @@ function buildMap() {
     for (var krx = 0; krx < KEY_ROWS[kry].length; krx++) keyTile(1 + krx, 1 + kry, 0, KEY_ROWS[kry][krx]);
   }
 
-  /* --- 2) 노란 벽돌 길 --- */
-  rect(8, 2, 12, 3, 0, 'brick');
+  /* --- 2) 노란 벽돌 길 — 1단계 입구를 6칸으로 넓게! (전에는 2칸이라 좁았어요) --- */
+  rect(8, 0, 12, 5, 0, 'brick');
 
-  /* --- 3) 점프 발판: 넉넉한 안전 디딤돌 + 가운데 키보드 블록 --- */
+  /* --- 3) 점프 발판: 넉넉한 안전 디딤돌 + 가운데 키보드 블록 ---
+     입구가 답답하지 않게 발판을 위아래로 한 줄씩 더 넓혔어요 (6칸). */
   gridKeys(14, 1, [
     [null, null, null, null],
     [null, 'A', 'S', null],
     [null, 'D', 'F', null],
     [null, null, null, null]
   ]);
+  rect(14, 0, 17, 0, 0, 'stone');
+  rect(14, 5, 17, 5, 0, 'stone');
   gridKeys(19, 1, [
     [null, null, null, null, null],
     [null, 'J', 'K', 'L', null],
     [null, '←', '→', '★', null],
     [null, null, null, null, null]
   ]);
-  // 점프 발판 양옆 난간 — 점프는 앞뒤(x)로만, 옆으로는 안 떨어져요
-  for (var jx = 14; jx <= 17; jx++) { railTile(jx, 0, 0); railTile(jx, 5, 0); }
-  for (var jx2 = 19; jx2 <= 22; jx2++) { railTile(jx2, 0, 0); railTile(jx2, 5, 0); }
+  rect(19, 0, 23, 0, 0, 'stone');
+  rect(19, 5, 23, 5, 0, 'stone');
+  // 점프 발판 양옆 난간 — 한 칸 더 바깥으로 물려 입구를 가로막지 않게 했어요
+  for (var jx = 14; jx <= 17; jx++) { railTile(jx, -1, 0); railTile(jx, 6, 0); }
+  for (var jx2 = 19; jx2 <= 23; jx2++) { railTile(jx2, -1, 0); railTile(jx2, 6, 0); }
 
   /* --- 3-1) 안전 쿠션: 점프가 짧아도 죽지 않고 퐁 하고 받아 줘요 --- */
-  rect(13, 1, 13, 4, -1, 'stone', { tint: '#ffd9e8' });
-  rect(18, 1, 18, 4, -1, 'stone', { tint: '#d6f0ff' });
+  rect(13, 0, 13, 5, -1, 'stone', { tint: '#ffd9e8' });
+  rect(18, 0, 18, 5, -1, 'stone', { tint: '#d6f0ff' });
 
   /* --- 4) 첫 번째 타자 섬 --- */
-  rect(24, 2, 24, 4, 0, 'wood');
+  rect(24, 1, 24, 5, 0, 'wood');
   rect(25, 2, 29, 4, 0, 'neon', { hidden: true });
 
   /* --- 5) 중간 쉼터 --- */
@@ -2111,264 +2118,332 @@ function buildMap() {
   coin(96, 13, 6.75, true); coin(98, 13, 6.75, true); coin(97, 14.5, 6.75, true);
 
   /* ============================================================
-     🏰 9-4) 3탄 — 무지개 타워 (타워 오브 헬 스타일 수직 점프맵)
-     마을 서쪽 「🏰 3탄 타워 입구」 문으로 들어오면 하늘 섬 위에
-     무지개 탑이 서 있어요. 1층 빨강 → 6층 보라 꼭대기 트로피!
-     층마다 뒤로 7칸씩 물러나며 1.5칸씩 높아져서 화면에서는
-     위로 곧게 솟은 무지개 탑처럼 보여요.
+     🏰 9-4) 3탄 — 무지개 타워 (하드모드 진짜 점프맵)
+     ------------------------------------------------------------
+     · 층마다 발판 「섬」이 2칸 떨어져 있어서 점프로만 건널 수 있어요.
+       (예전처럼 계단으로 걸어 올라갈 수 없어요!)
+     · 점프가 닿는 거리(최대 약 3.9칸)에 맞춰 발판을 놓았어요 —
+       가만히 서서 점프해도, 힘껏 달려서 점프해도 발판에 닿아요.
+     · 층과 층 사이는 「점프 디딤돌」 세 개로 반 칸씩 올라가요.
+     · 떨어지면 방금 지나온 층 체크포인트 깃발에서 즉시 부활!
      ============================================================ */
-  var T3X = 120, T3Y = 4, T3_STEP = 7, T3_DZ = 1.5;
+  var T3X = 120, T3Y = 4, T3_STEP = 10, T3_DZ = 1.5, T3_Z0 = 0.9;
   var T3_COL = ['#ff3d4e', '#ff8412', '#ffc400', '#2fbf5b', '#2b86ff', '#8a4dff'];
   var T3_LIT = ['#ffd3d4', '#ffe1c2', '#fff3bd', '#cdf3d8', '#cfe6ff', '#e4d6ff'];
   var T3_NAM = ['1층 빨강', '2층 주황', '3층 노랑', '4층 초록', '5층 파랑', '6층 보라'];
-  function t3x(k) { return T3X - T3_STEP * k; }
-  function t3y(k) { return T3Y - T3_STEP * k; }
-  function t3z(k) { return T3_DZ * k; }
-  // 한 층 바닥 — 6×6 색 타일 (holes 목록 칸은 비워 둡니다)
-  function t3plate(k, holes) {
-    var hs = {};
-    (holes || []).forEach(function (h) { hs[h[0] + ',' + h[1]] = 1; });
-    for (var dx = 0; dx <= 5; dx++) {
-      for (var dy = 0; dy <= 5; dy++) {
-        if (hs[dx + ',' + dy]) continue;
-        var edge = (dx === 0 || dx === 5 || dy === 0 || dy === 5);
-        add(t3x(k) + dx, t3y(k) + dy, t3z(k), 'stone', {
-          tint: edge ? T3_LIT[k] : T3_COL[k],
-          step: edge ? 0.5 : 0.95
-        });
-      }
+  /* [층별 발판]  dx,dy = 층 기준 칸 · w,d = 가로·세로 칸
+     발판 사이 빈칸(2칸)이 「점프 틈」이에요. */
+  var T3_FLOORS = [
+    { /* 1층 빨강 — 워밍업: 2칸 점프 + 느린 회전 막대 + 첫 적 */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      spin: [[3.0, 4.5, 1.0, 0.85]],
+      foe: [[4.4, 3.4, 5.4, 3.4, 1.4]],
+      coins: [[4, 5], [2, 4], [0.5, 4, 1]]
+    },
+    { /* 2층 주황 — 사라지는 블록 다리 (멈추면 사라져요) */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      crm: [[1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5]],
+      foe: [[0.5, 3.4, 0.5, 5.4, 1.6]],
+      coins: [[4, 3, 1], [2, 4], [0.5, 5]]
+    },
+    { /* 3층 노랑 — 타이밍 맞춰 움직이는 발판 */
+      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      move: [['x', 1, 4, 1, 1.05, 0, 2]],
+      foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
+      coins: [[2, 5], [1, 5, 1], [0.5, 4]]
+    },
+    { /* 4층 초록 — 굴러오는 구슬 + 순찰하는 적 */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      roll: [[0.2, 4.2, 1.8, 4.2, 0.4, 1.15, 0]],
+      spin: [[3.0, 4.5, 1.0, 1.15]],
+      foe: [[4.4, 4.3, 5.4, 4.3, 1.8]],
+      coins: [[4, 5], [2, 4], [1, 4.5, 1]]
+    },
+    { /* 5층 파랑 — 사라지는 블록 + 움직이는 발판 + 빠른 회전 막대 */
+      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      crm: [[2, 3], [2, 4], [2, 5]],
+      move: [['y', 1, 2, 1, 0.95, 1.0, 1]],
+      foe: [[0.5, 3.4, 0.5, 5.4, 1.7]],
+      coins: [[4, 5, 1], [2, 4], [0.5, 3]]
+    },
+    { /* 6층 보라 — 꼭대기: 마지막 2칸 점프 + 황금 왕좌 트로피 */
+      pads: [[4, 3, 2, 3], [0, 1, 2, 3, 'gold']],
+      coins: [[3.5, 5, 1], [1, 2, 1], [1, 3, 1]]
     }
-  }
-  // 층 사이 계단 3칸 (반 칸씩 — 그냥 걸어도 올라가요)
-  function t3step(k, dx, dy, zz) {
-    add(t3x(k) + dx, t3y(k) + dy, zz, 'stone', { tint: T3_LIT[k], step: 0.5 });
-  }
-  function t3stairs(k) {
-    t3step(k, -1, 0, t3z(k) + 0.5);
-    t3step(k, -1, -1, t3z(k) + 1.0);
-    t3step(k, -1, -2, t3z(k) + 1.25);
-    // 마지막 한 칸은 위층 모서리(5,5)가 이어 받아요
-  }
-  // 난간 — 계단 쪽(북서) 모서리만 열어 두고 둘러쳐요
-  function t3rails(k) {
-    var z = t3z(k), d;
-    for (d = 0; d <= 4; d++) {
-      railTile(t3x(k) + 6, t3y(k) + d, z);
-      railTile(t3x(k) + d, t3y(k) + 6, z);
-    }
-    for (d = 2; d <= 5; d++) railTile(t3x(k) - 1, t3y(k) + d, z);
-    for (d = 1; d <= 5; d++) railTile(t3x(k) + d, t3y(k) - 1, z);
-  }
-
-  /* ① 하늘 섬 — 1층 바닥을 감싸는 잔디 섬 */
-  rect(T3X - 3, T3Y - 3, T3X + 8, T3Y + 8, 0, 'grass');
-  for (var t3f = 0; t3f < 14; t3f++) {
-    var t3fx = rnd(T3X - 2.6, T3X + 7.6), t3fy = rnd(T3Y - 2.6, T3Y + 7.6);
-    if (t3fx > T3X - 0.8 && t3fx < T3X + 5.8 && t3fy > T3Y - 0.8 && t3fy < T3Y + 5.8) continue;
-    flowers.push({ x: t3fx, y: t3fy, z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
-  }
-  trees.push({ x: T3X - 2.2, y: T3Y + 7.6, z: 0, s: 0.9 });
-  trees.push({ x: T3X + 7.6, y: T3Y - 1.6, z: 0, s: 0.95 });
-  add(T3X + 6, T3Y + 7, 0, 'bounce');        // 🟣 하늘 섬 폼폼 점프대 (재미용)
-
-  /* ② 6개 층 — 색깔 바닥 + 계단 + 난간 */
-  for (var t3k = 0; t3k <= 5; t3k++) {
-    if (t3k === 2) t3plate(t3k, [[2, 2], [3, 2], [2, 3], [3, 3]]);          // 3층: 사라지는 발판 자리
-    else if (t3k === 4) t3plate(t3k, [[2, 2], [3, 2], [4, 2], [2, 3], [3, 3], [4, 3]]); // 5층: 발판 구덩이
-    else t3plate(t3k);
-    if (t3k >= 1) t3rails(t3k);
-    if (t3k <= 4) t3stairs(t3k);
-    if (t3k >= 1 && t3k <= 4) {
-      props.push({ k: 'houseSign', x: t3x(t3k) + 3.1, y: t3y(t3k) + 5.5, z: t3z(t3k), who: null, label: T3_NAM[t3k], emoji: '🌈' });
-    }
-  }
-  props.push({ k: 'houseSign', x: T3X + 0.6, y: T3Y + 6.4, z: 0, who: null, label: '3탄 무지개 타워', emoji: '🏰' });
-
-  /* ③ 3층(노랑) — 밟으면 흔들리다 사라지는 발판 4칸 */
-  for (var t3c = 0; t3c < 4; t3c++) {
-    add(t3x(2) + 2 + (t3c % 2), t3y(2) + 2 + Math.floor(t3c / 2), t3z(2),
-      'crumble', { crm: 1, step: 0.95 });
-  }
-
-  /* ④ 4층(초록) — 가운데 회전 막대 (스치면 휙!) */
-  spins.push({ id: 'tw1', x: t3x(3) + 2.5, y: t3y(3) + 2.5, z: t3z(3), len: 1.7, speed: 1.15, a: 0, hitAt: 0 });
-
-  /* ⑤ 5층(파랑) — 움직이는 발판으로 구덩이를 건너요 */
-  var twMv = { id: 'twmv', axis: 'x', span: 2, speed: 1.05, phase: 0, prev: 1, tiles: [] };
-  for (var t3my = 2; t3my <= 3; t3my++) {
-    var twMt = add(t3x(4) + 3, t3y(4) + t3my, t3z(4), 'mover', { mv: 'twmv' });
-    twMt.mvAxis = 'x';
-    twMt.mx = t3x(4) + 2;
-    twMt.x = t3x(4) + 2 + twMv.prev;
-    twMv.tiles.push(twMt);
-  }
-  movers.push(twMv);
-
-  /* ⑥ 6층(보라) 꼭대기 — 황금 왕좌 바닥 + 트로피 */
-  for (var t3gx = 1; t3gx <= 4; t3gx++) {
-    for (var t3gy = 1; t3gy <= 4; t3gy++) {
-      add(t3x(5) + t3gx, t3y(5) + t3gy, t3z(5), 'gold', { step: 0.95 });
-    }
-  }
-  var finish3 = { x: t3x(5) + 2.5, y: t3y(5) + 2.5, z: t3z(5) };
-
-  /* ⑦ 타워 코인 (3탄 체크포인트는 아래 12) 목록 맨 뒤에 따로 추가해요) */
-  coin(T3X + 2.5, T3Y + 2.5, 0.55);
-  coin(T3X + 1.5, T3Y + 5.5, 0.55);
-  coin(t3x(1) + 2.5, t3y(1) + 2.5, t3z(1) + 0.55, true);
-  coin(t3x(1) + 4.5, t3y(1) + 4.5, t3z(1) + 0.55);
-  coin(t3x(2) + 1.4, t3y(2) + 1.4, t3z(2) + 0.55);
-  coin(t3x(2) + 4.6, t3y(2) + 1.4, t3z(2) + 0.55, true);
-  coin(t3x(3) + 1.3, t3y(3) + 4.6, t3z(3) + 0.55);
-  coin(t3x(3) + 5.4, t3y(3) + 5.4, t3z(3) + 0.55);
-  coin(t3x(4) + 1.4, t3y(4) + 1.4, t3z(4) + 0.55, true);
-  coin(t3x(4) + 5.4, t3y(4) + 1.4, t3z(4) + 0.55);
-  coin(t3x(4) + 5.4, t3y(4) + 5.4, t3z(4) + 0.55);
-  coin(t3x(5) + 1.5, t3y(5) + 1.5, t3z(5) + 0.55, true);
-  coin(t3x(5) + 4.5, t3y(5) + 4.5, t3z(5) + 0.55, true);
-
-  /* ⑧ 하늘 섬 — 마을로 돌아가는 자리 */
-  spots.push({ x: T3X + 6.5, y: T3Y + 2.5, z: 0, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  ];
 
   /* ============================================================
-     🫧 9-5) 4탄 — 퐁실퐁실 왁뿌볼 타워
-     마을 서쪽 「🫧 4탄 왁뿌볼 타워 입구」 문으로 들어오면 파스텔
-     구슬(왁뿌볼) 발판이 6층으로 솟은 말랑 타워가 나와요. 발판을
-     밟을 때마다 말랑하게 눌렸다가 퐁실퐁실 튀어 오르고,
-     사그락사그락 구슬 ASMR 소리와 반짝이가 톡톡 터져요.
+     🫧 9-5) 4탄 — 퐁실퐁실 왁뿌볼 타워 (하드모드)
+     ------------------------------------------------------------
+     · 미끄러운 젤리 · 빨리 사라지는 구슬 · 움직이는 구슬 발판 ·
+       굴러오는 구슬 · 점프 젤리까지! 3탄보다 한 단계 더 어려워요.
      ============================================================ */
-  var JX = 150, JY = -42, J_STEP = 6, J_DZ = 1.6;
+  var JX = 150, JY = -42, J_STEP = 10, J_DZ = 1.6, J_Z0 = 0.9;
   var J_COL = ['#ffcfe4', '#dcc9ff', '#bdf0d6', '#c6e4ff', '#ffe7ae', '#ffd6ea'];
   var J_DEEP = ['#ef8fc2', '#a98bff', '#5fd0a6', '#79bdf0', '#e8bf62', '#f79ecb'];
   var J_NAM = ['1층 딸기 젤리', '2층 포도 젤리', '3층 민트 젤리', '4층 하늘 젤리', '5층 크림 젤리', '6층 복숭아 젤리'];
-  function bx4(k) { return JX - J_STEP * k; }
-  function by4(k) { return JY - J_STEP * k; }
-  function bz4(k) { return J_DZ * k; }
-  /* 왁뿌볼 하나 — t.jelly=1 이면 그리기·소리가 4탄 전용(사그락·퐁실)으로 바뀝니다 */
-  function jbead(x, y, z, k, opt) {
-    var o = opt || {};
-    var t = add(x, y, z, 'jelly', {
-      tint: o.tint || J_COL[k], step: 0.58, hidden: o.hidden, crm: o.crm ? 1 : 0
-    });
-    t.jelly = 1; t.jc = o.tint || J_COL[k]; t.jd = J_DEEP[k]; t.jk = k;
-    t.jedge = o.edge ? 1 : 0;
-    t.sq = 0; t.sqv = 0;
-    jellyTiles.push(t);
-    return t;
-  }
-  /* 한 층 바닥 — 5×5 구슬 판 (holes 칸은 비워 둬요) */
-  function jplate(k, holes) {
-    var hs = {};
-    (holes || []).forEach(function (h) { hs[h[0] + ',' + h[1]] = 1; });
-    for (var dx = 0; dx <= 4; dx++) {
-      for (var dy = 0; dy <= 4; dy++) {
-        if (hs[dx + ',' + dy]) continue;
-        var edge = (dx === 0 || dx === 4 || dy === 0 || dy === 4);
-        jbead(bx4(k) + dx, by4(k) + dy, bz4(k), k, { edge: edge });
+  var J4_FLOORS = [
+    { /* 1층 딸기 — 2칸 점프 (말랑 구슬) */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      coins: [[5, 5], [3, 4], [0.5, 4, 1]]
+    },
+    { /* 2층 포도 — 미끄러운 젤리 다리 */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      slip: [[1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5]],
+      foe: [[4.4, 5.4, 5.4, 5.4, 1.6]],
+      coins: [[5, 3, 1], [2, 4], [0.5, 5]]
+    },
+    { /* 3층 민트 — 0.6초 만에 사라지는 구슬 다리 */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      crm: [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5]],
+      foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
+      coins: [[5, 5, 1], [3, 4], [0.5, 4]]
+    },
+    { /* 4층 하늘 — 움직이는 구슬 발판 + 회전 막대 */
+      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      move: [['x', 1, 4, 1, 1.1, 0, 2]],
+      foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
+      coins: [[2, 5], [1, 5, 1], [0.5, 4]]
+    },
+    { /* 5층 크림 — 굴러오는 구슬 회랑 */
+      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      roll: [[0.2, 4.2, 1.8, 4.2, 0.4, 1.25, 0]],
+      spin: [[3.0, 4.5, 1.0, 1.2]],
+      foe: [[4.4, 4.3, 5.4, 4.3, 1.8]],
+      coins: [[5, 5], [2, 4.3], [1, 4.3, 1]]
+    },
+    { /* 6층 복숭아 — 점프 젤리 + 꼭대기 트로피 */
+      pads: [[4, 3, 2, 3], [0, 1, 2, 3, 'gold']],
+      gel: [[4, 5]],
+      coins: [[5, 5, 1], [1, 2, 1], [1, 3, 1]]
+    }
+  ];
+
+  /* --- 두 타워를 같은 규칙으로 짓는 도우미 --------------------- */
+  function towerBuild(cfg) {
+    function X(k, dx) { return cfg.x0 - cfg.step * k + dx; }
+    function Y(k, dy) { return cfg.y0 - cfg.step * k + dy; }
+    function Z(k) { return cfg.z0 + cfg.dz * k; }
+    function pick(k, dx, dy) { return map[X(k, dx) + ',' + Y(k, dy)]; }
+    function baseTint(k, dx, dy) {
+      return ((Math.round(dx) + Math.round(dy)) % 2 === 0) ? cfg.cols[k] : cfg.lit[k];
+    }
+    function tile(k, dx, dy, o) {
+      o = o || {};
+      var zz = (typeof o.z === 'number') ? o.z : Z(k);
+      var tint = o.tint || baseTint(k, dx, dy);
+      var t;
+      if (cfg.jelly) {
+        t = add(X(k, dx), Y(k, dy), zz, 'jelly', { tint: tint, step: o.step || 0.58, crm: o.crm ? 1 : 0 });
+        t.jelly = 1; t.jc = tint; t.jd = cfg.deep[k]; t.jk = k;
+        t.jedge = o.edge ? 1 : 0; t.sq = 0; t.sqv = 0;
+        jellyTiles.push(t);
+      } else {
+        t = add(X(k, dx), Y(k, dy), zz, o.type || 'stone', { tint: tint, step: o.step || 0.62, crm: o.crm ? 1 : 0 });
+      }
+      return t;
+    }
+    function pad(k, dx, dy, w, d, type) {
+      for (var a = 0; a < w; a++) for (var b = 0; b < d; b++) {
+        /* 꼭대기 황금 왕좌는 금색으로 (층 색에 묻히지 않게) */
+        var gt = (type === 'gold') ? (((dx + a + dy + b) % 2 === 0) ? '#ffd24a' : '#ffe98a') : null;
+        tile(k, dx + a, dy + b, { type: type, edge: 1, tint: gt || undefined });
       }
     }
-  }
-  /* 층 사이 구슬 계단 3칸 (반 칸씩 — 그냥 걸어도 올라가요) */
-  function jstep(k, dx, dy, zz) { jbead(bx4(k) + dx, by4(k) + dy, zz, k, { edge: 1 }); }
-  function jstairs(k) {
-    // 2칸 너비 구슬 계단 — 아이가 삐끗해도 옆 칸이 받아 줘요
-    var z0 = bz4(k);
-    jstep(k, -1, 0, z0 + 0.45);
-    jstep(k, -2, 0, z0 + 0.45);
-    jstep(k, -1, -1, z0 + 0.9);
-    jstep(k, -2, -1, z0 + 0.9);
-    jstep(k, -1, -2, z0 + 1.35);
-    // 계단 바깥 안전 난간 (옆·앞으로 떨어지지 않게)
-    railTile(bx4(k) - 3, by4(k), z0 + 0.45, { tint: '#ffcfe8' });
-    railTile(bx4(k) - 3, by4(k) - 1, z0 + 0.9, { tint: '#ffcfe8' });
-    railTile(bx4(k) - 1, by4(k) - 3, z0 + 1.35, { tint: '#ffcfe8' });
-    // 마지막 한 칸은 위층 모서리(x-2, y-2)가 이어 받아요
-  }
-  /* 난간 — 계단 자리(서쪽 위)만 열어 두고 둘러쳐요 */
-  function jrails(k) {
-    var z = bz4(k), d;
-    for (d = 0; d <= 3; d++) {
-      railTile(bx4(k) + 5, by4(k) + d, z, { tint: '#ffcfe8' });
-      railTile(bx4(k) + d, by4(k) + 5, z, { tint: '#ffcfe8' });
+
+    /* 🧪 검증용: 발판 사이 점프 목록 (테스트 모드에서만 읽어요) */
+    var hops = cfg.hops = [];
+    function rectOf(pd, kk) {
+      return { x0: X(kk, pd[0]), y0: Y(kk, pd[1]), x1: X(kk, pd[0] + pd[2]), y1: Y(kk, pd[1] + pd[3]) };
     }
-    for (d = 1; d <= 4; d++) railTile(bx4(k) - 1, by4(k) + d, z, { tint: '#ffcfe8' });
-    for (d = 1; d <= 4; d++) railTile(bx4(k) + d, by4(k) - 1, z, { tint: '#ffcfe8' });
+    function closePoint(r, px, py) {
+      return { x: clamp(px, r.x0 + 0.14, r.x1 - 0.14), y: clamp(py, r.y0 + 0.14, r.y1 - 0.14) };
+    }
+    function hop(rA, rB, zA, zB) {
+      var ca = { x: (rA.x0 + rA.x1) / 2, y: (rA.y0 + rA.y1) / 2 };
+      var tgt = closePoint(rB, ca.x, ca.y);
+      var dx = tgt.x - ca.x, dy = tgt.y - ca.y, dl = Math.hypot(dx, dy) || 1;
+      var stp = closePoint(rA, tgt.x - dx / dl * 0.9, tgt.y - dy / dl * 0.9);
+      hops.push({ sx: stp.x, sy: stp.y, sz: zA, tx: tgt.x, ty: tgt.y, tz: zB, tr: rB });
+    }
+
+    for (var k = 0; k < cfg.floors.length; k++) {
+      var f = cfg.floors[k], i;
+      /* ① 발판 섬들 + 점프 목록 */
+      for (i = 0; i < f.pads.length; i++) {
+        var pd = f.pads[i];
+        pad(k, pd[0], pd[1], pd[2], pd[3], pd[4] || 'stone');
+        if (i > 0) hop(rectOf(f.pads[i - 1], k), rectOf(pd, k), Z(k), Z(k));
+      }
+      /* ② ⏱️ 사라지는 블록 */
+      for (i = 0; i < (f.crm || []).length; i++) {
+        var ct = pick(k, f.crm[i][0], f.crm[i][1]);
+        if (!ct) continue;
+        ct.crm = 1; ct.crmT = cfg.crmT; ct.crmR = 3.0; ct.cstate = 'idle';
+        ct.tint = cfg.crmCol;
+        if (ct.jelly) { ct.jc = cfg.crmCol; ct.jd = cfg.crmDeep; }
+      }
+      /* ③ 🧊 미끄러운 젤리 */
+      for (i = 0; i < (f.slip || []).length; i++) {
+        var st = pick(k, f.slip[i][0], f.slip[i][1]);
+        if (!st) continue;
+        st.slip = 1; st.tint = '#bfeaff';
+        if (st.jelly) { st.jc = '#cfeeff'; st.jd = '#8fd0f0'; } else st.type = 'slip';
+      }
+      /* ④ 🟣 점프 젤리 */
+      for (i = 0; i < (f.gel || []).length; i++) {
+        var gt = pick(k, f.gel[i][0], f.gel[i][1]);
+        if (!gt) continue;
+        gt.type = 'bounce'; gt.tint = '#ff8cc0';
+        if (gt.jelly) { gt.jc = '#ff9fce'; gt.jd = '#ef63a2'; }
+      }
+      /* ⑤ 🌀 회전 막대 */
+      for (i = 0; i < (f.spin || []).length; i++) {
+        var sp = f.spin[i];
+        spins.push({
+          id: cfg.id + 'sp' + k + i, x: X(k, sp[0]), y: Y(k, sp[1]), z: Z(k),
+          len: sp[2], speed: sp[3], a: 0, hitAt: 0
+        });
+      }
+      /* ⑥ ↔️ 움직이는 발판 */
+      for (i = 0; i < (f.move || []).length; i++) {
+        var mv = f.move[i];
+        var mg = { id: cfg.id + 'mv' + k + i, axis: mv[0], span: mv[3], speed: mv[4], phase: (mv[5] || 0), prev: 0, tiles: [] };
+        mg.prev = (1 + Math.sin(mg.phase)) * 0.5 * mg.span;
+        var mn = mv[6] || 1;
+        for (var mi = 0; mi < mn; mi++) {
+          var bx = X(k, mv[1] + (mv[0] === 'y' ? mi : 0));
+          var by = Y(k, mv[2] + (mv[0] === 'x' ? mi : 0));
+          var ox = bx + (mv[0] === 'x' ? mg.prev : 0);
+          var oy = by + (mv[0] === 'y' ? mg.prev : 0);
+          var mt = add(ox, oy, Z(k), 'mover', { tint: cfg.lit[k], step: 0.55 });
+          if (cfg.jelly) {
+            mt.jelly = 1; mt.jc = cfg.cols[k]; mt.jd = cfg.deep[k]; mt.jk = k; mt.sq = 0; mt.sqv = 0;
+            jellyTiles.push(mt);
+          }
+          mt.mvAxis = mv[0]; mt.mx = bx; mt.my = by; mt.x = ox; mt.y = oy;
+          delete map[ox + ',' + oy];
+          map[Math.floor(ox) + ',' + Math.floor(oy)] = mt;
+          mg.tiles.push(mt);
+        }
+        movers.push(mg);
+      }
+      /* ⑦ 🫧 굴러오는 구슬 */
+      for (i = 0; i < (f.roll || []).length; i++) {
+        var rl = f.roll[i];
+        rollers.push({
+          id: cfg.id + 'rl' + k + i,
+          x0: X(k, rl[0]), y0: Y(k, rl[1]), x1: X(k, rl[2]), y1: Y(k, rl[3]),
+          z: Z(k), r: rl[4] || 0.4, speed: rl[5] || 1.1, ph: (rl[6] || 0),
+          px: X(k, rl[0]), py: Y(k, rl[1]), hitAt: 0
+        });
+      }
+      /* ⑧ 코인 */
+      for (i = 0; i < (f.coins || []).length; i++) {
+        var co = f.coins[i];
+        coin(X(k, co[0]) + 0.5, Y(k, co[1]) + 0.5, Z(k) + 0.62, !!co[2]);
+      }
+      /* ⑨ 🚩 층 체크포인트 깃발 — 도착 발판(5,5) */
+      var fl = f.flag || [5, 5];
+      var cpk = { x: X(k, fl[0]) + 0.5, y: Y(k, fl[1]) + 0.5, z: Z(k), on: false };
+      cpk[cfg.tag] = 1;
+      cps.push(cpk);
+      /* ⑩ 👾 순찰하는 적 — 부딪히면 -30 코인! */
+      for (i = 0; i < (f.foe || []).length; i++) {
+        var fo = f.foe[i];
+        enemies.push({
+          id: cfg.id + 'fo' + k + i,
+          x0: X(k, fo[0]) + 0.5, y0: Y(k, fo[1]) + 0.5, x1: X(k, fo[2]) + 0.5, y1: Y(k, fo[3]) + 0.5,
+          z: Z(k), speed: fo[4] || 1.5, ph: k * 1.27 + i * 2.1,
+          px: X(k, fo[0]) + 0.5, py: Y(k, fo[1]) + 0.5, hitAt: 0, face: 1
+        });
+      }
+      /* ⑪ 층 안내판 */
+      props.push({ k: 'houseSign', x: X(k, 2.2), y: Y(k, 6.1), z: Z(k), who: null, label: cfg.names[k], emoji: cfg.emoji });
+      /* ⑫ 위층으로 가는 점프 디딤돌 세 개 (마지막 층엔 없어요) */
+      if (k < cfg.floors.length - 1) {
+        var p1R = { x0: X(k, -5), y0: Y(k, 3), x1: X(k, -2), y1: Y(k, 5) };
+        var p2R = { x0: X(k, -5), y0: Y(k, -1), x1: X(k, -2), y1: Y(k, 2) };
+        var p3R = { x0: X(k, -4), y0: Y(k, -4), x1: X(k, -2), y1: Y(k, -2) };
+        for (var pz = 0; pz < 3; pz++) {
+          var rr = [p1R, p2R, p3R][pz];
+          var x0p = (pz === 0 || pz === 1) ? -5 : -4;
+          for (var ax = 0; ax < (pz === 0 || pz === 1 ? 3 : 2); ax++) {
+            for (var ay = 0; ay < Math.round(rr.y1 - rr.y0); ay++) {
+              tile(k, x0p + ax, (pz === 0 ? 3 : (pz === 1 ? -1 : -4)) + ay, { z: Z(k) + 0.5 * (pz + 1), tint: cfg.lit[k] });
+            }
+          }
+        }
+        var nx = cfg.floors[k + 1].pads[0];
+        hop(rectOf(f.pads[f.pads.length - 1], k), p1R, Z(k), Z(k) + 0.5);
+        hop(p1R, p2R, Z(k) + 0.5, Z(k) + 1.0);
+        hop(p2R, p3R, Z(k) + 1.0, Z(k) + 1.5);
+        /* p3R 은 다음 층 도착 발판과 바로 이어져 걸어 올라가요 */
+      }
+    }
+    return { X: X, Y: Y, Z: Z, hops: hops };
   }
 
-  /* ① 하늘 섬 — 1층을 감싸는 잔디 섬 */
-  rect(JX - 4, JY - 4, JX + 9, JY + 9, 0, 'grass');
-  for (var jf = 0; jf < 12; jf++) {
-    var jfx = rnd(JX - 3.4, JX + 8.4), jfy = rnd(JY - 3.4, JY + 8.4);
-    if (jfx > JX - 0.6 && jfx < JX + 4.6 && jfy > JY - 0.6 && jfy < JY + 4.6) continue;
-    flowers.push({ x: jfx, y: jfy, z: 0, c: pick(['#ffb3dc', '#d9c4ff', '#b6f0dc', '#ffffff']) });
+  /* ① 🏰 3탄 하늘 섬 — 남쪽 진입 마당 (타워 발판과 겹치지 않아요) */
+  rect(117, 10, 129, 13, 0, 'grass');
+  for (var t3f = 0; t3f < 14; t3f++) {
+    flowers.push({ x: rnd(117.4, 128.6), y: rnd(10.4, 12.6), z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
   }
-  trees.push({ x: JX + 8.4, y: JY - 2.2, z: 0, s: 0.95 });
-  trees.push({ x: JX - 3.2, y: JY + 8.4, z: 0, s: 0.9 });
-  props.push({ k: 'houseSign', x: JX - 2.4, y: JY + 8.2, z: 0, who: null, label: '4탄 왁뿌볼 타워', emoji: '🫧' });
-  props.push({ k: 'houseSign', x: 149.3, y: -39.4, z: 0, who: null, label: '계단은 이쪽 ↑', emoji: '🫧' });
+  trees.push({ x: 117.6, y: 12.6, z: 0, s: 0.9 });
+  trees.push({ x: 128.4, y: 12.6, z: 0, s: 0.95 });
+  add(119, 12, 0, 'bounce');                       // 🟣 하늘 섬 폼폼 점프대 (재미용)
+  props.push({ k: 'houseSign', x: 126.6, y: 12.6, z: 0, who: null, label: '3탄 무지개 타워', emoji: '🏰' });
+  props.push({ k: 'houseSign', x: 118.2, y: 10.6, z: 0, who: null, label: '발판 점프로 올라가요 ↑', emoji: '🦘' });
+  cps.push({ x: 123.5, y: 11.5, z: 0, on: false, s3: 1 });     // 3탄 시작 (하늘 섬 마당)
+  spots.push({ x: 120, y: 12.5, z: 0, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
 
-  /* ② 6개 층 — 파스텔 구슬 바닥 + 계단 + 난간 + 층마다 안전 깃발 */
-  for (var jk = 0; jk <= 5; jk++) {
-    if (jk === 1) jplate(jk, [[3, 3]]);
-    else if (jk === 2) jplate(jk, [[2, 1], [2, 2], [2, 3]]);
-    else if (jk === 3) jplate(jk, [[2, 2], [3, 2], [2, 3], [3, 3]]);
-    else if (jk === 4) jplate(jk, [[1, 2], [2, 2], [3, 2]]);
-    else if (jk === 5) jplate(jk, [[1, 1], [2, 1], [3, 1], [1, 2], [2, 2], [3, 2], [1, 3], [2, 3], [3, 3]]);
-    else jplate(jk);
-    if (jk >= 1) jrails(jk);
-    if (jk <= 4) jstairs(jk);
-    if (jk >= 1) props.push({ k: 'houseSign', x: bx4(jk) + 2.4, y: by4(jk) + 5.2, z: bz4(jk), who: null, label: J_NAM[jk], emoji: '🫧' });
+  /* ② 🏰 3탄 6개 층 */
+  var T3 = towerBuild({
+    id: 't3', tag: 's3', x0: T3X, y0: T3Y, step: T3_STEP, dz: T3_DZ, z0: T3_Z0,
+    cols: T3_COL, lit: T3_LIT, names: T3_NAM, emoji: '🌈',
+    jelly: false, crmT: 0.8, crmCol: '#f3cfa2', crmDeep: '#d5a469',
+    floors: T3_FLOORS
+  });
+  var finish3 = { x: T3.X(5, 1.0), y: T3.Y(5, 2.5), z: T3.Z(5) };
+  /* 꼭대기에서 4탄으로 바로 가는 문 + 마을로 가는 자리 */
+  portals.push({ id: 'tw4', x: T3.X(5, 0.3), y: T3.Y(5, 1.3), z: T3.Z(5), icon: '🫧', title: '4탄 왁뿌볼 타워', prompt: '🫧 바로 4탄 왁뿌볼 타워로 이어서 도전!', href: '#tw4', color: '#b98cff' });
+  spots.push({ x: T3.X(5, 1.6), y: T3.Y(5, 1.3), z: T3.Z(5), icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ③ 🫧 4탄 하늘 섬 — 남쪽 진입 마당 */
+  rect(147, -36, 159, -32, 0, 'grass');
+  for (var j4f = 0; j4f < 14; j4f++) {
+    flowers.push({ x: rnd(147.4, 158.6), y: rnd(-35.6, -32.4), z: 0, c: pick(['#ffb3dc', '#d9c4ff', '#b6f0dc', '#ffffff']) });
   }
+  trees.push({ x: 147.6, y: -32.4, z: 0, s: 0.92 });
+  trees.push({ x: 158.4, y: -32.4, z: 0, s: 0.95 });
+  props.push({ k: 'houseSign', x: 156.6, y: -32.6, z: 0, who: null, label: '4탄 왁뿌볼 타워', emoji: '🫧' });
+  props.push({ k: 'houseSign', x: 148.2, y: -35.6, z: 0, who: null, label: '구슬 발판 점프로 ↑', emoji: '🦘' });
+  cps.push({ x: 152.5, y: -34.5, z: 0, on: false, s4: 1 });    // 4탄 시작 (하늘 섬 마당)
+  spots.push({ x: 150, y: -33.5, z: 0, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
 
-  /* ③ 2층(포도) — 가운데 폼폼 구슬 (밟으면 하늘로 폴짝!) */
-  add(bx4(1) + 3, by4(1) + 3, bz4(1), 'bounce', { tint: '#d9c8ff' });
+  /* ④ 🫧 4탄 6개 층 */
+  var J4 = towerBuild({
+    id: 'j4', tag: 's4', x0: JX, y0: JY, step: J_STEP, dz: J_DZ, z0: J_Z0,
+    cols: J_COL, lit: J_COL, deep: J_DEEP, names: J_NAM, emoji: '🫧',
+    jelly: true, crmT: 0.6, crmCol: '#ffe0b0', crmDeep: '#e0a86a',
+    floors: J4_FLOORS
+  });
+  var finish4 = { x: J4.X(5, 1.0), y: J4.Y(5, 2.5), z: J4.Z(5) };
+  spots.push({ x: J4.X(5, 1.6), y: J4.Y(5, 1.3), z: J4.Z(5), icon: '🏠', label: '마을로 돌아가기', act: 'village' });
 
-  /* ④ 3층(민트) — 가운데 홈 + 그 위 코인 (가장자리로 돌아가도 돼요) */
-  coin(bx4(2) + 2.5, by4(2) + 1.5, bz4(2) + 0.75, true);
-  coin(bx4(2) + 2.5, by4(2) + 2.5, bz4(2) + 0.95, true);
-  coin(bx4(2) + 2.5, by4(2) + 3.5, bz4(2) + 0.75, true);
+  /* ⑤ 🌱 그로우 어 가든 문 — 1탄 무지개 성 결승 구역 안으로 */
+  portals.push({ id: 'garden', x: 52.4, y: 1.3, z: 3, icon: '🌱', title: '그로우 어 가든', prompt: '🌱 그로우 어 가든으로 갈까요?', href: './grow-garden.html', color: '#33cf87' });
 
-  /* ⑤ 4층(하늘) — 밟으면 사그락 흔들리다 사라지는 구슬 4개 */
-  for (var jc = 0; jc < 4; jc++) {
-    jbead(bx4(3) + 2 + (jc % 2), by4(3) + 2 + Math.floor(jc / 2), bz4(3), 3, { crm: 1, edge: 1 });
-  }
-
-  /* ⑥ 5층(크림) — 포실포실 구슬 세 개를 넘어야 해요 */
-  for (var jr = 1; jr <= 3; jr++) jbead(bx4(4) + jr, by4(4) + 2, bz4(4) + 0.4, 4, { edge: 1 });
-
-  /* ⑦ 6층 꼭대기 — 금빛 왕좌 + 왁뿌볼 챔피언 트로피 */
-  for (var jgx = 1; jgx <= 3; jgx++) {
-    for (var jgy = 1; jgy <= 3; jgy++) add(bx4(5) + jgx, by4(5) + jgy, bz4(5), 'gold', { step: 0.62 });
-  }
-  var finish4 = { x: bx4(5) + 2.5, y: by4(5) + 2.5, z: bz4(5) };
-
-  /* ⑧ 왁뿌볼 코인 */
-  coin(JX + 2.5, JY + 6.5, 0.55);
-  coin(bx4(0) + 1.5, by4(0) + 1.5, 0.55);
-  coin(bx4(1) + 1.4, by4(1) + 1.4, bz4(1) + 0.55, true);
-  coin(bx4(1) + 4.5, by4(1) + 1.4, bz4(1) + 0.55);
-  coin(bx4(2) + 1.4, by4(2) + 4.5, bz4(2) + 0.55);
-  coin(bx4(2) + 4.5, by4(2) + 4.5, bz4(2) + 0.55, true);
-  coin(bx4(3) + 1.4, by4(3) + 1.4, bz4(3) + 0.55);
-  coin(bx4(3) + 4.5, by4(3) + 4.5, bz4(3) + 0.55, true);
-  coin(bx4(4) + 4.5, by4(4) + 1.5, bz4(4) + 0.55);
-  coin(bx4(4) + 1.5, by4(4) + 4.5, bz4(4) + 0.55);
-  coin(bx4(5) + 1.5, by4(5) + 4.5, bz4(5) + 0.6, true);
-  coin(bx4(5) + 4.5, by4(5) + 1.5, bz4(5) + 0.6, true);
-
-  /* ⑨ 하늘 섬 — 마을로 돌아가는 자리 */
-  spots.push({ x: JX + 6.5, y: JY + 6.5, z: 0, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  /* ⑥ 👗 드레스 투 임프레스 문 + 🏰 3탄으로 이어지는 문 — 2탄 왕관 결승 구역 */
+  portals.push({ id: 'dress', x: 95.4, y: 12.4, z: 6, icon: '👗', title: '드레스 투 임프레스', prompt: '👗 드레스 투 임프레스로 갈까요?', href: './dress-up.html', color: '#a97bff' });
+  portals.push({ id: 'tw3', x: 98.5, y: 15, z: 6, icon: '🏰', title: '3탄 무지개 타워', prompt: '🏰 바로 3탄 무지개 타워로 이어서 도전!', href: '#tw3', color: '#ff7ac6' });
 
   /* ============================================================
      🌍 9-3) 세 월드 문 — 마을 광장 북쪽에 나란히 선 빛나는 포털
      ============================================================ */
-  add(-9, 0, 0, 'stone');
-  add(-6, 3, 0, 'stone');
-  add(-12, -1, 0, 'stone');
-  portals.push({ id: 'garden', x: -9.0, y: 0, z: 0, icon: '🌱', title: '그로우 어 가든', href: './grow-garden.html', color: '#33cf87' });
-  portals.push({ id: 'dress', x: -5.7, y: 3.3, z: 0, icon: '👗', title: '드레스 투 임프레스', href: './dress-up.html', color: '#a97bff' });
-  portals.push({ id: 'tower3', x: -12, y: -1, z: 0, icon: '🏰', title: '3탄 무지개 타워', prompt: '3탄 무지개 타워로 갈까요?', href: '#tw3', color: '#ff7ac6' });
-  portals.push({ id: 'tower4', x: -15.2, y: 0.8, z: 0, icon: '🫧', title: '4탄 왁뿌볼 타워', prompt: '4탄 왁뿌볼 타워로 갈까요?', href: '#tw4', color: '#b98cff' });
+  /* 🚪 마을 광장은 이제 깔끔하게! 그로우·드레스·3탄·4탄 문은
+     각 코스 결승 구역으로 옮겼어요 (1탄 끝 → 🌱, 2탄 끝 → 👗 · 🏰, 3탄 끝 → 🫧).
+     빠른 이동은 ☰ → 🌍 월드 이동 메뉴에서 할 수 있어요. */
 
   /* --- 체크포인트 (점프맵은 발판마다 촘촘하게) --- */
   cps.push({ x: -9, y: 2.5, z: 0, on: true });
@@ -2389,17 +2464,7 @@ function buildMap() {
   cps.push({ x: 92.5, y: 3.5, z: 5, on: false, s2: 1 });
   cps.push({ x: 98, y: 9.5, z: 5, on: false, s2: 1 });
 
-  /* --- 🏰 3탄 타워 체크포인트 — 목록 맨 뒤 (G.cp3Start) --- */
-  cps.push({ x: T3X + 2.5, y: T3Y + 6.5, z: 0, on: false, s3: 1 });
-  for (var t3cp = 1; t3cp <= 5; t3cp++) {
-    cps.push({ x: t3x(t3cp) + 5.5, y: t3y(t3cp) + 5.5, z: t3z(t3cp), on: false, s3: 1 });
-  }
-
-  /* --- 🫧 4탄 왁뿌볼 타워 체크포인트 — 목록 맨 뒤 (G.cp4Start) --- */
-  cps.push({ x: 150.4, y: -41.2, z: 0, on: false, s4: 1 });      // 계단 바로 앞
-  for (var jcp = 1; jcp <= 5; jcp++) {
-    cps.push({ x: bx4(jcp) + 0.45, y: by4(jcp) + 0.45, z: bz4(jcp), on: false, s4: 1 });   // 층마다 계단 앞
-  }
+  /* --- 🏰 3탄 · 🫧 4탄 체크포인트는 위 towerBuild 안에서 층마다 만들었어요 --- */
 
   /* --- 코인 --- */
   coin(4, 2, 0.55); coin(5, 3, 0.55); coin(6, 2, 0.55);
@@ -2435,8 +2500,8 @@ function buildMap() {
   return {
     tiles: tiles, map: map, gates: gates, coins: coinsArr, cps: cps, trees: trees, flowers: flowers,
     props: props, spots: spots, houses: houses, keyTiles: keyTiles,
-    movers: movers, spins: spins, portals: portals, crmTiles: crmTiles, finish2: finish2,
-    finish3: finish3, finish4: finish4, jellyTiles: jellyTiles,
+    movers: movers, spins: spins, portals: portals, crmTiles: crmTiles, rollers: rollers, enemies: enemies, finish2: finish2,
+    finish3: finish3, finish4: finish4, jellyTiles: jellyTiles, hops3: T3.hops, hops4: J4.hops,
     spawn: { x: -9, y: 2.5, z: 0 },
     finish: { x: 51, y: 3, z: 3 },
     arch: { x: 51, y: 3, z: 3 }
@@ -2451,7 +2516,7 @@ var G = {
   scale: 1, cam: { x: 0, y: 0 }, t: 0,
   tiles: [], map: {}, gates: [], coins: [], cps: [], trees: [], flowers: [], props: [], spots: [], houses: [], keyTiles: [],
   spawn: { x: -9, y: 2.5, z: 0 }, finish: { x: 51, y: 3, z: 3 },
-  movers: [], spins: [], portals: [], crmTiles: [], jellyTiles: [], portal: null, portalMute: '',
+  movers: [], spins: [], portals: [], crmTiles: [], jellyTiles: [], rollers: [], enemies: [], portal: null, portalMute: '',
   finish2: { x: 97, y: 13.5, z: 6 }, finished2: false, cp2Start: 9,
   finish3: { x: 87.5, y: -28.5, z: 7.5 }, finished3: false, cp3Start: 15, at3: false,
   finish4: { x: 132.5, y: -84.5, z: 6.75 }, finished4: false, cp4Start: -1, at4: false,
@@ -2479,6 +2544,8 @@ function buildWorld() {
   G.finish3 = m.finish3 || G.finish3;
   G.finish4 = m.finish4 || G.finish4;
   G.jellyTiles = m.jellyTiles || [];
+  G.rollers = m.rollers || []; G.enemies = m.enemies || [];
+  G.hops3 = m.hops3 || []; G.hops4 = m.hops4 || [];
   // 코스별 첫 체크포인트 위치 (s2 / s3 / s4 표시로 찾아요)
   G.cp2Start = -1; G.cp3Start = -1; G.cp4Start = -1;
   for (var ci = 0; ci < G.cps.length; ci++) {
@@ -2489,6 +2556,10 @@ function buildWorld() {
   if (G.cp2Start < 0) G.cp2Start = 9;
   if (G.cp3Start < 0) G.cp3Start = G.cps.length - 1;
   if (G.cp4Start < 0) G.cp4Start = G.cps.length - 1;
+  /* 1탄 첫 체크포인트(처음에 켜져 있는 깃발)가 목록 어디에 있든 찾아 둡니다 */
+  G.cp1Start = 0;
+  for (var cf = 0; cf < G.cps.length; cf++) if (G.cps[cf].on) { G.cp1Start = cf; break; }
+  G.cpIdx = G.cp1Start;
   // 🗺️ 지도 둘러보기 제한 범위
   var b = { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 };
   for (var bi = 0; bi < G.tiles.length; bi++) {
@@ -3416,6 +3487,207 @@ function drawSpin(ctx, s) {
   ctx.fillStyle = '#ffffff'; ctx.fill();
   ctx.strokeStyle = '#ffc93c'; ctx.lineWidth = 3; ctx.stroke();
   ctx.restore();
+}
+
+/* 👾 쿠파 스타일 블록 보스 — 초록 몸통 + 노란 배 + 가시 등껍질 + 노란 뿔 + 빨간 갈기 */
+function drawEnemy(ctx, e) {
+  var p = proj(e.px, e.py, e.z);
+  var bob = Math.sin(G.t * 7 + (e.ph || 0) * 2) * 1.5;
+  var f = e.face || 1;
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  // 바닥 그림자
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 18, 7.5, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(30,20,10,.2)';
+  ctx.fill();
+  ctx.scale(f, 1);
+  ctx.translate(0, -bob);
+  ctx.scale(1.24, 1.24);          /* 쿠파답게 아이들보다 조금 더 큼직하게 */
+
+  var G1 = '#63c444', G2 = '#3f9427', G3 = '#2e6f1c';
+  var BEL = '#ffd86b', BEL2 = '#e0ab35';
+  var SHL = '#2f7a2a', SHL2 = '#1c521a', SPIKE = '#fff0c2', SPIKE2 = '#c9a24c';
+  var HORN = '#ffe9a8', HORN2 = '#cfa94e', MANE = '#e8452e';
+
+  // 꼬리 (뒤쪽 살짝)
+  ctx.beginPath();
+  ctx.moveTo(-15, -12);
+  ctx.quadraticCurveTo(-26, -16, -23, -4);
+  ctx.quadraticCurveTo(-19, -6, -14, -6);
+  ctx.closePath();
+  ctx.fillStyle = G1; ctx.fill();
+  ctx.strokeStyle = G2; ctx.lineWidth = 1.6; ctx.stroke();
+
+  // 발 두 개
+  roundRect(ctx, -12, -8, 12, 8, 4); ctx.fillStyle = BEL; ctx.fill(); ctx.strokeStyle = BEL2; ctx.lineWidth = 1.4; ctx.stroke();
+  roundRect(ctx, 3, -8, 12, 8, 4); ctx.fillStyle = BEL; ctx.fill(); ctx.strokeStyle = BEL2; ctx.lineWidth = 1.4; ctx.stroke();
+  // 발톱
+  ctx.fillStyle = '#fffbe8';
+  [[-9, -1], [-5, -1], [6, -1], [10, -1]].forEach(function (c) {
+    ctx.beginPath();
+    ctx.moveTo(c[0], c[1] - 3); ctx.lineTo(c[0] + 2.4, c[1] - 3); ctx.lineTo(c[0] + 1.2, c[1]);
+    ctx.closePath(); ctx.fill();
+  });
+
+  // 등껍질 (등 쪽) + 가시
+  ctx.beginPath();
+  ctx.ellipse(-9, -21, 10.5, 12.5, -0.18, 0, 6.2832);
+  ctx.fillStyle = SHL; ctx.fill();
+  ctx.strokeStyle = SHL2; ctx.lineWidth = 2; ctx.stroke();
+  [-30, -21, -12].forEach(function (sy, i) {
+    var sx = -15 - (i === 1 ? 4 : 1);
+    ctx.beginPath();
+    ctx.moveTo(sx + 1, sy + 3.5);
+    ctx.lineTo(sx - 9, sy);
+    ctx.lineTo(sx + 1, sy - 3.5);
+    ctx.closePath();
+    ctx.fillStyle = SPIKE; ctx.fill();
+    ctx.strokeStyle = SPIKE2; ctx.lineWidth = 1.3; ctx.stroke();
+  });
+
+  // 몸통
+  roundRect(ctx, -14, -32, 28, 26, 9);
+  ctx.fillStyle = G1; ctx.fill();
+  ctx.strokeStyle = G2; ctx.lineWidth = 2.2; ctx.stroke();
+  // 노란 배
+  ctx.beginPath();
+  ctx.ellipse(-1, -18, 8.6, 9.6, 0, 0, 6.2832);
+  ctx.fillStyle = BEL; ctx.fill();
+  ctx.strokeStyle = BEL2; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.strokeStyle = 'rgba(200,150,40,.55)';
+  ctx.lineWidth = 1.4;
+  [-22, -18, -14].forEach(function (ly) {
+    ctx.beginPath();
+    ctx.moveTo(-7.5, ly); ctx.lineTo(6, ly);
+    ctx.stroke();
+  });
+
+  // 팔
+  ctx.beginPath();
+  ctx.ellipse(11, -20, 5.2, 6.4, 0.3, 0, 6.2832);
+  ctx.fillStyle = G1; ctx.fill();
+  ctx.strokeStyle = G2; ctx.lineWidth = 1.6; ctx.stroke();
+
+  // 머리
+  roundRect(ctx, -7, -50, 23, 21, 8);
+  ctx.fillStyle = G1; ctx.fill();
+  ctx.strokeStyle = G2; ctx.lineWidth = 2.2; ctx.stroke();
+  // 주둥이
+  roundRect(ctx, 5, -40, 14, 10, 5);
+  ctx.fillStyle = '#7dd85c'; ctx.fill();
+  ctx.strokeStyle = G2; ctx.lineWidth = 1.5; ctx.stroke();
+  // 코
+  ctx.beginPath();
+  ctx.arc(17, -37.5, 2.2, 0, 6.2832);
+  ctx.fillStyle = '#2e6f1c'; ctx.fill();
+
+  // 노란 뿔 두 개
+  [[-4, -50, -8], [9, -49, 7]].forEach(function (h) {
+    ctx.beginPath();
+    ctx.moveTo(h[0] - 3.6, -48);
+    ctx.lineTo(h[0] + h[2] * 0.12, -57);
+    ctx.lineTo(h[0] + 3.6, -48);
+    ctx.closePath();
+    ctx.fillStyle = HORN; ctx.fill();
+    ctx.strokeStyle = HORN2; ctx.lineWidth = 1.4; ctx.stroke();
+  });
+
+  // 빨간 갈기 (머리 뒤)
+  ctx.fillStyle = MANE;
+  [[-8, -50, -4], [-10, -44, 3], [-9, -38, 2]].forEach(function (m) {
+    ctx.beginPath();
+    ctx.moveTo(m[0], m[1]);
+    ctx.lineTo(m[0] - 7, m[1] + 1.5);
+    ctx.lineTo(m[0] - 1, m[1] + 6);
+    ctx.closePath();
+    ctx.fill();
+  });
+
+  // 눈 (오른쪽을 봐요) + 빨간 눈썹
+  [[0, -41], [7.6, -41]].forEach(function (ey) {
+    ctx.beginPath();
+    ctx.ellipse(ey[0], ey[1], 3.3, 3.7, 0, 0, 6.2832);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.strokeStyle = G2; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ey[0] + 1.2, ey[1] + 0.2, 1.7, 0, 6.2832);
+    ctx.fillStyle = '#20140f'; ctx.fill();
+  });
+  ctx.strokeStyle = MANE;
+  ctx.lineWidth = 2.6;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-2.6, -45.6); ctx.lineTo(2.8, -44.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(5.2, -45); ctx.lineTo(10.4, -45.8); ctx.stroke();
+
+  // 입 + 이빨
+  ctx.strokeStyle = '#2e6f1c';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(7, -33.5);
+  ctx.quadraticCurveTo(12.5, -32.2, 17.5, -34);
+  ctx.stroke();
+  ctx.fillStyle = '#fffbe8';
+  [[9.5, -33.4], [14.6, -33.4]].forEach(function (t) {
+    ctx.beginPath();
+    ctx.moveTo(t[0] - 1.6, t[1] + 0.4);
+    ctx.lineTo(t[0] + 1.6, t[1] + 0.4);
+    ctx.lineTo(t[0], t[1] + 3.4);
+    ctx.closePath(); ctx.fill();
+  });
+
+  ctx.restore();
+
+  // 👾 머리 위 표시 (피해야 할 적!)
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  emo(ctx, '👾', p.x, p.y - 80 - bob, 18);
+  ctx.restore();
+}
+
+/* 🫧 굴러오는 구슬 — 회랑을 좌우로 데구루루 */
+function drawRoller(ctx, r) {
+  var p = proj(r.px, r.py, r.z);
+  var a = r.ph;
+  var rad = Math.max(14, (r.r || 0.4) * 46);
+  // 바닥 그림자
+  ctx.beginPath();
+  ctx.ellipse(p.x, p.y, rad * 0.95, rad * 0.42, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(40,60,90,.18)';
+  ctx.fill();
+  // 공
+  var cy = p.y - rad * 0.92;
+  var g = ctx.createRadialGradient(p.x - rad * 0.3, cy - rad * 0.35, rad * 0.2, p.x, cy, rad);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.45, '#bfe6ff');
+  g.addColorStop(1, '#5aa6d8');
+  ctx.beginPath();
+  ctx.arc(p.x, cy, rad, 0, 6.2832);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(40,90,140,.55)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // 데구루루 줄무늬
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(p.x, cy, rad - 1.6, 0, 6.2832);
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(58,120,180,.5)';
+  ctx.lineWidth = 3;
+  for (var i = -2; i <= 2; i++) {
+    var off = Math.sin(a + i * 0.9) * rad;
+    ctx.beginPath();
+    ctx.moveTo(p.x - rad, cy + off);
+    ctx.quadraticCurveTo(p.x, cy + off + Math.cos(a + i) * 6, p.x + rad, cy + off);
+    ctx.stroke();
+  }
+  ctx.restore();
+  // 반짝
+  ctx.beginPath();
+  ctx.arc(p.x - rad * 0.32, cy - rad * 0.36, rad * 0.22, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.92)';
+  ctx.fill();
 }
 
 /* 👑 2탄 챔피언 왕관 골 */
@@ -4691,14 +4963,14 @@ function updateTraps(dt) {
       Math.abs(p.x - (t.x + 0.5)) < 0.56 && Math.abs(p.y - (t.y + 0.5)) < 0.56 &&
       Math.abs(p.z - t.z) < 0.3) {
       t.cstate = 'shake';
-      t.cT = 0.75;
+      t.cT = t.crmT || 0.8;
       if (t.jelly) AU.sagrak(0.8); else AU.click();
     }
     if (t.cstate === 'shake') {
       t.cT -= dt;
       if (t.cT <= 0) {
         t.cstate = 'gone';
-        t.cT = 2.5;
+        t.cT = t.crmR || 3.0;
         t.hidden = true;
         t.appear = 0;
         t.wob = 0;
@@ -4749,7 +5021,8 @@ function updateSpins(dt) {
     s.a += dt * s.speed;
     var dx = p.x - s.x, dy = p.y - s.y;
     var dist = Math.hypot(dx, dy);
-    if (dist > s.len + 0.6 || Math.abs(p.z - s.z) > 1.1) continue;
+    if (dist > s.len + 0.45 || Math.abs(p.z - s.z) > 1.1) continue;
+    if (p.z > s.z + 0.42) continue;          // 🦘 점프로 막대 위를 넘으면 안 맞아요
     var ux = Math.cos(s.a), uy = Math.sin(s.a);
     var along = dx * ux + dy * uy;
     var across = -dx * uy + dy * ux;
@@ -4764,6 +5037,83 @@ function updateSpins(dt) {
     spawnSpark(p.x, p.y, p.z + 0.5, '#ffffff', 8);
     AU.pop();
     toast('🌀 휙! 회전 막대에 밀렸어요', 1500);
+  }
+}
+
+/* ============================================================
+   👾 적(쿠파 스타일 블록 보스) · 🫧 굴러오는 구슬
+   ------------------------------------------------------------
+   · 3탄·4탄 타워 발판 위를 좌우/앞뒤로 순찰해요.
+   · 부딪히면 코인 -30 (0 아래로는 안 내려가요) + 1.8초 무적 깜빡임.
+   · 점프로 머리 위를 넘으면 안전!
+   ============================================================ */
+function updateEnemies(dt) {
+  var list = G.enemies || [];
+  if (!list.length) return;
+  var p = G.p;
+  for (var i = 0; i < list.length; i++) {
+    var e = list[i];
+    e.ph += dt * e.speed;
+    var u = (Math.sin(e.ph) + 1) * 0.5;
+    e.px = lerp(e.x0, e.x1, u);
+    e.py = lerp(e.y0, e.y1, u);
+    var ux = e.x1 - e.x0, uy = e.y1 - e.y0;
+    var ul = Math.hypot(ux, uy) || 1;
+    ux /= ul; uy /= ul;
+    var sgn = Math.cos(e.ph) >= 0 ? 1 : -1;
+    e.wx = ux * sgn; e.wy = uy * sgn;
+    e.face = ((e.wx - e.wy) >= 0) ? 1 : -1;
+    /* 불꽃 입김 (가끔 후우~) */
+    if (Math.random() < dt * 0.9) {
+      G.parts.push({
+        k: 'spark', x: e.px + e.wx * 0.42, y: e.py + e.wy * 0.42, z: e.z + 0.6,
+        vx: e.wx * 1.1, vy: e.wy * 1.1, vz: 0.5, life: 0.55, age: 0, r: 3.2, c: pick(['#ffb03a', '#ff7a2e', '#ffe08a'])
+      });
+    }
+    if (p.z > e.z + 0.62) continue;              // 🦘 점프로 머리 위를 넘으면 안전
+    if (Math.abs(p.z - e.z) > 0.9) continue;
+    if (Math.hypot(p.x - e.px, p.y - e.py) > 0.62) continue;
+    var now = Date.now();
+    if (now - (p.hurtAt || 0) < 1800) continue;  // 무적 시간에는 다시 안 깎여요
+    p.hurtAt = now;
+    /* 코인 -30 (가진 만큼만) */
+    var have = SAVE ? Math.max(0, Math.floor(SAVE.coins || 0)) : 0;
+    var cut = Math.min(30, have);
+    if (cut > 0) addCoins(-cut, true);
+    /* 넉백 + 삐용 */
+    var dx = p.x - e.px, dy = p.y - e.py, dl = Math.hypot(dx, dy) || 1;
+    p.vx = dx / dl * 6.6; p.vy = dy / dl * 6.6;
+    if (!p.air) { p.vz = 2.9; p.air = true; }
+    spawnSpark(p.x, p.y, p.z + 0.55, '#ff5a3c', 10);
+    spawnSpark(p.x, p.y, p.z + 0.55, '#ffe08a', 6);
+    G.parts.push({ k: 'heart', x: p.x, y: p.y, z: p.z + 0.95, vx: 0, vy: 0, vz: 1.05, life: 1.15, age: 0, ch: cut > 0 ? '-' + cut : '0' });
+    AU.err(); AU.clack();
+    toast(cut > 0 ? ('💥 앗, 적에게 부딪혔어요! -' + cut + ' 코인!') : '💥 앗, 적에게 부딪혔어요! 코인이 없어서 다행!', 2200);
+  }
+}
+
+function updateRollers(dt) {
+  var list = G.rollers || [];
+  if (!list.length) return;
+  var p = G.p;
+  for (var i = 0; i < list.length; i++) {
+    var r = list[i];
+    r.ph += dt * r.speed;
+    var u = (Math.sin(r.ph) + 1) * 0.5;
+    r.px = lerp(r.x0, r.x1, u);
+    r.py = lerp(r.y0, r.y1, u);
+    if (Math.abs(p.z - r.z) > 0.8) continue;
+    if (Math.hypot(p.x - r.px, p.y - r.py) > r.r + 0.34) continue;
+    if (p.z > r.z + 0.8) continue;               // 점프로 넘으면 안전
+    var now = Date.now();
+    if (now - (r.hitAt || 0) < 1100) continue;
+    r.hitAt = now;
+    var dx = p.x - r.px, dy = p.y - r.py, dl = Math.hypot(dx, dy) || 1;
+    p.vx = dx / dl * 7.6; p.vy = dy / dl * 7.6;
+    if (!p.air) { p.vz = 2.4; p.air = true; }
+    spawnSpark(p.x, p.y, p.z + 0.4, '#ffffff', 7);
+    AU.pop();
+    toast('🫧 구슬에 부딪혔어요! 조심!', 1500);
   }
 }
 
@@ -4831,7 +5181,8 @@ function updatePlayer(dt) {
     var sp = spec.speed * (inp.len > 0.92 ? 1 : Math.max(0.45, inp.len));
     tvx = wx * sp; tvy = wy * sp;
   }
-  var accel = (p.air ? 20 : 42);
+  /* 🧊 미끄러운 젤리 위에서는 가속·정지가 느려서 쭉 밀려가요 */
+  var accel = p.air ? 20 : (p.slip ? 7.5 : 42);
   p.vx = approach(p.vx || 0, tvx, accel * dt);
   p.vy = approach(p.vy || 0, tvy, accel * dt);
 
@@ -4857,6 +5208,8 @@ function updatePlayer(dt) {
     if (sup && sup.t.z > p.z - 0.12) {
       standsOn = sup.t;
       p.z = sup.t.z;
+      p.groundZ = p.z;
+      p.slip = !!sup.t.slip;
       p.coyote = 0.13;
       if (sup.d > 0.06 && !moving) {
         p.x = lerp(p.x, sup.nx, Math.min(1, dt * 10));
@@ -4866,6 +5219,8 @@ function updatePlayer(dt) {
       // 반 칸 내려가는 계단은 살짝 툭 내려서요
       standsOn = sup.t;
       p.z = sup.t.z;
+      p.groundZ = p.z;
+      p.slip = !!sup.t.slip;
       p.coyote = 0.13;
     } else {
       p.air = true;
@@ -4879,7 +5234,8 @@ function updatePlayer(dt) {
     p.z += p.vz * dt;
     // 착지: 발판을 살짝 벗어나도 끌어다 붙여 착지시켜요
     if (p.vz <= 0) {
-      var land = supportTile(p.x, p.y, LAND_R, prevZ);
+      /* 🏰 타워 점프맵은 발판이 작아서 착지 도움을 조금 더 넓게 줘요 */
+      var land = supportTile(p.x, p.y, (G.at3 || G.at4) ? 0.75 : LAND_R, prevZ);
       if (land && p.z <= land.t.z + 0.02) { doLand(land); standsOn = G.p.air ? null : land.t; }
     }
     if (p.air) p.keyId = null;
@@ -4902,13 +5258,19 @@ function updatePlayer(dt) {
   if (standsOn) {
     if (standsOn.crm && standsOn.cstate !== 'shake' && standsOn.cstate !== 'gone') {
       standsOn.cstate = 'shake';
-      standsOn.cT = 0.75;
+      standsOn.cT = standsOn.crmT || 0.8;
       AU.click();
     }
     if (standsOn.haz) hazardHit();
   }
 
   if (p.z < -4.5) respawn();
+
+  /* 🏰 타워 점프맵: 발판에서 떨어져 그 층 아래로 내려가면
+     방금 지나온 층 체크포인트 깃발에서 즉시 부활! */
+  if ((G.at3 || G.at4) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - 1.2) {
+    respawn();
+  }
 
   // 체크포인트
   for (var i = 0; i < G.cps.length; i++) {
@@ -4979,9 +5341,8 @@ function updatePlayer(dt) {
   // 🏆 3탄 타워 꼭대기 트로피 — 정상에 서면 완주!
   if (!G.finished3) {
     var fc3 = G.finish3;
-    if (Math.abs(fc3.z - p.z) < 0.9 &&
-      p.x > fc3.x - 3.2 && p.x < fc3.x + 3.2 &&
-      p.y > fc3.y - 3.2 && p.y < fc3.y + 3.2) {
+    if (Math.abs(fc3.z - p.z) < 0.7 &&
+      Math.abs(p.x - fc3.x) < 1.7 && Math.abs(p.y - fc3.y) < 1.5) {
       finishStage3();
     }
   }
@@ -4989,9 +5350,8 @@ function updatePlayer(dt) {
   // 🫧 4탄 왁뿌볼 타워 꼭대기 — 말랑 구슬 꼭대기 트로피 앞에 서면 완주!
   if (!G.finished4) {
     var fc4 = G.finish4;
-    if (Math.abs(fc4.z - p.z) < 0.9 &&
-      p.x > fc4.x - 3.0 && p.x < fc4.x + 3.0 &&
-      p.y > fc4.y - 3.0 && p.y < fc4.y + 3.0) {
+    if (Math.abs(fc4.z - p.z) < 0.7 &&
+      Math.abs(p.x - fc4.x) < 1.7 && Math.abs(p.y - fc4.y) < 1.5) {
       finishStage4();
     }
   }
@@ -5034,6 +5394,8 @@ function doLand(cand) {
   }
   p.squash = 1;
   p.keyId = null;
+  p.groundZ = t.z;
+  p.slip = !!t.slip;
   if (t.jelly) pressJelly(t, 1.05);            // 🫧 말랑 구슬 착지 → 사그락! 퐁실!
   else { AU.land(); spawnDust(p.x, p.y, p.z, 4); }
   if (t.key) pressKey(t);
@@ -5048,10 +5410,12 @@ function respawn() {
   var cp = G.cps[G.cpIdx] || G.cps[0];
   resetTraps2();                 // 사라진 블록은 다시 살아나요
   G.p.x = cp.x; G.p.y = cp.y; G.p.z = cp.z;
-  G.p.vz = 0; G.p.air = false;
+  G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
   G.p.face = 1;            // 코스가 +x(오른쪽)로 이어지니 앞을 바라보고 다시 출발
   G.p.walk = 0;
-  G.p.keyId = null;
+  G.p.keyId = null; G.p.jellyId = null;
+  G.p.groundZ = cp.z; G.p.slip = false;
+  G.p.hurtAt = Date.now() - 1200;      // 부활 직후엔 잠깐 무적 (바로 또 깎이지 않게)
   G.petXY.x = cp.x - 0.8; G.petXY.y = cp.y + 0.8; G.petXY.z = cp.z;
   snapCamera(cp.x, cp.y, cp.z);
   AU.err();
@@ -5154,10 +5518,15 @@ function gotoStage2(silent) {
 /* 🏰 3탄 무지개 타워 — 하늘 섬 입구로 */
 function gotoStage3(silent) {
   resetTraps2();
-  var cp = G.cps[G.cp3Start] || { x: 122.5, y: 10.5, z: 0 };
+  if (G.cp3Start >= 0) {
+    G.cpIdx = G.cp3Start;
+    for (var ci3 = 0; ci3 < G.cps.length; ci3++) G.cps[ci3].on = (ci3 === G.cp3Start);
+  }
+  var cp = G.cps[G.cp3Start] || { x: 123.5, y: 11.5, z: 0 };
   G.p.x = cp.x; G.p.y = cp.y; G.p.z = cp.z;
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
-  G.p.face = 1; G.p.walk = 0; G.p.keyId = null;
+  G.p.face = 1; G.p.walk = 0; G.p.keyId = null; G.p.jellyId = null;
+  G.p.groundZ = cp.z; G.p.slip = false; G.p.hurtAt = Date.now() - 1200;
   G.petXY.x = cp.x - 0.9; G.petXY.y = cp.y + 0.9; G.petXY.z = cp.z;
   snapCamera(cp.x, cp.y, cp.z);
   G.finished = true;          // 1탄 결승은 지난 것으로
@@ -5176,10 +5545,15 @@ function gotoStage3(silent) {
 /* 🫧 4탄 퐁실퐁실 왁뿌볼 타워 — 말랑 구슬 하늘 섬 입구로 */
 function gotoStage4(silent) {
   resetTraps2();
-  var cp = G.cps[G.cp4Start] || { x: 152.5, y: -35.5, z: 0 };
+  if (G.cp4Start >= 0) {
+    G.cpIdx = G.cp4Start;
+    for (var ci4 = 0; ci4 < G.cps.length; ci4++) G.cps[ci4].on = (ci4 === G.cp4Start);
+  }
+  var cp = G.cps[G.cp4Start] || { x: 152.5, y: -34.5, z: 0 };
   G.p.x = cp.x; G.p.y = cp.y; G.p.z = cp.z;
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
   G.p.face = 1; G.p.walk = 0; G.p.keyId = null; G.p.jellyId = null;
+  G.p.groundZ = cp.z; G.p.slip = false; G.p.hurtAt = Date.now() - 1200;
   G.petXY.x = cp.x - 0.9; G.petXY.y = cp.y + 0.9; G.petXY.z = cp.z;
   snapCamera(cp.x, cp.y, cp.z);
   G.finished = true;          // 앞선 코스 완주 팝업이 다시 뜨지 않게
@@ -5205,8 +5579,8 @@ function gotoVillage() {
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
   G.p.face = 1; G.p.walk = 0; G.p.keyId = null;
   G.petXY.x = G.p.x - 0.9; G.petXY.y = G.p.y + 0.9; G.petXY.z = 0;
-  G.cpIdx = 0;
-  for (var vi = 0; vi < G.cps.length; vi++) G.cps[vi].on = (vi === 0);
+  G.cpIdx = G.cp1Start;
+  for (var vi = 0; vi < G.cps.length; vi++) G.cps[vi].on = (vi === G.cp1Start);
   snapCamera(G.p.x, G.p.y, 0);
   closeAllSheets();
   G.paused = false;
@@ -5309,6 +5683,16 @@ function drawWorld() {
     if (sp3.x < minX - 4 || sp3.x > maxX + 4 || sp3.y < minY - 4 || sp3.y > maxY + 4) continue;
     items.push({ d: sp3.x + sp3.y + 0.05, k: 12, o: sp3 });
   }
+  for (i = 0; i < G.rollers.length; i++) {
+    var ro2 = G.rollers[i];
+    if (ro2.px < minX - 3 || ro2.px > maxX + 3 || ro2.py < minY - 3 || ro2.py > maxY + 3) continue;
+    items.push({ d: ro2.px + ro2.py + 0.07, k: 17, o: ro2 });
+  }
+  for (i = 0; i < G.enemies.length; i++) {
+    var en2 = G.enemies[i];
+    if (en2.px < minX - 3 || en2.px > maxX + 3 || en2.py < minY - 3 || en2.py > maxY + 3) continue;
+    items.push({ d: en2.px + en2.py + 0.07, k: 18, o: en2 });
+  }
   if (G.finish2 && Math.abs(G.finish2.x - G.p.x) < 18 && Math.abs(G.finish2.y - G.p.y) < 18) {
     items.push({ d: G.finish2.x + G.finish2.y + 0.01, k: 13, o: null });
   }
@@ -5337,7 +5721,15 @@ function drawWorld() {
     var it = items[i];
     switch (it.k) {
       case 1: drawTile(ctx, it.o); break;
-      case 2: drawMe(ctx); break;
+      case 2:
+        /* 💥 적에게 부딪힌 뒤 1.8초는 깜빡이며 무적 */
+        if (Date.now() - (G.p.hurtAt || 0) < 1800) {
+          ctx.save();
+          ctx.globalAlpha = 0.3 + 0.45 * Math.abs(Math.sin(G.t * 17));
+          drawMe(ctx);
+          ctx.restore();
+        } else drawMe(ctx);
+        break;
       case 3: drawCoin(ctx, it.o); break;
       case 4: drawTree(ctx, it.o); break;
       case 5: drawProp(ctx, it.o); break;
@@ -5352,6 +5744,8 @@ function drawWorld() {
       case 14: drawPortal(ctx, it.o); break;
       case 15: drawTrophy3(ctx); break;
       case 16: drawTrophy4(ctx); break;
+      case 17: drawRoller(ctx, it.o); break;
+      case 18: drawEnemy(ctx, it.o); break;
     }
   }
 
@@ -5776,7 +6170,7 @@ function finishRun() {
   $('#finGates').textContent = G.gatesSolved;
   $('#finPrize').textContent = '+25';
   $('#finishTitle').textContent = ME.name + ' 결승! 정말 잘했어!';
-  $('#finishLead').textContent = '무지개 성에 도착했어요 🎉 동쪽 문으로 🌋 2탄에 도전해 봐!';
+  $('#finishLead').textContent = '무지개 성에 도착했어요 🎉 성 안 🌱 그로우 어 가든 문, 동쪽 문으로는 🌋 2탄!';
   $('#finishOverlay').classList.add('open');
   updateHint();
 }
@@ -5801,7 +6195,7 @@ function finishStage2() {
   $('#champCps').textContent = G.cpIdx - G.cp2Start + 1;
   $('#champPrize').textContent = '+40';
   $('#champTitle').textContent = ME.name + ' 2탄 챔피언! 👑';
-  $('#champLead').textContent = '사라지는 블록·용암·움직이는 발판을 모두 넘었어요!';
+  $('#champLead').textContent = '사라지는 블록·용암·움직이는 발판을 모두 넘었어요! 👗 드레스 문과 🏰 3탄 문이 이 앞에 있어요!';
   $('#champOverlay').classList.add('open');
   updateHint();
 }
@@ -5839,7 +6233,7 @@ function finishStage3() {
   $('#twBest').textContent = fmtTime(best);
   $('#twPrize').textContent = '+50';
   $('#twTitle').textContent = ME.name + ' 타워 챔피언! 🏆';
-  $('#twLead').textContent = '무지개 타워 6층 꼭대기까지 올라왔어요! 폭죽이 터지고 공용 코인 +50을 받았어요!';
+  $('#twLead').textContent = '점프맵·장애물·적을 모두 넘고 무지개 타워 6층 꼭대기! 폭죽이 터지고 공용 코인 +50을 받았어요!';
   $('#towerOverlay').classList.add('open');
   updateHint();
 }
@@ -5877,7 +6271,7 @@ function finishStage4() {
   $('#jlBest').textContent = fmtTime(best);
   $('#jlPrize').textContent = '+50';
   $('#jlTitle').textContent = ME.name + ' 왁뿌볼 챔피언! 🫧';
-  $('#jlLead').textContent = '퐁실퐁실 왁뿌볼 구슬 발판 6층을 모두 밟고 올라왔어요! 폭죽이 터지고 공용 코인 +50을 받았어요!';
+  $('#jlLead').textContent = '미끄러운 젤리·사라지는 구슬·굴러오는 구슬을 모두 넘고 6층 꼭대기! 폭죽이 터지고 공용 코인 +50을 받았어요!';
   $('#jellyOverlay').classList.add('open');
   updateHint();
 }
@@ -5909,8 +6303,8 @@ function resetRun() {
     });
   });
   G.coins.forEach(function (c) { c.got = false; });
-  G.cps.forEach(function (c, i) { c.on = i === 0; });
-  G.cpIdx = 0;  G.p.x = 5; G.p.y = 2.5; G.p.z = 0; G.p.vz = 0; G.p.air = false;
+  G.cps.forEach(function (c, i) { c.on = i === G.cp1Start; });
+  G.cpIdx = G.cp1Start;  G.p.x = 5; G.p.y = 2.5; G.p.z = 0; G.p.vz = 0; G.p.air = false;
   G.petXY.x = 4.2; G.petXY.y = 3.2; G.petXY.z = 0;
   G.startAt = Date.now();
   G.paused = false;
@@ -5920,30 +6314,39 @@ function resetRun() {
   toast('🔁 다시 출발! 화이팅!');
 }
 
+var T3_TIP = [
+  '🏰 1층 빨강! 발판이 떨어져 있어요 — 점프로 건너요 (👾 부딪히면 -30 코인)',
+  '🟠 2층 주황! 사라지는 블록은 멈추지 말고 달려요',
+  '🟡 3층 노랑! 움직이는 발판이 다가오면 올라타요',
+  '🟢 4층 초록! 굴러오는 구슬은 점프로 넘어요',
+  '🔵 5층 파랑! 사라지는 블록 + 움직이는 발판이에요',
+  '🟣 6층 보라! 마지막 점프! 트로피가 코앞이에요'
+];
+var J4_TIP = [
+  '🫧 1층 딸기 젤리! 구슬 발판 사이를 점프로 건너요',
+  '🫧 2층 포도 젤리! 미끄러운 구슬에서는 쭉 밀려요',
+  '🫧 3층 민트 젤리! 구슬이 0.6초 만에 사라져요',
+  '🫧 4층 하늘 젤리! 움직이는 구슬 발판을 타요',
+  '🫧 5층 크림 젤리! 굴러오는 구슬은 점프로 넘어요',
+  '🫧 6층 복숭아! 점프 젤리로 폴짝! 트로피가 코앞!'
+];
+
 function updateHint() {
   var el = $('#hint');
   if (!el) return;
   var unsolved = G.gates.filter(function (g) { return !g.solved; });
   var p = G.p, txt;
   if (G.at4 && !G.finished4) {
-    if (p.z < 0.8) txt = '🫧 1층 딸기 젤리! 왼쪽 위 모서리 구슬 계단으로 올라가요';
-    else if (p.z < 2.4) txt = '🫧 2층 포도 젤리! 위층 계단은 왼쪽 위 모서리에 있어요';
-    else if (p.z < 4.0) txt = '🫧 3층 민트 젤리! 가운데 홈은 가장자리로 돌아가요';
-    else if (p.z < 5.6) txt = '🫧 4층 하늘 젤리! 사그락 구슬은 오래 서 있으면 사라져요';
-    else if (p.z < 7.2) txt = '🫧 5층 크림 젤리! 포실포실 구슬을 넘어가요';
-    else txt = '🫧 6층 복숭아! 왁뿌볼 챔피언 트로피가 코앞이에요!';
+    var jf = Math.max(0, Math.min(5, Math.round((p.z - 0.9) / 1.6)));
+    txt = J4_TIP[jf];
   }
   else if (G.at4 && G.finished4) txt = '🫧 왁뿌볼 챔피언! 정말 대단해! 마을에서 놀아도 좋아요';
   else if (G.at3 && !G.finished3) {
-    if (p.z < 0.9) txt = '🏰 1층 빨강! 무지개 계단을 따라 위로 올라가요';
-    else if (p.z < 2.4) txt = '🟠 2층 주황! 위층 계단은 왼쪽 위 모서리에 있어요';
-    else if (p.z < 3.9) txt = '🟡 3층 노랑! 사라지는 발판은 멈추지 말고 지나가요';
-    else if (p.z < 5.4) txt = '🟢 4층 초록! 회전 막대를 피해 지나가요';
-    else if (p.z < 6.9) txt = '🔵 5층 파랑! 움직이는 발판을 타고 건너요';
-    else txt = '🟣 6층 보라! 트로피가 코앞이에요!';
+    var tf = Math.max(0, Math.min(5, Math.round((p.z - 0.9) / 1.5)));
+    txt = T3_TIP[tf];
   }
   else if (G.finished3) txt = '🏆 타워 챔피언! 정말 대단해! 마을에서 놀아도 좋아요';
-  else if (G.finished2) txt = '👑 2탄 챔피언! 정말 대단해! 마을에서 놀아도 좋아요';
+  else if (G.finished2) txt = '👑 2탄 챔피언! 정말 대단해! 👗 드레스 문 · 🏰 3탄 문이 앞에 있어요';
   else if (p.x > 53.6) {
     if (p.x < 61) txt = '🌋 2탄 시작! 사라지는 블록은 멈추면 사라져요';
     else if (p.x < 67.5) txt = '⏱️ 사라지는 블록! 멈추지 말고 계속 걸어요!';
@@ -7094,6 +7497,8 @@ function loop(ts) {
     updateTraps(dt);
     updateJelly(dt);
     updateSpins(dt);
+    updateRollers(dt);
+    updateEnemies(dt);
     updatePlayer(dt);
     updatePet(dt);
     updateReveal(dt);
@@ -7173,6 +7578,66 @@ function init() {
   requestAnimationFrame(loop);
   updateHint();
 }
+
+/* ============================================================
+   🧪 테스트 도우미 — 주소에 ?bwtest=1 이 붙었을 때만 열려요
+   (아이들이 쓰는 화면에는 아무 영향이 없어요)
+   ============================================================ */
+try {
+  var _bwq = new URLSearchParams(location.search || '');
+  if (_bwq.get('bwtest') === '1') {
+    window.__BWD = {
+      G: G,
+      state: function () {
+        var p = G.p;
+        return {
+          x: +p.x.toFixed(3), y: +p.y.toFixed(3), z: +p.z.toFixed(3), air: !!p.air,
+          groundZ: p.groundZ, cp: G.cpIdx, at3: !!G.at3, at4: !!G.at4,
+          fin: !!G.finished, fin2: !!G.finished2, fin3: !!G.finished3, fin4: !!G.finished4,
+          coins: SAVE ? SAVE.coins : null, hurt: p.hurtAt || 0, slip: !!p.slip,
+          stand: p.standTile ? { x: p.standTile.x, y: p.standTile.y, z: p.standTile.z, type: p.standTile.type } : null
+        };
+      },
+      place: function (x, y, z) {
+        var p = G.p;
+        p.x = x; p.y = y; p.z = z; p.vx = 0; p.vy = 0; p.vz = 0; p.air = false;
+        p.groundZ = z; p.slip = false;
+        snapCamera(x, y, z);
+      },
+      stick: function (ix, iy) { G.stick.x = ix; G.stick.y = iy; G.stick.active = true; },
+      aim: function (dx, dy) {
+        var l = Math.hypot(dx, dy) || 1;
+        var ix = 34 * (dx / l - dy / l), iy = 17 * (dx / l + dy / l);
+        var n = Math.hypot(ix, iy) || 1;
+        G.stick.x = ix / n; G.stick.y = iy / n; G.stick.active = true;
+      },
+      stop: function () { G.stick.x = 0; G.stick.y = 0; G.stick.active = false; },
+      jump: function () { doJump(); },
+      respawn: function () { respawn(); },
+      calm: function () { G.enemies.length = 0; G.spins.length = 0; G.rollers.length = 0; resetTraps2(); },
+      resetTraps: function () { resetTraps2(); },
+      st1: function () { resetRun(); },
+      st2: function () { gotoStage2(); },
+      st3: function () { gotoStage3(); },
+      st4: function () { gotoStage4(); },
+      village: function () { gotoVillage(); },
+      hops: function (n) { return (n === 4 ? G.hops4 : G.hops3); },
+      cps: function () { return G.cps.map(function (c, i) { return { i: i, x: c.x, y: c.y, z: c.z, on: c.on, s2: !!c.s2, s3: !!c.s3, s4: !!c.s4 }; }); },
+      spins: function () { return G.spins.map(function (sp) { return { x: sp.x, y: sp.y, z: sp.z, len: sp.len }; }); },
+      rollers: function () { return G.rollers.map(function (r) { return { x: r.px, y: r.py, z: r.z, r: r.r }; }); },
+      foes: function () { return G.enemies.map(function (e) { return { x: e.px, y: e.py, z: e.z, face: e.face }; }); },
+      crumbles: function () { return G.crmTiles.map(function (t) { return { x: t.x, y: t.y, z: t.z, st: t.cstate, hid: !!t.hidden }; }); },
+      portals: function () { return G.portals.map(function (po) { return { id: po.id, x: po.x, y: po.y, z: po.z, href: po.href }; }); },
+      spots: function () { return G.spots.map(function (sp) { return { x: sp.x, y: sp.y, z: sp.z, label: sp.label }; }); },
+      finishes: function () { return { f1: G.finish, f2: G.finish2, f3: G.finish3, f4: G.finish4 }; },
+      tile: function (x, y) { var t = G.map[Math.floor(x) + ',' + Math.floor(y)]; return t ? { x: t.x, y: t.y, z: t.z, type: t.type, hid: !!t.hidden, crm: !!t.crm, jelly: !!t.jelly } : null; },
+      topUp: function (n) { var cur = WorldCoins.get(); if (cur < n) WorldCoins.earn(n - cur); return WorldCoins.get(); },
+      openModal: function (id) { var el = document.getElementById(id); if (el) el.classList.add('open'); },
+      closedModals: function () { return ['champOverlay', 'towerOverlay', 'jellyOverlay', 'finishOverlay'].filter(function (id) { var el = document.getElementById(id); return !el || !el.classList.contains('open'); }); },
+      errs: function () { return window.__errs || []; }
+    };
+  }
+} catch (e) {}
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
