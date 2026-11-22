@@ -947,6 +947,159 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
 .actor.p-hyeongwon .nm{background:linear-gradient(135deg,#ffbb63,#e08a20); box-shadow:0 3px 9px rgba(180,120,20,.35)}
 .actor.p-mom .nm{background:linear-gradient(135deg,#ff7fb2,#d63f7c); box-shadow:0 3px 9px rgba(180,50,110,.38)}
 .actor.p-dad .nm{background:linear-gradient(135deg,#6fb0ff,#2f63c4); box-shadow:0 3px 9px rgba(40,90,180,.38)}
+/* ================= 🏆 가족 실시간 시합 (2·3·4인) ================= */
+.mtHero{
+  display:flex; align-items:center; gap:11px; width:100%; text-align:left; padding:13px 14px; border-radius:20px;
+  background:linear-gradient(135deg,#fff6d0,#ffd76e 58%,#ffc23c); border:2.5px solid #edb02a;
+  box-shadow:inset 0 1px 0 #fff8dd, 0 5px 0 #d99a12; color:#5a3d00; cursor:pointer;
+}
+.mtHero:active{transform:translateY(3px); box-shadow:inset 0 1px 0 #fff8dd, 0 1px 0 #d99a12}
+.mtHero .he{font-size:34px; line-height:1; filter:drop-shadow(0 2px 2px rgba(120,70,0,.25)); animation:heroFloat 2.6s ease-in-out infinite}
+.mtHero .tx{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px}
+.mtHero .tx b{font-size:17.5px; font-weight:900; letter-spacing:-.04em; color:#4a3100}
+.mtHero .tx span{font-size:11.5px; font-weight:800; color:#7a5a10; line-height:1.35; word-break:keep-all}
+.mtHero .ar{font-size:22px; font-weight:900; color:#a97a00}
+.mgBadge.mtq{background:#fff1bf; border-color:#f0c14a; color:#8a5e00; cursor:pointer; font-size:11px}
+.mgBadge.mtq:active{transform:translateY(1px)}
+
+/* --- 초대 배너 --- */
+#mtInvite{position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:74; display:flex; justify-content:center}
+#mtInvite.hide{display:none}
+#mtInvite .in{
+  width:100%; max-width:540px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  background:linear-gradient(180deg,#fffbee,#ffeec4); border:2.5px solid #f0c14a; border-radius:18px;
+  padding:10px 11px; box-shadow:0 12px 28px rgba(120,80,10,.30);
+  animation:invDrop .26s cubic-bezier(.2,.9,.3,1.1);
+}
+@keyframes invDrop{from{transform:translateY(-26px); opacity:0}to{transform:translateY(0); opacity:1}}
+#mtInvite .em{font-size:25px; line-height:1}
+#mtInvite .tx{flex:1 1 150px; min-width:0; display:flex; flex-direction:column; gap:1px}
+#mtInvite .tx b{font-size:13px; font-weight:900; color:#5a3d00; letter-spacing:-.035em; line-height:1.3; word-break:keep-all}
+#mtInvite .tx span{font-size:10.8px; font-weight:800; color:#8a6a1a}
+#mtInvite .row{display:flex; gap:6px; flex:1 1 100%; max-width:340px; margin-left:auto}
+#mtInvite button{
+  flex:1 1 0; min-height:42px; border-radius:13px; font-size:13.5px; font-weight:900; padding:0 8px;
+  background:linear-gradient(135deg,#ffd35e,#ef9b13); color:#543200; box-shadow:0 3px 0 #c4810a;
+}
+#mtInvite button:active{transform:translateY(2px); box-shadow:none}
+#mtInvite button.gh{background:#fff; color:#8a6a1a; border:2px solid #eed9a0; box-shadow:none; flex:0 0 88px}
+
+/* --- 설정 · 대기 --- */
+.mtWrap{display:flex; flex-direction:column; gap:9px; padding:2px 1px 8px; margin:auto 0}
+.mtChooser{display:flex; flex-direction:column; gap:7px}
+.mtPick{
+  display:grid; grid-template-columns:44px minmax(0,1fr); gap:10px; align-items:center; text-align:left;
+  padding:9px 11px; border-radius:16px; background:#fff; border:2.5px solid #e0eee1;
+  box-shadow:0 3px 0 rgba(0,0,0,.05);
+}
+.mtPick span{font-size:25px; text-align:center; line-height:1}
+.mtPick b{display:block; font-size:14.5px; font-weight:900; color:#2c5238; letter-spacing:-.04em; line-height:1.2}
+.mtPick em{display:block; font-style:normal; font-size:11px; font-weight:800; color:#7d9483; line-height:1.3}
+.mtPick.on{background:linear-gradient(180deg,#fff7de,#ffe9ae); border-color:#efbe45; box-shadow:0 3px 0 #e0b03c}
+.mtRow2{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.mtRow2 .lb{font-size:11.5px; font-weight:900; color:#5d7a63; flex:0 0 auto; min-width:24px}
+.mtNum{
+  flex:1 1 0; min-width:58px; min-height:44px; border-radius:13px; background:#fff; border:2px solid #e0eee1;
+  font-size:13px; font-weight:900; color:#4f6b56; box-shadow:0 3px 0 rgba(0,0,0,.05); letter-spacing:-.03em;
+}
+.mtNum.on{background:linear-gradient(180deg,#dcf7e0,#b6ecc3); border-color:#7fd094; color:#1c6b39}
+.mtStart{
+  min-height:58px; border-radius:19px; font-size:18px; font-weight:900; letter-spacing:-.03em;
+  background:linear-gradient(135deg,#ffcf4d,#f08a00); color:#4a2d00;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 5px 0 #b96c00; width:100%;
+}
+.mtStart.inv{background:linear-gradient(135deg,#ffe08a,#ffc73c); color:#5a3d00; box-shadow:inset 0 1px 0 #fff7d6, 0 5px 0 #d99a12}
+.mtStart[disabled]{opacity:.52; filter:grayscale(.4); box-shadow:0 5px 0 #c0a06a}
+.mtStart:active{transform:translateY(3px); box-shadow:none}
+.mtGh{min-height:46px; border-radius:15px; background:#fff; border:2px solid #e0eee1; color:#6b8471;
+  font-size:14px; font-weight:900; box-shadow:0 3px 0 rgba(0,0,0,.05); width:100%}
+.mtGh:active{transform:translateY(2px); box-shadow:none}
+.mtTip{
+  font-size:11.5px; font-weight:800; color:#5d7a63; line-height:1.45; background:rgba(255,255,255,.72);
+  border:1.5px solid #dfeee0; border-radius:14px; padding:9px 11px; word-break:keep-all;
+}
+.mtWarn{font-size:11.5px; font-weight:900; color:#a4571a; background:#fff1e2; border:1.5px solid #f5cfa6;
+  border-radius:14px; padding:9px 11px; line-height:1.4}
+.mtOpenList{display:flex; flex-direction:column; gap:6px}
+.mtOpenList > b{font-size:11.5px; font-weight:900; color:#5d7a63}
+.mtOpen{display:flex; align-items:center; gap:8px; padding:9px 11px; border-radius:14px; background:#fff; border:2px solid #e0eee1; text-align:left}
+.mtOpen span{font-size:20px}
+.mtOpen b{flex:1 1 auto; font-size:13px; font-weight:900; color:#2c5238}
+.mtOpen em{font-style:normal; font-size:11px; font-weight:900; color:#8aa08f}
+.mtHead{
+  display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:18px;
+  background:radial-gradient(120% 120% at 50% 0%,#ffffff,#eaffdc); border:2px dashed #cfe8cd;
+}
+.mtHead .big{font-size:34px; line-height:1}
+.mtHead b{display:block; font-size:16.5px; font-weight:900; color:#27502f; letter-spacing:-.04em}
+.mtHead span{display:block; font-size:11.5px; font-weight:800; color:#6b8471}
+.mtSlots{display:grid; grid-template-columns:1fr 1fr; gap:7px}
+.mtSlot{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; min-height:78px;
+  border-radius:16px; background:rgba(255,255,255,.66); border:2px dashed #d5e7d6; color:#8aa08f;
+}
+.mtSlot.on{background:#fff; border-style:solid; border-color:#a8dbb4; color:#2c5238; box-shadow:0 3px 0 rgba(90,150,100,.16)}
+.mtSlot span{font-size:27px; line-height:1.05}
+.mtSlot b{font-size:13px; font-weight:900; letter-spacing:-.03em}
+.mtSlot em{font-style:normal; font-size:10px; font-weight:900; color:#8aa08f}
+.mtWaitBox{
+  font-size:13px; font-weight:900; color:#3f7a52; text-align:center; padding:14px 10px; border-radius:16px;
+  background:#eefaf0; border:2px dashed #a8dbb4; line-height:1.42; animation:softPulse 1.9s ease-in-out infinite;
+}
+@keyframes softPulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* --- 경기 --- */
+.mtLane{flex:0 0 auto; display:grid; grid-template-columns:1fr 1fr; gap:5px}
+.mtLane.n1{grid-template-columns:1fr}
+.mtp{
+  display:grid; grid-template-columns:22px minmax(0,1fr) auto; grid-template-rows:auto auto; align-items:center;
+  gap:0 4px; padding:5px 7px; border-radius:12px; background:rgba(255,255,255,.84); border:1.5px solid #dfeee0;
+}
+.mtp .e{font-size:17px; line-height:1; grid-row:1/3}
+.mtp .nm{font-size:11.5px; font-weight:900; color:#3f6b4c; letter-spacing:-.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mtp .vv{font-size:12px; font-weight:900; color:#2f6e45; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+.mtp .bar{grid-column:2/4; height:5px; border-radius:99px; background:#e6f1e5; overflow:hidden; margin-top:2px}
+.mtp .bar b{display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#8ce0a2,#3fae63); transition:width .35s ease}
+.mtp.me{background:linear-gradient(180deg,#fffbe8,#fff2c6); border-color:#f0c968}
+.mtp.me .vv{color:#8a5e00}
+.mtp.done .bar b{background:linear-gradient(90deg,#ffd76e,#f0a52a)}
+body:has(#mini:not(.hide)) #wt-badge{opacity:0 !important; pointer-events:none !important}
+.mtCount{position:absolute; inset:0; z-index:4; display:grid; place-items:center; background:rgba(18,46,26,.44); backdrop-filter:blur(1.5px)}
+.dpad button[data-mtdir="up"]{grid-area:up}
+.dpad button[data-mtdir="left"]{grid-area:left}
+.dpad button[data-mtdir="down"]{grid-area:down}
+.dpad button[data-mtdir="right"]{grid-area:right}
+.mtCount.hide{display:none}
+.mtCount b{font-size:96px; font-weight:900; color:#fff; letter-spacing:-.06em; text-shadow:0 8px 26px rgba(20,60,30,.5); animation:cntPop .55s cubic-bezier(.2,.9,.3,1.15)}
+.mtCount.go b{font-size:62px; color:#ffe27a}
+@keyframes cntPop{0%{transform:scale(.55); opacity:.2}60%{transform:scale(1.12)}100%{transform:scale(1); opacity:1}}
+.mtFoot{flex:0 0 auto; text-align:center; font-size:11px; font-weight:800; color:#5d7a63; line-height:1.35; padding:0 4px}
+
+/* --- 결과 --- */
+.mtRes{display:flex; flex-direction:column; gap:8px; padding-bottom:6px; margin:auto 0; width:100%}
+.mtTrophy{display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px 8px}
+.mtTrophy .cup{font-size:54px; line-height:1; animation:cupFloat 1.8s ease-in-out infinite; filter:drop-shadow(0 6px 10px rgba(180,120,0,.35))}
+@keyframes cupFloat{0%,100%{transform:translateY(0) rotate(-4deg) scale(1)}50%{transform:translateY(-7px) rotate(4deg) scale(1.04)}}
+.mtTrophy b{font-size:18px; font-weight:900; color:#2c5238; letter-spacing:-.04em}
+.mtTrophy span{font-size:12px; font-weight:800; color:#6b8471}
+.mtRow{
+  display:grid; grid-template-columns:26px 26px minmax(0,1fr) auto auto; align-items:center; gap:6px;
+  padding:10px 11px; border-radius:15px; background:#fff; border:2px solid #e6efe6; box-shadow:0 3px 0 rgba(0,0,0,.04);
+}
+.mtRow.win{background:linear-gradient(180deg,#fffbef,#fff0c0); border-color:#f0c968; box-shadow:0 3px 0 #e8c470}
+.mtRow.me{outline:2.5px solid #ffcf6a; outline-offset:1px}
+.mtRow .md{font-size:19px; text-align:center; line-height:1}
+.mtRow .em{font-size:19px; text-align:center; line-height:1}
+.mtRow .nm{font-size:13.5px; font-weight:900; color:#2c5238; letter-spacing:-.03em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.mtRow .nm em{font-style:normal; font-size:9.5px; font-weight:900; color:#8a5e00; background:#fff1bf; border-radius:6px; padding:1px 4px; margin-left:3px}
+.mtRow .rc{font-size:11.5px; font-weight:900; color:#4f7a58; font-variant-numeric:tabular-nums; white-space:nowrap}
+.mtRow .cn{font-size:12px; font-weight:900; color:#a06a00; white-space:nowrap}
+@media (max-width:380px){
+  .mtRow{grid-template-columns:22px 22px minmax(0,1fr) auto; }
+  .mtRow .cn{grid-column:4; grid-row:1}
+  .mtRow .rc{grid-column:3/5; grid-row:2; text-align:right}
+  .mtHero .tx b{font-size:16px}
+}
 </style>
 </head>
 <body data-wx="sunny">
@@ -1154,6 +1307,16 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   </div>
 </div>
 
+<div id="mtInvite" class="hide" role="alert" aria-live="assertive">
+  <div class="in">
+    <span class="em">🔥</span>
+    <span class="tx"><b id="mtInvTitle">시합 초대가 왔어요!</b><span id="mtInvSub">지금 참가해요</span></span>
+    <span class="row">
+      <button type="button" data-act="mtJoinNow" id="mtInvJoin">지금 참가하기</button>
+      <button type="button" class="gh" data-act="mtLater" id="mtInvLater">다음에</button>
+    </span>
+  </div>
+</div>
 <div id="fx"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -1627,7 +1790,9 @@ function toast(msg){
   clearTimeout(toast._t);
   toast._t = setTimeout(function(){ t.classList.remove('show'); }, 2400);
 }
-function vibe(ms){ try{ if(navigator.vibrate && !Sound.muted) navigator.vibrate(ms); }catch(e){} }
+let __gestureSeen = false;
+try{ document.addEventListener('pointerdown', function(){ __gestureSeen = true; }, {capture:true, once:true}); }catch(e){}
+function vibe(ms){ try{ if(__gestureSeen && navigator.vibrate && !Sound.muted) navigator.vibrate(ms); }catch(e){} }
 function todayKey(){ const d = new Date(); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
 function fmtLeft(sec){ return Math.max(0, Math.ceil(sec)) + '초'; }
 
@@ -4285,7 +4450,7 @@ function renderWxVisual(id){
 }
 
 /* ---------------- 25. 가족 실시간 연결 ---------------- */
-const NET = {db:null, on:false, ready:false, root:'family-lim-7660/growGarden', test:false};
+const NET = {db:null, on:false, ready:false, root:'family-lim-7660/growGarden', test:false, off:0};
 let remoteGardens = {}, gifts = {}, presence = {}, duel = null;
 let pushTimer = 0, posTimer = 0, lastPosAt = 0;
 const FB_CFG = {
@@ -4457,6 +4622,7 @@ function initNet(){
         schedulePush();
       }
     }).catch(function(){ syncReady = true; });
+    mtListen();
   }catch(e){
     NET.ready = false;
     console.warn('[grow-garden] 가족 연결을 시작하지 못했어요:', e);
@@ -4525,6 +4691,18 @@ document.addEventListener('click', function(e){
   if(act === 'closeModal'){ closeModal(); return; }
   if(act === 'miniGo'){ openMini(t.dataset.g || 'hub'); return; }
   if(act === 'miniBack'){ miniBack(); return; }
+  if(act === 'mtCreate'){ mtCreate(); return; }
+  if(act === 'mtPick'){ if(MT.roomId) return; MT.game = MTG[t.dataset.g] ? t.dataset.g : 'maze'; renderMini('match'); return; }
+  if(act === 'mtMax'){ if(MT.roomId) return; MT.max = Math.max(2, Math.min(4, parseInt(t.dataset.n, 10) || 4)); renderMini('match'); return; }
+  if(act === 'mtTarget'){ if(MT.roomId) return; MT.target = parseFloat(t.dataset.t) || 3.33; renderMini('match'); return; }
+  if(act === 'mtStart'){ mtStart(); return; }
+  if(act === 'mtLeave'){ mtLeave(); renderMini('hub'); return; }
+  if(act === 'mtHub'){ mtLeave(true); renderMini('hub'); return; }
+  if(act === 'mtAgain'){ mtAgain(); return; }
+  if(act === 'mtPlant'){ mtPlant(); return; }
+  if(act === 'mtQuick'){ MT.game = MTG[t.dataset.g] ? t.dataset.g : 'maze'; if(MT.roomId) mtLeave(true); openMini('match'); return; }
+  if(act === 'mtJoin' || act === 'mtJoinNow'){ const jid = t.dataset.id || MT.inviteId; if(jid) mtJoin(jid); return; }
+  if(act === 'mtLater'){ const did = t.dataset.id || MT.inviteId; if(did) MT.dismissed[did] = 1; mtInviteRender(); return; }
   if(act === 'trPlant'){ trPress(); return; }
   if(act === 'trSet'){ if(TR.state === 'run') return; TR.target = parseFloat(t.dataset.t) || 3.33; trSync(); return; }
   if(act === 'trBlind'){ if(TR.state === 'run') return; TR.blind = !TR.blind; trSync(); return; }
@@ -4735,7 +4913,8 @@ const MINI_HEAD = {
   hub:  ['🎮 정원 미니게임', '놀면서 정원 코인도 벌어요'],
   maze: ['🥕 당근 미로', '당근을 들고 바구니까지!'],
   star: ['⭐ 별 그리기', '점선 별을 빠르고 정확하게'],
-  tree: ['🌳 3.33초 나무 심기', '딱 맞는 순간에 심어요']
+  tree: ['🌳 3.33초 나무 심기', '딱 맞는 순간에 심어요'],
+  match: ['🏆 가족 실시간 시합', '2·3·4명이 동시에 겨뤄요']
 };
 const MINI = {view:'hub'};
 function stopMiniLoops(){
@@ -4744,6 +4923,8 @@ function stopMiniLoops(){
   if(TR.raf){ cancelAnimationFrame(TR.raf); TR.raf = 0; }
   MZ.holdDx = 0; MZ.holdDy = 0;
   ST.tracing = false;
+  if(typeof MP !== 'undefined' && MP.raf){ cancelAnimationFrame(MP.raf); MP.raf = 0; }
+  if(typeof MP !== 'undefined') MP.key = '';
 }
 
 /* ---------- 공통: 코인 지급 · 기록 ---------- */
@@ -4799,7 +4980,12 @@ function miniCard(kind, ic, name, desc, reward){
     + '</button>';
 }
 function miniHubHtml(){
-  return '<div class="hubWrap"><div class="mgGrid">'
+  return '<div class="hubWrap">'
+    + '<button class="mtHero" type="button" data-act="miniGo" data-g="match">'
+    + '<span class="he">🏆</span>'
+    + '<span class="tx"><b>가족과 실시간 시합</b><span>2·3·4명이 동시에 출발! 초대하면 바로 떠요</span></span>'
+    + '<span class="ar">›</span></button>'
+    + '<div class="mgGrid">'
     + miniCard('maze', '🥕', '당근 미로', '울타리 미로를 뚫고 당근을 수확 바구니까지', '🥇 15초 안 +25🪙 · 완주 +12🪙')
     + miniCard('star', '⭐', '별 그리기', '점선 별을 정확하고 빠르게 그어요', '80%+ 빠르면 +20🪙 · 65%+ +10🪙')
     + miniCard('tree', '⏳', '3.33초 나무 심기', '딱 맞는 순간에 심기 · 5·7.77초도 있어요', '±0.05초 +30🪙 · ±0.20초 +15🪙')
@@ -4824,10 +5010,12 @@ function closeMini(){
   const el = $('#mini');
   if(!el) return;
   stopMiniLoops();
+  if(typeof MT !== 'undefined' && MT.roomId && MT.room && MT.room.status === 'lobby') mtLeave(true);
   el.classList.add('hide');
   MINI.view = 'hub';
 }
 function miniBack(){
+  if(MINI.view === 'match'){ mtLeave(true); renderMini('hub'); return; }
   if(MINI.view !== 'hub') renderMini('hub');
   else closeMini();
 }
@@ -4846,6 +5034,7 @@ function renderMini(view){
   if(view === 'maze'){ box.innerHTML = mazeHtml(); startMaze(); }
   else if(view === 'star'){ box.innerHTML = starHtml(); startStar(); }
   else if(view === 'tree'){ box.innerHTML = treeHtml(); startTree(); }
+  else if(view === 'match'){ box.innerHTML = mtRootHtml(); mtAfterRender(); }
   else box.innerHTML = miniHubHtml();
   box.scrollTop = 0;
 }
@@ -4871,6 +5060,7 @@ function mazeHtml(){
     + '<span class="mgBadge" id="mzTime">0.00초</span>'
     + '<span class="mgBadge soft">최고 ' + (best ? best.toFixed(2) + '초' : '–') + '</span>'
     + '<span class="mgBadge rew">🥇15초 +25🪙</span>'
+    + '<button type="button" class="mgBadge mtq" data-act="mtQuick" data-g="maze">🏆 시합</button>'
     + '</div>'
     + '<div class="mgStage" id="mzStage"><canvas id="mzCv"></canvas>'
     + '<div class="mgDone hide" id="mzDone"></div></div>'
@@ -5191,6 +5381,7 @@ function starHtml(){
     + '<span class="mgBadge" id="stTime">0.00초</span>'
     + '<span class="mgBadge soft" id="stAcc">정확도 –</span>'
     + '<span class="mgBadge rew">80%+ 빠르면 +20🪙</span>'
+    + '<button type="button" class="mgBadge mtq" data-act="mtQuick" data-g="star">🏆 시합</button>'
     + '</div>'
     + '<div class="mgStage starStage" id="stStage"><canvas id="stCv"></canvas>'
     + '<div class="mgDone hide" id="stDone"></div></div>'
@@ -5239,18 +5430,19 @@ function segDist2(px, py, ax, ay, bx, by){
   const dx = px - (ax + vx * t), dy = py - (ay + vy * t);
   return dx * dx + dy * dy;
 }
-function starDistToPath(px, py){
+function starDistToPath(px, py, pts){
+  pts = pts || ST.pts;
   let best = 1e9;
-  for(let i=0; i<ST.pts.length; i++){
-    const a = ST.pts[i], b = ST.pts[(i + 1) % ST.pts.length];
+  for(let i=0; i<pts.length; i++){
+    const a = pts[i], b = pts[(i + 1) % pts.length];
     const d = segDist2(px, py, a.x, a.y, b.x, b.y);
     if(d < best) best = d;
   }
   return Math.sqrt(best);
 }
 /* 별 테두리(drawn) 쪽 거리 — 이상적인 별 위의 점 하나가 그린 선에서 얼마나 떨어졌나 */
-function starDistToDrawn(px, py){
-  const d = ST.samples;
+function starDistToDrawn(px, py, samples){
+  const d = samples || ST.samples;
   if(d.length < 2) return 1e9;
   let best = 1e9;
   for(let i=0; i<d.length-1; i++){
@@ -5276,14 +5468,18 @@ function starPassedVertices(){
    ① 정밀도 : 그린 점 하나하나가 별 선에서 얼마나 벗어났나 (평균)
    ② 커버리지 : 별 10개 구간을 빠짐없이, 선에 딱 붙여 그었나 (구간별로 본다)
    ③ 예리함 : 10개 꼭짓점을 뾰족하게 찍었나 — 모서리를 둥글게 깎으면 크게 깎인다 */
-function starScore(samples){
+function starScore(samples, cfg){
+  cfg = cfg || {};
+  const pts = cfg.pts || ST.pts;
+  const tol = cfg.tol || ST.tol, covTol = cfg.covTol || ST.covTol,
+        vTol = cfg.vTol || ST.vTol, maxOk = cfg.maxOk || ST.maxOk, RR = cfg.R || ST.R;
   const n = samples.length;
   if(n < 2) return {acc:0, prec:0, cov:0, sharp:0};
   /* ① 정밀도 */
   let psum = 0, worst = 0, dsum = 0;
   for(let i=0; i<n; i++){
-    const d = starDistToPath(samples[i][0], samples[i][1]);
-    psum += starSoft(d, ST.tol);
+    const d = starDistToPath(samples[i][0], samples[i][1], pts);
+    psum += starSoft(d, tol);
     dsum += d;
     if(d > worst) worst = d;
   }
@@ -5291,12 +5487,12 @@ function starScore(samples){
   /* ② 커버리지 (구간별) */
   const K = 8;
   let csum = 0, ctotal = 0, worstSeg = 1;
-  for(let i=0; i<ST.pts.length; i++){
-    const a = ST.pts[i], b = ST.pts[(i + 1) % ST.pts.length];
+  for(let i=0; i<pts.length; i++){
+    const a = pts[i], b = pts[(i + 1) % pts.length];
     let seg = 0;
     for(let k=0; k<K; k++){
       const t = k / K;
-      const v = starSoft(starDistToDrawn(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t), ST.covTol);
+      const v = starSoft(starDistToDrawn(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, samples), covTol);
       seg += v; csum += v; ctotal++;
     }
     seg /= K;
@@ -5305,21 +5501,21 @@ function starScore(samples){
   const cov = ctotal ? csum / ctotal : 0;
   /* ③ 꼭짓점 예리함 */
   let vsum = 0;
-  for(let i=0; i<ST.pts.length; i++){
-    const v = ST.pts[i];
+  for(let i=0; i<pts.length; i++){
+    const v = pts[i];
     let dv = 1e9;
     for(let j=0; j<n; j++){
       const d = Math.hypot(samples[j][0] - v.x, samples[j][1] - v.y);
       if(d < dv) dv = d;
     }
-    vsum += starSoft(dv, ST.vTol);
+    vsum += starSoft(dv, vTol);
   }
-  const sharp = vsum / ST.pts.length;
+  const sharp = vsum / pts.length;
   let acc = prec * 0.38 + cov * 0.28 + sharp * 0.34;
   /* 평균이 기준을 넘겨 삐뚤빼뚤하면 한 번 더 깎기 */
-  if(dmean > ST.tol) acc *= Math.max(0.60, 1 - (dmean - ST.tol) / (ST.R * 1.6));
+  if(dmean > tol) acc *= Math.max(0.60, 1 - (dmean - tol) / (RR * 1.6));
   /* 한 곳이라도 크게 튀면 감점 */
-  if(worst > ST.maxOk) acc *= Math.max(0.55, 1 - (worst - ST.maxOk) / (ST.R * 0.6));
+  if(worst > maxOk) acc *= Math.max(0.55, 1 - (worst - maxOk) / (RR * 0.6));
   /* 한 구간이 통째로 비면 감점 */
   if(worstSeg < 0.30) acc *= 0.80;
   /* 별을 거의 못 그렸으면 55% 상한 */
@@ -5494,6 +5690,7 @@ function treeHtml(){
     + '<span class="mgBadge" id="trTarget">목표 ' + TR.target.toFixed(2) + '초</span>'
     + '<span class="mgBadge soft" id="trBest">최고 ' + (rec.best ? '오차 ' + rec.best.toFixed(2) + '초' : '–') + '</span>'
     + '<span class="mgBadge rew">±0.05초 +30🪙</span>'
+    + '<button type="button" class="mgBadge mtq" data-act="mtQuick" data-g="tree">🏆 시합</button>'
     + '</div>'
     + '<div class="mgStage treeStage" id="trStage"><canvas id="trCv"></canvas>'
     + '<div class="trClockWrap" id="trWrap"><span class="trClock" id="trClock">0.00</span>'
@@ -5780,6 +5977,1105 @@ function treePaint(now){
   }
 }
 
+/* =========================================================
+   30-B. 🏆 가족 실시간 시합 — 2인 · 3인 · 4인 동시 대결
+   Firebase: (NET.root)/miniMatch/rooms/<roomId>
+   · 방장이 방을 열면 접속 중인 가족 화면에 초대 배너가 떠요
+   · 방장이 "지금 시작!" → 모두 같은 시각에 3·2·1 → 동시 출발
+   · 각자 기록을 실시간으로 올리고, 다 끝나면 순위표 + 코인
+   · 기존 kids · gardens 데이터는 건드리지 않아요(코인은 WorldCoins)
+   ========================================================= */
+const MTG = {
+  maze: {name:'당근 미로',       ic:'🥕', full:'🥕 당근 미로',       how:'바구니에 더 빨리 도착하면 1등!', limit:90},
+  star: {name:'별 그리기',       ic:'⭐', full:'⭐ 별 그리기',       how:'정확도가 높으면 1등! (같으면 빠른 사람)', limit:60},
+  tree: {name:'3.33초 나무 심기', ic:'⏳', full:'⏳ 3.33초 나무 심기', how:'목표 시간에 더 가까우면 1등!', limit:0}
+};
+const MT_RANK_COINS = [20, 10, 5, 5];
+const MT = {
+  rooms:{}, room:null, roomId:null, host:false,
+  game:'maze', max:4, target:3.33,
+  shownPhase:'', inviteId:null, dismissed:{}, awarding:{}, lastAgain:0
+};
+const MP = {
+  raf:0, key:'', game:'maze', goAt:0, deadline:0,
+  finished:false, lastPush:0, lastLane:0, counted:-1, waitShown:false,
+  mz:null, st:null, tr:null
+};
+function mtRoot(){ return NET.root + '/miniMatch'; }
+function mtSrv(){ return Date.now() + (+NET.off || 0); }
+function mtGameName(g){ return (MTG[g] && MTG[g].full) || '미니게임'; }
+function mtMe(){
+  const p = PEOPLE[kid] || {name:'가족', emo:'🙂'};
+  return {name:p.name, emo:p.emo, at:mtSrv(), prog:0};
+}
+function mtPlayersOf(room){
+  const r = room || MT.room || {};
+  const ps = r.players || {};
+  const out = Object.keys(ps).map(function(k){
+    const p = ps[k] || {};
+    return {
+      k:k, name: p.name || pName(k), emo: p.emo || (PEOPLE[k] ? PEOPLE[k].emo : '🙂'),
+      done: !!p.done, left: !!p.left,
+      prog: Math.max(0, Math.min(100, +p.prog || 0)),
+      t: +p.t || 0, time: +p.time || 0, acc: +p.acc || 0, err: +p.err || 0,
+      at: +p.at || 0
+    };
+  });
+  out.sort(function(a,b){ return (a.at - b.at) || (a.k < b.k ? -1 : 1); });
+  return out;
+}
+/* ---------- 단계 ---------- */
+function mtPhase(){
+  const r = MT.room;
+  if(!r) return 'setup';
+  if(r.status === 'lobby') return 'lobby';
+  if(r.status !== 'racing') return 'result';
+  const goAt = (+r.startedAt || 0);
+  const ps = mtPlayersOf(r);
+  if(ps.length && ps.every(function(p){ return p.done || p.left; })) return 'result';
+  const dl = +r.deadline || 0;
+  if(dl && mtSrv() > dl + 700) return 'result';
+  if(mtSrv() < goAt) return 'count';
+  return 'run';
+}
+function mtShownOf(ph){ return (ph === 'count' || ph === 'run') ? 'play' : ph; }
+function mtRank(room){
+  const r = room || MT.room || {};
+  const game = r.game || 'maze';
+  const arr = mtPlayersOf(r);
+  const done = arr.filter(function(p){ return p.done; });
+  const rest = arr.filter(function(p){ return !p.done; })
+                  .sort(function(a,b){ return (b.prog - a.prog) || (a.at - b.at); });
+  done.sort(function(a,b){
+    if(game === 'star') return (b.acc - a.acc) || (a.time - b.time);
+    if(game === 'tree') return Math.abs(a.err) - Math.abs(b.err);
+    return a.time - b.time;
+  });
+  return done.concat(rest);
+}
+function mtRecText(game, p){
+  if(!p || !p.done) return '기록 없음';
+  if(game === 'star') return Math.round(p.acc) + '% · ' + (+p.time).toFixed(1) + '초';
+  if(game === 'tree') return '오차 ' + Math.abs(+p.err).toFixed(2) + '초';
+  return (+p.time).toFixed(2) + '초';
+}
+
+/* ---------- 실시간 연결 ---------- */
+function mtListen(){
+  if(!NET.db) return;
+  try{
+    NET.db.ref('.info/serverTimeOffset').on('value', function(s){ NET.off = +(s.val() || 0); }, function(){});
+    NET.db.ref(mtRoot() + '/rooms').on('value', function(snap){
+      MT.rooms = snap.val() || {};
+      mtOnRooms();
+    }, function(){});
+  }catch(e){}
+}
+let mtPrunedAt = 0;
+function mtOnRooms(){
+  const id = MT.roomId;
+  if(id){
+    const r = MT.rooms[id];
+    if(!r){
+      MT.roomId = null; MT.room = null; MT.host = false;
+      if(MINI.view === 'match') toast('시합방이 닫혔어요 🥲');
+    } else {
+      MT.room = r;
+      MT.host = (r.host === kid);
+    }
+  }
+  mtPrune();
+  mtInviteRender();
+  if(MINI.view === 'match'){
+    const ph = mtPhase();
+    const shown = mtShownOf(ph);
+    const sig = mtSig();
+    if(shown !== MT.shownPhase || (shown !== 'play' && sig !== MT.sig)){
+      MT.sig = sig;
+      renderMini('match');
+    } else {
+      MT.sig = sig;
+      mtPaintLane(true);
+    }
+  }
+}
+function mtSig(){
+  const r = MT.room;
+  if(!r) return 'none';
+  return String(r.status || '') + '|' + (r.max || 0) + '|' + (r.target || 0) + '|'
+    + Object.keys(r.players || {}).sort().join(',');
+}
+function mtPrune(){
+  if(!NET.db || !NET.on) return;
+  const now = mtSrv();
+  if(now - mtPrunedAt < 15000) return;
+  mtPrunedAt = now;
+  Object.keys(MT.rooms || {}).forEach(function(id){
+    if(id === MT.roomId) return;
+    const r = MT.rooms[id];
+    if(!r) return;
+    const created = +r.createdAt || 0;
+    const dl = +r.deadline || 0;
+    if(r.status === 'lobby' && created && now - created > 10*60*1000) mtKill(id);
+    else if(r.status !== 'lobby' && dl && now - dl > 3*60*1000) mtKill(id);
+  });
+}
+function mtKill(id){ try{ NET.db.ref(mtRoot() + '/rooms/' + id).remove(); }catch(e){} }
+
+/* ---------- 초대 배너 ---------- */
+function mtInviteCandidate(){
+  /* 아직 대기 중이거나 달리는 중인 방에 있으면 초대를 띄우지 않아요.
+     끝난 방(결과 화면)에 남아 있을 때는 새 초대를 받을 수 있어요. */
+  if(MT.roomId && MT.room && (MT.room.status === 'lobby' || MT.room.status === 'racing')) return null;
+  const now = mtSrv();
+  let best = null;
+  Object.keys(MT.rooms || {}).forEach(function(id){
+    const r = MT.rooms[id];
+    if(!r || r.status !== 'lobby') return;
+    if(r.host === kid) return;
+    if(r.players && r.players[kid]) return;
+    if(MT.dismissed[id]) return;
+    const created = +r.createdAt || 0;
+    if(created && now - created > 5*60*1000) return;
+    if(Object.keys(r.players || {}).length >= (+r.max || 4)) return;
+    if(!best || created > best.created) best = {id:id, created:created, r:r};
+  });
+  return best;
+}
+function mtInviteRender(){
+  const el = document.getElementById('mtInvite');
+  if(!el) return;
+  const c = mtInviteCandidate();
+  if(!c){ el.classList.add('hide'); MT.inviteId = null; return; }
+  const g = MTG[c.r.game] || MTG.maze;
+  const n = Object.keys(c.r.players || {}).length, mx = +c.r.max || 4;
+  const t = document.getElementById('mtInvTitle'), s = document.getElementById('mtInvSub');
+  const btn = document.getElementById('mtInvJoin'), later = document.getElementById('mtInvLater');
+  if(t) t.textContent = '🔥 ' + pNim(c.r.host) + '가 [' + g.full + '] 시합에 초대했어요!';
+  if(s) s.textContent = '지금 ' + n + '/' + mx + '명 · 같이 출발해요!';
+  if(btn) btn.dataset.id = c.id;
+  if(later) later.dataset.id = c.id;
+  el.classList.remove('hide');
+  if(MT.inviteId !== c.id){
+    MT.inviteId = c.id;
+    try{ Sound.gift(); }catch(e){}
+    try{ vibe([18, 40, 18]); }catch(e){}
+  }
+}
+
+/* ---------- 방 만들기 · 참가 · 시작 · 나가기 ---------- */
+function mtCreate(){
+  if(!NET.db || !NET.on){ toast('가족 연결이 되면 실시간 시합을 할 수 있어요 🥲'); return; }
+  if(MT.roomId) mtLeave(true);
+  const id = kid + '-' + Date.now().toString(36);
+  const room = {
+    id:id, host:kid, game:MT.game, max:MT.max, target:MT.target,
+    seed: Math.floor(Math.random() * MAZE_RAW.length),
+    status:'lobby', createdAt: mtSrv(),
+    players: {} 
+  };
+  room.players[kid] = mtMe();
+  try{ NET.db.ref(mtRoot() + '/rooms/' + id).set(room); }catch(e){}
+  MT.roomId = id; MT.host = true; MT.room = room; MT.shownPhase = '';
+  if(MINI.view === 'match') renderMini('match'); else openMini('match');
+  try{ Sound.gift(); }catch(e){}
+  toast('🏆 시합방을 열었어요! 가족 화면에 초대가 떴어요');
+}
+function mtJoin(id){
+  if(!NET.db || !NET.on){ toast('가족 연결이 되면 실시간 시합을 할 수 있어요 🥲'); return; }
+  const r = MT.rooms[id];
+  if(!r){ toast('시합방이 이미 닫혔어요 🥲'); return; }
+  if(r.players && r.players[kid]){
+    MT.roomId = id; MT.room = r; MT.host = (r.host === kid); MT.shownPhase = '';
+    if(MINI.view === 'match') renderMini('match'); else openMini('match');
+    return;
+  }
+  if(r.status !== 'lobby'){ toast('이미 출발한 시합이에요 🏁'); return; }
+  if(Object.keys(r.players || {}).length >= (+r.max || 4)){ toast('자리가 다 찼어요 (' + (+r.max||4) + '명)'); return; }
+  try{ NET.db.ref(mtRoot() + '/rooms/' + id + '/players/' + kid).set(mtMe()); }catch(e){}
+  MT.roomId = id; MT.room = r; MT.host = false; MT.dismissed[id] = 1; MT.shownPhase = '';
+  if(MINI.view === 'match') renderMini('match'); else openMini('match');
+  try{ Sound.ding(); }catch(e){}
+  toast('🏆 ' + mtGameName(r.game) + ' 시합에 참가했어요!');
+}
+function mtStart(){
+  const r = MT.room;
+  if(!r || !MT.roomId) return;
+  if(r.host !== kid){ toast('방장만 시작할 수 있어요'); return; }
+  const ps = mtPlayersOf(r);
+  if(ps.length < 2){ toast('2명 이상 모여야 시작할 수 있어요 🙋'); return; }
+  const go = mtSrv() + 3000;
+  const lim = (r.game === 'tree')
+    ? Math.round(((+r.target || 3.33) + 6) * 1000)
+    : (MTG[r.game] || MTG.maze).limit * 1000;
+  try{ NET.db.ref(mtRoot() + '/rooms/' + MT.roomId).update({status:'racing', startedAt:go, deadline:go + lim}); }catch(e){}
+  try{ Sound.jackpot(); }catch(e){}
+  try{ vibe([30, 50, 30]); }catch(e){}
+}
+function mtLeave(silent){
+  const id = MT.roomId, r = MT.room;
+  if(id && NET.db){
+    try{
+      if(r && r.status === 'lobby'){
+        if(r.host === kid) NET.db.ref(mtRoot() + '/rooms/' + id).remove();
+        else NET.db.ref(mtRoot() + '/rooms/' + id + '/players/' + kid).remove();
+      } else if(r && r.status === 'racing'){
+        NET.db.ref(mtRoot() + '/rooms/' + id + '/players/' + kid + '/left').set(true);
+      }
+    }catch(e){}
+  }
+  MT.roomId = null; MT.room = null; MT.host = false; MT.shownPhase = ''; MT.inviteId = null;
+  MP.key = ''; MP.finished = false;
+  if(MP.raf){ cancelAnimationFrame(MP.raf); MP.raf = 0; }
+  if(!silent) toast('시합방에서 나왔어요');
+}
+function mtAgain(){
+  const r = MT.room;
+  if(!r) return;
+  const g = r.game, mx = +r.max || 4, tg = +r.target || 3.33;
+  if(r.host !== kid){ toast('방장이 새 시합방을 열면 다시 초대돼요 🏆'); return; }
+  mtLeave(true);
+  MT.game = g; MT.max = mx; MT.target = tg;
+  mtCreate();
+}
+
+/* ---------- 화면 그리기 ---------- */
+function mtRootHtml(){
+  const ph = mtPhase();
+  MT.shownPhase = mtShownOf(ph);
+  MT.sig = mtSig();
+  if(ph === 'setup') return mtSetupHtml();
+  if(ph === 'lobby') return mtLobbyHtml();
+  if(ph === 'result') return mtResultHtml();
+  return mtPlayHtml();
+}
+function mtAfterRender(){
+  const ph = mtPhase();
+  const box = $('#miniBody');
+  if(box) box.className = 'mbody' + (mtShownOf(ph) === 'play' ? ' game' : '');
+  const ti = $('#miniTitle'), sb = $('#miniSub');
+  const g = MTG[(MT.room && MT.room.game) || MT.game] || MTG.maze;
+  if(ti){
+    ti.textContent = (ph === 'setup') ? '🏆 가족 실시간 시합'
+      : (ph === 'lobby' ? '🏆 시합방 · ' + g.name : (ph === 'result' ? '🏆 시합 결과' : '🏆 ' + g.name + ' 시합'));
+  }
+  if(sb){
+    sb.textContent = (ph === 'setup') ? '2·3·4명이 동시에 겨뤄요'
+      : (ph === 'lobby' ? '가족을 기다리는 중이에요' : (ph === 'result' ? '순위와 코인을 확인해요' : g.how));
+  }
+  if(mtShownOf(ph) === 'play') mtPlayStart();
+  else if(ph === 'result'){
+    mtAwardMine();
+    /* 결과 화면이 뜨면 방 상태를 done으로 — 새 초대를 받을 수 있게 */
+    if(MT.room && MT.room.status === 'racing' && MT.roomId && NET.db){
+      try{ NET.db.ref(mtRoot() + '/rooms/' + MT.roomId).update({status:'done', endedAt: mtSrv()}); }catch(e){}
+    }
+  }
+}
+
+function mtSetupHtml(){
+  const games = ['maze','star','tree'].map(function(id){
+    const g = MTG[id];
+    return '<button type="button" class="mtPick' + (MT.game === id ? ' on' : '') + '" data-act="mtPick" data-g="' + id + '">'
+      + '<span>' + g.ic + '</span>'
+      + '<span><b>' + g.name + '</b><em>' + g.how + '</em></span>'
+      + '</button>';
+  }).join('');
+  const maxs = [2,3,4].map(function(n){
+    return '<button type="button" class="mtNum' + (MT.max === n ? ' on' : '') + '" data-act="mtMax" data-n="' + n + '">' + n + '명</button>';
+  }).join('');
+  const tg = (MT.game === 'tree')
+    ? '<div class="mtRow2"><span class="lb">목표</span>' + [3.33, 5, 7.77].map(function(t){
+        return '<button type="button" class="mtNum' + (Math.abs(MT.target - t) < 0.01 ? ' on' : '') + '" data-act="mtTarget" data-t="' + t + '">' + t.toFixed(2) + '초</button>';
+      }).join('') + '</div>'
+    : '';
+  const open = mtOpenRoomsHtml();
+  return '<div class="mtWrap">'
+    + '<div class="mtChooser">' + games + '</div>'
+    + '<div class="mtRow2"><span class="lb">인원</span>' + maxs + '</div>'
+    + tg
+    + '<button type="button" class="mtStart inv" data-act="mtCreate">🏆 시합방 열고 초대 보내기</button>'
+    + (NET.on ? '' : '<div class="mtWarn">지금은 가족 연결이 안 돼 있어요. 연결되면 실시간 시합을 할 수 있어요 🥲</div>')
+    + (open ? '<div class="mtOpenList"><b>지금 열려 있는 시합방</b>' + open + '</div>' : '')
+    + '<div class="mtTip">방을 열면 접속 중인 가족(윤진·형원·엄마·아빠) 화면에 초대가 바로 떠요. 모두 들어오면 방장이 <b>지금 시작!</b>을 눌러요.</div>'
+    + '</div>';
+}
+function mtOpenRoomsHtml(){
+  const out = [];
+  Object.keys(MT.rooms || {}).forEach(function(id){
+    const r = MT.rooms[id];
+    if(!r || r.status !== 'lobby') return;
+    if(r.players && r.players[kid]) return;
+    const n = Object.keys(r.players || {}).length;
+    if(n >= (+r.max || 4)) return;
+    const g = MTG[r.game] || MTG.maze;
+    out.push('<button type="button" class="mtOpen" data-act="mtJoin" data-id="' + id + '">'
+      + '<span>' + g.ic + '</span><b>' + esc(pNim(r.host)) + ' 시합방</b><em>' + n + '/' + (+r.max || 4) + '명</em></button>');
+  });
+  return out.slice(0, 3).join('');
+}
+function mtLobbyHtml(){
+  const r = MT.room;
+  const g = MTG[r.game] || MTG.maze;
+  const ps = mtPlayersOf(r);
+  const mx = Math.max(2, Math.min(4, +r.max || 4));
+  const isHost = (r.host === kid);
+  const slots = [];
+  for(let i = 0; i < mx; i++){
+    const p = ps[i];
+    slots.push(p
+      ? '<div class="mtSlot on"><span>' + p.emo + '</span><b>' + esc(p.name) + '</b><em>' + (p.k === kid ? '나' : '참가!') + '</em></div>'
+      : '<div class="mtSlot"><span>➕</span><b>기다리는 중</b><em>빈자리</em></div>');
+  }
+  return '<div class="mtWrap">'
+    + '<div class="mtHead"><span class="big">' + g.ic + '</span>'
+    + '<div><b>' + g.full + '</b><span>' + g.how + '</span></div></div>'
+    + '<div class="mtSlots">' + slots.join('') + '</div>'
+    + '<div class="mtTip">📣 ' + ps.length + '/' + mx + '명 · 다른 가족 화면에 초대가 떠 있어요</div>'
+    + (isHost
+        ? '<button type="button" class="mtStart" data-act="mtStart"' + (ps.length < 2 ? ' disabled' : '') + '>'
+          + (ps.length < 2 ? '🙋 한 명 더 오면 시작!' : '지금 시작! (' + ps.length + '명)') + '</button>'
+        : '<div class="mtWaitBox">방장 ' + esc(pNim(r.host)) + '가 시작하면<br>3 · 2 · 1 하고 함께 출발해요 🏁</div>')
+    + '<button type="button" class="mtGh" data-act="mtLeave">방 나가기</button>'
+    + '</div>';
+}
+function mtPlayHtml(){
+  const r = MT.room;
+  const ps = mtPlayersOf(r);
+  const lane = ps.map(function(p){
+    return '<div class="mtp' + (p.k === kid ? ' me' : '') + '" id="mtp-' + p.k + '">'
+      + '<span class="e">' + p.emo + '</span>'
+      + '<span class="nm">' + esc(p.name) + '</span>'
+      + '<span class="vv" id="mtv-' + p.k + '">–</span>'
+      + '<i class="bar"><b id="mtb-' + p.k + '" style="width:0%"></b></i></div>';
+  }).join('');
+  let ctl = '';
+  if(r.game === 'maze'){
+    ctl = '<div class="dpad">'
+      + '<button type="button" data-mtdir="up" aria-label="위로">▲</button>'
+      + '<button type="button" data-mtdir="left" aria-label="왼쪽으로">◀</button>'
+      + '<button type="button" data-mtdir="down" aria-label="아래로">▼</button>'
+      + '<button type="button" data-mtdir="right" aria-label="오른쪽으로">▶</button>'
+      + '</div>';
+  } else if(r.game === 'tree'){
+    ctl = '<button type="button" class="plantBtn" id="mtPlant" data-act="mtPlant">▶ 시작!</button>';
+  } else {
+    ctl = '<p class="mgHint" id="mtHint">⭐ 초록 점에서 시작해 별을 한 번에 쭉! 정확도로 겨뤄요</p>';
+  }
+  return '<div class="mtLane' + (ps.length <= 2 ? ' n1' : '') + '">' + lane + '</div>'
+    + '<div class="mgStage mtStage" id="mtStage"><canvas id="mtCv"></canvas>'
+    + '<div class="mtCount hide" id="mtCount"><b>3</b></div>'
+    + '<div class="mgDone hide" id="mtWait"></div></div>'
+    + ctl;
+}
+function mtResultHtml(){
+  const r = MT.room;
+  const rk = mtRank(r);
+  const g = MTG[r.game] || MTG.maze;
+  const winner = rk[0];
+  const rows = rk.map(function(p, i){
+    const medal = ['🥇','🥈','🥉','4️⃣'][i] || (i + 1) + '.';
+    const coins = p.done ? (MT_RANK_COINS[i] || 5) : 0;
+    return '<div class="mtRow' + (i === 0 ? ' win' : '') + (p.k === kid ? ' me' : '') + '">'
+      + '<span class="md">' + medal + '</span>'
+      + '<span class="em">' + p.emo + '</span>'
+      + '<span class="nm">' + esc(p.name) + (p.k === kid ? '<em>나</em>' : '') + '</span>'
+      + '<span class="rc">' + mtRecText(r.game, p) + '</span>'
+      + '<span class="cn">' + (coins ? '+' + coins + '🪙' : '–') + '</span>'
+      + '</div>';
+  }).join('');
+  const mine = rk.filter(function(p){ return p.k === kid; })[0];
+  const myCoins = mine && mine.done ? (MT_RANK_COINS[rk.indexOf(mine)] || 5) : 0;
+  const isHost = (r.host === kid);
+  return '<div class="mtRes">'
+    + '<div class="mtTrophy"><span class="cup">🏆</span>'
+    + '<b>' + (winner ? esc(winner.name) + ' 1등!' : '결과') + '</b>'
+    + '<span>' + g.full + ' · ' + rk.length + '명 시합</span></div>'
+    + rows
+    + '<div class="mtTip">' + (myCoins ? '🪙 내 코인 <b>+' + myCoins + '</b> 지갑에 넣었어요!' : '이번엔 기록이 없어서 코인은 다음에!') + '</div>'
+    + '<div class="mgBtns">'
+    + (isHost
+        ? '<button type="button" data-act="mtAgain">🔄 한 판 더</button>'
+        : '<button type="button" data-act="mtAgain">🏆 다시 초대받기</button>')
+    + '<button type="button" class="gh" data-act="mtHub">🎮 놀이터</button>'
+    + '</div>'
+    + '</div>';
+}
+
+/* ---------- 내 코인 지급 (한 번만) ---------- */
+function mtAwardMine(){
+  const r = MT.room;
+  if(!r || !MT.roomId || !NET.db) return;
+  const rk = mtRank(r);
+  const i = rk.findIndex(function(p){ return p.k === kid; });
+  if(i < 0) return;
+  const me = rk[i];
+  if(!me.done) return;
+  const key = MT.roomId + ':' + kid;
+  if(MT.awarding[key]) return;
+  MT.awarding[key] = 1;
+  const coins = MT_RANK_COINS[i] || 5;
+  let ref;
+  try{ ref = NET.db.ref(mtRoot() + '/rooms/' + MT.roomId + '/players/' + kid + '/award'); }catch(e){ return; }
+  ref.transaction(function(cur){
+    if(cur) return;
+    return {rank:i + 1, coins:coins, at:Date.now()};
+  }).then(function(res){
+    if(res && res.committed){
+      try{ miniCoins(coins); }catch(e){}
+      try{ confetti(i === 0 ? 'rainbow' : 'golden'); }catch(e){}
+      try{ if(i === 0) Sound.jackpot(); }catch(e){}
+    }
+  }).catch(function(){});
+}
+
+/* ---------- 경기 진행 ---------- */
+function mpRunning(){
+  const r = MT.room;
+  return !!(r && r.status === 'racing' && mtSrv() >= MP.goAt && !MP.finished);
+}
+function mpElapsed(){
+  if(MP.game === 'maze'){
+    const m = MP.mz;
+    if(!m || !m.started) return 0;
+    return m.done ? m.time : (performance.now() - m.t0) / 1000;
+  }
+  if(MP.game === 'star'){
+    const s = MP.st;
+    if(!s || !s.t0) return 0;
+    return s.done ? s.time : (performance.now() - s.t0) / 1000;
+  }
+  const t = MP.tr;
+  if(!t) return 0;
+  if(t.state === 'done') return t.time;
+  if(t.state === 'run') return (performance.now() - t.t0) / 1000;
+  return 0;
+}
+function mpProg(){
+  if(MP.game === 'maze') return mzProg();
+  if(MP.game === 'star'){
+    const s = MP.st;
+    if(!s) return 0;
+    if(s.done) return 100;
+    return Math.max(0, Math.min(100, Math.round(s.liveAcc || 0)));
+  }
+  const t = MP.tr;
+  if(!t) return 0;
+  if(t.state === 'done') return 100;
+  if(t.state !== 'run') return 0;
+  const tg = +((MT.room && MT.room.target) || 3.33);
+  return Math.max(0, Math.min(100, Math.round(((performance.now() - t.t0) / 1000) / tg * 100)));
+}
+function mtPlayStart(){
+  const r = MT.room;
+  if(!r) return;
+  const key = MT.roomId + ':' + (r.startedAt || 0);
+  if(MP.key === key && MP.raf) return;
+  if(MP.raf){ cancelAnimationFrame(MP.raf); MP.raf = 0; }
+  MP.key = key;
+  MP.game = r.game;
+  MP.goAt = (+r.startedAt || 0);
+  MP.deadline = +r.deadline || 0;
+  MP.finished = false; MP.counted = -1; MP.waitShown = false; MP.lastPush = 0; MP.lastLane = 0;
+  if(r.game === 'maze') mzInit();
+  else if(r.game === 'star') stInit();
+  else trInit();
+  mpLayout();
+  mpAttach();
+  mtPaintLane(true);
+  MP.raf = requestAnimationFrame(mpLoop);
+}
+function mtMyRecText(){
+  const game = MP.game;
+  if(game === 'maze') return MP.mz && MP.mz.done ? MP.mz.time.toFixed(2) + '초' : '도착!';
+  if(game === 'star') return MP.st ? '정확도 ' + MP.st.acc + '%' : '완성!';
+  return MP.tr ? '오차 ' + Math.abs(MP.tr.err).toFixed(2) + '초' : '심었어요!';
+}
+function mpFinish(data){
+  if(MP.finished) return;
+  MP.finished = true;
+  try{
+    if(NET.db && MT.roomId){
+      const upd = {done:true, prog:100, at:mtSrv()};
+      if(data && data.time != null) upd.time = Math.round(data.time * 100) / 100;
+      if(data && data.acc != null) upd.acc = Math.round(data.acc);
+      if(data && data.err != null) upd.err = Math.round(data.err * 100) / 100;
+      NET.db.ref(mtRoot() + '/rooms/' + MT.roomId + '/players/' + kid).update(upd);
+    }
+  }catch(e){}
+  const el = document.getElementById('mtWait');
+  if(el){
+    const ic = MP.game === 'maze' ? '🏁' : MP.game === 'star' ? '⭐' : '🌳';
+    el.innerHTML = '<div class="mgCard">'
+      + '<b class="mgBig">' + ic + ' 해냈어요!</b>'
+      + '<span class="mgNum">' + mtMyRecText() + '</span>'
+      + '<em>다른 가족을 기다리는 중…</em></div>';
+    el.classList.remove('hide');
+  }
+  if(MP.mz){ MP.mz.holdDx = 0; MP.mz.holdDy = 0; }
+  if(MP.st){ MP.st.tracing = false; }
+  try{ mtPaintLane(true); }catch(e){}
+}
+function mpPush(now){
+  if(!NET.db || !MT.roomId || MP.finished || !mpRunning()) return;
+  const upd = {prog: mpProg(), t: Math.round(mpElapsed() * 100) / 100, at: mtSrv()};
+  if(MP.game === 'star' && MP.st && MP.st.liveAcc) upd.acc = Math.round(MP.st.liveAcc);
+  try{ NET.db.ref(mtRoot() + '/rooms/' + MT.roomId + '/players/' + kid).update(upd); }catch(e){}
+  MP.lastPush = now;
+}
+function mpLoop(now){
+  if(!isMiniOpen() || MINI.view !== 'match'){ MP.raf = 0; return; }
+  const ph = mtPhase();
+  if(ph === 'result' || ph === 'lobby' || ph === 'setup'){ MP.raf = 0; renderMini('match'); return; }
+  MP.raf = requestAnimationFrame(mpLoop);
+  mtCount();
+  const run = mpRunning();
+  if(MP.game === 'maze') mzTick(now, run);
+  else if(MP.game === 'star') stTick(now);
+  else trTick(now, run);
+  if(run && now - MP.lastPush > 700) mpPush(now);
+  if(now - MP.lastLane > 140){ MP.lastLane = now; mtPaintLane(); }
+}
+function mtCount(){
+  const el = document.getElementById('mtCount');
+  if(!el) return;
+  const left = MP.goAt - mtSrv();
+  const b = el.querySelector('b');
+  if(left > 0){
+    const n = Math.min(3, Math.max(1, Math.ceil(left / 1000)));
+    el.classList.remove('hide', 'go');
+    if(b && b.textContent !== String(n)) b.textContent = String(n);
+    if(MP.counted !== n){ MP.counted = n; try{ Sound.step(); }catch(e){} }
+  } else if(left > -800){
+    el.classList.remove('hide');
+    el.classList.add('go');
+    if(b && b.textContent !== 'GO!'){
+      b.textContent = 'GO!';
+      try{ Sound.ding(); }catch(e){}
+      try{ vibe(30); }catch(e){}
+    }
+  } else {
+    el.classList.add('hide');
+  }
+}
+function mtPaintLane(force){
+  const r = MT.room;
+  if(!r) return;
+  const game = r.game;
+  mtPlayersOf(r).forEach(function(p){
+    const chip = document.getElementById('mtp-' + p.k);
+    const v = document.getElementById('mtv-' + p.k);
+    const b = document.getElementById('mtb-' + p.k);
+    if(!chip) return;
+    const mine = (p.k === kid);
+    const done = p.done;
+    const prog = mine ? Math.max(p.prog, mpProg()) : p.prog;
+    const el = mine ? mpElapsed() : p.t;
+    let txt = '·';
+    if(game === 'maze'){
+      txt = done ? (+p.time).toFixed(2) + '초' : (el > 0 ? el.toFixed(1) + '초' : (mine ? '출발!' : '대기'));
+    } else if(game === 'star'){
+      const acc = done ? p.acc : (mine && MP.st ? (MP.st.liveAcc || 0) : p.acc);
+      txt = acc > 0 ? Math.round(acc) + '%' : (done ? '완성' : '그리는 중');
+    } else {
+      txt = done ? '오차 ' + Math.abs(+p.err).toFixed(2) + '초' : (el > 0 ? el.toFixed(2) + '초' : '준비');
+    }
+    if(v && v.textContent !== txt) v.textContent = txt;
+    if(b){
+      const w = Math.max(0, Math.min(100, done ? 100 : prog)) + '%';
+      if(b.style.width !== w) b.style.width = w;
+    }
+    chip.classList.toggle('done', done);
+  });
+}
+function mpLayout(){
+  const st = document.getElementById('mtStage'), cv = document.getElementById('mtCv');
+  if(!st || !cv) return;
+  const w = st.clientWidth, h = st.clientHeight;
+  if(!w || !h){ setTimeout(mpLayout, 100); return; }
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d');
+  if(ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if(MP.game === 'maze' && MP.mz) mzFit(w, h, ctx);
+  else if(MP.game === 'star' && MP.st) stFit(w, h, ctx);
+  else if(MP.game === 'tree' && MP.tr){ MP.tr.w = w; MP.tr.h = h; MP.tr.ctx = ctx; }
+}
+
+/* ---------- ① 당근 미로 (시합) ---------- */
+function mzInit(){
+  const idx = Math.abs(parseInt((MT.room && MT.room.seed), 10) || 0) % MAZE_RAW.length;
+  const raw = MAZE_RAW[idx];
+  const rows = raw.length, cols = raw[0].length;
+  const cells = new Uint8Array(cols * rows);
+  for(let y = 0; y < rows; y++) for(let x = 0; x < cols; x++) cells[y * cols + x] = raw[y][x] === '#' ? 1 : 0;
+  const gx = cols - 2, gy = 1;
+  const dist = mzDist(cells, cols, rows, gx, gy);
+  MP.mz = {
+    cols:cols, rows:rows, cells:cells, gx:gx, gy:gy, sx:1, sy:rows - 2,
+    cx:1, cy:rows - 2, vx:1, vy:rows - 2, trail:[[1, rows - 2]],
+    t0:0, started:false, done:false, time:0, holdDx:0, holdDy:0, lastStep:0, shake:0,
+    dist:dist, d0: Math.max(1, dist[(rows - 2) * cols + 1]),
+    cell:30, ox:0, oy:0, w:0, h:0, ctx:null
+  };
+}
+function mzDist(cells, cols, rows, gx, gy){
+  const d = new Int32Array(cols * rows).fill(-1);
+  const q = [gy * cols + gx];
+  d[gy * cols + gx] = 0;
+  const nb = [[1,0],[-1,0],[0,1],[0,-1]];
+  for(let i = 0; i < q.length; i++){
+    const cur = q[i], cxx = cur % cols, cyy = (cur - cxx) / cols, dd = d[cur];
+    for(let j = 0; j < 4; j++){
+      const nx = cxx + nb[j][0], ny = cyy + nb[j][1];
+      if(nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+      const ni = ny * cols + nx;
+      if(cells[ni] || d[ni] >= 0) continue;
+      d[ni] = dd + 1; q.push(ni);
+    }
+  }
+  return d;
+}
+function mzFit(w, h, ctx){
+  const m = MP.mz; if(!m) return;
+  m.w = w; m.h = h; m.ctx = ctx;
+  m.cell = Math.max(18, Math.floor(Math.min((w - 18) / m.cols, (h - 18) / m.rows)));
+  m.ox = Math.round((w - m.cell * m.cols) / 2);
+  m.oy = Math.round((h - m.cell * m.rows) / 2);
+}
+function mzProg(){
+  const m = MP.mz;
+  if(!m || !m.dist) return 0;
+  if(m.done) return 100;
+  const d = m.dist[m.cy * m.cols + m.cx];
+  if(d < 0 || !m.d0) return 0;
+  return Math.max(0, Math.min(100, Math.round(100 * (1 - d / m.d0))));
+}
+function mzStep(dx, dy, now){
+  const m = MP.mz;
+  if(!m || m.done || !mpRunning()) return;
+  const nx = m.cx + dx, ny = m.cy + dy;
+  if(nx < 0 || ny < 0 || nx >= m.cols || ny >= m.rows) return;
+  if(m.cells[ny * m.cols + nx]){ m.shake = 0.18; try{ Sound.nope(); }catch(e){} return; }
+  if(!m.started){ m.started = true; m.t0 = now || performance.now(); }
+  m.cx = nx; m.cy = ny;
+  m.trail.push([nx, ny]);
+  if(m.trail.length > 80) m.trail.shift();
+  try{ Sound.step(); }catch(e){}
+  if(nx === m.gx && ny === m.gy) mzDone();
+}
+function mzDone(){
+  const m = MP.mz;
+  if(!m || m.done) return;
+  m.done = true;
+  m.time = Math.max(0.01, (performance.now() - m.t0) / 1000);
+  try{ Sound.jackpot(); }catch(e){}
+  mpFinish({time:m.time});
+}
+function mzTick(now, run){
+  const m = MP.mz;
+  if(!m || !m.ctx) return;
+  if(run && (m.holdDx || m.holdDy) && !m.done && now - m.lastStep > 135){
+    m.lastStep = now;
+    mzStep(m.holdDx, m.holdDy, now);
+  }
+  m.vx += (m.cx - m.vx) * 0.42;
+  m.vy += (m.cy - m.vy) * 0.42;
+  if(m.shake > 0) m.shake = Math.max(0, m.shake - 0.02);
+  mzPaint(now);
+}
+function mzPaint(now){
+  const m = MP.mz;
+  const ctx = m && m.ctx;
+  if(!ctx) return;
+  const s = m.cell, ox = m.ox, oy = m.oy;
+  ctx.clearRect(0, 0, m.w, m.h);
+  ctx.fillStyle = '#dcf0c1';
+  ctx.fillRect(0, 0, m.w, m.h);
+  ctx.save();
+  const rndA = (function(seed){ let q = seed >>> 0; return function(){ q = (q * 1664525 + 1013904223) >>> 0; return q / 4294967296; }; })(m.cols * 7919 + m.rows * 104729);
+  for(let i = 0; i < 80; i++){
+    const gx = 6 + rndA() * (m.w - 12), gy2 = 6 + rndA() * (m.h - 12);
+    const bx0 = m.ox - 6, by0 = m.oy - 6, bx1 = m.ox + m.cell * m.cols + 6, by1 = m.oy + m.cell * m.rows + 6;
+    if(gx > bx0 && gx < bx1 && gy2 > by0 && gy2 < by1) continue;
+    if(i % 3 === 0){
+      ctx.fillStyle = 'rgba(122,180,96,.5)';
+      ctx.beginPath(); ctx.arc(gx, gy2, 4.2, 0, 7); ctx.fill();
+      ctx.fillStyle = '#ffd6e7';
+      ctx.beginPath(); ctx.arc(gx - 2.6, gy2 - 2.4, 2.2, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(gx + 2.6, gy2 - 2.4, 2.2, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(gx, gy2 + 2.8, 2.2, 0, 7); ctx.fill();
+    } else if(i % 3 === 1){
+      ctx.strokeStyle = 'rgba(90,150,80,.45)'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(gx, gy2 + 5); ctx.lineTo(gx - 4, gy2 - 3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, gy2 + 5); ctx.lineTo(gx + 4, gy2 - 2); ctx.stroke();
+    }
+  }
+  ctx.restore();
+  ctx.save();
+  const shx = m.shake > 0 ? Math.sin(now / 18) * Math.min(3, m.shake * 18) : 0;
+  ctx.translate(ox + shx, oy);
+  for(let y = 0; y < m.rows; y++){
+    for(let x = 0; x < m.cols; x++){
+      if(m.cells[y * m.cols + x]) continue;
+      ctx.fillStyle = ((x + y) % 2 === 0) ? '#f6e8c8' : '#f1dfb6';
+      ctx.fillRect(x * s, y * s, s + 0.6, s + 0.6);
+    }
+  }
+  ctx.strokeStyle = 'rgba(70,165,93,.75)'; ctx.lineWidth = Math.max(2, s * 0.06);
+  ctx.setLineDash([s * 0.14, s * 0.12]);
+  ctx.beginPath(); ctx.arc((m.sx + 0.5) * s, (m.sy + 0.5) * s, s * 0.33, 0, 7); ctx.stroke();
+  ctx.setLineDash([]);
+  drawBasketC(ctx, (m.gx + 0.5) * s, (m.gy + 0.52) * s, s * 1.02, now);
+  if(m.trail.length > 1){
+    ctx.strokeStyle = 'rgba(255,214,120,.62)'; ctx.lineWidth = Math.max(2, s * 0.14);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for(let i = 0; i < m.trail.length; i++){
+      const p = m.trail[i];
+      const px = (p[0] + 0.5) * s, py = (p[1] + 0.5) * s;
+      if(i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  for(let y = 0; y < m.rows; y++){
+    for(let x = 0; x < m.cols; x++){
+      if(!m.cells[y * m.cols + x]) continue;
+      drawHedgeC(ctx, x * s, y * s, s);
+    }
+  }
+  const px = (m.vx + 0.5) * s, py = (m.vy + 0.5) * s;
+  drawKidC(ctx, px, py, s * 0.98, now);
+  drawCarrotC(ctx, px + s * 0.33, py - s * 0.40, s * 0.74, 0.32 + Math.sin(now / 300) * 0.16);
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(120,170,110,.55)'; ctx.lineWidth = 3;
+  rrPath(ctx, ox - 2, oy - 2, s * m.cols + 4, s * m.rows + 4, 14); ctx.stroke();
+}
+
+/* ---------- ② 별 그리기 (시합) ---------- */
+function stInit(){
+  MP.st = {
+    pts:[], samples:[], tracing:false, t0:0, done:false, acc:0, time:0, prec:0, cov:0, sharp:0,
+    cx:0, cy:0, R:0, tol:12, covTol:13, vTol:10, maxOk:16,
+    w:0, h:0, ctx:null, liveAt:0, liveAcc:0
+  };
+}
+function stFit(w, h, ctx){
+  const S = MP.st; if(!S) return;
+  S.w = w; S.h = h; S.ctx = ctx;
+  S.R = Math.max(60, Math.min((w - 44) / 1.902, (h - 44) / 1.809));
+  S.cx = w / 2; S.cy = h / 2 + Math.min(26, h * 0.03) + 2;
+  S.pts = starPointsMake(S.cx, S.cy, S.R);
+  S.tol = Math.max(9, Math.min(13, S.R * 0.069));
+  S.covTol = S.tol * 1.14;
+  S.vTol = S.tol * 0.80;
+  S.maxOk = Math.max(12, Math.min(18, S.R * 0.092));
+}
+function stCfg(){
+  const S = MP.st;
+  return {pts:S.pts, tol:S.tol, covTol:S.covTol, vTol:S.vTol, maxOk:S.maxOk, R:S.R};
+}
+function stTick(now){
+  const S = MP.st;
+  if(!S || !S.ctx) return;
+  stPaint(now);
+  if(S.tracing && S.samples.length > 12 && now - S.liveAt > 300){
+    S.liveAt = now;
+    try{ S.liveAcc = starScore(S.samples, stCfg()).prec; }catch(e){}
+  }
+}
+function stPaint(now){
+  const S = MP.st;
+  const ctx = S && S.ctx;
+  if(!ctx || !S.pts.length) return;
+  const w = S.w, h = S.h;
+  ctx.clearRect(0, 0, w, h);
+  for(let i = 0; i < 22; i++){
+    const x = (i * 97 % 100) / 100 * w, y = (i * 53 % 100) / 100 * h;
+    ctx.fillStyle = 'rgba(150,130,220,' + (0.10 + (i % 3) * 0.05) + ')';
+    ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, 7); ctx.fill();
+  }
+  const path = function(){
+    ctx.beginPath();
+    S.pts.forEach(function(p, i){ if(i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.closePath();
+  };
+  if(S.done && S.acc >= 80){ path(); ctx.fillStyle = 'rgba(255,214,86,.30)'; ctx.fill(); }
+  path();
+  ctx.setLineDash([1, Math.max(9, S.R * 0.085)]);
+  ctx.lineWidth = Math.max(8, S.R * 0.075);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(150,130,215,.55)';
+  ctx.stroke();
+  ctx.setLineDash([]);
+  S.pts.forEach(function(p, i){
+    ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(4.5, S.R * 0.045), 0, 7);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(150,130,215,.65)'; ctx.stroke();
+  });
+  const p0 = S.pts[0];
+  const pulse = 1 + Math.sin(now / 260) * 0.16;
+  ctx.beginPath(); ctx.arc(p0.x, p0.y, Math.max(10, S.R * 0.10) * pulse, 0, 7);
+  ctx.fillStyle = 'rgba(78,200,116,.28)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(p0.x, p0.y, Math.max(6, S.R * 0.062), 0, 7);
+  ctx.fillStyle = '#37b45f'; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+  if(!S.samples.length){
+    ctx.fillStyle = '#2f7a45';
+    ctx.font = '900 ' + Math.max(10, S.R * 0.09) + 'px "Pretendard Variable",system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('여기서 시작!', p0.x + S.R * 0.05, p0.y - Math.max(12, S.R * 0.12));
+  }
+  if(S.samples.length > 1){
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(5, S.R * 0.055);
+    ctx.strokeStyle = S.done ? (S.acc >= 80 ? '#f5a623' : S.acc >= 65 ? '#e9b23a' : '#d06a5a') : '#ffb733';
+    ctx.beginPath();
+    S.samples.forEach(function(p, i){ if(i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
+    ctx.stroke();
+  }
+}
+function stFinish(){
+  const S = MP.st;
+  if(!S || !S.tracing) return;
+  S.tracing = false;
+  if(S.samples.length < 6){
+    S.samples = [];
+    const hint = document.getElementById('mtHint');
+    if(hint) hint.textContent = '별을 한 번에 쭉 그어 봐요! ✍️';
+    return;
+  }
+  const t = Math.max(0.05, (performance.now() - S.t0) / 1000);
+  let sc;
+  try{ sc = starScore(S.samples, stCfg()); }catch(e){ sc = {acc:0, prec:0, cov:0, sharp:0}; }
+  S.acc = sc.acc; S.prec = sc.prec; S.cov = sc.cov; S.sharp = sc.sharp;
+  S.time = Math.round(t * 10) / 10;
+  S.done = true;
+  try{ if(S.acc >= 80) Sound.jackpot(); else Sound.ding(); }catch(e){}
+  mpFinish({time:S.time, acc:S.acc});
+}
+
+/* ---------- ③ 나무 심기 (시합) ---------- */
+function trInit(){
+  MP.tr = {state:'ready', t0:0, time:0, err:0, w:0, h:0, ctx:null};
+}
+function mpTarget(){ return +((MT.room && MT.room.target) || 3.33); }
+function trCtl(){
+  const btn = document.getElementById('mtPlant');
+  if(!btn || !MP.tr) return;
+  const st = MP.tr.state;
+  btn.classList.toggle('hot', st === 'run');
+  btn.classList.toggle('calm', st === 'done');
+  btn.textContent = st === 'ready' ? '▶ 시작!' : (st === 'run' ? '🌱 심기!' : '🌱 심었어요!');
+}
+function mtPlant(){
+  const T = MP.tr;
+  if(!T || !mpRunning()) return;
+  const tg = mpTarget();
+  if(T.state === 'ready'){
+    T.state = 'run'; T.t0 = performance.now(); T.err = 0;
+    trCtl();
+    try{ Sound.ding(); }catch(e){}
+    return;
+  }
+  if(T.state !== 'run') return;
+  const t = (performance.now() - T.t0) / 1000;
+  T.state = 'done';
+  T.time = t;
+  T.err = t - tg;
+  trCtl();
+  try{ Sound.ding(); }catch(e){}
+  mpFinish({time:t, err:T.err});
+}
+function trTick(now, run){
+  const T = MP.tr;
+  if(!T || !T.ctx) return;
+  if(T.state === 'run'){
+    const el = (now - T.t0) / 1000;
+    if(el > mpTarget() + 4){
+      T.state = 'done';
+      T.time = el;
+      T.err = el - mpTarget();
+      trCtl();
+      try{ Sound.nope(); }catch(e){}
+      mpFinish({time:el, err:T.err});
+    }
+  }
+  trPaint(now);
+}
+function trPaint(now){
+  const T = MP.tr;
+  const ctx = T && T.ctx;
+  if(!ctx) return;
+  const w = T.w, h = T.h;
+  ctx.clearRect(0, 0, w, h);
+  const sky = ctx.createLinearGradient(0, 0, 0, h);
+  sky.addColorStop(0, '#d9f2ff'); sky.addColorStop(0.55, '#eefbe4'); sky.addColorStop(1, '#d7eec4');
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h);
+  const cloud = function(cx, cy, sc){
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.beginPath(); ctx.ellipse(cx, cy, 26 * sc, 15 * sc, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx - 22 * sc, cy + 4 * sc, 18 * sc, 11 * sc, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + 22 * sc, cy + 5 * sc, 16 * sc, 10 * sc, 0, 0, 7); ctx.fill();
+  };
+  cloud(w * 0.2 + Math.sin(now / 4200) * 6, h * 0.18, 0.85);
+  cloud(w * 0.66 + Math.sin(now / 5100 + 1) * 8, h * 0.12, 0.65);
+  cloud(w * 0.44 + Math.sin(now / 6000 + 2) * 5, h * 0.32, 0.58);
+  ctx.fillStyle = 'rgba(255,224,120,.9)';
+  ctx.beginPath(); ctx.arc(w * 0.85, h * 0.18, Math.min(24, w * 0.06), 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,240,170,.5)';
+  ctx.beginPath(); ctx.arc(w * 0.85, h * 0.18, Math.min(38, w * 0.09), 0, 7); ctx.fill();
+  ctx.fillStyle = '#b9e2a2';
+  ctx.beginPath(); ctx.ellipse(w * 0.2, h * 0.92, w * 0.55, h * 0.2, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#cbeab4';
+  ctx.beginPath(); ctx.ellipse(w * 0.85, h * 0.94, w * 0.5, h * 0.18, 0, 0, 7); ctx.fill();
+  /* 멀리 보이는 언덕 */
+  ctx.fillStyle = 'rgba(176,216,158,.55)';
+  ctx.beginPath(); ctx.ellipse(w * 0.24, h * 0.545, w * 0.46, h * 0.055, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(190,226,172,.5)';
+  ctx.beginPath(); ctx.ellipse(w * 0.82, h * 0.535, w * 0.42, h * 0.045, 0, 0, 7); ctx.fill();
+  /* 멀리 보이는 덤불 줄 */
+  for(let i = 0; i < 7; i++){
+    const bx = (i / 6) * (w + 40) - 20 + Math.sin(now / 7000 + i) * 4;
+    const by = h * 0.545;
+    ctx.fillStyle = i % 2 ? '#a9d894' : '#9ed389';
+    ctx.beginPath(); ctx.arc(bx, by, 16 + (i % 3) * 5, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx + 14, by + 4, 12 + (i % 2) * 4, 0, 7); ctx.fill();
+  }
+  /* 새 두 마리 */
+  ctx.strokeStyle = 'rgba(90,120,100,.5)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  const mbird = function(cx, cy, sc){
+    ctx.beginPath(); ctx.moveTo(cx - 7 * sc, cy); ctx.quadraticCurveTo(cx - 3 * sc, cy - 5 * sc, cx, cy);
+    ctx.quadraticCurveTo(cx + 3 * sc, cy - 5 * sc, cx + 7 * sc, cy); ctx.stroke();
+  };
+  mbird(w * 0.3 + Math.sin(now / 5200) * 10, h * 0.34, 0.95);
+  mbird(w * 0.37 + Math.sin(now / 5200 + 0.6) * 10, h * 0.3, 0.75);
+  const fy = h * 0.6;
+  ctx.strokeStyle = '#dcc39a'; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(w, fy - 6); ctx.stroke();
+  ctx.strokeStyle = '#cbb185'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(0, fy + 16); ctx.lineTo(w, fy + 10); ctx.stroke();
+  ctx.fillStyle = '#e2cb9f';
+  for(let x = 14; x < w; x += 46) ctx.fillRect(x, fy - 16 + (x / w) * -4, 9, 44);
+  const gy = h * 0.78;
+  ctx.fillStyle = '#8a5a3a';
+  rrPath(ctx, w / 2 - 62, gy - 6, 124, 34, 16); ctx.fill();
+  ctx.fillStyle = '#a97246';
+  rrPath(ctx, w / 2 - 58, gy - 10, 116, 20, 12); ctx.fill();
+  let k = 0.06, type = null;
+  if(T.state === 'run') k = Math.min(0.92, ((now - T.t0) / 1000) / mpTarget());
+  else if(T.state === 'done'){
+    k = 1;
+    type = Math.abs(T.err) <= 0.05 ? 'gold' : Math.abs(T.err) <= 0.20 ? 'green' : 'sad';
+  }
+  drawTreePlant(ctx, w / 2, gy + 2, k, type, now);
+  if(T.state === 'ready'){
+    ctx.fillStyle = '#a9744a';
+    ctx.beginPath(); ctx.ellipse(w / 2, gy + 3, 9, 6, 0.3, 0, 7); ctx.fill();
+    const p = 1 + Math.sin(now / 420) * 0.06;
+    ctx.save();
+    ctx.translate(w / 2, gy - 44);
+    ctx.scale(p, p);
+    ctx.fillStyle = 'rgba(255,255,255,.94)';
+    rrPath(ctx, -66, -20, 132, 40, 15); ctx.fill();
+    ctx.strokeStyle = 'rgba(120,170,110,.55)'; ctx.lineWidth = 2;
+    rrPath(ctx, -66, -20, 132, 40, 15); ctx.stroke();
+    ctx.fillStyle = '#2c5c3a';
+    ctx.font = '900 17px "Pretendard Variable",system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('목표 ' + mpTarget().toFixed(2) + '초', 0, 1);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    rrPath(ctx, w / 2 - 82, gy - 16, 164, 22, 11); ctx.fill();
+    ctx.fillStyle = '#4f7a58';
+    ctx.font = '800 12px "Pretendard Variable",system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('시작을 누르고 딱 맞춰 심어요!', w / 2, gy - 4);
+  }
+  if(T.state === 'run'){
+    const el = (performance.now() - T.t0) / 1000;
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    rrPath(ctx, w / 2 - 62, 12, 124, 54, 18); ctx.fill();
+    ctx.fillStyle = '#2c5c3a';
+    ctx.font = '900 34px "Pretendard Variable",system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(el.toFixed(2), w / 2, 52);
+  }
+}
+
+/* ---------- 이벤트 연결 ---------- */
+function mpAttach(){
+  const r = MT.room;
+  if(!r) return;
+  const cv = document.getElementById('mtCv');
+  if(r.game === 'maze'){
+    const btns = document.querySelectorAll('#miniBody [data-mtdir]');
+    MP.bound = (MP.bound || 0) + btns.length;
+    Array.prototype.forEach.call(btns, function(b){
+      const v = DIRV[b.dataset.mtdir] || [0, 0];
+      const go = function(e){
+        if(e && e.cancelable) e.preventDefault();
+        if(!mpRunning()) return;
+        b.classList.add('on');
+        if(MP.mz){ MP.mz.holdDx = v[0]; MP.mz.holdDy = v[1]; MP.mz.lastStep = performance.now(); }
+        mzStep(v[0], v[1], performance.now());
+      };
+      const stop = function(){
+        if(MP.mz){ MP.mz.holdDx = 0; MP.mz.holdDy = 0; }
+        b.classList.remove('on');
+      };
+      b.addEventListener('pointerdown', go);
+      b.addEventListener('pointerup', stop);
+      b.addEventListener('pointercancel', stop);
+      b.addEventListener('pointerleave', stop);
+    });
+    if(cv){
+      let drag = null;
+      cv.addEventListener('pointerdown', function(e){
+        drag = {x:e.clientX, y:e.clientY};
+        try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+      });
+      cv.addEventListener('pointermove', function(e){
+        if(!drag || !mpRunning()) return;
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        const th = Math.max(16, ((MP.mz && MP.mz.cell) || 30) * 0.5);
+        if(Math.abs(dx) < th && Math.abs(dy) < th) return;
+        if(Math.abs(dx) > Math.abs(dy)){ mzStep(dx > 0 ? 1 : -1, 0); drag.x = e.clientX; }
+        else { mzStep(0, dy > 0 ? 1 : -1); drag.y = e.clientY; }
+      });
+      cv.addEventListener('pointerup', function(){ drag = null; });
+      cv.addEventListener('pointercancel', function(){ drag = null; });
+    }
+  } else if(r.game === 'star' && cv){
+    let lastP = null;
+    cv.addEventListener('pointerdown', function(e){
+      const S = MP.st;
+      if(!S || S.done || !mpRunning()) return;
+      const rect = cv.getBoundingClientRect();
+      S.tracing = true; S.samples = []; S.t0 = performance.now(); S.liveAcc = 0;
+      lastP = [e.clientX, e.clientY];
+      S.samples.push([e.clientX - rect.left, e.clientY - rect.top]);
+      try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+      const hint = document.getElementById('mtHint');
+      if(hint) hint.textContent = '쭉— 별을 따라 그려요!';
+    });
+    cv.addEventListener('pointermove', function(e){
+      const S = MP.st;
+      if(!S || !S.tracing) return;
+      const rect = cv.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      if(lastP && Math.hypot(x - lastP[0], y - lastP[1]) < 3) return;
+      lastP = [x, y];
+      S.samples.push([x, y]);
+    });
+    const end = function(){ stFinish(); };
+    cv.addEventListener('pointerup', end);
+    cv.addEventListener('pointercancel', end);
+  } else if(r.game === 'tree'){
+    trCtl();
+  }
+}
+
 /* ---------- 미니게임 이벤트 ---------- */
 document.addEventListener('keydown', function(e){
   if(!isMiniOpen()) return;
@@ -5810,6 +7106,13 @@ document.addEventListener('keyup', function(e){
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','a','d','w','s','A','D','W','S'].indexOf(k) >= 0){
     MZ.holdDx = 0; MZ.holdDy = 0;
   }
+});
+/* 창을 닫거나 다른 앱으로 나가면, 아직 시작 전인 시합방은 정리해요
+   (달리는 중인 시합은 기록을 남겨 두려고 건드리지 않습니다) */
+window.addEventListener('pagehide', function(){
+  try{
+    if(typeof MT !== 'undefined' && MT.roomId && MT.room && MT.room.status === 'lobby') mtLeave(true);
+  }catch(e){}
 });
 window.addEventListener('resize', function(){
   if(!isMiniOpen()) return;
@@ -5879,6 +7182,54 @@ window.__gg = {
     press: trPress,
     setTarget: function(t){ TR.target = +t; trSync(); },
     setBlind: function(b){ TR.blind = !!b; trSync(); }
+  },
+  match: {
+    get state(){
+      return {
+        roomId: MT.roomId, host: MT.host, phase: mtPhase(),
+        game: MT.room ? MT.room.game : MT.game, target: MT.room ? MT.room.target : MT.target,
+        players: mtPlayersOf(MT.room).map(function(p){ return {k:p.k, name:p.name, done:p.done, prog:p.prog, time:p.time, acc:p.acc, err:p.err}; }),
+        rooms: Object.keys(MT.rooms || {})
+      };
+    },
+    pick: function(o){
+      o = o || {};
+      if(o.game && MTG[o.game]) MT.game = o.game;
+      if(o.max) MT.max = Math.max(2, Math.min(4, parseInt(o.max, 10) || 4));
+      if(o.target) MT.target = parseFloat(o.target) || 3.33;
+    },
+    create: mtCreate, join: mtJoin, start: mtStart, leave: mtLeave, again: mtAgain,
+    step: function(dx, dy){ mzStep(dx, dy, performance.now()); },
+    maze: function(){
+      const m = MP.mz;
+      return m ? {cols:m.cols, rows:m.rows, gx:m.gx, gy:m.gy, cx:m.cx, cy:m.cy, done:m.done, time:m.time,
+                  cells: Array.prototype.slice.call(m.cells)} : null;
+    },
+    star: function(){
+      const s = MP.st;
+      return s ? {acc:s.acc, done:s.done, time:s.time, pts:s.pts.map(function(p){ return {x:p.x, y:p.y}; })} : null;
+    },
+    plant: mtPlant,
+    probe: function(){
+      return {phase: mtPhase(), game: MT.room ? MT.room.game : MT.game, prog: mpProg(), el: mpElapsed(),
+              fin: MP.finished, running: mpRunning(), roomId: MT.roomId, host: MT.host,
+              bound: MP.bound || 0, hold: [MP.mz ? MP.mz.holdDx : null, MP.mz ? MP.mz.holdDy : null],
+              btns: document.querySelectorAll('#miniBody [data-mtdir]').length};
+    },
+    rooms: function(){
+      return Object.keys(MT.rooms || {}).map(function(id){
+        const r = MT.rooms[id] || {};
+        return {id:id, host:r.host, game:r.game, status:r.status, max:r.max, n:Object.keys(r.players || {}).length};
+      });
+    },
+    invite: function(){
+      const el = document.getElementById('mtInvite');
+      if(!el || el.classList.contains('hide')) return null;
+      const t = document.getElementById('mtInvTitle');
+      return t ? t.textContent : '';
+    },
+    joinNow: function(){ if(MT.inviteId) mtJoin(MT.inviteId); },
+    award: function(){ return Object.keys(MT.awarding); }
   },
   partnerGarden, switchKid, resetAll, setPartner, openStarter, closeStarter,
   partner: function(){ return partnerId(); },
