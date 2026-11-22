@@ -1085,7 +1085,7 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
         <a class="wn" href="./dress-up.html"><i>👗</i><b>드레스</b><em>가기</em></a>
       </div>
     </div>
-    <div class="sechead" style="margin-top:2px"><div><h2>👧 누구로 놀까요?</h2><p>이 기기에서 노는 텃밭을 골라요</p></div></div>
+    <div class="sechead" style="margin-top:2px"><div><h2>👨‍👩‍👧‍👦 누구로 놀까요?</h2><p>이 기기에서 노는 텃밭을 골라요 · 엄마·아빠는 제한 없음</p></div></div>
     <div class="kidrow" id="kidRow">
       <button type="button" data-act="pickKid" data-k="yunjin" id="kidBtnY"><span>🦊</span>윤진이 텃밭</button>
       <button type="button" data-act="pickKid" data-k="hyeongwon" id="kidBtnH"><span>🐣</span>형원이 텃밭</button>
@@ -2507,9 +2507,9 @@ function makeActor(label, cls, x, z){
 let NPCS = [];      /* [{k, a}] — 나를 뺀 가족 3명 */
 function wanderSpot(k){
   const side = (k === partner) ? -homeSide() : (SIDE[k] || 1);
-  /* 아이와 어른은 앞줄·뒷줄로 나눠 걸어 서로 겹치지 않게 */
+  /* 아이와 어른은 앞줄·뒷줄로 나눠 걷고, 월드 문(z 4.95)보다 앞에서 걸어요 */
   const adult = isAdultWho(k);
-  const z = adult ? (5.42 + Math.random()*0.50) : (4.58 + Math.random()*0.48);
+  const z = adult ? (5.44 + Math.random()*0.44) : (5.12 + Math.random()*0.48);
   return {x: clamp(side * (0.95 + Math.random()*2.9), -4.2, 4.2), z: z};
 }
 function buildActors(){
