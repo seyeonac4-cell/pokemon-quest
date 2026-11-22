@@ -133,7 +133,7 @@
       'font-family:"Jua","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;',
       '-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}',
 
-      '#wv-toast{max-width:80vw;padding:8px 14px;border-radius:14px;background:rgba(38,28,60,.93);color:#fff;',
+      '#wv-toast{max-width:64vw;padding:8px 14px;border-radius:14px;background:rgba(38,28,60,.93);color:#fff;',
       'font-size:12.5px;font-weight:800;line-height:1.35;letter-spacing:-.02em;text-align:center;',
       'box-shadow:0 8px 22px rgba(20,10,40,.32);opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;',
       'pointer-events:none;word-break:keep-all}',
@@ -734,8 +734,7 @@
       render();
       if (S.transport) { S.transport.announce(); syncMesh(); }
       unlockAudio();
-      var who = person(S.who).name;
-      toast('마이크 켜짐! ' + who + ' 목소리가 가족에게 들려요 🎙️', 2600);
+      toast('🎙️ 마이크 켜짐! 이야기해 보세요', 2200);
     }).catch(function (err) {
       S.micBusy = false; S.micOn = false; render();
       dbgErr('mic:' + ((err && err.name) || '?'), err);
