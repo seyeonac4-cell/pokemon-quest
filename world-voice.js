@@ -755,7 +755,7 @@
     S.myVer++;
     closeAllConns();
     render();
-    if (S.transport) S.transport.announce();
+    if (S.transport) { S.transport.announce(); syncMesh(); }
     if (reason === 'user') toast('마이크 껐어요 🔇', 1800);
     else if (reason === 'idle') toast('5분 동안 조용해서 마이크를 껐어요 💤', 3200);
     else if (reason === 'blocked') toast('하은이 대화 중이라 마이크를 잠깐 껐어요 🎤', 3000);
