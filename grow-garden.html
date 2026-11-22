@@ -3212,7 +3212,7 @@ function stepWorld(dt){
   if(!paused && !PLAYER.target){
     if(Math.abs(v.x) > 0.06 || Math.abs(v.y) > 0.06){
       if(PATH.length) cancelPath();
-      const sp = 2.35;
+      const sp = 2.95;   /* 넓어진 정원(2배)이라 걸음도 조금 빠르게 */
       const nx = PLAYER.x + v.x*sp*dt;
       const nz = PLAYER.z + v.y*sp*dt;
       if(canStand(clamp(nx, XMIN(), XMAX()), PLAYER.z)) PLAYER.x = clamp(nx, XMIN(), XMAX());
@@ -3236,7 +3236,7 @@ function stepWorld(dt){
       }else if(Date.now() - PLAYER.targetAt > 8000){
         cancelPath();
       }else{
-        const stepL = Math.min(2.6*dt, dist);
+        const stepL = Math.min(3.25*dt, dist);
         const ux = dx/dist, uz = dz/dist;
         if(canStand(PLAYER.x + ux*stepL, PLAYER.z)) PLAYER.x += ux*stepL;
         if(canStand(PLAYER.x, PLAYER.z + uz*stepL)) PLAYER.z += uz*stepL;
