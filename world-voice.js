@@ -829,6 +829,8 @@
 
   function markActive() {
     S.lastAct = now();
+    /* 화면을 한 번이라도 만지면 상대 목소리가 막혀 있던 것도 풀어요 */
+    if (S.audioBlocked) { S.audioBlocked = false; unlockAudio(); }
     if (S.idled) {
       S.idled = false;
       if (S.transport) S.transport.announce();
