@@ -1235,6 +1235,14 @@ function pEge(k){ return pNim(k) + '에게'; }
 function pUi(k){ return pNim(k) + '의'; }
 function pReul(k){ return pNim(k) + '를'; }
 function pWa(k){ return pNim(k) + '와'; }
+/* 목적격 조사 — ''딸기를' / '당근을' 처럼 받침에 맞춰요 */
+function josaEul(word){
+  const s2 = String(word == null ? '' : word).trim();
+  if(!s2) return s2 + '을';
+  const c = s2.charCodeAt(s2.length - 1);
+  const batchim = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+  return s2 + (batchim ? '을' : '를');
+}
 function isAdultWho(k){ return !!(PEOPLE[k] && PEOPLE[k].adult); }
 function familyOthers(){ return FAMILY.filter(function(k){ return k !== kid; }); }
 
@@ -1300,7 +1308,7 @@ function renderWorldBar(){
     const adult = isAdultWho(k);
     wc.hidden = !adult;
     wc.textContent = adult ? '🔓 제한 없음' : '';
-    wc.title = adult ? (nm + '은(는) 놀이 시간 제한 없이 마음껏 놀아요') : '';
+    wc.title = adult ? (nm + '는 놀이 시간 제한 없이 마음껏 놀아요') : '';
   }
   const ab = $('#wgoBlock'), ad = $('#wgoDress');
   if(ab) ab.setAttribute('href', './block-world.html?who=' + k);
@@ -3350,7 +3358,7 @@ function trimBasket(g){
     earnCoins(sold.price);
     g.stats.sold += 1;
     g.stats.earned += sold.price;
-    toast('바구니가 가득 차서 가장 싼 ' + mutLabel(sold.seed, sold.muts) + '을 자동으로 팔았어요 (+' + nf(sold.price) + '🪙)');
+    toast('바구니가 가득 차서 가장 싼 ' + josaEul(mutLabel(sold.seed, sold.muts)) + ' 자동으로 팔았어요 (+' + nf(sold.price) + '🪙)');
   }
 }
 function addToBasket(item){
@@ -3954,7 +3962,7 @@ function submitDuel(itemId){
   try{
     NET.db.ref(NET.root + '/duel/entries/' + kid).set(entry).then(function(){
       Sound.mutate();
-      toast('🏆 ' + mutLabel(it.seed, it.muts) + '을 냈어요!');
+      toast('🏆 ' + josaEul(mutLabel(it.seed, it.muts)) + ' 냈어요!');
       renderDuelSheet();
     }).catch(function(){ toast('작물을 내지 못했어요 😢'); });
   }catch(e){ toast('작물을 내지 못했어요 😢'); }
@@ -4049,8 +4057,8 @@ function sendGift(itemId){
       renderAll();
       closeSheets();
       Sound.gift();
-      toast('🎁 ' + pEge(to) + ' ' + mutLabel(it.seed, it.muts) + ' ' + kgText(it.kg) + '을 보냈어요!');
-      setFairy(pEge(to) + ' <b>' + esc(mutLabel(it.seed, it.muts)) + '</b>를 선물했어요! ' + pNim(to) + ' 폰에서 받을 수 있어요 🎁');
+      toast('🎁 ' + pEge(to) + ' ' + josaEul(mutLabel(it.seed, it.muts) + ' ' + kgText(it.kg)) + ' 보냈어요!');
+      setFairy(pEge(to) + ' <b>' + esc(mutLabel(it.seed, it.muts)) + '</b>' + ' 선물을 보냈어요! ' + pNim(to) + ' 폰에서 받을 수 있어요 🎁');
     }).catch(function(){ toast('선물을 보내지 못했어요 😢'); });
   }catch(e){ toast('선물을 보내지 못했어요 😢'); }
 }
@@ -4069,7 +4077,7 @@ function claimGift(giftId){
   confetti(item.muts.length ? item.muts[0] : 'golden');
   renderAll(); renderMore();
   const fromName = pNim(gift.from);
-  toast('🎁 ' + fromName + '의 ' + mutLabel(item.seed, item.muts) + '을 받았어요!');
+  toast('🎁 ' + fromName + '의 ' + josaEul(mutLabel(item.seed, item.muts)) + ' 받았어요!');
   setFairy(fromName + '가 보낸 <b>' + esc(mutLabel(item.seed, item.muts)) + '</b>를 받았어요! 정원에 자랑해 봐요 💚');
 }
 
