@@ -1010,7 +1010,9 @@ input{font-family:inherit}
       </div>
       <div class="help-sec">
         <h3>🌉 타자 미션 · 점프맵</h3>
-        <p>마을 동쪽 길로 나가면 점프맵이 있어요. 빛나는 안내판 앞에 서면 타자 미션이 열리고, 낱말을 다 치면 다리가 생겨 건너갈 수 있어요.<br>발판이 넓고 구멍도 한 칸뿐이라 가볍게만 점프해도 착지해요. 떨어져도 퐁퐁 쿠션에 받혀서 다시 올라갈 수 있어요!</p>
+        <p>마을 동쪽 길로 나가면 점프맵이 있어요. 빛나는 안내판 앞에 서면 타자 미션이 열리고, 낱말을 다 치면 다리가 생겨 건너갈 수 있어요.<br>발판이 넓고 구멍도 한 칸뿐이라 가볍게만 점프해도 착지해요. 떨어져도 퐁퐁 쿠션에 받혀서 다시 올라갈 수 있어요!<br>
+        👾 <b>중간 발판엔 쿠파가 순찰해요</b>: 부딪히면 <b>-30 코인</b>. 점프로 머리 위를 넘거나 반대쪽으로 걸어 피해 가요!<br>
+        🕳️ <b>난간 없는 블록 밖으로 걸어 나가면 진짜로 아래로 떨어져요</b> — 체크포인트 깃발에서 다시 출발해요!</p>
       </div>
       <div class="help-sec">
         <h3>🌋 2탄 스릴 함정 어드벤처</h3>
@@ -1033,6 +1035,11 @@ input{font-family:inherit}
         🫧 층마다 파스텔 구슬이 가득한 <b>왁뿌볼 발판</b>이 있어요. 밟을 때마다 발판이 말랑하게 눌렸다가 <b>퐁~</b> 튀어 오르고, <b>사그락사그락</b> 구슬 소리와 반짝이가 톡톡 터져요!<br>
         🚩 층마다 <b>안전 깃발</b>이 있어서 떨어져도 그 층에서 다시 시작해요. 계단은 왼쪽 위(북서) 모서리에 있어요.<br>
         🏆 꼭대기 <b>🫧 왁뿌볼 챔피언</b> 트로피에 닿으면 축하 폭죽과 함께 <b>가족 공용 코인 +50</b>, 최단 시간 기록도 남아요!</p>
+      </div>
+      <div class="help-sec">
+        <h3>🎒 아빠한테 업혀가기</h3>
+        <p>아빠가 <b>같은 시간에 접속</b>해 있으면, 윤진·형원이 <b>아빠 캐릭터 가까이</b> 다가갔을 때 <b>「🎒 아빠한테 업히기」</b> 버튼이 떠요.<br>
+        누르면 아빠 등에 쏙 업혀서, 아빠가 걸을 때도 점프할 때도 함께 따라가요! <b>「⬇️ 내려오기」</b> 버튼이나 <b>점프</b>를 누르면 언제든 내려와요.</p>
       </div>
       <div class="help-sec">
         <h3>🚪 세 월드 문</h3>
@@ -2019,6 +2026,18 @@ function buildMap() {
   for (var gx3 = 47; gx3 <= 48; gx3++) GBS.push(gx3);
   gateRails(gates[2], GBS, 3, -1, 6);
 
+  /* 👾 1단계에도 쿠파! — 넓은 발판(19~23 · 30~32) 위만 천천히 순찰해요.
+     체크포인트 깃발과는 2칸 넘게 떨어져 있어서 부활해도 안전하고,
+     반대쪽 길로 걸어서 얼마든지 피해 갈 수 있어요. (부딪히면 -30 코인) */
+  enemies.push({
+    id: 't1fo0', x0: 20.0, y0: 0.6, x1: 23.0, y1: 0.6, z: 0, speed: 1.35, ph: 0.4,
+    px: 20.0, py: 0.6, hitAt: 0, face: 1, wx: 1, wy: 0
+  });
+  enemies.push({
+    id: 't1fo1', x0: 30.4, y0: 4.6, x1: 32.4, y1: 4.6, z: 0, speed: 1.15, ph: 2.2,
+    px: 30.4, py: 4.6, hitAt: 0, face: 1, wx: 1, wy: 0
+  });
+
   /* ============================================================
      🌋 9-2) 2탄 — 스릴 함정 어드벤처
      무지개 성 동쪽 문(54,3)에서 이어져요. 발판이 모두 높이 떠 있어서
@@ -2135,32 +2154,32 @@ function buildMap() {
      발판 사이 빈칸(2칸)이 「점프 틈」이에요. */
   var T3_FLOORS = [
     { /* 1층 빨강 — 워밍업: 2칸 점프 + 느린 회전 막대 + 첫 적 */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 2, 3]],
       spin: [[3.0, 4.5, 1.0, 0.85]],
       foe: [[4.4, 3.4, 5.4, 3.4, 1.4]],
       coins: [[4, 5], [2, 4], [0.5, 4, 1]]
     },
     { /* 2층 주황 — 사라지는 블록 다리 (멈추면 사라져요) */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 2, 3], [-1, 3, 3, 4]],
       crm: [[1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5]],
       foe: [[0.5, 3.4, 0.5, 5.4, 1.6]],
       coins: [[4, 3, 1], [2, 4], [0.5, 5]]
     },
     { /* 3층 노랑 — 타이밍 맞춰 움직이는 발판 */
-      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 1, 3]],
       move: [['x', 1, 4, 1, 1.05, 0, 2]],
       foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
       coins: [[2, 5], [1, 5, 1], [0.5, 4]]
     },
     { /* 4층 초록 — 굴러오는 구슬 + 순찰하는 적 */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 2, 3]],
       roll: [[0.2, 4.2, 1.8, 4.2, 0.4, 1.15, 0]],
       spin: [[3.0, 4.5, 1.0, 1.15]],
       foe: [[4.4, 4.3, 5.4, 4.3, 1.8]],
       coins: [[4, 5], [2, 4], [1, 4.5, 1]]
     },
     { /* 5층 파랑 — 사라지는 블록 + 움직이는 발판 + 빠른 회전 막대 */
-      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      pads: [[4, 3, 2, 3], [-1, 3, 3, 4]],
       crm: [[2, 3], [2, 4], [2, 5]],
       move: [['y', 1, 2, 1, 0.95, 1.0, 1]],
       foe: [[0.5, 3.4, 0.5, 5.4, 1.7]],
@@ -2188,25 +2207,25 @@ function buildMap() {
       coins: [[5, 5], [3, 4], [0.5, 4, 1]]
     },
     { /* 2층 포도 — 미끄러운 젤리 다리 */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 2, 3]],
       slip: [[1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5]],
       foe: [[4.4, 5.4, 5.4, 5.4, 1.6]],
       coins: [[5, 3, 1], [2, 4], [0.5, 5]]
     },
     { /* 3층 민트 — 0.6초 만에 사라지는 구슬 다리 */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 2, 3]],
       crm: [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5]],
       foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
       coins: [[5, 5, 1], [3, 4], [0.5, 4]]
     },
     { /* 4층 하늘 — 움직이는 구슬 발판 + 회전 막대 */
-      pads: [[4, 3, 2, 3], [0, 3, 1, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 1, 3]],
       move: [['x', 1, 4, 1, 1.1, 0, 2]],
       foe: [[4.4, 3.4, 5.4, 3.4, 1.7]],
       coins: [[2, 5], [1, 5, 1], [0.5, 4]]
     },
     { /* 5층 크림 — 굴러오는 구슬 회랑 */
-      pads: [[4, 3, 2, 3], [0, 3, 2, 3]],
+      pads: [[4, 3, 3, 4], [0, 3, 2, 3]],
       roll: [[0.2, 4.2, 1.8, 4.2, 0.4, 1.25, 0]],
       spin: [[3.0, 4.5, 1.0, 1.2]],
       foe: [[4.4, 4.3, 5.4, 4.3, 1.8]],
@@ -2528,7 +2547,7 @@ var G = {
   running: false, paused: false, finished: false,
   coinsGot: 0, gatesSolved: 0, startAt: 0, elapsed: 0,
   parts: [], confetti: [],
-  respawnAt: 0, cpIdx: 0,
+  respawnAt: 0, cpIdx: 0, piggy: null, piggyPrompt: null,
   jumpLatch: false, hintTimer: 0, unread: 0, revealing: [], fx: null
 };
 
@@ -5070,6 +5089,7 @@ function updateEnemies(dt) {
         vx: e.wx * 1.1, vy: e.wy * 1.1, vz: 0.5, life: 0.55, age: 0, r: 3.2, c: pick(['#ffb03a', '#ff7a2e', '#ffe08a'])
       });
     }
+    if (G.piggy) continue;                       // 🎒 업혀 있는 동안엔 아빠가 지켜 줘요
     if (p.z > e.z + 0.62) continue;              // 🦘 점프로 머리 위를 넘으면 안전
     if (Math.abs(p.z - e.z) > 0.9) continue;
     if (Math.hypot(p.x - e.px, p.y - e.py) > 0.62) continue;
@@ -5165,6 +5185,8 @@ function stepUp(tx, ty) {
 
 function updatePlayer(dt) {
   var p = G.p, inp = inputVector();
+  /* 🎒 아빠 등에 업혀 있는 동안엔 내 조작 대신 아빠를 따라가요 */
+  if (G.piggy && updatePiggyRide(dt)) return;
   var spec = RIDE[G.ride] || RIDE.walk;
   var moving = inp.len > 0.12;
   p.move = moving;
@@ -5223,19 +5245,30 @@ function updatePlayer(dt) {
       p.slip = !!sup.t.slip;
       p.coyote = 0.13;
     } else {
+      /* 🕳️ 발판(블록)이 없는 곳으로 걸어 나가면 여기서 공중이 돼요.
+         그때 착지 도움 반경을 잠깐 0으로 줄여서, 방금 딛고 있던 발판이
+         발밑으로 캐릭터를 도로 끌어당기지(투명 벽처럼 막지) 못하게 해요. */
       p.air = true;
+      p.airTime = 0;
+      p.walkOff = true;
       p.vz = Math.min(p.vz || 0, 0);
       p.coyote = 0.13;
     }
   } else {
     p.coyote = Math.max(0, (p.coyote || 0) - dt);
+    p.airTime = (p.airTime || 0) + dt;
     p.vz -= GRAV * dt;
     var prevZ = p.z;
     p.z += p.vz * dt;
     // 착지: 발판을 살짝 벗어나도 끌어다 붙여 착지시켜요
     if (p.vz <= 0) {
-      /* 🏰 타워 점프맵은 발판이 작아서 착지 도움을 조금 더 넓게 줘요 */
-      var land = supportTile(p.x, p.y, (G.at3 || G.at4) ? 0.75 : LAND_R, prevZ);
+      /* 🏰 타워 점프맵은 발판이 작아서 착지 도움을 조금 더 넓게 줘요.
+         단, 발판 밖으로 「걸어서」 막 나간 직후(0.16초)에는 도움을 거의
+         주지 않아요 — 그래야 걸어 나가면 진짜로 아래로 떨어져요. */
+      var landR = LAND_R;
+      if (G.at3 || G.at4) landR = 0.75;
+      if (p.walkOff && (p.airTime || 0) < 0.16) landR = 0.1;
+      var land = supportTile(p.x, p.y, landR, prevZ);
       if (land && p.z <= land.t.z + 0.02) { doLand(land); standsOn = G.p.air ? null : land.t; }
     }
     if (p.air) p.keyId = null;
@@ -5264,12 +5297,12 @@ function updatePlayer(dt) {
     if (standsOn.haz) hazardHit();
   }
 
-  if (p.z < -4.5) respawn();
+  if (p.z < -4.5) { fallOut(); return; }
 
   /* 🏰 타워 점프맵: 발판에서 떨어져 그 층 아래로 내려가면
      방금 지나온 층 체크포인트 깃발에서 즉시 부활! */
   if ((G.at3 || G.at4) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - 1.2) {
-    respawn();
+    fallOut(); return;
   }
 
   // 체크포인트
@@ -5376,6 +5409,7 @@ function updatePlayer(dt) {
     var d = Math.hypot(sp2.x - p.x, sp2.y - p.y);
     if (d < best) { best = d; G.spot = sp2; }
   }
+  G.piggyPrompt = piggyPromptFor();
   updateActionPrompt();
   p.hintTick = (p.hintTick || 0) + dt;
   if (p.hintTick > 0.6) { p.hintTick = 0; updateHint(); }
@@ -5394,6 +5428,8 @@ function doLand(cand) {
   }
   p.squash = 1;
   p.keyId = null;
+  p.airTime = 0;
+  p.walkOff = false;
   p.groundZ = t.z;
   p.slip = !!t.slip;
   if (t.jelly) pressJelly(t, 1.05);            // 🫧 말랑 구슬 착지 → 사그락! 퐁실!
@@ -5406,11 +5442,12 @@ function doLand(cand) {
   }
 }
 
-function respawn() {
+function respawn(fell) {
   var cp = G.cps[G.cpIdx] || G.cps[0];
   resetTraps2();                 // 사라진 블록은 다시 살아나요
   G.p.x = cp.x; G.p.y = cp.y; G.p.z = cp.z;
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
+  G.p.airTime = 0; G.p.walkOff = false;
   G.p.face = 1;            // 코스가 +x(오른쪽)로 이어지니 앞을 바라보고 다시 출발
   G.p.walk = 0;
   G.p.keyId = null; G.p.jellyId = null;
@@ -5419,12 +5456,106 @@ function respawn() {
   G.petXY.x = cp.x - 0.8; G.petXY.y = cp.y + 0.8; G.petXY.z = cp.z;
   snapCamera(cp.x, cp.y, cp.z);
   AU.err();
-  toast('😵 앗! 다시 체크포인트에서 출발!');
+  if (fell) {
+    toast('💦 앗, 떨어졌어요! 체크포인트에서 다시 출발!');
+    spawnSpark(cp.x, cp.y, cp.z + 0.15, '#9ad9ff', 7);
+  } else {
+    toast('😵 앗! 다시 체크포인트에서 출발!');
+  }
   spawnDust(cp.x, cp.y, cp.z, 8);
+}
+
+/* 🕳️ 블록 밖 허공으로 떨어졌을 때 — 체크포인트 깃발로 부활 */
+function fallOut() {
+  respawn(true);
+}
+
+/* ============================================================
+   🎒 아빠한테 업혀가기 — 실시간 접속한 아빠(👨) 등에 쏙!
+   ------------------------------------------------------------
+   · 윤진·형원이 아빠 캐릭터 가까이 가면 「🎒 아빠한테 업히기」 버튼
+   · 업히면 아빠가 걸을 때도 점프할 때도 아이가 등에 업혀 따라가요
+   · 「⬇️ 내려오기」 버튼이나 점프를 누르면 언제든 내려옴
+   · live 상태에 piggyback:'dad' 로 써서 아빠 화면에도 업힌 모습
+   ============================================================ */
+var PIGGY_KIDS = { yunjin: 1, hyungwon: 1 };
+var PIGGY_LIFT = 0.52;            // 등에 올라탄 높이(칸)
+var PIGGY_DX = -0.28, PIGGY_DY = 0.28;   // 아빠 등 뒤(화면 위쪽) 위치
+
+function piggyCarrier() {
+  if (!PIGGY_KIDS[ME.id]) return null;              // 아이만 업혀요
+  if (!G.remotes || !G.remotes.dad) return null;
+  return G.remotes.dad;
+}
+
+function piggyPromptFor() {
+  if (G.piggy) return { icon: '⬇️', label: '아빠 등에서 내려오기', act: 'offpiggy' };
+  var d = piggyCarrier();
+  if (!d || G.paused) return null;
+  if (Math.abs((d.z || 0) - G.p.z) > 1.1) return null;
+  if (Math.hypot((d.x || 0) - G.p.x, (d.y || 0) - G.p.y) > 1.35) return null;
+  return { icon: '🎒', label: '아빠한테 업히기', act: 'piggy' };
+}
+
+function startPiggy() {
+  var d = piggyCarrier();
+  if (!d) return;
+  G.piggy = 'dad';
+  var p = G.p;
+  p.x = (d.x || 0) + PIGGY_DX; p.y = (d.y || 0) + PIGGY_DY; p.z = d.z || 0;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.groundZ = p.z;
+  p.face = d.face || 1;
+  G.piggyPrompt = { icon: '⬇️', label: '아빠 등에서 내려오기', act: 'offpiggy' };
+  AU.chime(); spawnHearts(p.x, p.y, 4);
+  toast('🎒 아빠 등에 쏙! 아빠 따라가요~');
+  FB.pushLive(true);
+  updateActionPrompt();
+}
+
+function stopPiggy() {
+  if (!G.piggy) return;
+  var d = G.remotes && G.remotes[G.piggy];
+  var p = G.p;
+  if (d) { p.x = (d.x || 0) - 0.55; p.y = (d.y || 0) + 0.55; p.z = d.z || 0; }
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.groundZ = p.z;
+  G.piggy = null;
+  G.piggyPrompt = null;
+  AU.pop();
+  toast('⬇️ 아빠 등에서 내려왔어요!');
+  spawnDust(p.x, p.y, p.z, 5);
+  FB.pushLive(true);
+}
+
+/* 업힌 동안: 아빠 위치를 따라가고 내 입력은 잠깐 쉬어요.
+   true 를 돌려주면 이번 프레임은 일반 이동을 하지 않습니다. */
+function updatePiggyRide(dt) {
+  var p = G.p;
+  var d = G.remotes && G.remotes[G.piggy];
+  if (!d || (Date.now() - (d.ts || 0)) >= 40000) {   // 아빠가 나갔어요 → 안전하게 내려놓기
+    G.piggy = null; G.piggyPrompt = null;
+    p.vz = 0; p.air = false; p.groundZ = p.z;
+    FB.pushLive(true);
+    toast('👨 아빠가 잠깐 나가서 등에서 내려왔어요');
+    return false;
+  }
+  var tx = (d.x || 0) + PIGGY_DX, ty = (d.y || 0) + PIGGY_DY;
+  var k = Math.min(1, dt * 16);
+  p.x = lerp(p.x, tx, k); p.y = lerp(p.y, ty, k);
+  p.z = d.z || 0; p.groundZ = p.z;
+  p.face = d.face || 1;
+  p.air = !!d.air; p.move = false;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.coyote = 0;
+  p.walk += dt * (d.moving ? 8 : 1.6);
+  G.spot = null; G.portal = null;
+  G.piggyPrompt = { icon: '⬇️', label: '아빠 등에서 내려오기', act: 'offpiggy' };
+  updateActionPrompt();
+  return true;
 }
 
 function doJump() {
   if (G.paused) return;
+  /* 🎒 업힌 상태에서 점프를 누르면 아빠 등에서 내려와요 */
+  if (G.piggy) { stopPiggy(); return; }
   var p = G.p;
   if (p.air) {
     if ((p.coyote || 0) > 0) {
@@ -5437,6 +5568,8 @@ function doJump() {
   }
   p.vz = (RIDE[G.ride] || RIDE.walk).jump;
   p.air = true;
+  p.airTime = 0;
+  p.walkOff = false;
   p.squash = 0;
   if (p.standTile && p.standTile.jelly) {
     pressJelly(p.standTile, 0.9);              // 🫧 구슬을 밀고 튀어 오르는 퐁~
@@ -5469,9 +5602,11 @@ function updateRideUI() {
 
 function updateActionPrompt() {
   var el = $('#actionPrompt');
-  if (!G.spot || G.paused || G.portal) { el.classList.remove('on'); updatePortalPrompt(); return; }
-  $('#actIco').textContent = G.spot.icon;
-  $('#actTxt').textContent = G.spot.label;
+  if (G.paused || G.portal) { el.classList.remove('on'); updatePortalPrompt(); return; }
+  var s = G.piggyPrompt || G.spot;
+  if (!s) { el.classList.remove('on'); updatePortalPrompt(); return; }
+  $('#actIco').textContent = s.icon;
+  $('#actTxt').textContent = s.label;
   el.classList.add('on');
   updatePortalPrompt();
 }
@@ -5590,6 +5725,8 @@ function gotoVillage() {
 }
 
 function doAction() {
+  if (G.piggyPrompt && G.piggyPrompt.act === 'offpiggy') { stopPiggy(); return; }
+  if (G.piggyPrompt && G.piggyPrompt.act === 'piggy') { startPiggy(); return; }
   var s = G.spot;
   if (G.portal) { goWorld(G.portal.href); return; }
   if (!s) return;
@@ -5705,7 +5842,7 @@ function drawWorld() {
 
   // 나
   var p = G.p;
-  items.push({ d: p.x + p.y + 0.05, k: 2, o: 'me' });
+  items.push({ d: p.x + p.y + (G.piggy ? 0.09 : 0.05), k: 2, o: 'me' });
   // 펫
   if (G.pet && G.pet.type) items.push({ d: G.petXY.x + G.petXY.y + 0.045, k: 10, o: 'pet' });
   // 상대 가족 (여러 명 동시 접속)
@@ -5774,6 +5911,8 @@ function drawFx(ctx) {
 function drawMe(ctx) {
   var p = G.p;
   var base = proj(p.x, p.y, p.z);
+  /* 🎒 아빠 등에 업혀 있으면 아빠 어깨 높이에 올려 그려요 */
+  if (G.piggy) base.y -= PIGGY_LIFT * BLOCK_H;
   /* 🫧 말랑 구슬을 밟으면 발판과 함께 살짝 퐁 하고 내려앉아요 */
   if (p.standTile && p.standTile.jelly && p.standTile.sq > 0) {
     base.y += Math.min(0.22, p.standTile.sq) * 0.14 * BLOCK_H;
@@ -5783,10 +5922,10 @@ function drawMe(ctx) {
   var b = G.bubbles[ME.id];
   if (b && Date.now() - b.ts < 20000) bubble = b.text;
 
-  if (G.ride === 'car') {
+  if (!G.piggy && G.ride === 'car') {
     var cp = proj(p.x, p.y, p.z + 0.1);
     drawCar(ctx, p.x - 0.9, p.y - 0.9, p.z + 0.05, SAVE && SAVE.carColor ? SAVE.carColor : '#ff6f95', false);
-  } else if (G.ride === 'scooter') {
+  } else if (!G.piggy && G.ride === 'scooter') {
     var cp2 = proj(p.x, p.y, p.z + 0.1);
     drawScooter(ctx, p.x - 0.4, p.y - 0.4, p.z + 0.05, '#3fd6c0');
   }
@@ -5825,12 +5964,15 @@ function drawRemote(ctx, r) {
   if (!r) r = G.remote;
   if (!r) return;
   var base = proj(r.x, r.y, r.z || 0);
+  /* 🎒 내 등에 업혀 있는 가족이면 내 어깨 높이로 올려 그려요 */
+  var pig = !!(r.piggyback && ME.id && r.piggyback === ME.id);
+  if (pig) base.y -= PIGGY_LIFT * BLOCK_H;
   var look = r.look || LOOK_DEFAULT;
   var w = WHO[r.who] || {};
   var b = G.bubbles[r.who];
   var bubble = (b && Date.now() - b.ts < 20000) ? b.text : null;
-  if (r.ride === 'car') drawCar(ctx, r.x - 0.9, r.y - 0.9, (r.z || 0) + 0.05, '#7fc9ff', false);
-  else if (r.ride === 'scooter') drawScooter(ctx, r.x - 0.4, r.y - 0.4, (r.z || 0) + 0.05, '#ffd24a');
+  if (!pig && r.ride === 'car') drawCar(ctx, r.x - 0.9, r.y - 0.9, (r.z || 0) + 0.05, '#7fc9ff', false);
+  else if (!pig && r.ride === 'scooter') drawScooter(ctx, r.x - 0.4, r.y - 0.4, (r.z || 0) + 0.05, '#ffd24a');
   var lift = (r.ride && r.ride !== 'walk') ? 0.16 : 0;
   var rgz = tileTop(r.x, r.y);
   if (rgz < -50) rgz = r.z || 0;
@@ -6842,7 +6984,7 @@ var FB = {
   pushLive: function (force) {
     if (!FB.ready || !SAVE || !G.running) return;
     var now = Date.now();
-    if (!force && now - FB.lastPush < (G.p.move || G.p.air ? 300 : 1800)) return;
+    if (!force && now - FB.lastPush < (G.p.move || G.p.air || G.piggy ? 300 : 1800)) return;
     FB.lastPush = now;
     var p = G.p;
     var data = {
@@ -6850,6 +6992,7 @@ var FB = {
       x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, z: Math.round(p.z * 100) / 100,
       face: p.face, walk: Math.round(p.walk * 10) / 10, moving: p.move ? 1 : 0, air: p.air ? 1 : 0,
       ride: G.ride, ts: now,
+      piggyback: G.piggy || '',
       look: { body: SAVE.look.body, hat: SAVE.look.hat, face: SAVE.look.face, acc: SAVE.look.acc || 'none' },
       prop: SAVE.prop || '', pet: (SAVE.pet && SAVE.pet.type) || '', house: SAVE.house || '',
       role: SAVE.role || ''
@@ -6958,6 +7101,7 @@ function sendChat() {
 function setProfile(who, silent) {
   if (SAVE) persist();
   ME = WHO[who] || WHO.yunjin;
+  G.piggy = null; G.piggyPrompt = null;      // 🎒 프로필을 바꾸면 업힌 건 풀려요
   SAVE = loadSave(ME.id);
   /* 공용 지갑도 이 아이로 — 코인의 진실은 서버(worldCoins) 값이에요 */
   WorldCoins.setKid(ME.id);
@@ -7588,6 +7732,9 @@ try {
   if (_bwq.get('bwtest') === '1') {
     window.__BWD = {
       G: G,
+      FB: FB,
+      ME: function () { return ME.id; },
+      spot: function () { return G.spot ? { x: G.spot.x, y: G.spot.y, label: G.spot.label } : null; },
       state: function () {
         var p = G.p;
         return {
@@ -7595,6 +7742,7 @@ try {
           groundZ: p.groundZ, cp: G.cpIdx, at3: !!G.at3, at4: !!G.at4,
           fin: !!G.finished, fin2: !!G.finished2, fin3: !!G.finished3, fin4: !!G.finished4,
           coins: SAVE ? SAVE.coins : null, hurt: p.hurtAt || 0, slip: !!p.slip,
+          piggy: G.piggy || '', prompt: G.piggyPrompt ? G.piggyPrompt.act : '',
           stand: p.standTile ? { x: p.standTile.x, y: p.standTile.y, z: p.standTile.z, type: p.standTile.type } : null
         };
       },
