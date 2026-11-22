@@ -1001,6 +1001,33 @@ body{
 .actor.sis .nm{background:linear-gradient(135deg,#22CC88,#0E9C74); box-shadow:0 3px 9px rgba(10,120,90,.35)}
 .actor.sis .bub{color:#116B4F}
 
+/* ===== ✂️ 리나 헤어살롱 미용사 · 리나 쌤 ===== */
+.actor.stylist{pointer-events:auto; cursor:pointer}
+.actor.stylist .mid svg{animation:linaBob 2.6s ease-in-out infinite}
+@keyframes linaBob{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-3.2%) rotate(.6deg)}}
+.actor.stylist .nm{
+  font-size:10px; padding:2px 8px; letter-spacing:-.03em;
+  background:linear-gradient(135deg,#FF6BA8,#2FD6A6); box-shadow:0 3px 10px rgba(180,50,140,.42);
+}
+.actor.stylist .bub{
+  width:152px; max-width:none; white-space:normal; text-align:center; line-height:1.3;
+  font-size:9.5px; color:#0E6B52; background:#FFFFFF; border:1.5px solid #9CF0D2;
+}
+.actor.stylist.talk .mid svg{animation:linaHop .5s ease-in-out 2}
+@keyframes linaHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-9%)}}
+/* ✂️ 머리 다듬을 때 터지는 반짝이 */
+.spk{
+  position:fixed; z-index:130; pointer-events:none; line-height:1;
+  transform:translate(-50%,-50%);
+  animation:spkFly .95s cubic-bezier(.2,.7,.3,1) forwards;
+  filter:drop-shadow(0 2px 5px rgba(170,60,140,.35)); will-change:transform,opacity;
+}
+@keyframes spkFly{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(.35) rotate(0deg)}
+  18%{opacity:1}
+  100%{opacity:0; transform:translate(calc(-50% + var(--dx,0px)), calc(-50% + var(--dy,-40px))) scale(1.06) rotate(var(--rot,0deg))}
+}
+
 /* 테마 칩 시트 */
 .themeGrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(104px,1fr)); gap:7px}
 .themeGrid button{
@@ -1403,7 +1430,15 @@ var SFX = {
   star: function(i){ tone(880 + (i||0)*160, 0.12, 'triangle', 0.12); },
   fanfare: function(){ [523,659,784,1047,1319].forEach(function(f,i){ tone(f, 0.22, 'triangle', 0.11, i*0.1); }); tone(1047, 0.5, 'sine', 0.09, 0.52); },
   clap: function(){ for(var i=0;i<7;i++){ noise(0.09, 0.11, 1800 + Math.random()*1400, 0.7, i*0.11 + Math.random()*0.03); } },
-  oops: function(){ tone(400, 0.14, 'sine', 0.1); tone(300, 0.2, 'sine', 0.09, 0.13); }
+  oops: function(){ tone(400, 0.14, 'sine', 0.1); tone(300, 0.2, 'sine', 0.09, 0.13); },
+  /* ✂️ 싹둑싹둑 — 미용사 가위 소리(짧은 금속성 잡음 두 번) */
+  snip: function(){
+    for(var i=0;i<3;i++){
+      noise(0.055, 0.14, 5200, 3.4, i*0.19);
+      tone(3100, 0.04, 'square', 0.045, i*0.19);
+      noise(0.04, 0.08, 3600, 2.2, i*0.19 + 0.055);
+    }
+  }
 };
 
 /* ============================================================
@@ -3075,7 +3110,7 @@ var ZONES = [
   { id:'dress',   emoji:'👗', name:'로열 드레스 홀',      x:-5.6, z:4.0,  w:4.0, d:1.8, h:0.46, base:'#FF9EC6', carpet:'#FFD3E6', cats:['dress'],              panel:1.25, artH:2.5, sub:'ROYAL DRESS HALL' },
   { id:'cloth',   emoji:'👚', name:'캐주얼 부티크',        x: 5.6, z:4.0,  w:4.0, d:1.8, h:0.46, base:'#8FD0F5', carpet:'#CDEBFF', cats:['top','bottom'],       panel:1.25, artH:2.5, sub:'CASUAL BOUTIQUE' },
   { id:'shoes',   emoji:'👠', name:'슈즈 갤러리',          x:-7.2, z:7.6,  w:3.4, d:1.7, h:0.42, base:'#B6A2F0', carpet:'#E3D6FF', cats:['shoes'],              panel:1.15, artH:2.3, sub:'SHOES GALLERY' },
-  { id:'hair',    emoji:'💇', name:'라나의 헤어 살롱',      x: 7.2, z:7.6,  w:3.4, d:1.7, h:0.50, base:'#86DFC4', carpet:'#D3F6E8', cats:['hair','face','skin'], panel:1.15, artH:2.3, sub:'LANA HAIR SALON' },
+  { id:'hair',    emoji:'💇', name:'리나의 헤어 살롱',      x: 7.2, z:7.6,  w:3.4, d:1.7, h:0.50, base:'#86DFC4', carpet:'#D3F6E8', cats:['hair','face','skin'], panel:1.15, artH:2.3, sub:'LINA HAIR SALON' },
   { id:'makeup',  emoji:'💄', name:'메이크업 & 네일',      x:-5.4, z:11.2, w:3.6, d:1.8, h:0.42, base:'#FFB68F', carpet:'#FFE0CE', cats:['makeup'],             panel:1.15, artH:2.3, sub:'MAKEUP STUDIO' },
   { id:'acc',     emoji:'👑', name:'VIP & 주얼리 라운지',  x: 5.4, z:11.2, w:3.8, d:1.9, h:0.42, base:'#FFD166', carpet:'#FFEFC2', cats:['acc'],                panel:1.15, artH:2.4, sub:'VIP LOUNGE' },
   { id:'park',    emoji:'🎡', name:'놀이공원',            x:-5.8, z:14.4, w:4.6, d:2.0, h:0.40, base:'#FF9BD0', carpet:'#FFE7B8', cats:['park','acc'],          panel:1.3, artH:2.2, sub:'FUN PARK' },
@@ -3943,6 +3978,235 @@ function paintMe(){
   me.el.className = 'actor me' + (PLAYER.pose ? ' pose' + PLAYER.pose : '') +
     ((typeof CLUB !== 'undefined' && CLUB.dancing) ? ' dance' : '');
 }
+
+/* ============================================================
+   ✂️ 리나 헤어살롱 — 미용사 「리나 쌤」 (레고 스타일 NPC)
+   · 헤어 살롱 카운터 앞에 서서 가위를 짤깍짤깍!
+   · 가까이 가면 말풍선 인사, 말을 걸면(또는 머리를 고르면) 싹둑싹둑 컷 연출
+   ============================================================ */
+var LINA = {
+  x: 8.30, z: 8.62,                 /* 리나 쌤이 서 있는 자리(헤어 살롱 앞) */
+  front: { x: 7.30, z: 9.40 },      /* 리나 쌤 앞에 서는 자리(살짝 옆으로) */
+  el:null, mid:null, nm:null, bub:null, bubT:0,
+  saidAt:0, cutting:false, pending:false, pendingAt:0
+};
+function linaArtSVG(){
+  var SK='#FFE1CB', SK2='#F1C2A6';
+  var PINK='#FF7FB4', PINK2='#FFC3DD';
+  var MINT='#4FDDB2', MINT2='#B7F4E0', MINT3='#25A981';
+  var HAIR='#4A2B22';
+  return '<svg viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg" class="fig" role="img" aria-label="리나 쌤">'
+  + '<defs>'
+  +   '<radialGradient id="linaHd" cx="42%" cy="22%" r="88%"><stop offset="35%" stop-color="'+SK+'"/><stop offset="100%" stop-color="'+SK2+'"/></radialGradient>'
+  +   '<linearGradient id="linaCap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+MINT2+'"/><stop offset="1" stop-color="'+MINT+'"/></linearGradient>'
+  + '</defs>'
+  /* 그림자 */
+  + '<ellipse cx="110" cy="309" rx="48" ry="8.5" fill="rgba(90,40,110,.16)"/>'
+  /* 뒤머리 */
+  + '<path d="M73 70 C73 32 90 20 110 20 C130 20 147 32 147 70 L149 136 C149 149 137 152 128 147 L92 147 C83 152 71 149 71 136 Z" fill="'+HAIR+'"/>'
+  /* 다리 */
+  + '<rect x="93" y="194" width="16" height="98" rx="6" fill="#FDF8FF"/>'
+  + '<rect x="111" y="194" width="16" height="98" rx="6" fill="#F1E9FA"/>'
+  /* 신발 */
+  + '<rect x="84" y="285" width="27" height="20" rx="9" fill="'+PINK+'"/>'
+  + '<rect x="109" y="285" width="27" height="20" rx="9" fill="'+PINK+'"/>'
+  + '<rect x="88" y="289" width="9" height="4" rx="2" fill="#FFFFFF" opacity=".55"/>'
+  + '<rect x="113" y="289" width="9" height="4" rx="2" fill="#FFFFFF" opacity=".55"/>'
+  /* 핑크 원피스 */
+  + '<path d="M88 138 Q110 128 132 138 L140 236 Q110 250 80 236 Z" fill="'+PINK2+'"/>'
+  /* 민트색 미용 앞치마 */
+  + '<path d="M100 148 L102 128 L118 128 L120 148 Z" fill="url(#linaCap)"/>'
+  + '<path d="M97 148 Q110 142 123 148 L127 243 Q110 252 93 243 Z" fill="url(#linaCap)"/>'
+  + '<path d="M103 130 L95 139 M117 130 L125 139" stroke="'+MINT3+'" stroke-width="3" stroke-linecap="round"/>'
+  + '<rect x="101" y="196" width="18" height="15" rx="4" fill="#FFFFFF" opacity=".5"/>'
+  /* 이름표 */
+  + '<rect x="98" y="168" width="24" height="17" rx="5" fill="#FFFFFF" stroke="'+MINT3+'" stroke-width="1.5"/>'
+  + '<text x="110" y="176.5" text-anchor="middle" dominant-baseline="middle" font-size="12">✂</text>'
+  /* 팔 · 소매 · 손 */
+  + '<path d="M90 146 C82 176 75 210 71 236" stroke="'+SK+'" stroke-width="12.5" fill="none" stroke-linecap="round"/>'
+  + '<path d="M130 146 C138 176 145 210 149 236" stroke="'+SK+'" stroke-width="12.5" fill="none" stroke-linecap="round"/>'
+  + '<path d="M89 141 C83 152 80 161 78 169" stroke="'+PINK2+'" stroke-width="15" fill="none" stroke-linecap="round"/>'
+  + '<path d="M131 141 C137 152 140 161 142 169" stroke="'+PINK2+'" stroke-width="15" fill="none" stroke-linecap="round"/>'
+  + '<circle cx="71" cy="239" r="7" fill="'+SK+'"/>'
+  + '<circle cx="149" cy="239" r="7" fill="'+SK+'"/>'
+  /* 얼굴 */
+  + '<circle cx="80.5" cy="94" r="5.2" fill="'+SK+'"/>'
+  + '<circle cx="139.5" cy="94" r="5.2" fill="'+SK+'"/>'
+  + '<path d="M97 54 H123 C136 54 142 60 142 72 L142 92 C142 108 138 118 128 118 H92 C82 118 78 108 78 92 L78 72 C78 60 84 54 97 54 Z" fill="url(#linaHd)" stroke="rgba(90,54,40,.10)" stroke-width="1.2"/>'
+  /* 앞머리 + 옆머리 */
+  + '<path d="M75 86 C73 40 92 24 110 24 C129 24 147 41 145 86 C140 62 131 54 121 60 C115 70 105 70 99 60 C89 54 80 62 75 86 Z" fill="'+HAIR+'"/>'
+  + '<path d="M76 78 C70 96 70 114 74 130" stroke="'+HAIR+'" stroke-width="9" fill="none" stroke-linecap="round"/>'
+  + '<path d="M144 78 C150 96 150 114 146 130" stroke="'+HAIR+'" stroke-width="9" fill="none" stroke-linecap="round"/>'
+  /* 민트 헤어밴드 + 핑크 리본 */
+  + '<path d="M79 58 Q110 38 141 58" stroke="'+MINT+'" stroke-width="7.5" fill="none" stroke-linecap="round"/>'
+  + '<g transform="translate(140 45)"><path d="M0 0 l-13 -7 0 14 z" fill="'+PINK+'"/><path d="M0 0 l13 -7 0 14 z" fill="'+PINK+'"/><circle r="3.8" fill="#FFFFFF"/></g>'
+  /* 눈 · 볼 · 입 */
+  + '<ellipse cx="99" cy="96" rx="4.1" ry="5" fill="#3A2438"/>'
+  + '<ellipse cx="121" cy="96" rx="4.1" ry="5" fill="#3A2438"/>'
+  + '<circle cx="100.4" cy="94.2" r="1.5" fill="#FFFFFF"/>'
+  + '<circle cx="122.4" cy="94.2" r="1.5" fill="#FFFFFF"/>'
+  + '<path d="M92 88 Q96 85 100 87" stroke="#6B4636" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
+  + '<path d="M120 87 Q124 85 128 88" stroke="#6B4636" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
+  + '<ellipse cx="89" cy="103" rx="6" ry="3.4" fill="#FFA3C0" opacity=".55"/>'
+  + '<ellipse cx="131" cy="103" rx="6" ry="3.4" fill="#FFA3C0" opacity=".55"/>'
+  + '<path d="M103 106 Q110 113 117 106" stroke="#C2436B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  /* 오른손 가위 — 짤깍짤깍 */
+  + '<g transform="translate(151 241)">'
+  +   '<g><animateTransform attributeName="transform" type="rotate" values="-15 0 0;7 0 0;-15 0 0" dur="1.15s" repeatCount="indefinite"/>'
+  +     '<path d="M-1 2 L-2 -31" stroke="#CBD7E6" stroke-width="5.6" stroke-linecap="round"/>'
+  +     '<path d="M-1 2 L-2 -31" stroke="#8FA3BC" stroke-width="1.5" stroke-linecap="round"/>'
+  +     '<ellipse cx="-4" cy="12" rx="6.2" ry="7.2" fill="none" stroke="'+PINK+'" stroke-width="3.2"/>'
+  +   '</g>'
+  +   '<g><animateTransform attributeName="transform" type="rotate" values="15 0 0;-7 0 0;15 0 0" dur="1.15s" repeatCount="indefinite"/>'
+  +     '<path d="M1 2 L2 -31" stroke="#E4EDF8" stroke-width="5.6" stroke-linecap="round"/>'
+  +     '<path d="M1 2 L2 -31" stroke="#9FB2C9" stroke-width="1.5" stroke-linecap="round"/>'
+  +     '<ellipse cx="4" cy="12" rx="6.2" ry="7.2" fill="none" stroke="'+PINK+'" stroke-width="3.2"/>'
+  +   '</g>'
+  +   '<circle r="2.8" fill="#5B6B82"/>'
+  + '</g>'
+  /* 왼손 빗 */
+  + '<g transform="translate(68 238) rotate(-12)">'
+  +   '<rect x="-11" y="-4" width="22" height="8" rx="3.5" fill="'+PINK+'"/>'
+  +   '<g stroke="'+PINK+'" stroke-width="2.6" stroke-linecap="round"><path d="M-8 5 v11"/><path d="M-2.5 5 v11"/><path d="M3 5 v11"/><path d="M8.5 5 v11"/></g>'
+  + '</g>'
+  + '</svg>';
+}
+function buildLina(){
+  if(LINA.el && LINA.el.parentNode) LINA.el.parentNode.removeChild(LINA.el);
+  var el = document.createElement('div');
+  el.className = 'actor stylist';
+  el.setAttribute('data-npc', 'lina');
+  el.setAttribute('role', 'button');
+  el.setAttribute('aria-label', '리나 쌤 · 머리 맡기기');
+  el.title = '리나 쌤 · 머리 맡기기';
+  var mid = document.createElement('div'); mid.className = 'mid';
+  var nm = document.createElement('div'); nm.className = 'ts nm'; nm.textContent = '✂️ 리나 쌤';
+  var bub = document.createElement('div'); bub.className = 'ts bub';
+  mid.innerHTML = linaArtSVG();
+  mid.style.width = Math.round(WORLD.figh * 0.647) + 'px';
+  mid.style.height = WORLD.figh + 'px';
+  el.appendChild(mid); el.appendChild(nm); el.appendChild(bub);
+  worldEl.appendChild(el);
+  LINA.el = el; LINA.mid = mid; LINA.nm = nm; LINA.bub = bub; LINA.bubT = 0;
+  drawLina();
+}
+function drawLina(){
+  if(!LINA.el) return;
+  var p = proj(LINA.x, LINA.z, 0);
+  var e = LINA.el;
+  e.style.left = p.x.toFixed(1) + 'px';
+  e.style.top = p.y.toFixed(1) + 'px';
+  e.style.transform = 'translate(-50%,-100%)';
+  e.style.zIndex = String(Math.round(102 + LINA.z * 10 + 3));
+  LINA.mid.style.transform = 'scale(' + p.s.toFixed(3) + ',' + p.s.toFixed(3) + ')';
+  LINA.nm.style.bottom = (p.s * WORLD.figh + 1).toFixed(0) + 'px';
+  LINA.bub.style.bottom = (p.s * WORLD.figh + 19).toFixed(0) + 'px';
+}
+function linaSay(text, ms){
+  if(!LINA.bub) return;
+  LINA.bub.textContent = text;
+  LINA.bub.classList.add('on');
+  clearTimeout(LINA.bubT);
+  LINA.bubT = setTimeout(function(){ if(LINA.bub) LINA.bub.classList.remove('on'); }, ms || 2400);
+}
+function linaDist(){ return Math.hypot(LINA.x - PLAYER.x, LINA.z - PLAYER.z); }
+/* ✨ 화면 좌표에 반짝이를 터뜨립니다(사진·시트 위에서도 보이게 fixed) */
+function sparkleBurstAt(cx, cy, n, lead){
+  var em = ['✨','⭐','💖','💫','🌸','✨','⭐'];
+  n = n || 16;
+  for(var i=0;i<n;i++){
+    var s = document.createElement('span');
+    s.className = 'spk';
+    s.textContent = (i === 0 && lead) ? lead : em[(Math.random()*em.length)|0];
+    var a = Math.random() * Math.PI * 2, dist = 24 + Math.random()*58;
+    s.style.left = cx.toFixed(1) + 'px';
+    s.style.top = cy.toFixed(1) + 'px';
+    s.style.setProperty('--dx', (Math.cos(a)*dist).toFixed(1) + 'px');
+    s.style.setProperty('--dy', (Math.sin(a)*dist - 20).toFixed(1) + 'px');
+    s.style.setProperty('--rot', Math.round(Math.random()*340 - 170) + 'deg');
+    s.style.fontSize = Math.round(12 + Math.random()*11) + 'px';
+    s.style.animationDelay = (Math.random()*0.12).toFixed(2) + 's';
+    document.body.appendChild(s);
+    (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 1400); })(s);
+  }
+}
+/* ✂️ 컷 연출: 싹둑싹둑 효과음 → 반짝이 → 머리 바뀜 */
+function linaCut(done, anchorEl){
+  if(LINA.cutting) return;
+  LINA.cutting = true;
+  var anchor = null;
+  try{
+    if(anchorEl && anchorEl.getBoundingClientRect){
+      var ab = anchorEl.getBoundingClientRect();
+      anchor = { x: ab.left + ab.width/2, y: ab.top + ab.height*0.4 };
+    }
+  }catch(e){}
+  if(LINA.el){
+    LINA.el.classList.add('talk');
+    setTimeout(function(){ if(LINA.el) LINA.el.classList.remove('talk'); }, 1150);
+  }
+  linaSay('싹둑싹둑~ ✂️', 1700);
+  toast('✂️ 리나 쌤이 예쁘게 다듬어 주는 중!');
+  SFX.snip();
+  var p = proj(PLAYER.x, PLAYER.z, 0), r = roomEl.getBoundingClientRect();
+  if(!anchor) sparkleBurstAt(r.left + p.x - CAM.x, r.top + p.y - CAM.y - WORLD.figh * p.s * 0.82, 12, '✂️');
+  setTimeout(function(){
+    try{ if(typeof done === 'function') done(); }catch(e){}
+    var p2 = proj(PLAYER.x, PLAYER.z, 0), r2 = roomEl.getBoundingClientRect();
+    sparkleBurstAt(r2.left + p2.x - CAM.x, r2.top + p2.y - CAM.y - WORLD.figh * p2.s * 0.80, 24, '✨');
+    if(anchor) sparkleBurstAt(anchor.x, anchor.y, 22, '✨');
+    SFX.star(2); SFX.star(4);
+    linaSay('짜잔! 어때? 너무 예뻐! 💖', 2800);
+    toast('✨ 짜잔! 리나 쌤이 머리를 예쁘게 다듬어 줬어요!');
+    LINA.cutting = false;
+  }, 620);
+}
+/* 리나 쌤에게 머리를 맡기면 — 지금과 다른 머리로 바꿔 줍니다 */
+function linaRestyle(){
+  var list = listFor('hair');
+  if(!list.length) return;
+  var cur = st.hair, id = cur, g = 0;
+  while(id === cur && g++ < 80) id = pick(list).id;
+  linaCut(function(){
+    st.hair = id;
+    saveState(); paintMe();
+    if(curZone && curZone.id === 'hair' && anySheetOpen()) renderWardrobe();
+  });
+}
+/* 헤어살롱에서 머리를 고르면 리나 쌤이 다듬어 줍니다 */
+function hairByLina(id, btn){
+  if(st.hair === id){ SFX.tap(); toast('✂️ 그 머리도 잘 어울려요!'); return; }
+  linaCut(function(){
+    st.hair = id;
+    saveState(); paintMe(); renderWardrobe();
+  }, btn);
+}
+/* 말 걸기 — 멀면 걸어가고, 가까우면 머리를 다듬어 줘요 */
+function linaTalk(){
+  if(LINA.cutting) return;
+  if(linaDist() > 2.0){
+    LINA.pending = true;
+    LINA.pendingAt = Date.now();
+    linaSay('어서 와~ 이쪽이야! ✂️', 2400);
+    if(!walkTo(LINA.front.x, LINA.front.z, null)) LINA.pending = false;
+    else toast('👣 리나 쌤에게 걸어가는 중…');
+    hidTip();
+    return;
+  }
+  linaRestyle();
+}
+function linaStep(){
+  var d = linaDist(), now = Date.now();
+  if(LINA.pending && now - LINA.pendingAt > 15000) LINA.pending = false;   /* 너무 오래 걸어오지 않으면 취소 */
+  if(!LINA.cutting && d < 1.9 && now - LINA.saidAt > 9000){
+    LINA.saidAt = now;
+    linaSay('✂️ 어서 와! 예쁜 머리로 싹둑 잘라 줄게!', 3400);
+  }
+  if(LINA.pending && d < 1.7){
+    LINA.pending = false; LINA.saidAt = now;
+    linaRestyle();
+  }
+}
 function buildActors(){
   if(me && me.el.parentNode) me.el.parentNode.removeChild(me.el);
   FRIENDS.forEach(function(f){ if(f.el.parentNode) f.el.parentNode.removeChild(f.el); });
@@ -3965,6 +4229,7 @@ function buildActors(){
     paintActor(f, f.state);
     return f;
   });
+  buildLina();   /* ✂️ 리나 헤어살롱 미용사 리나 쌤 */
 }
 
 /* ---------- 그리기(매 프레임) ---------- */
@@ -3990,6 +4255,7 @@ function drawAll(){
   if(FAM && FAM.others){
     Object.keys(FAM.others).forEach(function(id){ var r = FAM.others[id]; if(r && r.actor) drawActor(r.actor, false); });
   }
+  drawLina();
   fadeProps();
 }
 
@@ -4209,6 +4475,8 @@ function stepWorld(dt){
     onZoneChange(nearZone);
     renderPrompt(); syncMini();
   }
+  /* ✂️ 리나 쌤 — 다가가면 인사, 부탁하면 머리를 다듬어 줍니다 */
+  linaStep();
   if((PLAYER.x < -8.0 || PLAYER.x > 8.0) && !secretTip){
     secretTip = true;
     toast('🕯️ 벽 구석에 반짝이는 게 있어!');
@@ -4349,7 +4617,7 @@ var HINTS = {
   top:'상의를 고르면 투피스 코디가 돼요. 하의도 같이 골라 주세요.',
   bottom:'하의를 고르면 투피스 코디가 돼요.',
   shoes:'신발 색은 옷 색을 따라가요.',
-  hair:'머리 모양을 고르고, 아래 색 동그라미로 머리색을 바꿔 보세요.',
+  hair:'✂️ 리나 쌤이 싹둑 다듬어 드려요! 모양을 고르면 반짝하며 바뀌고, 아래 색 동그라미로 머리색도 바꿔요.',
   face:'표정을 눌러 얼굴을 바꿔 보세요.',
   makeup:'립스틱·립 광택·볼터치·아이섀도·아이라인·스파클까지! 위 얼굴 미리보기로 바로 확인해요.',
   acc:'소품은 여러 개 같이 낄 수 있어요. 🎁 숨은 소품도 찾아보세요!',
@@ -4784,7 +5052,7 @@ function screenToWorld(px, py){
 (function(){
   var room = roomEl, downX = 0, downY = 0, downT = 0, downOk = false;
   function isControl(t){
-    return !!(t && t.closest && t.closest('.acts, #stick, #prompt, .tipbar, .zone, [data-zone], [data-mzone], .mini, .claim, .sheet, .overlay'));
+    return !!(t && t.closest && t.closest('.acts, #stick, #prompt, .tipbar, .zone, [data-zone], [data-mzone], [data-npc], .mini, .claim, .sheet, .overlay'));
   }
   room.addEventListener('pointerdown', function(e){
     if(e.pointerType === 'mouse' && e.button !== 0) return;
@@ -5154,9 +5422,10 @@ var TM_LEFT_MODE = 'free';
    17. 이벤트
    ============================================================ */
 document.addEventListener('click', function(e){
-  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del],[data-pat],[data-mk],[data-v],[data-close],[data-buy],[data-zone],[data-mzone],[data-locked]') : null;
+  var t = e.target.closest ? e.target.closest('[data-theme],[data-cat],[data-id],[data-color],[data-pose],[data-name],[data-wear],[data-del],[data-pat],[data-mk],[data-v],[data-close],[data-buy],[data-zone],[data-mzone],[data-locked],[data-npc]') : null;
   if(!t) return;
 
+  if(t.hasAttribute('data-npc')){ linaTalk(); return; }
   if(t.hasAttribute('data-close')){ closeSheets(); SFX.tap(); return; }
   if(t.hasAttribute('data-mzone')){
     var mz = null;
@@ -5189,9 +5458,9 @@ document.addEventListener('click', function(e){
   if(t.hasAttribute('data-cat')){ cat = t.getAttribute('data-cat'); renderCats(); renderWardrobe(); SFX.tap(); return; }
   if(t.hasAttribute('data-id')){
     var id = t.getAttribute('data-id');
+    if(cat === 'hair'){ hairByLina(id, t); return; }   /* ✂️ 리나 쌤이 다듬어 줍니다 */
     if(cat === 'skin') st.skin = id;
     else if(cat === 'face') st.face = id;
-    else if(cat === 'hair') st.hair = id;
     else if(cat === 'dress'){ st.mode = 'dress'; st.dress = id; }
     else if(cat === 'top'){ st.mode = 'two'; st.top = id; }
     else if(cat === 'bottom'){ st.mode = 'two'; st.bottom = id; }
@@ -5208,10 +5477,15 @@ document.addEventListener('click', function(e){
   }
   if(t.hasAttribute('data-color')){
     var col = t.getAttribute('data-color');
+    var isHairCol = (cat === 'hair');
     if(cat === 'hair') st.hairColor = col;
     else if(cat === 'shoes') st.shoeColor = col;
     else st.outfitColor = col;
     saveState(); paintMe(); renderWardrobe(); SFX.pick();
+    if(isHairCol){   /* ✂️ 염색도 리나 쌤이 반짝이며 */
+      try{ var cb = t.getBoundingClientRect(); sparkleBurstAt(cb.left + cb.width/2, cb.top + cb.height/2, 10, '✨'); }catch(e){}
+      toast('✂️ 리나 쌤이 머리색을 예쁘게 바꿔 줬어요!');
+    }
     return;
   }
   if(t.hasAttribute('data-pat')){
@@ -6005,6 +6279,8 @@ window.__dti = {
   doResetAll: doResetAll, askReset: askReset, snapPhoto: snapPhoto,
   photoSVGString: photoSVGString, onContestStage: onContestStage,
   CLUB: CLUB, toggleDance: toggleDance, clubMusic: clubMusic, buildMini: buildMini,
+  LINA: LINA, linaCut: linaCut, linaTalk: linaTalk, linaRestyle: linaRestyle,
+  sparkleBurstAt: sparkleBurstAt, linaDist: linaDist, drawLina: drawLina,
   get nearZone(){ return nearZone; },
   get curZone(){ return curZone; }
 };
