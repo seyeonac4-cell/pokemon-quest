@@ -395,6 +395,8 @@ input{font-family:inherit}
   transition:transform .12s,box-shadow .15s,border-color .15s
 }
 .pick button .big{font-size:38px;line-height:1.15}
+.pick button .mini{display:block;width:66px;height:86px;margin:-2px 0 0}
+.who-grid button .mini{display:block;width:58px;height:76px;margin:-2px 0 0}
 .pick button b{font-size:17px;font-weight:400}
 .pick button small{font-size:11px;color:#6d87a0}
 .pick button.sel{border-color:#ffb400;box-shadow:0 0 0 4px rgba(255,200,60,.35),0 10px 24px rgba(20,60,90,.16);transform:translateY(-3px)}
@@ -832,10 +834,10 @@ input{font-family:inherit}
     <div class="sheet-head"><b>누가 놀까요?</b><button class="x" data-close="whoPanel" type="button" aria-label="닫기">✕</button></div>
     <div class="sheet-body">
       <div class="who-grid">
-        <button type="button" data-switch="yunjin"><span>🦊</span><b>윤진</b><small>초3 언니</small></button>
-        <button type="button" data-switch="hyungwon"><span>🐣</span><b>형원</b><small>7살 동생</small></button>
-        <button type="button" data-switch="mom"><span>👩</span><b>엄마</b><small>우리 엄마</small></button>
-        <button type="button" data-switch="dad"><span>👨</span><b>아빠</b><small>우리 아빠</small></button>
+        <button type="button" data-switch="yunjin"><canvas class="mini" data-mini="yunjin" aria-hidden="true"></canvas><b>윤진</b><small>초3 언니 · 긴 머리</small></button>
+        <button type="button" data-switch="hyungwon"><canvas class="mini" data-mini="hyungwon" aria-hidden="true"></canvas><b>형원</b><small>7살 동생 · 양갈래</small></button>
+        <button type="button" data-switch="mom"><canvas class="mini" data-mini="mom" aria-hidden="true"></canvas><b>엄마</b><small>우리 엄마</small></button>
+        <button type="button" data-switch="dad"><canvas class="mini" data-mini="dad" aria-hidden="true"></canvas><b>아빠</b><small>우리 아빠</small></button>
       </div>
       <p class="shop-note">바꾸면 코인·옷·펫도 그 사람 것으로 바뀌어요. (엄마·아빠도 코인 50개부터!)</p>
     </div>
@@ -1071,12 +1073,12 @@ input{font-family:inherit}
   <div id="starter">
     <div class="starter-in">
       <h1>🧱 블록 월드</h1>
-      <p class="sub">채씨네 가족 놀이터 · 누구로 놀까요?</p>
+      <p class="sub">채씨네 가족 놀이터 · 윤진·형원 자매와 누구로 놀까요?</p>
       <div class="pick">
-        <button type="button" data-who="yunjin"><span class="big">🦊</span><b>윤진</b><small>초3 언니</small></button>
-        <button type="button" data-who="hyungwon"><span class="big">🐣</span><b>형원</b><small>7살 동생</small></button>
-        <button type="button" data-who="mom"><span class="big">👩</span><b>엄마</b><small>우리 엄마</small></button>
-        <button type="button" data-who="dad"><span class="big">👨</span><b>아빠</b><small>우리 아빠</small></button>
+        <button type="button" data-who="yunjin"><canvas class="mini" data-mini="yunjin" aria-hidden="true"></canvas><b>윤진</b><small>초3 언니 · 긴 머리</small></button>
+        <button type="button" data-who="hyungwon"><canvas class="mini" data-mini="hyungwon" aria-hidden="true"></canvas><b>형원</b><small>7살 동생 · 양갈래</small></button>
+        <button type="button" data-who="mom"><canvas class="mini" data-mini="mom" aria-hidden="true"></canvas><b>엄마</b><small>우리 엄마</small></button>
+        <button type="button" data-who="dad"><canvas class="mini" data-mini="dad" aria-hidden="true"></canvas><b>아빠</b><small>우리 아빠</small></button>
       </div>
       <button id="startBtn" type="button" disabled>🌍 월드 들어가기</button>
       <p class="tiny">마을에서 집·카페·학교 놀이도 하고,<br>타자로 다리를 만들고, 가족 넷이 같이 놀아요!</p>
@@ -1543,14 +1545,15 @@ function toast(msg, ms) {
    3. 프로필 · 저장 데이터
    ============================================================ */
 var WHO = {
+  /* 🎀 윤진·형원은 여자아이 자매 — 긴 생머리(girl1) · 양갈래(girl2)에 원피스 차림 */
   yunjin: {
     id: 'yunjin', name: '윤진', emoji: '🦊', tag: '초3 언니', color: '#3f8cff',
-    look: { body: '#3f8cff' }, hair: '#6b4a2f', style: 'kid',
+    look: { body: '#b9a0f2' }, hair: '#5d3a26', style: 'girl1',
     house: '#ffd0e6', spawn: { x: -1.3, y: 0.7 }, scale: 1
   },
   hyungwon: {
     id: 'hyungwon', name: '형원', emoji: '🐣', tag: '7살 동생', color: '#ff8fc2',
-    look: { body: '#3f8cff' }, hair: '#6b4a2f', style: 'kid',
+    look: { body: '#ffe08a' }, hair: '#8a5f3c', style: 'girl2',
     house: '#c9f2e2', spawn: { x: 1.3, y: -0.7 }, scale: 1
   },
   mom: {
@@ -1570,7 +1573,7 @@ function othersOf(id) {
 }
 
 var LOOK_DEFAULT = { body: '#3f8cff', hat: 'none', face: 'smile' };
-/* 엄마·아빠는 처음 옷색이 달라요 (윤진·형원 기본값은 예전 그대로) */
+/* 가족마다 처음 옷색이 달라요 (윤진 라벤더 · 형원 파스텔 옐로 · 엄마 핑크 · 아빠 파랑) */
 function whoDefaultLook(who) {
   var w = WHO[who];
   return {
@@ -1623,7 +1626,9 @@ var SHOP = {
     { id: '#ff8fc2', nm: '핑크', price: 10, sw: '#ff8fc2' },
     { id: '#3fd6c0', nm: '민트', price: 10, sw: '#3fd6c0' },
     { id: '#3b3f52', nm: '검정', price: 10, sw: '#3b3f52' },
-    { id: '#ffcc33', nm: '금색', price: 20, sw: '#ffcc33' }
+    { id: '#ffcc33', nm: '금색', price: 20, sw: '#ffcc33' },
+    { id: '#b9a0f2', nm: '라벤더', price: 10, sw: '#b9a0f2' },
+    { id: '#ffe08a', nm: '파스텔 옐로', price: 10, sw: '#ffe08a' }
   ],
   face: [
     { id: 'smile', nm: '방긋', price: 0, emoji: '😊' },
@@ -2503,7 +2508,13 @@ function proj(x, y, z) {
   return { x: (x - y) * TILE_W / 2, y: (x + y) * TILE_H / 2 - (z || 0) * BLOCK_H };
 }
 function hexRgb(hex) {
-  var h = String(hex).replace('#', '');
+  var s = String(hex).trim();
+  /* shade() 를 두 번 겹쳐 써도 색이 회색으로 풀리지 않게 rgb() 도 받아요 */
+  if (s.indexOf('rgb') === 0) {
+    var m = s.match(/(\d+(?:\.\d+)?)/g);
+    if (m && m.length >= 3) return { r: +m[0], g: +m[1], b: +m[2] };
+  }
+  var h = s.replace('#', '');
   if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
   var n = parseInt(h, 16);
   if (!isFinite(n)) n = 0x888888;
@@ -3584,11 +3595,75 @@ function limb3(ctx, x, y, w, h, d, col) {
   ctx.fill();
 }
 
+/* 🎀 여자아이 머리 — 얼굴·몸 뒤로 지나가는 머리카락 (몸통보다 먼저 그려요)
+   kind 1 = 윤진(긴 생머리), kind 2 = 형원(단발 + 양갈래) */
+function drawGirlBackHair(ctx, hair, kind) {
+  ctx.save();
+  if (kind === 1) {
+    ctx.fillStyle = hair;
+    roundRect(ctx, -24, -77, 48, 52, 15); ctx.fill();      // 어깨 아래까지 흘러내리는 긴 머리
+    ctx.fillStyle = 'rgba(255,255,255,.15)';               // 머리 결 하이라이트
+    roundRect(ctx, -19, -67, 4.6, 31, 2.3); ctx.fill();
+    roundRect(ctx, 14.4, -67, 4.6, 31, 2.3); ctx.fill();
+  } else {
+    ctx.fillStyle = hair;
+    roundRect(ctx, -20, -77, 40, 30, 13); ctx.fill();      // 깜찍한 단발
+    roundRect(ctx, -17, -60, 34, 18, 9); ctx.fill();        // 목덜미 뒤통수
+  }
+  ctx.restore();
+}
+
+/* 흰 카라 + 가슴 리본 (원피스 앞모습) */
+function drawDress(ctx, girl2) {
+  ctx.fillStyle = '#fffdf8';
+  roundRect(ctx, -12.5, -47.5, 11, 8.5, 4.2); ctx.fill();
+  roundRect(ctx, 1.5, -47.5, 11, 8.5, 4.2); ctx.fill();
+  var bc = girl2 ? '#ff8fc2' : '#ff6fae';
+  poly(ctx, [{ x: 0, y: -42.5 }, { x: -8, y: -47 }, { x: -8, y: -38 }], bc);
+  poly(ctx, [{ x: 0, y: -42.5 }, { x: 8, y: -47 }, { x: 8, y: -38 }], bc);
+  ctx.fillStyle = shade(bc, 0.3);
+  ctx.beginPath(); ctx.arc(0, -42.5, 2.7, 0, 6.2832); ctx.fill();
+}
+
+/* 허리에서 살짝 퍼지는 블록 스커트 */
+function drawSkirt(ctx, body) {
+  poly(ctx, [{ x: -15, y: -31 }, { x: 15, y: -31 }, { x: 20, y: -13 }, { x: -20, y: -13 }], shade(body, 0.18));
+  poly(ctx, [{ x: 15, y: -31 }, { x: 20, y: -13 }, { x: 24, y: -16.6 }, { x: 19, y: -34.6 }], shade(body, -0.16));
+  ctx.fillStyle = shade(body, 0.42);
+  roundRect(ctx, -19.5, -15.6, 39, 2.6, 1.3); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(-6.5, -29); ctx.lineTo(-9, -15.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(6.5, -29); ctx.lineTo(9, -15.6); ctx.stroke();
+  ctx.fillStyle = shade(body, -0.06);
+  roundRect(ctx, -15.4, -31.6, 30.8, 3.6, 1.8); ctx.fill();
+}
+
+function drawHeart(ctx, cx, cy, r, col, shine) {
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + r * 0.95);
+  ctx.bezierCurveTo(cx - r * 1.9, cy - r * 0.5, cx - r * 0.5, cy - r * 1.7, cx, cy - r * 0.25);
+  ctx.bezierCurveTo(cx + r * 0.5, cy - r * 1.7, cx + r * 1.9, cy - r * 0.5, cx, cy + r * 0.95);
+  ctx.closePath(); ctx.fill();
+  if (shine) {
+    ctx.fillStyle = shine;
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.5, cy - r * 0.4, r * 0.3, r * 0.22, -0.5, 0, 6.2832); ctx.fill();
+  }
+}
+
+function drawRibbon(ctx, cx, cy, s, col) {
+  poly(ctx, [{ x: cx, y: cy }, { x: cx - s * 1.8, y: cy - s }, { x: cx - s * 1.8, y: cy + s }], col);
+  poly(ctx, [{ x: cx, y: cy }, { x: cx + s * 1.8, y: cy - s }, { x: cx + s * 1.8, y: cy + s }], col);
+  ctx.fillStyle = shade(col, 0.32);
+  ctx.beginPath(); ctx.arc(cx, cy, s * 0.52, 0, 6.2832); ctx.fill();
+}
+
 function drawAvatar(ctx, sx, sy, look, o) {
   o = o || {};
   var body = look.body || '#3f8cff';
   var hair = o.hair || '#6b4a2f';
   var style = o.style || '';
+  var girl1 = style === 'girl1', girl2 = style === 'girl2', girl = girl1 || girl2;
   var scl = o.scale || 1;
   var acc = look.acc || 'none';
   var bodyD = shade(body, -0.22);
@@ -3673,24 +3748,32 @@ function drawAvatar(ctx, sx, sy, look, o) {
   var l2 = air ? 5 : swing * 5;
   limb3(ctx, -13, -21 + l1, 11, 21 - Math.min(0, l1), 5, bodyD);
   limb3(ctx, 2, -21 + l2, 11, 21 - Math.min(0, l2), 5, bodyD);
-  // 신발
-  ctx.fillStyle = '#3b3f52';
+  /* 🎀 여자아이는 다리 뒤로 긴 머리·양갈래가 지나가요 */
+  if (girl) drawGirlBackHair(ctx, hair, girl2 ? 2 : 1);
+  // 신발 (여자아이는 하얀 단화에 핑크 줄)
+  ctx.fillStyle = girl ? '#fffafd' : '#3b3f52';
   roundRect(ctx, -13, -6 + l1, 11, 6, 3); ctx.fill();
   roundRect(ctx, 2, -6 + l2, 11, 6, 3); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,.16)';
+  ctx.fillStyle = girl ? 'rgba(255,150,195,.7)' : 'rgba(255,255,255,.16)';
   roundRect(ctx, -13, -6 + l1, 11, 2, 2); ctx.fill();
   roundRect(ctx, 2, -6 + l2, 11, 2, 2); ctx.fill();
 
   // 몸통 (앞면 + 옆면 + 윗면)
   limb3(ctx, -15, -49, 30, 30, 8, body);
-  // 가슴 블록
-  ctx.fillStyle = shade(body, 0.45);
-  roundRect(ctx, -6, -40, 12, 12, 3); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,.7)';
-  roundRect(ctx, -3, -37, 6, 4, 2); ctx.fill();
+  if (girl) {
+    /* 👗 여자아이 원피스 — 흰 카라와 가슴 리본 */
+    drawDress(ctx, girl2);
+  } else {
+    // 가슴 블록
+    ctx.fillStyle = shade(body, 0.45);
+    roundRect(ctx, -6, -40, 12, 12, 3); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    roundRect(ctx, -3, -37, 6, 4, 2); ctx.fill();
+  }
   // 몸통 테두리 (만화 느낌)
   roundRect(ctx, -15, -49, 30, 30, 6);
   ctx.strokeStyle = 'rgba(30,40,70,.16)'; ctx.lineWidth = 1.4; ctx.stroke();
+  if (girl) drawSkirt(ctx, body);
   if (acc === 'starback') {
     /* 🎒 별 가방 줄 */
     ctx.strokeStyle = 'rgba(224,168,0,.8)'; ctx.lineWidth = 3;
@@ -3734,6 +3817,16 @@ function drawAvatar(ctx, sx, sy, look, o) {
   roundRect(ctx, hx - hw / 2, hy, hw, hh, 6);
   ctx.strokeStyle = 'rgba(60,44,30,.18)'; ctx.lineWidth = 1.4; ctx.stroke();
 
+  /* 🎀 여자아이는 정수리·옆머리 위쪽도 머리카락으로 덮어요 */
+  if (girl) {
+    poly(ctx, [{ x: -hw / 2, y: hy }, { x: -hw / 2 + dx, y: hy - dy },
+      { x: hw / 2 + dx, y: hy - dy }, { x: hw / 2, y: hy }], hair);
+    poly(ctx, [{ x: hw / 2, y: hy }, { x: hw / 2 + dx, y: hy - dy },
+      { x: hw / 2 + dx, y: hy + 11 - dy }, { x: hw / 2, y: hy + 13 }], shade(hair, -0.18));
+    poly(ctx, [{ x: -hw / 2, y: hy }, { x: -hw / 2 - 1, y: hy + 13 },
+      { x: -hw / 2 + 3, y: hy + 13 }, { x: -hw / 2, y: hy }], hair);
+  }
+
   // 머리카락 (앞머리)
   ctx.fillStyle = hair;
   roundRect(ctx, -hw / 2, hy - 1, hw, 9, 5); ctx.fill();
@@ -3753,6 +3846,29 @@ function drawAvatar(ctx, sx, sy, look, o) {
     ctx.fillStyle = hair;
     roundRect(ctx, -hw / 2 - 2, hy + 1, 5, 9, 3); ctx.fill();
     roundRect(ctx, hw / 2 - 3, hy + 1, 5, 9, 3); ctx.fill();
+  } else if (girl1) {
+    /* 긴 생머리 — 얼굴을 감싸며 어깨로 흘러내리는 앞머리 가닥 + 핑크 하트 머리핀 */
+    ctx.fillStyle = hair;
+    roundRect(ctx, -hw / 2 - 7, hy + 3, 9, 48, 5); ctx.fill();
+    roundRect(ctx, hw / 2 - 2, hy + 3, 9, 48, 5); ctx.fill();
+    poly(ctx, [{ x: -hw / 2, y: hy + 9 }, { x: 1, y: hy + 9 }, { x: -4, y: hy - 3 }, { x: -hw / 2, y: hy - 1 }], hair);
+    drawHeart(ctx, -10.5, hy + 7, 4.8, '#ff6fae', 'rgba(255,255,255,.7)');
+  } else if (girl2) {
+    /* 단발 + 양갈래 — 볼 옆 가닥과 나란히 내려오는 두 갈래 리본 머리 */
+    ctx.fillStyle = hair;
+    roundRect(ctx, -hw / 2 - 5, hy + 3, 8, 24, 4.5); ctx.fill();
+    roundRect(ctx, hw / 2 - 3, hy + 3, 8, 24, 4.5); ctx.fill();
+    [-1, 1].forEach(function (sd) {
+      ctx.save();
+      ctx.translate(sd * 21, hy + 15);
+      ctx.rotate(sd * 0.10);
+      ctx.fillStyle = hair;
+      roundRect(ctx, -7, 0, 14, 30, 7); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,.13)';
+      roundRect(ctx, -3.5, 4, 3, 17, 1.5); ctx.fill();
+      ctx.restore();
+      drawRibbon(ctx, sd * 23, hy + 13, 4.2, '#ff8fc2');   // 묶은 리본
+    });
   }
 
   drawFace(ctx, look.face || 'smile', 0, hy + 8);
@@ -3762,8 +3878,8 @@ function drawAvatar(ctx, sx, sy, look, o) {
     roundRect(ctx, -15, hy + 10, 13, 10, 4); ctx.stroke();
     roundRect(ctx, 2, hy + 10, 13, 10, 4); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-2, hy + 15); ctx.lineTo(2, hy + 15); ctx.stroke();
-  } else if (style === 'mom') {
-    // 발그레 볼
+  } else if (style === 'mom' || girl) {
+    // 발그레 볼 (여자아이도 발그레)
     ctx.fillStyle = 'rgba(255,140,175,.38)';
     ctx.beginPath(); ctx.arc(-13, hy + 21, 4.6, 0, 6.2832); ctx.fill();
     ctx.beginPath(); ctx.arc(13, hy + 21, 4.6, 0, 6.2832); ctx.fill();
@@ -3813,6 +3929,31 @@ function drawAvatar(ctx, sx, sy, look, o) {
 
   // 말풍선
   if (o.bubble) drawBubble(ctx, sx, sy - 140, o.bubble, o.me);
+}
+
+/* 🎀 시작 화면 · 「누가 놀까요?」 카드에 진짜 캐릭터 그림을 그려요 */
+function paintMiniAvatar(cv) {
+  var w = WHO[cv.getAttribute('data-mini')];
+  if (!w || !cv.getContext) return;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var cw = cv.clientWidth || 66, ch = cv.clientHeight || 86;
+  cv.width = Math.round(cw * dpr);
+  cv.height = Math.round(ch * dpr);
+  var ctx = cv.getContext('2d');
+  if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+  var s = (ch - 4) / 132;
+  ctx.save();
+  ctx.translate(cw / 2, ch - 2);
+  ctx.scale(s, s);
+  drawAvatar(ctx, 0, 0, { body: w.look.body, hat: 'none', face: 'smile', acc: 'none' }, {
+    hair: w.hair, style: w.style, scale: w.scale || 1, shadow: false
+  });
+  ctx.restore();
+}
+function paintMiniAvatars() {
+  $$('.mini[data-mini]').forEach(paintMiniAvatar);
 }
 
 function drawFace(ctx, kind, cx, cy) {
@@ -5819,6 +5960,7 @@ function openSheet(id) {
   $('#actionPrompt').classList.remove('on');
   $('#portalPrompt').classList.remove('on');
   if (id === 'shopPanel') renderShop();
+  if (id === 'whoPanel') paintMiniAvatars();
   if (id === 'playPanel') { renderRoles(); renderProps(); renderHouseColors(); renderGiftTo(); }
   if (id === 'chatPanel') renderGiftTo();
   if (id === 'petPanel') renderPet();
@@ -6956,6 +7098,7 @@ function init() {
   bindUI();
   AU.watchUnlock();
   updateCoinUI();
+  paintMiniAvatars();      // 🎀 프로필 카드에 여자아이·가족 캐릭터 그림
 
   // 시작 화면 프로필 미리보기
   $$('.pick button').forEach(function (b) {
