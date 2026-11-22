@@ -104,8 +104,8 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   box-shadow:inset 0 -46px 60px -28px rgba(20,60,30,.26), inset 0 34px 54px -40px rgba(20,60,30,.18);
   border-radius:20px;
 }
-#groundSvg{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1}
-#world{position:absolute; inset:0; z-index:5; pointer-events:none}
+#groundSvg{position:absolute; left:0; top:0; width:100%; height:100%; display:block; z-index:1; will-change:transform}
+#world{position:absolute; left:0; top:0; z-index:5; pointer-events:none; will-change:transform}
 #wxLayer{position:absolute; inset:0; z-index:18; pointer-events:none; overflow:hidden; border-radius:20px}
 
 /* 소품 · 흙 타일 */
@@ -921,6 +921,22 @@ footer a{color:#4fae74; text-decoration:none; font-weight:900}
   font-size:10.5px; font-weight:900; letter-spacing:-.03em; white-space:nowrap;
 }
 .wtchip[hidden]{display:none}
+/* 💤 5분 동안 움직임이 없으면 스스로 접속을 마쳐요 */
+#idleEnd{position:absolute; inset:0; z-index:2147483010; display:none; align-items:center; justify-content:center;
+  padding:18px; background:rgba(18,46,26,.6); backdrop-filter:blur(3px)}
+#idleEnd.on{display:flex}
+#idleEnd .card{width:100%; max-width:330px; text-align:center; background:rgba(255,255,255,.97);
+  border-radius:24px; padding:20px 16px 16px; box-shadow:0 18px 40px rgba(10,40,20,.32); animation:popIn .35s ease}
+#idleEnd .zz{font-size:46px; line-height:1; animation:zzFloat 2.4s ease-in-out infinite}
+@keyframes zzFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}}
+#idleEnd b{display:block; margin:9px 0 5px; font-size:17px; font-weight:900; color:#25412f; letter-spacing:-.04em; line-height:1.34}
+#idleEnd span{display:block; font-size:11.5px; font-weight:800; color:#7b8f7c; line-height:1.45}
+#idleEnd button{margin-top:15px; width:100%; min-height:52px; border:0; border-radius:16px; cursor:pointer;
+  font-family:inherit; font-size:16px; font-weight:900; color:#fff; letter-spacing:-.03em;
+  background:linear-gradient(135deg,#4ec97e,#1f9c57); box-shadow:0 4px 0 #177a45, 0 10px 20px rgba(30,140,80,.32)}
+#idleEnd button:active{transform:translateY(2px); box-shadow:0 2px 0 #177a45}
+body.idle-ended #wt-badge{opacity:0 !important; pointer-events:none !important}
+
 #starter{position:fixed; inset:0; z-index:2147483002; display:none; align-items:center; justify-content:center; padding:16px;
   background:radial-gradient(120% 90% at 50% 0%, #b6efcd 0%, #74cf9d 42%, #3d9a6a 100%)}
 #starter.on{display:flex}
@@ -1143,6 +1159,16 @@ body:has(#mini:not(.hide)) #wt-badge{opacity:0 !important; pointer-events:none !
     <div class="ctxRow" id="ctxRow"></div>
 
     <div class="claim" id="claim"><b></b><i></i></div>
+
+    <!-- 💤 5분 무활동 자동 종료 -->
+    <div id="idleEnd" role="dialog" aria-modal="true" aria-labelledby="idleTitle">
+      <div class="card">
+        <div class="zz">💤</div>
+        <b id="idleTitle">5분 동안 움직임이 없어<br>접속이 종료되었어요!</b>
+        <span>다른 가족 화면에서도 내 캐릭터가 사라졌어요 · 놀이 시간도 멈춰 뒀어요</span>
+        <button type="button" id="idleResume">🌱 다시 놀기</button>
+      </div>
+    </div>
 
     <div class="stick" id="stick" aria-label="이동 조이스틱"><div class="knob" id="knob"></div><span class="hintAr">이동</span></div>
 
@@ -1906,24 +1932,38 @@ function bigWord(seedId, kg){
 const roomEl = $('#room');
 const worldEl = $('#world');
 const groundEl = $('#groundSvg');
-const WORLD = {x0:-4.6, x1:4.6, z0:0, z1:7.4, W:360, H:620, zTop:190, zLen:380, ux:32, uy:52, figh:86};
+/* 🌍 정원이 화면보다 2배 넓고 깊어요 — 카메라가 우리 캐릭터를 부드럽게 따라가요 */
+const ZOOM = 2.0;          /* 정원 전체 = 화면 가로 2배 × 세로 2배 */
+const CHAR_SCALE = 1.4;    /* 가족 캐릭터는 1.4배 크게 (표정·물부리개가 잘 보이게) */
+const BOOTH_SCALE = 1.4;   /* 씨앗 가게·판매대·룰렛·미니게임 부스도 1.4배 크게 */
+const WORLD = {x0:-9.4, x1:9.4, z0:0, z1:14.8, W:360, H:620, zTop:190, zLen:380, ux:32, uy:52, figh:86,
+               viewW:360, viewH:620, camX:0, camY:0};
+const CAM = {x:0, y:0, snap:true};
 const PLAYER = {x:-2.6, z:6.5, y:0, vy:0, dir:1, grounded:true, jumpQ:0, target:null, targetZone:null, targetAt:0};
 
 const GEOM = {
   booths: [
-    {id:'seed',     name:'씨앗 가게',    emoji:'🌱', x:-2.95, z:0.80, w:1.80, d:0.62, h:0.34, act:'씨앗 사기'},
-    {id:'market',   name:'수확물 판매대', emoji:'🧺', x:0,     z:0.76, w:2.15, d:0.66, h:0.34, act:'작물 팔기'},
-    {id:'roulette', name:'보물 룰렛',    emoji:'🎰', x:2.95,  z:0.80, w:1.80, d:0.62, h:0.36, act:'룰렛 돌리기'},
-    {id:'minigame', name:'미니게임', emoji:'🎮', x:-3.56, z:4.70, w:1.72, d:0.62, h:0.38, act:'미니게임', artH:1.76}
+    {id:'seed',     name:'씨앗 가게',    emoji:'🌱', x:-5.15, z:1.30, w:2.52, d:0.87, h:0.50, act:'씨앗 사기'},
+    {id:'market',   name:'수확물 판매대', emoji:'🧺', x:  0.00, z:1.22, w:3.00, d:0.92, h:0.50, act:'작물 팔기'},
+    {id:'roulette', name:'보물 룰렛',    emoji:'🎰', x: 5.15, z:1.30, w:2.52, d:0.87, h:0.52, act:'룰렛 돌리기'},
+    {id:'minigame', name:'미니게임', emoji:'🎮', x:-6.40, z:9.90, w:2.42, d:0.87, h:0.56, act:'미니게임', artH:2.46}
   ],
-  farm: {cx:2.62, colGap:1.02, rowGap:0.66, tileW:0.84, tileD:0.50, z0:2.15, cols:3, rows:4},
-  fence: {x:0, z1:1.95, z2:4.35, gate:[3.12,3.78]},
+  farm: {cx:5.15, colGap:1.52, rowGap:0.94, tileW:1.26, tileD:0.64, z0:3.85, cols:3, rows:4},
+  fence: {x:0, z1:3.30, z2:9.40, gate:[6.30, 7.70]},
   plats: [
-    {x:-3.35, z:5.90, w:1.15, d:0.85, h:0.42, kind:'hay'},
-    {x: 3.05, z:6.05, w:1.10, d:0.85, h:0.46, kind:'stump'},
-    {x: 0.05, z:6.55, w:0.85, d:0.66, h:0.30, kind:'crate'}
+    {x:-5.60, z:12.90, w:1.60, d:1.05, h:0.50, kind:'hay'},
+    {x: 5.60, z:12.90, w:1.55, d:1.05, h:0.55, kind:'stump'},
+    {x: 0.15, z:13.10, w:1.15, d:0.86, h:0.36, kind:'crate'}
   ]
 };
+/* 텃밭이 차지하는 네모 — 그림·길·울타리에서 함께 써요 */
+function farmBox(){
+  const f = GEOM.farm;
+  return {
+    x1: f.cx - f.colGap - f.tileW/2, x2: f.cx + f.colGap + f.tileW/2,
+    z1: f.z0 - f.tileD/2, z2: f.z0 + (f.rows-1)*f.rowGap + f.tileD/2
+  };
+}
 function tilePos(i, side){
   const col = i % GEOM.farm.cols, row = Math.floor(i / GEOM.farm.cols);
   return {
@@ -1934,13 +1974,20 @@ function tilePos(i, side){
 
 function measureRoom(){
   const r = roomEl.getBoundingClientRect();
-  WORLD.W = Math.max(240, Math.round(r.width));
-  WORLD.H = Math.max(300, Math.round(r.height));
+  WORLD.viewW = Math.max(240, Math.round(r.width));
+  WORLD.viewH = Math.max(300, Math.round(r.height));
+  WORLD.W = Math.round(WORLD.viewW * ZOOM);
+  WORLD.H = Math.round(WORLD.viewH * ZOOM);
   WORLD.zTop = Math.round(WORLD.H * 0.245);
   WORLD.zLen = Math.round(WORLD.H * 0.655);
   WORLD.uy = WORLD.zLen / (WORLD.z1 - WORLD.z0);
   WORLD.ux = (WORLD.W * 0.462) / (WORLD.x1 * 1.16);
-  WORLD.figh = Math.round(1.72 * WORLD.uy * 0.96);
+  WORLD.figh = Math.round(1.72 * WORLD.uy * 0.96 * CHAR_SCALE);
+  groundEl.style.width = WORLD.W + 'px';
+  groundEl.style.height = WORLD.H + 'px';
+  worldEl.style.width = WORLD.W + 'px';
+  worldEl.style.height = WORLD.H + 'px';
+  CAM.snap = true;
 }
 function proj(x, z, y){
   const nz = clamp((z - WORLD.z0) / (WORLD.z1 - WORLD.z0), 0, 1);
@@ -1950,6 +1997,27 @@ function proj(x, z, y){
     y: WORLD.zTop + nz * WORLD.zLen - (y || 0) * WORLD.uy * s,
     s: s
   };
+}
+/* ---------- 🎥 카메라 — 캐릭터를 화면 가운데보다 약간 아래에 두고 따라가요 ---------- */
+function camTarget(){
+  const p = proj(PLAYER.x, PLAYER.z, 0);
+  return {
+    x: clamp(p.x - WORLD.viewW/2, 0, Math.max(0, WORLD.W - WORLD.viewW)),
+    y: clamp(p.y - WORLD.viewH*0.60, 0, Math.max(0, WORLD.H - WORLD.viewH))
+  };
+}
+function updateCamera(dt){
+  const t = camTarget();
+  if(CAM.snap){ CAM.x = t.x; CAM.y = t.y; CAM.snap = false; }
+  else{
+    const k = Math.min(1, Math.max(0, dt) * 7.5);
+    CAM.x += (t.x - CAM.x) * k;
+    CAM.y += (t.y - CAM.y) * k;
+  }
+  WORLD.camX = CAM.x; WORLD.camY = CAM.y;
+  const tr = 'translate3d(' + (-(Math.round(CAM.x*10)/10)).toFixed(1) + 'px,' + (-(Math.round(CAM.y*10)/10)).toFixed(1) + 'px,0)';
+  groundEl.style.transform = tr;
+  worldEl.style.transform = tr;
 }
 
 let SOLIDS = [];
@@ -2375,10 +2443,11 @@ function pickArt(kind){
 }
 /* ---------------- 🌍 월드 문 (다른 월드로 걸어가기) ---------------- */
 const GATES = [
+  /* 🚪 정원 뒤편 양쪽 한적한 광장 — 텃밭(z 3.5~)과 멀리 떨어져 심기·물주기를 방해하지 않아요 */
   { id:'gate_block', gate:true, emoji:'🧱', name:'블록 월드', to:'./block-world.html',
-    x:-2.20, z:4.95, c1:'#d6ebff', c2:'#5b9ded' },
+    x:-8.35, z:1.12, c1:'#d6ebff', c2:'#5b9ded' },
   { id:'gate_dress', gate:true, emoji:'👗', name:'드레스 투 임프레스', to:'./dress-up.html',
-    x: 2.20, z:4.95, c1:'#f1e0ff', c2:'#a06bff' }
+    x: 8.35, z:1.12, c1:'#f1e0ff', c2:'#a06bff' }
 ];
 function gateSvg(g){
   const uid = 'gg_' + g.id;
@@ -2400,10 +2469,10 @@ function gateSvg(g){
 function buildGates(){
   GATES.forEach(function(g){
     const p = proj(g.x, g.z, 0);
-    const wpx = 1.62 * WORLD.ux * p.s, hpx = 2.10 * WORLD.uy * p.s;
+    const wpx = 1.86 * WORLD.ux * p.s, hpx = 2.42 * WORLD.uy * p.s;
     worldEl.insertAdjacentHTML('beforeend',
       '<div class="prop gate" style="left:'+(p.x-wpx/2).toFixed(1)+'px;top:'+(p.y-hpx).toFixed(1)+'px;width:'+wpx.toFixed(1)+'px;height:'+hpx.toFixed(1)+'px;z-index:'+Math.round(100+g.z*10)+'">'+gateSvg(g)+'</div>');
-    const top = proj(g.x, g.z, 2.12);
+    const top = proj(g.x, g.z, 2.44);
     const el = document.createElement('div');
     el.className = 'zone gateLb';
     el.dataset.zone = g.id;
@@ -2433,6 +2502,9 @@ function drawGround(){
   const W = WORLD.W, H = WORLD.H, zT = WORLD.zTop;
   const R = rng(1234567);
   let s = '<defs>'
+    + '<linearGradient id="skyG" x1="0" y1="0" x2="0" y2="'+zT+'" gradientUnits="userSpaceOnUse">'
+    + '<stop offset="0" stop-color="#a9dcf6"/><stop offset="0.55" stop-color="#c9e9f2"/><stop offset="1" stop-color="#e7f3d8"/>'
+    + '</linearGradient>'
     + '<linearGradient id="grassG" x1="0" y1="'+zT+'" x2="0" y2="'+H+'" gradientUnits="userSpaceOnUse">'
     + '<stop offset="0" stop-color="#c8ecb2"/><stop offset="0.42" stop-color="#a2dd86"/><stop offset="1" stop-color="#7cc663"/>'
     + '</linearGradient>'
@@ -2440,8 +2512,11 @@ function drawGround(){
     + '<stop offset="0" stop-color="#d9f0cd"/><stop offset="1" stop-color="#b9e3a8"/></linearGradient>'
     + '</defs>';
 
+  /* 하늘 — 정원 위쪽 하늘도 월드 안에 그려서, 카메라가 따라가도 비지 않아요 */
+  s += '<rect x="-2" y="-2" width="'+(W+4)+'" height="'+(zT+4)+'" fill="url(#skyG)"/>';
+
   /* 해 · 구름 */
-  const sunX = W*0.80, sunY = Math.max(26, zT*0.34), sunR = Math.max(20, Math.min(46, W*0.075));
+  const sunX = W*0.78, sunY = Math.max(30, zT*0.30), sunR = Math.max(24, Math.min(64, W*0.058));
   s += '<circle cx="'+sunX.toFixed(1)+'" cy="'+sunY.toFixed(1)+'" r="'+(sunR*2.1).toFixed(1)+'" fill="#FFF7CF" opacity=".38"/>';
   s += '<circle cx="'+sunX.toFixed(1)+'" cy="'+sunY.toFixed(1)+'" r="'+(sunR*1.45).toFixed(1)+'" fill="#FFF9DA" opacity=".55"/>';
   s += '<circle cx="'+sunX.toFixed(1)+'" cy="'+sunY.toFixed(1)+'" r="'+sunR.toFixed(1)+'" fill="#FFF3B8"/>';
@@ -2457,8 +2532,8 @@ function drawGround(){
   s += '<path d="M-12 '+(zT+8)+' Q '+(W*0.2)+' '+(zT-72)+' '+(W*0.46)+' '+(zT-4)
      + ' Q '+(W*0.62)+' '+(zT-56)+' '+(W*0.8)+' '+(zT-2)
      + ' Q '+(W*0.93)+' '+(zT-30)+' '+(W+12)+' '+(zT+6)+' L '+(W+12)+' '+(zT+52)+' L -12 '+(zT+52)+' Z" fill="url(#hillG)"/>';
-  for(let i=0;i<8;i++){
-    const tx = W*(0.05 + i*0.13) + R()*8;
+  for(let i=0;i<15;i++){
+    const tx = W*(0.03 + i*0.068) + R()*9;
     const ty = zT - 6 - R()*14;
     const hh = 22 + R()*14;
     s += '<g opacity=".92">'
@@ -2471,55 +2546,59 @@ function drawGround(){
   /* 잔디 */
   s += '<rect x="-2" y="'+(zT-1)+'" width="'+(W+4)+'" height="'+(H-zT+2)+'" fill="url(#grassG)"/>';
   /* 잔디 결 */
-  for(let i=0;i<74;i++){
+  const tufts = Math.round((W*(H-zT))/1500);
+  for(let i=0;i<tufts;i++){
     const gx = R()*W, gy = zT + 12 + R()*(H-zT-12);
     const len = 4 + R()*7;
     s += '<path d="M'+gx.toFixed(1)+' '+gy.toFixed(1)+' q '+(R()*3-1.5).toFixed(1)+' '+(-len).toFixed(1)+' '+(R()*4-2).toFixed(1)+' '+(-len-2).toFixed(1)+'" stroke="#6fb958" stroke-opacity=".45" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
   }
   /* 텃밭 아래 옅은 그림자 */
+  const fb = farmBox();
   [-1,1].forEach(function(side){
-    const x1 = side>0 ? 1.10 : -4.10, x2 = side>0 ? 4.10 : -1.10;
-    s += regionRect(x1, x2, 1.86, 4.42, '#3f6b2c', .16);
+    const x1 = side>0 ? fb.x1 - 0.20 : -(fb.x2 + 0.20);
+    const x2 = side>0 ? fb.x2 + 0.20 : -(fb.x1 - 0.20);
+    s += regionRect(x1, x2, fb.z1 - 0.24, fb.z2 + 0.26, '#3f6b2c', .10);
   });
-  /* 길 */
-  s += regionRect(-0.92, 0.92, 4.42, 7.30, '#e6d8bb', .92);
-  s += regionRect(-4.20, 4.20, 1.12, 1.86, '#e6d8bb', .92);
-  s += regionRect(-4.20, 4.20, 4.42, 5.02, '#e6d8bb', .92);
-  s += regionRect(-3.70, -2.20, 1.86, 2.02, '#e6d8bb', .9);
-  s += regionRect(2.20, 3.70, 1.86, 2.02, '#e6d8bb', .9);
+  /* 길 — 가게 앞 가로 길 · 가운데 큰 길 · 텃밭 앞 길 · 앞마당 광장 */
+  s += regionRect(-8.85, 8.85, 1.92, 2.86, '#e6d8bb', .92);      /* 가게 앞 가로 길 */
+  s += regionRect(-1.34, 1.34, 2.86, 14.20, '#e6d8bb', .92);     /* 가운데 세로 큰 길 */
+  s += regionRect(-8.85, 8.85, 8.62, 9.46, '#e6d8bb', .90);      /* 텃밭 앞 가로 길 */
+  s += regionRect(-2.62, 2.62, 12.10, 14.32, '#e6d8bb', .92);    /* 앞마당 광장 */
+  s += regionRect(-8.85, 8.85, 1.06, 1.92, '#e3d4b5', .58);      /* 가게 발치 흙길 */
+  s += regionRect(-8.85, 8.85, 9.46, 9.90, '#e3d4b5', .5);       /* 텃밭 앞 흙길 */
   /* 길 조약돌 */
-  for(let i=0;i<34;i++){
-    const pz = 1.2 + R()*6.0;
-    const px = (R()*1.6 - 0.8) * (0.4 + (pz-1.2)/6);
+  for(let i=0;i<64;i++){
+    const pz = 2.95 + R()*10.9;
+    const px = (R()*2.3 - 1.15) * (0.42 + (pz-2.95)/10.9);
     const pp = proj(px, pz);
     s += '<ellipse cx="'+pp.x.toFixed(1)+'" cy="'+pp.y.toFixed(1)+'" rx="'+(2+R()*2.4).toFixed(1)+'" ry="'+(1+R()*1.2).toFixed(1)+'" fill="#cfbf9e" opacity=".7"/>';
   }
   /* 연못(꾸미기) */
   if(G().deco.pond){
-    const pp = proj(1.55, 6.95), ss = pp.s;
+    const pp = proj(3.30, 14.05), ss = pp.s;
     s += '<ellipse cx="'+pp.x.toFixed(1)+'" cy="'+pp.y.toFixed(1)+'" rx="'+(0.82*WORLD.ux*ss).toFixed(1)+'" ry="'+(0.34*WORLD.uy*ss).toFixed(1)+'" fill="#57b7dd" stroke="#a9e4c6" stroke-width="3"/>';
-    s += '<ellipse cx="'+(pp.x-5).toFixed(1)+'" cy="'+(pp.y-3).toFixed(1)+'" rx="'+(0.55*WORLD.ux*ss).toFixed(1)+'" ry="'+(0.16*WORLD.uy*ss).toFixed(1)+'" fill="#9fe0f2" opacity=".7"/>';
-    s += '<ellipse cx="'+(pp.x+7).toFixed(1)+'" cy="'+(pp.y+3).toFixed(1)+'" rx="'+(WORLD.figh*0.10).toFixed(0)+'" ry="'+(WORLD.figh*0.045).toFixed(0)+'" fill="#F2903C" opacity=".92"/>';
-    s += '<path d="M'+pp.x.toFixed(1)+' '+(pp.y+3).toFixed(1)+' l'+(-WORLD.figh*0.06).toFixed(0)+' '+(-WORLD.figh*0.04).toFixed(0)+' v'+(WORLD.figh*0.08).toFixed(0)+' z" fill="#F2903C" opacity=".92"/>';
+    s += '<ellipse cx="'+(pp.x-6).toFixed(1)+'" cy="'+(pp.y-4).toFixed(1)+'" rx="'+(0.55*WORLD.ux*ss).toFixed(1)+'" ry="'+(0.16*WORLD.uy*ss).toFixed(1)+'" fill="#9fe0f2" opacity=".7"/>';
+    s += '<ellipse cx="'+(pp.x+8).toFixed(1)+'" cy="'+(pp.y+4).toFixed(1)+'" rx="'+(WORLD.figh*0.10).toFixed(0)+'" ry="'+(WORLD.figh*0.045).toFixed(0)+'" fill="#F2903C" opacity=".92"/>';
+    s += '<path d="M'+pp.x.toFixed(1)+' '+(pp.y+4).toFixed(1)+' l'+(-WORLD.figh*0.06).toFixed(0)+' '+(-WORLD.figh*0.04).toFixed(0)+' v'+(WORLD.figh*0.08).toFixed(0)+' z" fill="#F2903C" opacity=".92"/>';
   }
   /* 뒤 울타리 */
   s += '<g opacity=".95">';
-  for(let i=0;i<=16;i++){
-    const bx = -4.5 + i*0.575;
-    const p1 = proj(bx, 0.42, 0), p2 = proj(bx, 0.42, 0.42);
+  for(let i=0;i<=20;i++){
+    const bx = -9.15 + i*0.915;
+    const p1 = proj(bx, 0.72, 0), p2 = proj(bx, 0.72, 0.60);
     const hpx = p1.y - p2.y;
-    s += '<rect x="'+(p1.x-2.2).toFixed(1)+'" y="'+p2.y.toFixed(1)+'" width="4.4" height="'+hpx.toFixed(1)+'" rx="1.6" fill="#dcb283"/>';
-    s += '<path d="M'+(p1.x-2.2).toFixed(1)+' '+p2.y.toFixed(1)+' l2.2 -3 l2.2 3 z" fill="#f0cf9f"/>';
+    s += '<rect x="'+(p1.x-2.4).toFixed(1)+'" y="'+p2.y.toFixed(1)+'" width="4.8" height="'+hpx.toFixed(1)+'" rx="1.6" fill="#dcb283"/>';
+    s += '<path d="M'+(p1.x-2.4).toFixed(1)+' '+p2.y.toFixed(1)+' l2.4 -3.4 l2.4 3.4 z" fill="#f0cf9f"/>';
   }
-  [0.34, 0.20].forEach(function(hh){
-    const a = proj(-4.5, 0.42, hh), b = proj(4.5, 0.42, hh);
-    s += '<path d="M'+a.x.toFixed(1)+' '+a.y.toFixed(1)+' L'+b.x.toFixed(1)+' '+b.y.toFixed(1)+'" stroke="#e6c497" stroke-width="'+(hh>0.3?3.2:2.6)+'" stroke-linecap="round"/>';
+  [0.46, 0.28].forEach(function(hh){
+    const a = proj(-9.15, 0.72, hh), b = proj(9.15, 0.72, hh);
+    s += '<path d="M'+a.x.toFixed(1)+' '+a.y.toFixed(1)+' L'+b.x.toFixed(1)+' '+b.y.toFixed(1)+'" stroke="#e6c497" stroke-width="'+(hh>0.4?3.4:2.8)+'" stroke-linecap="round"/>';
   });
   s += '</g>';
   /* 가운데 울타리 레일 */
   const f = GEOM.fence;
   [[f.z1, f.gate[0]],[f.gate[1], f.z2]].forEach(function(seg){
-    [0.34, 0.18].forEach(function(hh){
+    [0.50, 0.30].forEach(function(hh){
       const a = proj(f.x, seg[0], hh), b = proj(f.x, seg[1], hh);
       s += '<path d="M'+(a.x+1).toFixed(1)+' '+(a.y+2).toFixed(1)+' L'+(b.x+1).toFixed(1)+' '+(b.y+2).toFixed(1)+'" stroke="#8a6134" stroke-width="4" stroke-linecap="round" opacity=".35"/>';
       s += '<path d="M'+a.x.toFixed(1)+' '+a.y.toFixed(1)+' L'+b.x.toFixed(1)+' '+b.y.toFixed(1)+'" stroke="#d8a86f" stroke-width="3.6" stroke-linecap="round"/>';
@@ -2527,9 +2606,9 @@ function drawGround(){
     });
   });
   /* 울타리 문 표지판 */
-  const gsp = proj(f.x, f.gate[0] + 0.06, 0.62);
-  const gsp2 = proj(f.x, f.gate[1] - 0.06, 0.62);
-  s += '<path d="M'+gsp.x.toFixed(1)+' '+gsp.y.toFixed(1)+' Q '+((gsp.x+gsp2.x)/2).toFixed(1)+' '+(gsp.y+16).toFixed(1)+' '+gsp2.x.toFixed(1)+' '+gsp2.y.toFixed(1)+'" stroke="#a97b45" stroke-width="2.2" fill="none"/>';
+  const gsp = proj(f.x, f.gate[0] + 0.06, 0.92);
+  const gsp2 = proj(f.x, f.gate[1] - 0.06, 0.92);
+  s += '<path d="M'+gsp.x.toFixed(1)+' '+gsp.y.toFixed(1)+' Q '+((gsp.x+gsp2.x)/2).toFixed(1)+' '+(gsp.y+18).toFixed(1)+' '+gsp2.x.toFixed(1)+' '+gsp2.y.toFixed(1)+'" stroke="#a97b45" stroke-width="2.4" fill="none"/>';
   groundEl.innerHTML = s;
 }
 
@@ -2537,17 +2616,17 @@ function buildFence(){
   const f = GEOM.fence;
   let html = '';
   const zs = [];
-  for(let z=f.z1; z<=f.gate[0]+0.001; z+=0.30) zs.push(z);
-  for(let z=f.gate[1]; z<=f.z2+0.001; z+=0.30) zs.push(z);
+  for(let z=f.z1; z<=f.gate[0]+0.001; z+=0.52) zs.push(z);
+  for(let z=f.gate[1]; z<=f.z2+0.001; z+=0.52) zs.push(z);
   zs.forEach(function(z){
-    html += billboard(fencePostSVG(), f.x, z, 0.30, 0.62, 0);
+    html += billboard(fencePostSVG(), f.x, z, 0.42, 0.88, 0);
   });
   worldEl.insertAdjacentHTML('beforeend', html);
 }
 
 function buildBooths(){
   GEOM.booths.forEach(function(b){
-    const artH = b.artH || 1.62;
+    const artH = b.artH || 1.62 * BOOTH_SCALE;
     /* 기둥·카운터 (입체 상자) */
     worldEl.insertAdjacentHTML('beforeend', propBox(b.x, b.z, b.w, b.d, b.h, '#c9a06a', {plank:true}, 0));
     /* 어닝·간판 그림 */
@@ -2617,27 +2696,31 @@ function buildWorld(){
   buildActors();
   paintAll();
   drawAll();
+  updateCamera(0);
 }
 
 function buildDecoProps(){
   const g = G();
   const side = homeSide();
+  const fb = farmBox();
+  const dz1 = fb.z1 - 0.30, dz2 = fb.z2 + 0.30;   /* 텃밭 앞·뒤 꾸미기 줄 */
+  const dx1 = fb.x1 - 0.16, dx2 = fb.x2 + 0.16;
   let html = '';
   if(g.deco.fence){
-    const x1 = side>0 ? 0.98 : -4.20, x2 = side>0 ? 4.20 : -0.98;
-    for(let x=x1+0.16; x<=x2-0.1; x+=0.45){
-      html += billboard(fencePostSVG(), x, 4.52, 0.18, 0.44, 0);
-      html += billboard(fencePostSVG(), x, 1.78, 0.18, 0.44, 0);
+    const x1 = side>0 ? dx1 : -dx2, x2 = side>0 ? dx2 : -dx1;
+    for(let x=x1+0.24; x<=x2-0.12; x+=0.66){
+      html += billboard(fencePostSVG(), x, dz2, 0.42, 0.88, 0);
+      html += billboard(fencePostSVG(), x, dz1, 0.42, 0.88, 0);
     }
-    [4.52, 1.78].forEach(function(z){
-      const a = proj(x1, z, 0.30), b = proj(x2, z, 0.30);
+    [dz2, dz1].forEach(function(z){
+      const a = proj(x1, z, 0.50), b = proj(x2, z, 0.50);
       html = '<div class="prop" style="left:'+Math.min(a.x,b.x).toFixed(1)+'px;top:'+(a.y-2).toFixed(1)+'px;width:'+Math.abs(b.x-a.x).toFixed(1)+'px;height:6px;z-index:'+Math.round(100+z*10)+'">'
         + '<div style="height:4px;border-radius:3px;background:#e8c79a;box-shadow:0 1px 2px rgba(90,60,20,.35)"></div></div>' + html;
     });
   }
   if(g.deco.lights){
-    const zz = 1.74;
-    const a = proj(side>0?1.0:-4.2, zz, 1.05), b = proj(side>0?4.2:-1.0, zz, 1.05);
+    const zz = dz1 - 0.04;
+    const a = proj(side>0?dx1:-dx2, zz, 1.70), b = proj(side>0?dx2:-dx1, zz, 1.70);
     html += '<div class="prop lights" style="left:'+Math.min(a.x,b.x).toFixed(1)+'px;top:'+a.y.toFixed(1)+'px;width:'+Math.abs(b.x-a.x).toFixed(1)+'px;height:10px;z-index:'+Math.round(100+zz*10)+'">'
       + '<svg viewBox="0 0 100 10" preserveAspectRatio="none" width="100%" height="10">'
       + '<path d="M0 2 Q50 9 100 2" stroke="#8a6a44" stroke-width="1.2" fill="none"/>'
@@ -2647,11 +2730,11 @@ function buildDecoProps(){
   }
   if(g.deco.butterfly){
     for(let i=0;i<3;i++){
-      const bx = (side*1.8) + (i-1)*0.9, bz = 3.2 + i*0.8;
+      const bx = (side*3.9) + (i-1)*1.5, bz = 8.1 + i*1.25;
       html += billboard('<svg viewBox="0 0 40 34" xmlns="http://www.w3.org/2000/svg">'
         + '<path d="M20 16 C10 2 2 6 4 15 C6 24 14 24 20 18" fill="#FFB3D6" stroke="#E4699B" stroke-width="1.1"/>'
         + '<path d="M20 16 C30 2 38 6 36 15 C34 24 26 24 20 18" fill="#FFD166" stroke="#E4A21C" stroke-width="1.1"/>'
-        + '<path d="M20 18 v10" stroke="#8a6a44" stroke-width="2"/></svg>', bx, bz, 0.34, 0.30, 4);
+        + '<path d="M20 18 v10" stroke="#8a6a44" stroke-width="2"/></svg>', bx, bz, 0.46, 0.40, 4);
     }
   }
   if(html) worldEl.insertAdjacentHTML('beforeend', html);
@@ -2669,37 +2752,68 @@ function makeActor(label, cls, x, z){
   a.mid.style.height = WORLD.figh + 'px';
   return a;
 }
-let NPCS = [];      /* [{k, a}] — 나를 뺀 가족 3명 */
+let NPCS = [];      /* [{k, a}] — 지금 진짜 접속해 있는 가족만 */
+const PRESENCE_TTL = 5 * 60 * 1000;   /* 5분 넘게 소식이 없으면 오프라인으로 봐요 */
+function presenceOf(k){
+  const p = presence && presence[k];
+  if(!p) return null;
+  const at = +p.at || 0;
+  if(!at || (Date.now() - at) > PRESENCE_TTL) return null;
+  return p;
+}
+function isLive(k){ return !!presenceOf(k); }
+function liveOthers(){ return familyOthers().filter(isLive); }
+function presenceSpot(k){
+  const p = presenceOf(k);
+  if(!p) return null;
+  return {
+    x: clamp(+p.x || 0, XMIN(), XMAX()), z: clamp(+p.z || 0, ZMIN(), ZMAX()),
+    y: Math.max(0, +p.y || 0), dir: +p.dir === -1 ? -1 : 1, live: true
+  };
+}
 function wanderSpot(k){
   const side = (k === partner) ? -homeSide() : (SIDE[k] || 1);
-  /* 아이와 어른은 앞줄·뒷줄로 나눠 걷고, 월드 문(z 4.95)보다 앞에서 걸어요 */
+  /* 아이와 어른은 앞줄·뒷줄로 나눠 걷고, 텃밭 앞 넓은 마당(z 8.4~)에서 놀아요 */
   const adult = isAdultWho(k);
-  const z = adult ? (5.44 + Math.random()*0.44) : (5.12 + Math.random()*0.48);
-  return {x: clamp(side * (0.95 + Math.random()*2.9), -4.2, 4.2), z: z};
+  const z = adult ? (9.55 + Math.random()*1.45) : (8.55 + Math.random()*1.45);
+  return {x: clamp(side * (2.1 + Math.random()*4.6), -8.6, 8.6), z: z};
 }
 function buildActors(){
   me = makeActor(PEOPLE[kid].name, 'me', PLAYER.x, PLAYER.z);
   me.mid.innerHTML = figureSVG(kid);
+  buildOtherActors();
+}
+/* 🧑‍🤝‍🧑 접속해 있는 가족만 그려요 — 안 들어온 사람은 아예 나타나지 않아요 */
+let liveKey = null;
+function buildOtherActors(){
   NPCS.forEach(function(n){ if(n.a && n.a.el && n.a.el.parentNode) n.a.el.parentNode.removeChild(n.a.el); });
   NPCS = []; sis = null;
-  familyOthers().forEach(function(k){
-    const t = (k === partner) ? sisTarget() : wanderSpot(k);
+  const now = liveOthers();
+  now.forEach(function(k){
+    const t = presenceSpot(k) || wanderSpot(k);
     const a = makeActor(PEOPLE[k].name, 'npc p-' + k, t.x, t.z);
     a.mid.innerHTML = figureSVG(k);
     a.y = t.y || 0;
+    a.dir = t.dir || 1;
     a.wander = wanderSpot(k);
     a.wanderAt = Date.now() + 2200 + Math.random()*2600;
-    if(k === partner){ a.el.classList.add('sis'); if(t.live) a.el.classList.add('live'); sis = a; }
+    a.el.classList.add('live');
+    if(k === partner){ a.el.classList.add('sis'); sis = a; }
     NPCS.push({k: k, a: a});
+    drawActor(a, false);
   });
+  liveKey = now.join(',');
+}
+function syncActors(){
+  const key = liveOthers().join(',');
+  if(key === liveKey) return;
+  buildOtherActors();
+  updateVBar();
+  renderCtx();
+  drawAll();
 }
 function sisTarget(){
-  const p = presence && presence[partnerId()];
-  const live = p && Number.isFinite(+p.x) && (Date.now() - (+p.at || 0) < 70000);
-  if(live){
-    return {x:clamp(+p.x, -4.3, 4.3), z:clamp(+p.z, 0.6, 7.0), y:Math.max(0, +p.y || 0), dir:+p.dir === -1 ? -1 : 1, live:true};
-  }
-  return {x:-homeSide()*GEOM.farm.cx, z:4.95, y:0, dir:homeSide(), live:false};
+  return presenceSpot(partner) || {x:-homeSide()*GEOM.farm.cx, z:7.95, y:0, dir:homeSide(), live:false};
 }
 function drawActor(a, isMe){
   if(!a) return;
@@ -2732,9 +2846,9 @@ function spawnPick(force){
   do{
     if(Math.random() < 0.26){
       const pl = GEOM.plats[Math.floor(Math.random()*GEOM.plats.length)];
-      x = pl.x + rnd(-0.28, 0.28); z = pl.z + rnd(-0.22, 0.22); y = pl.h;
+      x = pl.x + rnd(-0.40, 0.40); z = pl.z + rnd(-0.30, 0.30); y = pl.h;
     }else{
-      x = rnd(-4.0, 4.0); z = rnd(1.25, 6.9); y = 0;
+      x = rnd(WORLD.x0 + 0.7, WORLD.x1 - 0.7); z = rnd(2.2, 13.9); y = 0;
     }
     tries++;
   } while(tries < 20 && y === 0 && solidTop(x, z) > 0.02);
@@ -2978,8 +3092,23 @@ function findPath(sx, sz, tx, tz){
   const rows = Math.floor((maxZ - minZ)/ST) + 1;
   const si = clamp(Math.round((sx-minX)/ST), 0, cols-1), sj = clamp(Math.round((sz-minZ)/ST), 0, rows-1);
   let ti = clamp(Math.round((tx-minX)/ST), 0, cols-1), tj = clamp(Math.round((tz-minZ)/ST), 0, rows-1);
-  const n = cols*rows, start = si + sj*cols;
+  const n = cols*rows;
+  let start = si + sj*cols;
   let goal = ti + tj*cols;
+  /* 발판 위에 올라서 있으면 그 칸이 막혔다고 나옵니다 — 가까운 빈 칸에서 출발해요 */
+  if(solidTop(minX + si*ST, minZ + sj*ST) > 0.03){
+    let sbest = -1, sbd = 1e9;
+    for(let cy=0; cy<rows; cy++){
+      for(let cx=0; cx<cols; cx++){
+        const wx = minX + cx*ST, wz = minZ + cy*ST;
+        if(solidTop(wx, wz) > 0.03) continue;
+        const dd = (wx-sx)*(wx-sx) + (wz-sz)*(wz-sz);
+        if(dd < sbd){ sbd = dd; sbest = cx + cy*cols; }
+      }
+    }
+    if(sbest < 0) return null;
+    start = sbest;
+  }
   if(solidTop(minX + ti*ST, minZ + tj*ST) > 0.03){
     let best = -1, bd = 1e9;
     for(let cy=0; cy<rows; cy++){
@@ -3042,7 +3171,7 @@ function cancelPath(){ PATH = []; PLAYER.target = null; PLAYER.targetZone = null
 /* ---------- 바닥 톡 → 그 자리로 ---------- */
 function screenToWorld(px, py){
   const r = roomEl.getBoundingClientRect();
-  const lx = px - r.left, ly = py - r.top;
+  const lx = px - r.left + CAM.x, ly = py - r.top + CAM.y;
   const nz = clamp((ly - WORLD.zTop)/WORLD.zLen, 0, 1);
   const s = 0.90 + 0.30*nz;
   const wx = (lx - WORLD.W*0.5)/(WORLD.ux*s);
@@ -3071,7 +3200,7 @@ function screenToWorld(px, py){
 })();
 
 /* ---------------- 13. 한 프레임 ---------------- */
-function sheetOpen(){ return !!document.querySelector('.sheetwrap:not(.hide)') || !$('#modal').classList.contains('hide') || isMiniOpen() || isStarterOn(); }
+function sheetOpen(){ return IDLE.on || !!document.querySelector('.sheetwrap:not(.hide)') || !$('#modal').classList.contains('hide') || isMiniOpen() || isStarterOn(); }
 let tipOff = false;
 function hidTip(){ if(tipOff) return; tipOff = true; const t = $('#tipBar'); if(t) t.classList.add('off'); }
 
@@ -3143,24 +3272,12 @@ function stepWorld(dt){
       if(now - stepSndT > 330){ stepSndT = now; Sound.step(); }
     }
   }
-  /* 👨‍👩‍👧‍👦 가족 아바타 — 옆집 친구는 그 텃밭에, 엄마·아빠·자매는 정원을 걸어 다녀요 */
+  /* 👨‍👩‍👧‍👦 지금 접속해 있는 가족만 — 실제 접속 위치를 따라가요 */
   for(let i=0;i<NPCS.length;i++){
     const n = NPCS[i], a = n.a;
     if(!a) continue;
-    let t;
-    if(n.k === partner){
-      t = sisTarget();
-      a.el.classList.add('sis');
-      a.el.classList.toggle('live', !!t.live);
-    }else{
-      a.el.classList.remove('sis', 'live');
-      const near = a.wander ? Math.hypot(a.wander.x - a.x, a.wander.z - a.z) : 9;
-      if(!a.wander || near < 0.14 || Date.now() > (a.wanderAt || 0)){
-        a.wander = wanderSpot(n.k);
-        a.wanderAt = Date.now() + 2600 + Math.random()*3000;
-      }
-      t = {x:a.wander.x, z:a.wander.z, y:0, dir:a.wander.x < a.x ? -1 : 1, live:false};
-    }
+    const t = presenceSpot(n.k);
+    if(!t) continue;
     const px = a.x, pz = a.z;
     const sp = Math.min(1, dt*2.4);
     a.x += (t.x - a.x) * sp;
@@ -3182,6 +3299,7 @@ function stepWorld(dt){
 
   checkNear(dt);
   drawAll();
+  updateCamera(dt);
 }
 
 function checkNear(dt){
@@ -3213,7 +3331,7 @@ function checkNear(dt){
   }
   GEOM.booths.forEach(function(b){
     const d = Math.hypot(PLAYER.x - b.x, PLAYER.z - (b.z + b.d/2 + 0.15));
-    if(d > 1.9) armed[b.id] = false;
+    if(d > 2.4) armed[b.id] = false;
   });
   if(changed) updatePrompt();
   updateVBar();
@@ -3227,14 +3345,14 @@ function nearestZone(){
     const d = Math.hypot(Math.max(0, dx), Math.max(0, dz));
     if(d < bd){ bd = d; best = b; }
   });
-  if(bd < 0.62) return best;
-  /* 월드 문은 조금 멀리서도 알아채게 */
+  if(bd < 0.92) return best;
+  /* 월드 문은 조금 멀리서도 알아채게 — 단, 텃밭 작업을 방해하지 않게 좁게 */
   let gBest = null, gd = 1e9;
   GATES.forEach(function(g){
     const d = Math.hypot(PLAYER.x - g.x, PLAYER.z - g.z);
     if(d < gd){ gd = d; gBest = g; }
   });
-  return gd < 0.95 ? gBest : null;
+  return gd < 0.78 ? gBest : null;
 }
 function tileUnder(x, z, side){
   let best = -1, bd = 1e9;
@@ -3254,7 +3372,7 @@ function nearestTile(){
   if(j >= 0) return {i:j, owner:'sis'};
   return null;
 }
-function onSisterGround(){ return PLAYER.x * homeSide() < -0.35 && PLAYER.z < 4.9; }
+function onSisterGround(){ return PLAYER.x * homeSide() < -1.30 && PLAYER.z < 9.4; }
 
 let wasSisGround = null;
 function updateVBar(){
@@ -3840,7 +3958,7 @@ function resetAll(){
   /* 3) 화면 처음 상태로 */
   gifts = {}; duel = null; presence = {}; remoteGardens = {};
   appliedWater = {};
-  PLAYER.x = homeSide()*1.90; PLAYER.z = 6.35; PLAYER.y = 0; PLAYER.vy = 0;
+  PLAYER.x = homeSide()*GEOM.farm.cx; PLAYER.z = 8.55; PLAYER.y = 0; PLAYER.vy = 0;
   buildWorld();
   lastWxId = '';
   renderAll();
@@ -3855,6 +3973,8 @@ function resetAll(){
 }
 function switchKid(k){
   if(!PEOPLE[k]) return;
+  const prevKid = kid;
+  if(prevKid && prevKid !== k) clearPresence(prevKid);
   kid = k; DB.kid = k;
   whoSharedSet(k);
   /* 이 사람이 마지막에 함께 놀던 짝꿍으로 */
@@ -3862,12 +3982,13 @@ function switchKid(k){
   partner = (lastP && PEOPLE[lastP] && lastP !== k) ? lastP : defaultPartner();
   WorldCoins.setKid(walletKid(k));
   DB.gardens[k].coins = WorldCoins.get(walletKid(k));
-  PLAYER.x = homeSide()*1.90; PLAYER.z = 6.35; PLAYER.y = 0; PLAYER.vy = 0;
+  PLAYER.x = homeSide()*GEOM.farm.cx; PLAYER.z = 8.55; PLAYER.y = 0; PLAYER.vy = 0;
   cancelPath();
   saveNow();
   buildWorld();
   renderAll();
   renderWorldBar();
+  wirePresence(); beat();
   Sound.plant();
   toast(pLabel(k) + '으로 왔어요 🌱');
   setFairy('<b>' + pLabel(k) + '</b>이에요! 흙 타일 위로 걸어가면 심기·물주기·수확 버튼이 떠요.');
@@ -4479,6 +4600,7 @@ function pushGarden(k){
   try{ NET.db.ref(NET.root + '/gardens/' + k).set(g); }catch(e){}
 }
 function beat(){
+  if(IDLE.on) return;
   if(!NET.db || !NET.on) return;
   try{
     NET.db.ref(NET.root + '/presence/' + kid).update({
@@ -4487,6 +4609,17 @@ function beat(){
       y: Math.round(PLAYER.y*100)/100, dir: PLAYER.dir
     });
   }catch(e){}
+}
+/* 창을 닫거나 인터넷이 끊기면 내 캐릭터도 바로 사라져요 */
+function wirePresence(){
+  if(!NET.db || !NET.on) return;
+  try{ NET.db.ref(NET.root + '/presence/' + kid).onDisconnect().remove(); }catch(e){}
+}
+function clearPresence(k){
+  k = k || kid;
+  if(!NET.db) return;
+  try{ NET.db.ref(NET.root + '/presence/' + k).remove(); }catch(e){}
+  try{ NET.db.ref(NET.root + '/presence/' + k).onDisconnect().cancel(); }catch(e){}
 }
 function beatPos(){
   const now = Date.now();
@@ -4563,7 +4696,9 @@ function initNet(){
       if(NET.on && !was){
         schedulePush();
         ensureAdultGardens(remoteGardens);
+        wirePresence();
         beat();
+        syncActors();
         if(isSheetOpen('#duelSheet')) renderDuelSheet();
         if(isSheetOpen('#giftSheet')) renderGiftSheet();
       }
@@ -4592,7 +4727,9 @@ function initNet(){
 
     NET.db.ref(NET.root + '/presence').on('value', function(snap){
       presence = snap.val() || {};
+      syncActors();
       updateVBar();
+      renderCtx();
     }, function(){});
 
     NET.db.ref(NET.root + '/water').on('value', function(snap){
@@ -4629,6 +4766,78 @@ function initNet(){
     renderHUD();
   }
 }
+/* ---------------- 25-b. 💤 5분 무활동 → 스스로 접속 종료 ----------------
+   5분(300,000ms) 동안 터치·조이스틱·키보드 같은 움직임이 없으면
+   · 가족 클라우드 presence를 바로 지워서 다른 화면에서도 내 캐릭터가 사라지고
+   · 이 화면에는 “다시 놀기” 안내가 뜨고 놀이 시간도 멈춰요.
+   ?gtest=1&idletest=1&idlesec=6 으로 짧게 시험할 수 있어요 */
+const IDLE = {on:false, at:Date.now(), holdT:0, frozen:0};
+function idleLimitMs(){
+  try{
+    const q = new URLSearchParams(location.search);
+    if(q.get('idletest') === '1' && q.get('gtest') === '1'){
+      const s = parseFloat(q.get('idlesec'));
+      return Math.max(1, (isFinite(s) && s > 0) ? s : 5) * 1000;
+    }
+  }catch(e){}
+  return 300000;
+}
+function touchInput(){ IDLE.at = Date.now(); }
+/* ⏳ world-timer 시간 차감 잠금 — 쉬는 동안 남은 시간이 줄지 않게 */
+function holdWorldTimer(on){
+  if(IDLE.holdT){ clearInterval(IDLE.holdT); IDLE.holdT = 0; }
+  if(!on) return;
+  const WT = window.__WT;
+  if(!WT || typeof WT.state !== 'function' || typeof WT.set !== 'function') return;
+  let st0 = null;
+  try{ st0 = WT.state(); }catch(e){ st0 = null; }
+  if(!st0 || st0.adult) return;
+  const frozen = st0.used || 0;
+  IDLE.frozen = frozen;
+  const keep = function(){ if(IDLE.on){ try{ WT.set({used: frozen}); }catch(e){} } };
+  keep();
+  IDLE.holdT = setInterval(keep, 900);
+}
+function endIdle(){
+  if(IDLE.on) return;
+  IDLE.on = true;
+  document.body.classList.add('idle-ended');
+  cancelPath();
+  try{ closeSheets(); }catch(e){}
+  try{ if(isMiniOpen()) closeMini(); }catch(e){}
+  holdWorldTimer(true);          /* 놀이 시간 멈춤 */
+  clearPresence(kid);            /* 다른 가족 화면에서도 사라짐 */
+  const el = $('#idleEnd');
+  if(el) el.classList.add('on');
+  try{ Sound.nope(); }catch(e){}
+}
+function resumeFromIdle(){
+  if(!IDLE.on) return;
+  IDLE.on = false;
+  IDLE.at = Date.now();
+  document.body.classList.remove('idle-ended');
+  const el = $('#idleEnd');
+  if(el) el.classList.remove('on');
+  holdWorldTimer(false);
+  wirePresence();
+  beat();
+  try{ Sound.unlock(); Sound.plant(); }catch(e){}
+}
+function initIdle(){
+  ['pointerdown','pointermove','keydown','wheel','touchstart'].forEach(function(ev){
+    document.addEventListener(ev, touchInput, {passive:true, capture:true});
+  });
+  const btn = $('#idleResume');
+  if(btn) btn.addEventListener('click', function(e){ e.preventDefault(); resumeFromIdle(); });
+  IDLE.at = Date.now();
+  setInterval(function(){
+    if(IDLE.on) return;
+    if(isStarterOn()) { IDLE.at = Date.now(); return; }   /* 누구로 놀까요 화면은 안내 */
+    if(Date.now() - IDLE.at < idleLimitMs()) return;
+    endIdle();
+  }, 1000);
+}
+
 function paintSister(){
   for(let i=0;i<PLOTS;i++) paintCrop(i, 'sis');
   updateVBar();
@@ -4734,8 +4943,8 @@ document.addEventListener('click', function(e){
     if(l.length) claimGift(l[0].id);
     return;
   }
-  if(act === 'teleHome'){ walkTo(homeSide()*GEOM.farm.cx, 5.0, null, true); closeSheets(); toast('내 텃밭으로 걸어가요 🏡'); return; }
-  if(act === 'teleSister'){ walkTo(-homeSide()*GEOM.farm.cx, 5.0, null, true); closeSheets(); toast(pLabel(partnerId()) + '으로 걸어가요 👀'); return; }
+  if(act === 'teleHome'){ walkTo(homeSide()*GEOM.farm.cx, 7.95, null, true); closeSheets(); toast('내 텃밭으로 걸어가요 🏡'); return; }
+  if(act === 'teleSister'){ walkTo(-homeSide()*GEOM.farm.cx, 7.95, null, true); closeSheets(); toast(pLabel(partnerId()) + '으로 걸어가요 👀'); return; }
   if(act === 'resetAll'){ resetAll(); return; }
   if(act === 'reset'){
     if(confirm(pLabel(kid) + '을 처음부터 다시 시작할까요?\n심은 작물, 바구니, 코인이 모두 사라져요.')){
@@ -4833,6 +5042,8 @@ setInterval(function(){
 setInterval(function(){
   if(document.visibilityState !== 'visible') return;
   beat();
+  wirePresence();
+  syncActors();
   renderWeather(false);
   renderHUD();
 }, 15000);
@@ -4851,6 +5062,7 @@ document.addEventListener('visibilitychange', function(){
     ensureWeather();
     renderAll();
     tickTiles();
+    if(!IDLE.on){ wirePresence(); beat(); syncActors(); }
   }else{
     saveNow();
   }
@@ -4862,8 +5074,8 @@ window.addEventListener('resize', function(){
 });
 
 /* ---------------- 29. 시작 ---------------- */
-PLAYER.x = homeSide()*1.90;
-PLAYER.z = 6.35;
+PLAYER.x = homeSide()*GEOM.farm.cx;
+PLAYER.z = 8.55;
 buildWorld();
 renderAll();
 ensureWeather();
@@ -4884,6 +5096,7 @@ G().coins = WorldCoins.get();
 renderHUD();
 
 initNet();
+initIdle();
 
 let lastT = 0;
 function loop(t){
@@ -7135,6 +7348,12 @@ window.__gg = {
   get gifts(){ return gifts; },
   get duel(){ return duel; },
   get presence(){ return presence; },
+  get live(){ return {others: liveOthers(), count: liveOthers().length, presence: presence}; },
+  get idle(){ return {on:IDLE.on, at:IDLE.at, limit:idleLimitMs(), frozen:IDLE.frozen, holding:!!IDLE.holdT, left: Math.max(0, idleLimitMs() - (Date.now() - IDLE.at))}; },
+  endIdle: function(){ endIdle(); },
+  resumeIdle: function(){ resumeFromIdle(); },
+  touch: function(){ touchInput(); },
+  get cam(){ return {x:CAM.x, y:CAM.y, wx:WORLD.camX, wy:WORLD.camY}; },
   get remote(){ return remoteGardens; },
   get player(){ return PLAYER; },
   get world(){ return WORLD; },
@@ -7166,7 +7385,9 @@ window.__gg = {
   openGift, renderGiftSheet, sendGift, claimGift, giftListForMe, chalLeft, decideWinner,
   openSeedSheet, openMarket, openMore, openZone,
   walkTo: function(x, z, zone){ return walkTo(x, z, zone || null, true); },
-  teleport: function(x, z){ PLAYER.x = x; PLAYER.z = z; PLAYER.y = solidTop(x,z); cancelPath(); drawAll(); },
+  findPath,
+  solidTop,
+  teleport: function(x, z){ PLAYER.x = x; PLAYER.z = z; PLAYER.y = solidTop(x,z); cancelPath(); CAM.snap = true; drawAll(); updateCamera(0); },
   jump: doJump,
   pickAll: function(){ while(PICKUPS.length){ takePick(PICKUPS.length-1); } },
   spawnPick: function(){ spawnPick(true); },
