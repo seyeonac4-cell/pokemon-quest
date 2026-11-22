@@ -262,6 +262,7 @@
         '#wt-lock input{flex:1;min-width:0;height:52px;border:2px solid rgba(255,255,255,.42);border-radius:14px;',
         'background:rgba(255,255,255,.95);color:#3A1A5E;font-family:inherit;font-size:22px;font-weight:900;line-height:1;text-align:center;letter-spacing:.32em;padding-left:.32em}',
         '#wt-lock input::placeholder{font-size:12.5px;letter-spacing:0;color:#9B8BB4;padding-left:0}',
+        '#wt-lock input:focus{outline:none;border-color:#FFD86B;box-shadow:0 0 0 3px rgba(255,216,107,.35)}',
         '#wt-lock .wt-pin-ok{width:88px;min-height:52px;background:#fff;color:#4A2378}',
         '#wt-lock .wt-err{min-height:16px;margin-top:8px;font-size:12px;font-weight:800;color:#FFC9C9}',
         '#wt-lock .wt-shake{animation:wtshake .3s}',
@@ -661,7 +662,7 @@
     tick: tick
   };
 
-  if (TEST && qp('wtreset') === '1') resetState();
+  if (TEST && qp('wtreset') === '1') { resetState(); writeAdult(null); }
 
   if (document.body) start();
   else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
