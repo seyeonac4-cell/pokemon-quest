@@ -827,6 +827,46 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 .tw-steps i{width:26px;height:8px;border-radius:5px;display:block;opacity:.9}
 .jl-crown{font-size:62px;text-align:center;line-height:1.15;animation:eggwob 1.9s ease-in-out infinite}
 
+/* ---------------- ❄️🍬🚀 5·6·7탄 ---------------- */
+.stage-strip{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:2px 0 12px;
+}
+.stage-strip button{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:7px 2px;border-radius:13px;background:#f2f7ff;border:2px solid #e3ecfb;
+  color:#4a5f86;transition:transform .12s;
+}
+.stage-strip button:active{transform:scale(.94)}
+.stage-strip button b{font-size:16px;line-height:1;font-weight:400}
+.stage-strip button span{font-size:9.5px;letter-spacing:-.03em;white-space:nowrap;opacity:.85}
+.stage-strip button.s5{background:linear-gradient(160deg,#eaf8ff,#d3eeff);border-color:#b9e2fa;color:#1d6d92}
+.stage-strip button.s6{background:linear-gradient(160deg,#fff1f9,#ffe3f3);border-color:#ffc4e4;color:#a8306f}
+.stage-strip button.s7{background:linear-gradient(160deg,#eef0ff,#e0e4ff);border-color:#c3c8f6;color:#3c3f8f}
+.world-row.ice5{background:linear-gradient(135deg,#f0fbff,#e4f5ff 55%,#f7fdff);border-color:#b6e3fa}
+.world-row.ice5 .go{color:#1d6d92;background:#dcf2ff}
+.world-row.sweet6{background:linear-gradient(135deg,#fff2f9,#ffe9f5 55%,#fff8fd);border-color:#ffc4e2}
+.world-row.sweet6 .go{color:#a8306f;background:#ffe1f1}
+.world-row.space7{background:linear-gradient(135deg,#eef0ff,#e6e9ff 55%,#f4f5ff);border-color:#c3c8f6}
+.world-row.space7 .go{color:#3c3f8f;background:#e2e5ff}
+.gal-crown{font-size:66px;text-align:center;line-height:1.1;animation:eggwob 1.7s ease-in-out infinite}
+.gal-stars{text-align:center;font-size:17px;letter-spacing:4px;margin:2px 0 6px;opacity:.9}
+
+/* 🌙 7탄 달 저중력 배지 */
+#gravBadge{
+  position:absolute;left:50%;top:calc(96px + env(safe-area-inset-top,0px));z-index:27;
+  transform:translateX(-50%);display:none;align-items:center;gap:7px;
+  padding:6px 15px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(92,104,214,.94),rgba(150,96,224,.94));
+  border:2px solid rgba(255,255,255,.6);color:#fff;font-size:13px;letter-spacing:-.01em;
+  box-shadow:0 6px 18px rgba(60,50,140,.32);pointer-events:none;
+}
+#gravBadge.on{display:inline-flex;animation:gravFloat 2.4s ease-in-out infinite;width:max-content;white-space:nowrap}
+#gravBadge b{font-size:13.5px;font-weight:400;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 7px}
+@keyframes gravFloat{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-5px)}
+}
+
 @media (max-width:430px){
   #hud{gap:5px}
   .hud-right{gap:4px}
@@ -836,6 +876,10 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
   .pill .caret{display:none}
   .pill.coin{padding:0 9px}
   .pill.coin b{font-size:15px}
+  .stage-strip button{padding:6px 1px;border-radius:11px}
+  .stage-strip button b{font-size:14px}
+  .stage-strip button span{font-size:8.5px}
+  #gravBadge{font-size:12px;padding:5px 12px;top:calc(90px + env(safe-area-inset-top,0px))}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -867,6 +911,8 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
   </div>
 
   <div id="hint">🦊 윤진, 마을을 구경하고 키보드 블록도 밟아 봐!</div>
+  <!-- 🌙 7탄 달 저중력 배지 -->
+  <div id="gravBadge" aria-live="polite">🌙 달 저중력 <b>0.42G</b> · 둥실둥실!</div>
   <div id="otherChip"><span>🟢</span><span id="otherChipTxt">형원이 지금 놀고 있어!</span></div>
   <button id="btnCenter" type="button" aria-label="내 위치로 돌아가기">🎯 내 위치</button>
 
@@ -1014,6 +1060,15 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
       <button class="x" data-close="worldPanel" type="button" aria-label="닫기">✕</button>
     </div>
     <div class="sheet-body">
+      <div class="stage-strip" id="stageStrip" role="group" aria-label="1~7탄 바로 가기">
+        <button type="button" data-jump1="1"><b>1</b><span>마을</span></button>
+        <button type="button" data-jump2="1"><b>2</b><span>함정</span></button>
+        <button type="button" data-jump3="1"><b>3</b><span>무지개</span></button>
+        <button type="button" data-jump4="1"><b>4</b><span>왁뿌볼</span></button>
+        <button type="button" data-jump5="1" class="s5"><b>5</b><span>얼음</span></button>
+        <button type="button" data-jump6="1" class="s6"><b>6</b><span>디저트</span></button>
+        <button type="button" data-jump7="1" class="s7"><b>7</b><span>우주</span></button>
+      </div>
       <div class="world-list">
         <div class="world-row here">
           <span class="big-ic">🧱</span>
@@ -1050,8 +1105,23 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
           <span class="wt"><b>4탄 왁뿌볼 타워</b><small>퐁실퐁실 구슬 발판 6층 · 사그락사그락 소리</small></span>
           <span class="go">바로 가기 ›</span>
         </button>
+        <button class="world-row ice5" type="button" data-jump5="1">
+          <span class="big-ic">❄️</span>
+          <span class="wt"><b>5탄 얼음 빙글빙글 왕국</b><small>얼음 미끄럼 · 펭귄 얼음땡 · 이글루 · 빙산 발판</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row sweet6" type="button" data-jump6="1">
+          <span class="big-ic">🍬</span>
+          <span class="wt"><b>6탄 달콤 디저트 하늘섬</b><small>마카롱 바운스 · 쿠키 발판 · 회전 사탕 · 구름 징검다리</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row space7" type="button" data-jump7="1">
+          <span class="big-ic">🚀</span>
+          <span class="wt"><b>7탄 우주 별빛 대모험</b><small>달 저중력 · UFO 발판 · 운석 · 대왕 쿠파 · 최종 트로피</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
       </div>
-      <p class="shop-note">문은 코스 끝에 있어요! 🌱 <b>그로우 어 가든</b>은 1탄 무지개 성 안, 👗 <b>드레스 투 임프레스</b>는 2탄 왕관 앞, 🏰 <b>3탄</b>은 2탄 왕관 앞, 🫧 <b>4탄</b>은 3탄 꼭대기에 있는 문으로 들어가요. 급할 땐 여기 <b>바로 가기</b>를 눌러요!</p>
+      <p class="shop-note">코스는 <b>1탄 → 2탄 → 3탄 → 4탄 → ❄️ 5탄 → 🍬 6탄 → 🚀 7탄</b> 순서로 걸어서 이어져요! 4탄 꼭대기에서 눈 디딤돌 다리로 5탄에 내려서고, 5탄 얼음 성 → 6탄 사탕 다리 → 7탄 발사대로 이어져요. 급할 땐 위 <b>1~7</b> 버튼이나 여기 <b>바로 가기</b>를 눌러요!</p>
     </div>
   </div>
 
@@ -1218,6 +1288,24 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
     </div>
   </div>
 
+  <!-- ===================== 🏆 7탄 최종 황금 트로피 ===================== -->
+  <div class="modal" id="galaxyOverlay">
+    <div class="modal-card">
+      <div class="gal-crown">🏆</div>
+      <div class="gal-stars">⭐✨🌟⭐✨</div>
+      <h2 id="galTitle">우주 대모험 완주! 🏆</h2>
+      <p class="lead">5탄 얼음 왕국 · 6탄 디저트 하늘섬 · 7탄 우주를 모두 지나<br><b>최종 황금 트로피</b>를 차지했어요! 폭죽이 펑펑 터졌어요 🎆</p>
+      <div class="result-grid">
+        <div><span>걸린 시간</span><b id="galTime">0:00</b></div>
+        <div><span>최단 기록</span><b id="galBest">0:00</b></div>
+        <div><span>받은 상</span><b>+50</b></div>
+        <div><span>대왕 쿠파</span><b>🕸️ +50</b></div>
+      </div>
+      <button class="btn primary" id="galAgain" type="button">🔁 7탄 다시 도전</button>
+      <button class="btn blue mt8" id="galHome" type="button">🏠 마을로 돌아갈래</button>
+    </div>
+  </div>
+
   <!-- ===================== 🐰 하은이랑 말하기 ===================== -->
   <div class="modal" id="friendOverlay">
     <div class="modal-card fr-card">
@@ -1279,6 +1367,28 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         🫧 층마다 파스텔 구슬이 가득한 <b>왁뿌볼 발판</b>이 있어요. 밟을 때마다 발판이 말랑하게 눌렸다가 <b>퐁~</b> 튀어 오르고, <b>사그락사그락</b> 구슬 소리와 반짝이가 톡톡 터져요!<br>
         🚩 층마다 <b>안전 깃발</b>이 있어서 떨어져도 그 층에서 다시 시작해요. 계단은 왼쪽 위(북서) 모서리에 있어요.<br>
         🏆 꼭대기 <b>🫧 왁뿌볼 챔피언</b> 트로피에 닿으면 축하 폭죽과 함께 <b>가족 공용 코인 +50</b>, 최단 시간 기록도 남아요!</p>
+      </div>
+      <div class="help-sec">
+        <h3>❄️ 5탄 얼음 빙글빙글 왕국</h3>
+        <p>4탄 꼭대기에서 <b>눈 디딤돌 다리</b>로 걸어 내려오면 5탄이 시작돼요. (🌍 월드 이동에서 <b>바로 가기</b>도 돼요!)<br>
+        ❄️ <b>얼음 타일</b>은 관성으로 쭉— 미끄러져요. 눈 타일은 <b>뽀드득</b> 발소리가 나요!<br>
+        🐧 <b>펭귄</b>에 닿으면 <b>2.2초 얼음땡!</b> — 얼음 속에서 점프 버튼을 <b>톡톡톡 4번</b> 누르면 깨져요. 가만 있어도 2초 뒤엔 녹아요. (녹은 뒤 2초는 안 얼어요)<br>
+        ⛄ <b>눈사람</b>은 부딪히면 <b>-30 코인</b>. 🕸️ 그물로 잡으면 +15, 🐧 펭귄은 +10이에요!<br>
+        🏠 <b>이글루</b> 안 모닥불에 가면 따뜻해지고 보너스 코인도 있어요. 🧊 빙산 발판은 위아래·좌우로 오르내려요.</p>
+      </div>
+      <div class="help-sec">
+        <h3>🍬 6탄 달콤 디저트 하늘섬</h3>
+        <p>5탄 얼음 성 문을 지나 <b>사탕 다리</b>로 이어져요.<br>
+        🥐 <b>마카롱·도넛 바운스</b>: 밟으면 퐁! 하고 높이 튕겨 올라가요. 위층 디저트 발판은 이걸로 올라가요.<br>
+        🍪 <b>쿠키 발판</b>: 밟고 <b>0.7초</b>면 바스락 부서졌다가 2.4초 뒤 다시 생겨요. 멈추지 말고 건너요!<br>
+        🍭 <b>회전 사탕 막대</b>에 닿으면 휙 밀려나요. ☁️ <b>구름 징검다리</b>는 폭신폭신 밟고 건너요.</p>
+      </div>
+      <div class="help-sec">
+        <h3>🚀 7탄 우주 별빛 대모험</h3>
+        <p>6탄 케이크 꼭대기에서 <b>발사대</b>로 이어져요. 7탄에 들어서면 <b>🌙 달 저중력</b> — 점프가 더 높고 둥실둥실 천천히 내려와요. 화면 위에 <b>0.42G 배지</b>가 떠요!<br>
+        ⭐ <b>별빛 징검다리</b> · 🛸 <b>UFO 발판</b> · 🌀 <b>회전 별 막대</b> · ☄️ <b>떨어지는 운석</b>(그림자가 생기면 피해요)을 지나 맨 꼭대기 <b>우주 정거장</b>으로!<br>
+        👑 <b>거대 대왕 쿠파</b>를 🕸️ 그물로 잡으면 <b>특별 보너스 +50 코인</b>!<br>
+        🏆 <b>최종 황금 트로피</b>에 닿으면 축하 폭죽과 함께 <b>공용 코인 +50</b>! 5·6·7탄을 모두 지나온 진짜 챔피언이에요!</p>
       </div>
       <div class="help-sec">
         <h3>🎒 아빠한테 업혀가기</h3>
@@ -1756,6 +1866,67 @@ var AU = (function () {
     tone({ f: 2093, d: 0.6, g: 0.05, type: 'sine', delay: 0.05 });
   }
 
+  /* ============================================================
+     ❄️ 5탄 — 눈 뽀드득 · 얼음 지잉 · 펭귄 얼음땡 · 얼음 깨짐
+     ============================================================ */
+  function crunch(n) {
+    var c = ctx(); if (!c || muted) return;
+    var t0 = c.currentTime + 0.002;
+    var pitch = 1 + ((n || 0) % 3) * 0.06;
+    /* 눈을 밟을 때 "뽀드득" — 짧은 고역 알갱이 두어 개 + 낮은 푹 */
+    for (var i = 0; i < 3; i++) {
+      hit({ at: t0 + i * 0.012 + rnd(0, 0.008), hp: rnd(1800, 3200) * pitch, bp: rnd(3200, 5600),
+        q: rnd(0.9, 1.5), a: 0.0006, d: rnd(0.01, 0.022), g: rnd(0.3, 0.55) });
+    }
+    tone({ at: t0, f: rnd(120, 150) * pitch, to: rnd(70, 90), d: 0.09, type: 'sine', g: 0.10, a: 0.002 });
+  }
+  function iceStep() {
+    var c = ctx(); if (!c || muted) return;
+    var t0 = c.currentTime + 0.002;
+    /* 얼음 위를 지날 때 "지이잉" — 살짝 미끄러지는 고역 노이즈 */
+    hit({ at: t0, hp: 2600, bp: 5200, q: 1.1, a: 0.008, hold: 0.02, d: 0.13, g: 0.16 });
+    tone({ at: t0, f: rnd(1500, 1800), to: rnd(1200, 1400), d: 0.1, type: 'sine', g: 0.030, a: 0.004 });
+  }
+  function freeze() {
+    var c = ctx(); if (!c || muted) return;
+    var t0 = c.currentTime + 0.004;
+    /* 쨍그랑— 얼음이 확 감싸는 소리 */
+    for (var i = 0; i < 5; i++) {
+      var f = rnd(2100, 3400) * (1 + i * 0.07);
+      tone({ at: t0 + i * 0.026, f: f, to: f * 0.94, d: rnd(0.08, 0.16), type: 'sine', g: 0.075, a: 0.002 });
+    }
+    hit({ at: t0, bp: 5200, q: 1.4, a: 0.002, d: 0.16, g: 0.28 });
+    tone({ at: t0, f: 520, to: 150, d: 0.26, type: 'triangle', g: 0.10, a: 0.004 });
+  }
+  function iceBreak(lv) {
+    var c = ctx(); if (!c || muted) return;
+    var L = lv === undefined ? 1 : clamp(lv, 0.3, 1.3);
+    var t0 = c.currentTime + 0.002;
+    /* 바사삭 — 얼음이 깨지는 소리 */
+    for (var i = 0; i < 7; i++) {
+      hit({ at: t0 + i * 0.011 + rnd(0, 0.007), hp: rnd(2600, 4800), bp: rnd(4200, 8200),
+        q: rnd(0.8, 1.3), a: 0.0005, d: rnd(0.008, 0.02), g: rnd(0.35, 0.7) * L });
+    }
+    tone({ at: t0 + 0.01, f: 1900, to: 900, d: 0.13, type: 'triangle', g: 0.09 * L, a: 0.002 });
+    tone({ at: t0 + 0.03, f: 760, to: 320, d: 0.16, type: 'sine', g: 0.10 * L, a: 0.003 });
+  }
+
+  /* 🥐 6탄 마카롱 — 말랑하게 눌렸다가 퐁! 하고 튀는 소리 */
+  var macLast = 0;
+  function macPop(lv) {
+    var c = ctx(); if (!c || muted) return;
+    var L = lv === undefined ? 1 : clamp(lv, 0.3, 1.4);
+    var nowMs = c.currentTime * 1000;
+    if (nowMs - macLast < 60) L *= 0.6;
+    macLast = nowMs;
+    var t0 = c.currentTime + 0.004;
+    /* 말랑 스프링 "뽀용-퐁" */
+    tone({ at: t0, f: 300, to: 1050, d: 0.17, type: 'sine', g: 0.12 * L, a: 0.006 });
+    tone({ at: t0 + 0.03, f: 700, to: 1500, d: 0.12, type: 'triangle', g: 0.06 * L, a: 0.004 });
+    hit({ at: t0, bp: 1400, q: 1.6, a: 0.002, d: 0.06, g: 0.22 * L });
+    hit({ at: t0 + 0.09, hp: 3600, bp: 6200, q: 1.1, a: 0.001, d: 0.03, g: 0.14 * L });
+  }
+
   function setMuted(m) {
     muted = !!m;
     store('bw:mute', muted ? '1' : '0');
@@ -1827,6 +1998,7 @@ var AU = (function () {
   return { click: click, clack: clack, keycap: keycap, typeKey: typeKey, chime: chime, coin: coin, jump: jump, land: land,
     err: err, msg: msg, win: win, pop: pop, sagrak: sagrak, jellyPop: jellyPop, setMuted: setMuted, isMuted: isMuted, unlock: unlock, seeCreak: seeCreak, coasterClack: coasterClack, whoosh: whoosh, scream: scream, bell: bell,
     swingWhoosh: swingWhoosh, swingPush: swingPush,
+    crunch: crunch, iceStep: iceStep, freeze: freeze, iceBreak: iceBreak, macPop: macPop,
     isRunning: isRunning, watchUnlock: watchUnlock, nudge: nudge };
 })();
 
@@ -2044,11 +2216,42 @@ var TYPES = {
   // 🫧 4탄 왁뿌볼(젤리 구슬) 발판 — 실제 색은 타일마다 tint 로 들어가요
   jelly:  { top: '#ffd4e8', right: '#ef8fc2', left: '#d9709f' },
   // 🧊 미끄러운 젤리 발판 (4탄 2층)
-  slip:   { top: '#d6f2ff', right: '#a9dcf2', left: '#7cc0dd' }
+  slip:   { top: '#d6f2ff', right: '#a9dcf2', left: '#7cc0dd' },
+  // ❄️ 5탄 얼음 빙글빙글 왕국
+  ice:    { top: '#d6f0ff', right: '#9ed7f3', left: '#71bcdf' },
+  iceDeep:{ top: '#cdefff', right: '#8ed1ea', left: '#5faed0' },
+  snow:   { top: '#ffffff', right: '#eaf3fb', left: '#cbdbec' },
+  // 🍬 6탄 달콤 디저트 하늘섬
+  macaron:{ top: '#ffd9ec', right: '#f2a6cb', left: '#d780aa' },
+  cookie: { top: '#ecc08d', right: '#c99561', left: '#a47340' },
+  cloud:  { top: '#ffffff', right: '#e9f4ff', left: '#d2e4f7' },
+  candy:  { top: '#ffd6f4', right: '#f0a6de', left: '#cf7cbb' },
+  // 🚀 7탄 우주 별빛 대모험
+  star:   { top: '#fff3b0', right: '#ffd85c', left: '#dca91c' },
+  space:  { top: '#6a7cb8', right: '#4a5790', left: '#333f6e' },
+  ufo:    { top: '#d3e0ff', right: '#9aade8', left: '#6d81c6' },
+  station:{ top: '#e2ecfa', right: '#adbdd8', left: '#8497b6' }
 };
 
 // ⌨️ 키캡 색 (알록달록 기계식 키보드)
 var KEY_COLORS = ['#ff7a9c', '#ffa63d', '#ffd94a', '#7ee081', '#4ec5ff', '#b48bff', '#ff8cd6', '#43d9c4'];
+
+/* ============================================================
+   🗺️ 5·6·7탄 구역 상자 — 발을 들이면 그 탄의 물리가 켜져요
+   (5탄 얼음 미끄럼 · 7탄 달 저중력)
+   ============================================================ */
+var ZONES = {
+  5: { x0: 52.4, x1: 110, y0: -116, y1: -92, z0: 7.8, z1: 12.0 },
+  6: { x0: 28, x1: 52.6, y0: -134, y1: -95, z0: 8.6, z1: 14.0 },
+  7: { x0: 2, x1: 28.4, y0: -152, y1: -130, z0: 10.6, z1: 24.0 }
+};
+function zoneAt(x, y, z) {
+  for (var k in ZONES) {
+    var b = ZONES[k];
+    if (x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && (z === undefined || (z >= b.z0 && z <= b.z1))) return +k;
+  }
+  return 0;
+}
 
 function seedOf(x, y) {
   var s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
@@ -2058,6 +2261,7 @@ function seedOf(x, y) {
 function buildMap() {
   var tiles = [], map = {}, gates = [], coinsArr = [], cps = [], trees = [], flowers = [], keyTiles = [];
   var movers = [], spins = [], portals = [], crmTiles = [], jellyTiles = [], rollers = [], enemies = [];
+  var pens = [], meteorSpots = [];       // 🐧 얼음땡 펭귄 · ☄️ 운석 자리
 
   function add(x, y, z, type, opt) {
     var t = {
@@ -2757,11 +2961,280 @@ function buildMap() {
   var finish4 = { x: J4.X(5, 1.0), y: J4.Y(5, 2.5), z: J4.Z(5) };
   spots.push({ x: J4.X(5, 1.6), y: J4.Y(5, 1.3), z: J4.Z(5), icon: '🏠', label: '마을로 돌아가기', act: 'village' });
 
-  /* ⑤ 🌱 그로우 어 가든 문 — 🎡 원더랜드 남쪽 잔디 광장으로 이사했어요 */
-  portals.push({ id: 'garden', x: 5.3, y: 24.6, z: 0, icon: '🌱', title: '그로우 어 가든', prompt: '🌱 그로우 어 가든으로 갈까요?', href: './grow-garden.html', color: '#33cf87' });
+  /* ============================================================
+     ❄️ 9-7) 5탄 — 얼음 빙글빙글 왕국  (4탄 꼭대기에서 걸어서 이어져요)
+     ------------------------------------------------------------
+     · 4탄 꼭대기 눈 디딤돌 다리 → 눈 광장(이글루 쉼터) → 얼음 미끄럼 길
+     · 얼음 타일은 관성으로 쭉 미끄러지고, 눈 타일은 뽀드득 발소리!
+     · 얼음 틈 점프 · 좌우/위아래로 오르내리는 빙산 발판
+     · 🐧 펭귄에 닿으면 2.2초 얼음땡! (점프 연타로 얼음 깨기)
+     · ⛄ 눈사람 적은 부딪히면 -30 코인, 🕸️ 그물로 잡을 수 있어요
+     ============================================================ */
+  var Z5 = 8.6;
+
+  /* ① 4탄 꼭대기 → 5탄 눈 디딤돌 다리 (4칸 너비라 걸어서 술술 내려와요) */
+  rect(99, -96, 102, -92, 8.85, 'snow');        // 4탄 결승 발판 바로 남쪽
+  rect(98, -98, 101, -96, 8.75, 'snow');
+  for (var s5br = -98; s5br <= -92; s5br++) {
+    if (s5br <= -96) railTile(102, s5br, 8.8, { tint: '#bfe6ff' });
+    else railTile(103, s5br, 8.85, { tint: '#bfe6ff' });
+  }
+  props.push({ k: 'snowPine', x: 101.6, y: -92.4, z: 8.85, s: 0.8 });
+  props.push({ k: 'icePillar', x: 98.6, y: -94.6, z: 8.85 });
+  props.push({ k: 'houseSign', x: 99.0, y: -93.2, z: 8.85, who: null, label: '4탄 끝 → ❄️ 5탄', emoji: '🧊' });
+
+  /* ② 시작 광장 — 눈밭 + 🏠 이글루 쉼터 */
+  rect(90, -106, 101, -99, Z5, 'snow');
+  /* 이글루 앞마당은 얼음으로 반짝 */
+  rect(92, -103, 96, -100, Z5, 'ice');
+  props.push({ k: 'igloo', x: 92.4, y: -105.2, z: Z5 });
+  props.push({ k: 'campfire', x: 94.4, y: -102.2, z: Z5 });
+  props.push({ k: 'rug', x: 93.2, y: -103.4, z: Z5 });
+  props.push({ k: 'houseSign', x: 98.4, y: -105.4, z: Z5, who: null, label: '아늑한 이글루', emoji: '🏠' });
+  props.push({ k: 'houseSign', x: 90.2, y: -105.6, z: Z5, who: null, label: '5탄 얼음 빙글빙글 왕국', emoji: '❄️' });
+  props.push({ k: 'snowPine', x: 91.0, y: -99.6, z: Z5, s: 1.0 });
+  props.push({ k: 'snowPine', x: 100.6, y: -104.2, z: Z5, s: 0.9 });
+  props.push({ k: 'icePillar', x: 90.4, y: -105.4, z: Z5 });
+  spots.push({ x: 94.4, y: -102.4, z: Z5, icon: '🔥', label: '모닥불에 손 녹이기', act: 'warm' });
+  cps.push({ x: 99.2, y: -100.2, z: Z5, on: false, s5: 1 });      // 5탄 시작 깃발
+  coin(92.6, -102.0, Z5 + 0.55);
+  coin(94.0, -103.2, Z5 + 0.55);
+  coin(95.6, -101.6, Z5 + 0.55);
+  coin(93.4, -100.4, Z5 + 0.55, true);
+  coin(98.4, -101.0, Z5 + 0.55); coin(99.4, -102.6, Z5 + 0.55);
+
+  /* 🐧 얼음땡 펭귄 — 같이 걷다가 닿으면 얼려요! */
+  pens.push({ id: 'pn1', x0: 97.4, y0: -104.0, x1: 100.4, y1: -104.0, z: Z5, speed: 0.75, ph: 0.4, px: 97.4, py: -104.0, face: 1 });
+  pens.push({ id: 'pn2', x0: 90.6, y0: -100.2, x1: 92.0, y1: -101.6, z: Z5, speed: 0.55, ph: 2.1, px: 90.6, py: -100.2, face: 1 });
+
+  /* ③ 얼음 미끄럼 길 (서쪽으로 쭉—) */
+  rect(82, -104, 89, -100, Z5, 'ice');
+  for (var s5r = 82; s5r <= 89; s5r++) {
+    railTile(s5r, -105, Z5, { tint: '#d9f2ff' });
+    railTile(s5r, -99, Z5, { tint: '#d9f2ff' });
+  }
+  props.push({ k: 'houseSign', x: 84.2, y: -105.6, z: Z5, who: null, label: '미끄럼 얼음길', emoji: '🛷' });
+  props.push({ k: 'icePillar', x: 88.6, y: -105.4, z: Z5 });
+  props.push({ k: 'icePillar', x: 83.2, y: -98.6, z: Z5 });
+  enemies.push({ id: 's5fo0', x0: 84.2, y0: -102.0, x1: 88.4, y1: -102.0, z: Z5, speed: 1.15, ph: 0.7, px: 84.2, py: -102.0, hitAt: 0, face: 1, kind: 'snow' });
+  coin(83, -102, Z5 + 0.55); coin(85, -102, Z5 + 0.55); coin(87, -102, Z5 + 0.55);
+  coin(88.5, -101, Z5 + 0.55, true);
+
+  /* ④ 얼음 틈 점프 1 (2칸) */
+  rect(76, -104, 79, -100, Z5, 'iceDeep');
+  for (var s5r2 = 76; s5r2 <= 79; s5r2++) {
+    railTile(s5r2, -105, Z5, { tint: '#d9f2ff' });
+    railTile(s5r2, -99, Z5, { tint: '#d9f2ff' });
+  }
+  props.push({ k: 'houseSign', x: 76.4, y: -105.4, z: Z5, who: null, label: '점프로 건너요 ↑', emoji: '🦘' });
+  cps.push({ x: 77.5, y: -102.0, z: Z5, on: false, s5: 1 });     // 5탄 중간 깃발
+  coin(77, -101, Z5 + 0.55); coin(78.5, -103, Z5 + 0.55);
+  pens.push({ id: 'pn3', x0: 76.6, y0: -103.2, x1: 78.6, y1: -103.2, z: Z5, speed: 0.62, ph: 1.1, px: 76.6, py: -103.2, face: 1 });
+
+  /* ⑤ 얼음 틈 점프 2 (2칸) — 눈 발판 섬 */
+  rect(70, -104, 73, -100, Z5, 'snow');
+  props.push({ k: 'snowPine', x: 70.4, y: -104.2, z: Z5, s: 0.85 });
+  enemies.push({ id: 's5fo1', x0: 70.6, y0: -101.6, x1: 72.6, y1: -101.6, z: Z5, speed: 1.0, ph: 1.9, px: 70.6, py: -101.6, hitAt: 0, face: 1, kind: 'snow' });
+  coin(71, -102.5, Z5 + 0.55); coin(72, -104.0, Z5 + 0.55, true);
+
+  /* ⑥ ↔️ 좌우로 오르내리는 빙산 발판 (1) */
+  var s5mvY = { id: 's5my', axis: 'y', span: 1.2, speed: 0.9, phase: 0.6, prev: 0, tiles: [] };
+  s5mvY.prev = (1 + Math.sin(s5mvY.phase)) * 0.5 * s5mvY.span;
+  for (var s5k = 0; s5k < 2; s5k++) {
+    for (var s5k4 = 0; s5k4 < 3; s5k4++) {
+      var s5mt = add(68 + s5k, -103 + s5k4 + s5mvY.prev, Z5, 'iceDeep', { step: 0.6 });
+      s5mt.mvAxis = 'y'; s5mt.mx = 68 + s5k; s5mt.my = -103 + s5k4;
+      s5mt.ice = 1;
+      s5mvY.tiles.push(s5mt);
+    }
+  }
+  movers.push(s5mvY);
+
+  /* ⑦ ↕️ 위아래로 오르내리는 빙산 발판 (2) */
+  var s5mvZ = { id: 's5mz', axis: 'z', span: 1.3, speed: 1.05, phase: 1.7, prev: 0, tiles: [] };
+  s5mvZ.prev = (1 + Math.sin(s5mvZ.phase)) * 0.5 * s5mvZ.span;
+  for (var s5k2 = 0; s5k2 < 2; s5k2++) {
+    for (var s5k3 = 0; s5k3 < 2; s5k3++) {
+      var s5mt2 = add(66 + s5k2, -103 + s5k3, Z5 + s5mvZ.prev, 'ice', { step: 0.6 });
+      s5mt2.mvAxis = 'z'; s5mt2.mx = 66 + s5k2; s5mt2.my = -103 + s5k3;
+      s5mt2.ice = 1;
+      s5mvZ.tiles.push(s5mt2);
+    }
+  }
+  movers.push(s5mvZ);
+  props.push({ k: 'houseSign', x: 66.2, y: -100.4, z: Z5, who: null, label: '빙산 발판을 타고', emoji: '🧊' });
+
+  /* ⑧ 얼음 성 마당 — 5탄 완주 깃발 */
+  rect(56, -104, 65, -97, Z5, 'iceDeep');
+  for (var s5c = 56; s5c <= 65; s5c++) railTile(s5c, -105, Z5, { tint: '#e6f7ff' });
+  for (var s5c2 = -105; s5c2 <= -102; s5c2++) railTile(55, s5c2, Z5, { tint: '#e6f7ff' });
+  rect(56, -105, 65, -105, Z5 + 1.2, 'ice');
+  portals.push({ id: 'ice5', x: 99.2, y: -96.6, z: 8.75, icon: '❄️', title: '5탄 얼음 왕국', prompt: '❄️ 바로 5탄 얼음 빙글빙글 왕국으로!', href: '#tw5', color: '#8fd6ff' });
+  portals.push({ id: 'candy6', x: 57.4, y: -98.4, z: Z5, icon: '🍬', title: '6탄 디저트 하늘섬', prompt: '🍬 바로 6탄 달콤 디저트 하늘섬으로!', href: '#tw6', color: '#ff9fd8' });
+  portals.push({ id: 'space7', x: 31.6, y: -127.2, z: 11.0, icon: '🚀', title: '7탄 우주 대모험', prompt: '🚀 바로 7탄 우주 별빛 대모험으로!', href: '#tw7', color: '#9fb2ff' });
+  props.push({ k: 'iceCastle', x: 57.2, y: -104.6, z: Z5 });
+  props.push({ k: 'houseSign', x: 60.4, y: -105.6, z: Z5, who: null, label: '얼음 성 · 5탄 완주!', emoji: '🏰' });
+  props.push({ k: 'houseSign', x: 55.6, y: -99.2, z: Z5, who: null, label: '→ 6탄 달콤 디저트', emoji: '🍬' });
+  cps.push({ x: 62.0, y: -101.0, z: Z5, on: false, s5: 1 });
+  coin(58, -100, Z5 + 0.55); coin(60, -102, Z5 + 0.55); coin(63, -99, Z5 + 0.55, true);
+  enemies.push({ id: 's5fo2', x0: 58.6, y0: -98.4, x1: 62.6, y1: -98.4, z: Z5, speed: 1.3, ph: 2.6, px: 58.6, py: -98.4, hitAt: 0, face: 1, kind: 'snow' });
+  spots.push({ x: 60.2, y: -100.4, z: Z5, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ============================================================
+     🍬 9-8) 6탄 — 달콤 디저트 하늘섬 (5탄 얼음 성에서 이어져요)
+     ------------------------------------------------------------
+     · 🥐 마카롱·도넛 바운스 패드 — 밟으면 퐁! 하고 높이 튕겨요
+     · 🍪 쿠키 발판 — 밟고 0.7초면 바스락 부서졌다가 다시 살아나요
+     · 🍭 회전 사탕(롤리팝) 막대 · ☁️ 구름 징검다리
+     ============================================================ */
+  var Z6 = 9.2;
+
+  /* ① 얼음 성에서 이어지는 사탕 다리 */
+  rect(52, -101, 55, -97, 8.9, 'candy');
+  props.push({ k: 'lollipop', x: 55.4, y: -101.6, z: 9.9, s: 1.0 });
+
+  /* ② 시작 광장 — 케이크 바닥 */
+  rect(45, -102, 51, -97, Z6, 'candy');
+  props.push({ k: 'houseSign', x: 50.6, y: -102.4, z: Z6, who: null, label: '6탄 달콤 디저트 하늘섬', emoji: '🍬' });
+  props.push({ k: 'cakeStage', x: 45.6, y: -102.2, z: Z6 });
+  cps.push({ x: 49.4, y: -99.4, z: Z6, on: false, s6: 1 });   // 6탄 시작 깃발
+  coin(46.5, -99, Z6 + 0.55); coin(48, -101, Z6 + 0.55); coin(50, -99.5, Z6 + 0.55, true);
+  spots.push({ x: 47.2, y: -99.2, z: Z6, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ③ 🥐 마카롱·도넛 바운스 발판 — 높이 튕겨 올라가요 */
+  rect(39, -102, 44, -97, Z6, 'cookie');
+  for (var s6d = 0; s6d < tiles.length; s6d++) {
+    var s6t = tiles[s6d];
+    if (s6t.type === 'cookie' && !s6t.crm && s6t.z === Z6) s6t.cookie = 1;   // 초코칩 장식만 (부서지지 않아요)
+  }
+  function macPad(x, y, kind) {
+    var t = add(x, y, Z6, 'macaron', { step: 0.5 });
+    t.mac = kind || 'macaron';
+    t.macSq = 0; t.macV = 0;
+    return t;
+  }
+  macPad(41, -100, 'macaron');
+  macPad(42, -99, 'donut');
+  macPad(39, -99, 'macaron');
+  props.push({ k: 'houseSign', x: 40.2, y: -102.6, z: Z6, who: null, label: '마카롱 바운스!', emoji: '🥐' });
+
+  /* ④ 위층 디저트 발판 (마카롱으로 튕겨 올라가요) */
+  rect(33, -104, 38, -96, 10.4, 'candy');
+  props.push({ k: 'lollipop', x: 33.6, y: -103.6, z: 11.4, s: 1.05, tint: '#ff8fd6' });
+  props.push({ k: 'lollipop', x: 37.2, y: -96.8, z: 11.4, s: 0.95, tint: '#8fe0ff' });
+  coin(34.5, -101, 10.95); coin(36, -99, 10.95); coin(37, -102, 10.95, true);
+  cps.push({ x: 35.6, y: -97.6, z: 10.4, on: false, s6: 1 });   // 6탄 중간 깃발
+  enemies.push({ id: 's6fo0', x0: 34.2, y0: -100.6, x1: 36.8, y1: -100.6, z: 10.4, speed: 1.15, ph: 0.9, px: 34.2, py: -100.6, hitAt: 0, face: 1 });
+
+  /* ⑤ 🍪 쿠키 발판 다리 — 밟고 0.7초면 바스락! */
+  for (var s6cx = 34; s6cx <= 37; s6cx++) {
+    for (var s6cy = -110; s6cy <= -105; s6cy++) {
+      var s6ck = add(s6cx, s6cy, 10.4, 'cookie', { crm: 1, step: 0.5 });
+      s6ck.cookie = 1; s6ck.crmT = 0.7; s6ck.crmR = 2.4; s6ck.cstate = 'idle';
+    }
+  }
+  props.push({ k: 'houseSign', x: 38.0, y: -107.2, z: 10.4, who: null, label: '쿠키는 0.7초!', emoji: '🍪' });
+  coin(35, -107, 10.95); coin(36.5, -109, 10.95);
+  /* 쿠키 다리 끝 — 안전하게 설 수 있는 케이크 턱 */
+  rect(34, -111, 37, -111, 10.4, 'candy');
+  props.push({ k: 'houseSign', x: 37.8, y: -111.6, z: 10.4, who: null, label: '구름으로 점프!', emoji: '☁️' });
+
+  /* ⑥ ☁️ 구름 징검다리 */
+  rect(31, -114, 35, -113, 10.4, 'cloud');
+  rect(30, -117, 34, -116, 10.4, 'cloud');
+  rect(31, -120, 35, -119, 10.4, 'cloud');
+  props.push({ k: 'houseSign', x: 35.0, y: -114.4, z: 10.4, who: null, label: '구름 징검다리', emoji: '☁️' });
+  coin(33, -113.5, 10.95); coin(32, -116.5, 10.95, true); coin(33, -119.5, 10.95);
+
+  /* ⑦ 🍭 회전 사탕 막대 아레나 */
+  rect(32, -125, 38, -121, 10.6, 'candy');
+  spins.push({ id: 's6sp0', x: 35, y: -123, z: 10.6, len: 2.2, speed: 1.25, a: 0, hitAt: 0, kind: 'lolli' });
+  props.push({ k: 'houseSign', x: 38.2, y: -125.4, z: 10.6, who: null, label: '회전 사탕 막대', emoji: '🍭' });
+  coin(33, -122, 11.15); coin(37, -124, 11.15);
+
+  /* ⑧ 케이크 꼭대기 — 6탄 완주 */
+  rect(30, -132, 36, -126, 11.0, 'candy');
+  props.push({ k: 'cakeStage', x: 30.4, y: -132.2, z: 11.0, big: 1 });
+  props.push({ k: 'houseSign', x: 36.4, y: -132.4, z: 11.0, who: null, label: '6탄 완주! → 🚀 7탄', emoji: '🎂' });
+  cps.push({ x: 33.0, y: -129.0, z: 11.0, on: false, s6: 1 });
+  coin(32, -128, 11.55); coin(34.5, -130, 11.55); coin(35.5, -127.5, 11.55, true);
+  enemies.push({ id: 's6fo1', x0: 31.4, y0: -127.2, x1: 35.0, y1: -127.2, z: 11.0, speed: 1.2, ph: 1.6, px: 31.4, py: -127.2, hitAt: 0, face: 1 });
+
+  /* ============================================================
+     🚀 9-9) 7탄 — 우주 별빛 대모험 (달 저중력!)
+     ------------------------------------------------------------
+     · 7탄 구역에 들어서면 중력이 0.42배 → 더 높이 뜨고 둥실둥실!
+       (화면 아래에 🌙 달 저중력 배지가 떠요)
+     · 🛸 움직이는 UFO 발판 · ⭐ 별빛 징검다리 · ☄️ 떨어지는 운석 · 🌀 회전 별 막대
+     · 맨 꼭대기 우주 정거장에 👑 거대 대왕 쿠파 + 🏆 최종 황금 트로피 (+50)
+     ============================================================ */
+  var Z7 = 11.2;
+
+  /* ① 발사대 — 7탄 시작 깃발 */
+  rect(23, -138, 28, -132, Z7, 'space');
+  for (var s7r = 23; s7r <= 28; s7r++) { railTile(s7r, -139, Z7, { tint: '#9fb6ff' }); }
+  props.push({ k: 'rocket', x: 24.6, y: -137.2, z: Z7 });
+  props.push({ k: 'houseSign', x: 27.2, y: -138.6, z: Z7, who: null, label: '7탄 우주 별빛 대모험', emoji: '🚀' });
+  props.push({ k: 'houseSign', x: 23.4, y: -131.4, z: Z7, who: null, label: '톡톡 튀어 오르는 별을 밟아요', emoji: '⭐' });
+  cps.push({ x: 26.4, y: -134.0, z: Z7, on: false, s7: 1 });     // 7탄 시작 깃발
+  coin(24, -134, Z7 + 0.55); coin(27, -135.5, Z7 + 0.55);
+  spots.push({ x: 25.4, y: -133.2, z: Z7, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ② ⭐ 별빛 징검다리 (2칸 점프 · 저중력이라 훨씬 멀리 날아요) */
+  function starStone(x0, y0, w, d, z) {
+    rect(x0, y0, x0 + w - 1, y0 + d - 1, z, 'star', { step: 0.55 });
+  }
+  starStone(19, -137, 2, 2, 12.0);
+  starStone(15, -139, 2, 2, 12.8);
+  starStone(15, -135, 2, 2, 13.6);
+  coin(19.5, -136, 12.55); coin(15.5, -138, 13.35); coin(15.5, -134, 14.15);
+
+  /* ③ 🛸 움직이는 UFO 발판 (좌우로 둥실) */
+  var s7mv = { id: 's7mx', axis: 'x', span: 1.6, speed: 0.8, phase: 0.4, prev: 0, tiles: [] };
+  s7mv.prev = (1 + Math.sin(s7mv.phase)) * 0.5 * s7mv.span;
+  for (var s7k = 0; s7k < 3; s7k++) {
+    for (var s7k2 = 0; s7k2 < 2; s7k2++) {
+      var s7ut = add(10 + s7k + s7mv.prev, -135 + s7k2, 13.6, 'ufo', { step: 0.5 });
+      s7ut.mvAxis = 'x'; s7ut.mx = 10 + s7k; s7ut.my = -135 + s7k2; s7ut.ufo = 1;
+      s7mv.tiles.push(s7ut);
+    }
+  }
+  movers.push(s7mv);
+  props.push({ k: 'houseSign', x: 12.4, y: -132.8, z: 13.6, who: null, label: 'UFO 발판', emoji: '🛸' });
+
+  /* ④ 🌀 회전 별 막대 · ☄️ 운석이 떨어지는 구간 */
+  rect(6, -134, 9, -131, 14.4, 'station');
+  spins.push({ id: 's7sp0', x: 7.5, y: -132.5, z: 14.4, len: 1.9, speed: 1.5, a: 0, hitAt: 0, kind: 'star' });
+  meteorSpots.push({ x: 7.5, y: -132.6, z: 14.4 });
+  meteorSpots.push({ x: 12.6, y: -136.4, z: 13.6 });
+  meteorSpots.push({ x: 16.4, y: -139.4, z: 12.8 });
+  meteorSpots.push({ x: 20.4, y: -135.4, z: 12.0 });
+  props.push({ k: 'houseSign', x: 9.4, y: -134.6, z: 14.4, who: null, label: '운석 조심!', emoji: '☄️' });
+
+  /* ⑤ 🏆 우주 정거장 — 거대 대왕 쿠파 + 최종 황금 트로피 */
+  rect(4, -146, 13, -137, 15.2, 'station');
+  for (var s7s = 4; s7s <= 13; s7s++) { railTile(s7s, -147, 15.2, { tint: '#a9c6ff' }); }
+  for (var s7s2 = -146; s7s2 <= -137; s7s2++) { railTile(3, s7s2, 15.2, { tint: '#a9c6ff' }); railTile(14, s7s2, 15.2, { tint: '#a9c6ff' }); }
+  rect(4, -147, 13, -147, 16.4, 'station');
+  props.push({ k: 'stationDome', x: 4.6, y: -146.4, z: 15.2 });
+  props.push({ k: 'houseSign', x: 12.0, y: -146.8, z: 15.2, who: null, label: '우주 정거장', emoji: '🛰️' });
+  props.push({ k: 'planetBig', x: 1.2, y: -150.0, z: 13.0 });
+  props.push({ k: 'saturn', x: 17.0, y: -147.0, z: 12.0 });
+  cps.push({ x: 11.6, y: -142.0, z: 15.2, on: false, s7: 1 });  // 7탄 정거장 깃발
+  var finish7 = { x: 12.0, y: -144.4, z: 15.2 };
+  enemies.push({
+    id: 's7king', x0: 5.4, y0: -139.4, x1: 11.6, y1: -139.4, z: 15.2, speed: 1.05, ph: 0.6,
+    px: 5.4, py: -139.4, hitAt: 0, face: 1, king: 1
+  });
+  coin(6, -144, 15.75); coin(9, -144, 15.75); coin(10, -145.4, 15.75, true);
+  coin(5, -142, 15.75); coin(13.4, -142, 15.75);
+  spots.push({ x: 4.8, y: -138.4, z: 15.2, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ⑤ 🌱 그로우 어 가든 문 — 🎡 원더랜드 남서쪽 잔디 (청룡열차 레일을 안 가리는 자리) */
+  portals.push({ id: 'garden', x: 2.4, y: 25.6, z: 0, icon: '🌱', title: '그로우 어 가든', prompt: '🌱 그로우 어 가든으로 갈까요?', href: './grow-garden.html', color: '#33cf87' });
 
   /* ⑥ 👗 드레스 투 임프레스 문(원더랜드) + 🏰 3탄으로 이어지는 문(2탄 왕관 결승 구역) */
-  portals.push({ id: 'dress', x: 9.9, y: 24.4, z: 0, icon: '👗', title: '드레스 투 임프레스', prompt: '👗 드레스 투 임프레스로 갈까요?', href: './dress-up.html', color: '#a97bff' });
+  portals.push({ id: 'dress', x: 2.4, y: 30.4, z: 0, icon: '👗', title: '드레스 투 임프레스', prompt: '👗 드레스 투 임프레스로 갈까요?', href: './dress-up.html', color: '#a97bff' });
   /* 🛝·🤸 미끄럼틀·트램펄린 문 안내가 승강장 쪽에서 뜨지 않게 거리 체크는 문 앞 1.6칸로 */
   portals.push({ id: 'tw3', x: 98.5, y: 15, z: 6, icon: '🏰', title: '3탄 무지개 타워', prompt: '🏰 바로 3탄 무지개 타워로 이어서 도전!', href: '#tw3', color: '#ff7ac6' });
 
@@ -2998,11 +3471,16 @@ function buildMap() {
     flowers.push({ x: fx, y: fy, z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
   }
 
+  var finish5 = { x: 60.2, y: -100.6, z: Z5 };
+  var finish6 = { x: 33.0, y: -129.0, z: 11.0 };
+
   return {
     tiles: tiles, map: map, gates: gates, coins: coinsArr, cps: cps, trees: trees, flowers: flowers,
     props: props, spots: spots, houses: houses, keyTiles: keyTiles,
     movers: movers, spins: spins, portals: portals, crmTiles: crmTiles, rollers: rollers, enemies: enemies, finish2: finish2,
-    finish3: finish3, finish4: finish4, jellyTiles: jellyTiles, hops3: T3.hops, hops4: J4.hops,
+    finish3: finish3, finish4: finish4, finish5: finish5, finish6: finish6, finish7: finish7,
+    pens: pens, meteorSpots: meteorSpots, zones: ZONES,
+    jellyTiles: jellyTiles, hops3: T3.hops, hops4: J4.hops,
     park: { area: PARK, see: seesaw, coaster: coaster },
     spawn: { x: -9, y: 2.5, z: 0 },
     finish: { x: 51, y: 3, z: 3 },
@@ -3022,6 +3500,11 @@ var G = {
   finish2: { x: 97, y: 13.5, z: 6 }, finished2: false, cp2Start: 9,
   finish3: { x: 87.5, y: -28.5, z: 7.5 }, finished3: false, cp3Start: 15, at3: false,
   finish4: { x: 132.5, y: -84.5, z: 6.75 }, finished4: false, cp4Start: -1, at4: false,
+  /* ❄️🍬🚀 5·6·7탄 */
+  finish5: { x: 60.2, y: -100.6, z: 8.6 }, finished5: false, cp5Start: -1, at5: false,
+  finish6: { x: 33, y: -129, z: 11.0 }, finished6: false, cp6Start: -1, at6: false,
+  finish7: { x: 8, y: -141, z: 15.2 }, finished7: false, cp7Start: -1, at7: false,
+  pens: [], meteorSpots: [], meteors: [], frozen: null, zone: 0, freezes: 0,
   p: { x: -9, y: 2.5, z: 0, vz: 0, air: false, face: 1, walk: 0, move: false, ground: 0, land: 0 },
   ride: 'walk', pet: null, petXY: { x: -9, y: 3.2 }, spot: null,
   zoom: 1, zoomBase: 1, camFree: false, camOff: { x: 0, y: 0 }, bounds: null,
@@ -3054,6 +3537,13 @@ function buildWorld() {
   G.jellyTiles = m.jellyTiles || [];
   G.rollers = m.rollers || []; G.enemies = m.enemies || [];
   G.hops3 = m.hops3 || []; G.hops4 = m.hops4 || [];
+  /* ❄️🍬🚀 5·6·7탄 */
+  G.finish5 = m.finish5 || G.finish5;
+  G.finish6 = m.finish6 || G.finish6;
+  G.finish7 = m.finish7 || G.finish7;
+  G.pens = m.pens || [];
+  G.meteorSpots = m.meteorSpots || [];
+  G.zones = m.zones || ZONES; G.meteors = []; G.frozen = null; G.freezes = 0;
   /* 🎡 놀이공원 — 시소 · 청룡열차 */
   G.park = m.park || null;
   G.see = G.park ? G.park.see : null;
@@ -3061,14 +3551,21 @@ function buildWorld() {
   G.coSegs = G.co ? buildCoasterSegs(G.co) : [];
   // 코스별 첫 체크포인트 위치 (s2 / s3 / s4 표시로 찾아요)
   G.cp2Start = -1; G.cp3Start = -1; G.cp4Start = -1;
+  G.cp5Start = -1; G.cp6Start = -1; G.cp7Start = -1;
   for (var ci = 0; ci < G.cps.length; ci++) {
     if (G.cps[ci].s2 && G.cp2Start < 0) G.cp2Start = ci;
     if (G.cps[ci].s3 && G.cp3Start < 0) G.cp3Start = ci;
     if (G.cps[ci].s4 && G.cp4Start < 0) G.cp4Start = ci;
+    if (G.cps[ci].s5 && G.cp5Start < 0) G.cp5Start = ci;
+    if (G.cps[ci].s6 && G.cp6Start < 0) G.cp6Start = ci;
+    if (G.cps[ci].s7 && G.cp7Start < 0) G.cp7Start = ci;
   }
   if (G.cp2Start < 0) G.cp2Start = 9;
   if (G.cp3Start < 0) G.cp3Start = G.cps.length - 1;
   if (G.cp4Start < 0) G.cp4Start = G.cps.length - 1;
+  if (G.cp5Start < 0) G.cp5Start = G.cps.length - 1;
+  if (G.cp6Start < 0) G.cp6Start = G.cps.length - 1;
+  if (G.cp7Start < 0) G.cp7Start = G.cps.length - 1;
   /* 1탄 첫 체크포인트(처음에 켜져 있는 깃발)가 목록 어디에 있든 찾아 둡니다 */
   G.cp1Start = 0;
   for (var cf = 0; cf < G.cps.length; cf++) if (G.cps[cf].on) { G.cp1Start = cf; break; }
@@ -3521,6 +4018,176 @@ function drawTile(ctx, t) {
     ctx.globalAlpha = ap;
     ctx.fillStyle = 'rgba(255,255,255,.92)';
     emo(ctx, t.mvAxis === 'y' ? '↕' : '↔', mcx, mcy - 1, 22);
+    ctx.restore();
+  }
+
+  /* ❄️ 얼음 타일 — 반짝 하이라이트 + 금 간 무늬 */
+  if (t.type === 'ice' || t.type === 'iceDeep') {
+    var icx = (p0.x + p2.x) / 2, icy = (p0.y + p2.y) / 2;
+    ctx.save();
+    ctx.globalAlpha = ap * (0.22 + 0.1 * Math.sin(G.t * 2 + t.x * 1.7 + t.y));
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(icx - 6, icy - 3, 24, 10, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.globalAlpha = ap * 0.5;
+    ctx.strokeStyle = 'rgba(255,255,255,.85)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(p0.x + 12, p0.y + 4);
+    ctx.lineTo(icx - 4, icy + 2);
+    ctx.lineTo(icx + 6, icy - 4);
+    ctx.lineTo(p2.x - 10, p2.y - 3);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* ⛄ 눈 타일 — 반짝 눈송이 */
+  if (t.type === 'snow') {
+    var scx = (p0.x + p2.x) / 2, scy = (p0.y + p2.y) / 2;
+    ctx.save();
+    ctx.globalAlpha = ap * (0.55 + 0.35 * Math.sin(G.t * 2.4 + t.x * 2.1 + t.y * 1.3));
+    ctx.fillStyle = '#eaf8ff';
+    star(ctx, scx + (t.seed - 0.5) * 34, scy + (t.seed - 0.5) * 12, 4, 5, 1.8);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 🥐 마카롱 · 🍩 도넛 — 밟으면 말랑하게 쑥 내려가요 */
+  if (t.mac) {
+    var mxc = (p0.x + p2.x) / 2, myc = (p0.y + p2.y) / 2;
+    var dip = (t.macSq || 0) * 9;
+    ctx.save();
+    ctx.globalAlpha = ap;
+    if (t.mac === 'donut') {
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 2 + dip, 30, 15, 0, 0, 6.2832);
+      ctx.fillStyle = '#f2b880'; ctx.fill();
+      ctx.strokeStyle = '#d3915a'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 1 + dip, 27, 12.5, 0, 0, 6.2832);
+      ctx.fillStyle = '#ff9ecd'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 1 + dip, 9, 4.2, 0, 0, 6.2832);
+      ctx.fillStyle = '#fdf3e6'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.fillStyle = '#ffe27a';
+      for (var dn = 0; dn < 6; dn++) {
+        var da = dn * 1.05 + t.seed * 6;
+        ctx.beginPath();
+        ctx.arc(mxc + Math.cos(da) * 19, myc + 1 + dip + Math.sin(da) * 8, 1.8, 0, 6.2832);
+        ctx.fill();
+      }
+    } else {
+      /* 마카롱 — 위아래 껍질 + 가운데 크림 */
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 4 + dip, 30, 14, 0, 0, 6.2832);
+      ctx.fillStyle = '#f79cc8'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 4 + dip, 30, 14, 0, 0, 6.2832);
+      ctx.fillStyle = '#fff4f9'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(mxc, myc + dip, 28, 12, 0, 0, 6.2832);
+      ctx.fillStyle = '#ffeaf4'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(mxc, myc + 2 + dip, 26, 6, 0, 0, 6.2832);
+      ctx.fillStyle = '#ffb6d9'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(mxc, myc - 2 + dip, 28, 12, 0, 0, 6.2832);
+      ctx.fillStyle = '#ffc9e2'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(mxc - 8, myc - 5 + dip, 8, 3.4, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* 🍪 쿠키 발판 — 초코칩 + 바스크 부서지기 직전엔 갈라져요 */
+  if (t.cookie) {
+    var kcx = (p0.x + p2.x) / 2, kcy = (p0.y + p2.y) / 2;
+    ctx.save();
+    ctx.globalAlpha = ap;
+    ctx.fillStyle = '#8a5a2b';
+    for (var ci2 = 0; ci2 < 4; ci2++) {
+      var ca = ci2 * 1.6 + t.seed * 5;
+      ctx.beginPath();
+      ctx.arc(kcx + Math.cos(ca) * 16, kcy + Math.sin(ca) * 7, 2.6, 0, 6.2832);
+      ctx.fill();
+    }
+    if (t.cstate === 'shake') {
+      ctx.globalAlpha = ap * (0.45 + 0.4 * Math.sin(G.t * 24));
+      ctx.strokeStyle = '#7a4a1e'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p0.x + 14, p0.y + 4); ctx.lineTo(kcx - 2, kcy + 1); ctx.lineTo(kcx + 8, kcy - 4);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* ☁️ 구름 — 폭신폭신 구름 솜 */
+  if (t.type === 'cloud') {
+    var cxc2 = (p0.x + p2.x) / 2, cyc2 = (p0.y + p2.y) / 2;
+    var puff = 0.5 + 0.5 * Math.sin(G.t * 1.3 + t.x * 1.9 + t.y);
+    ctx.save();
+    ctx.globalAlpha = ap;
+    /* 구름 아래 부드러운 그늘 */
+    ctx.beginPath();
+    ctx.ellipse(cxc2, cyc2 + 5, 26, 10, 0, 0, 6.2832);
+    ctx.fillStyle = 'rgba(180,212,240,.45)'; ctx.fill();
+    /* 봉실봉실 구름 (작은 원 여러 개) */
+    var pu = [[-16, 1, 11, 8], [0, -5, 13, 10], [15, 1, 10, 7], [-7, 4, 9, 6], [8, 4, 9, 6]];
+    for (var pj = 0; pj < pu.length; pj++) {
+      ctx.beginPath();
+      ctx.ellipse(cxc2 + pu[pj][0], cyc2 + pu[pj][1] - puff * 1.2, pu[pj][2], pu[pj][3], 0, 0, 6.2832);
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+    }
+    ctx.globalAlpha = ap * 0.75;
+    ctx.beginPath();
+    ctx.ellipse(cxc2 - 7, cyc2 - 7 - puff * 1.2, 6, 3.4, 0, 0, 6.2832);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.restore();
+  }
+
+  /* ⭐ 별빛 징검돌 — 반짝반짝 */
+  if (t.type === 'star') {
+    var swx = (p0.x + p2.x) / 2, swy = (p0.y + p2.y) / 2;
+    var tw = 0.55 + 0.45 * Math.sin(G.t * 3.2 + t.x * 2.3 + t.y * 1.9);
+    ctx.save();
+    ctx.globalAlpha = ap * (0.35 + tw * 0.6);
+    ctx.fillStyle = '#fffbe0';
+    star(ctx, swx, swy, 5, 30, 12);
+    ctx.fill();
+    ctx.globalAlpha = ap * 0.9;
+    ctx.fillStyle = '#fff8c0';
+    star(ctx, swx, swy - 2, 5, 18, 7);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* 🛸 UFO 발판 — 유리 돔 + 반짝이는 등 */
+  if (t.ufo) {
+    var ux2 = (p0.x + p2.x) / 2, uy2 = (p0.y + p2.y) / 2;
+    ctx.save();
+    ctx.globalAlpha = ap;
+    ctx.beginPath(); ctx.ellipse(ux2, uy2 + 1, 29, 13, 0, 0, 6.2832);
+    ctx.fillStyle = '#c9d4ff'; ctx.fill();
+    ctx.strokeStyle = '#7f92d8'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(ux2, uy2 - 8, 15, 12, 0, Math.PI, 0);
+    ctx.fillStyle = 'rgba(180,235,255,.9)'; ctx.fill();
+    ctx.strokeStyle = '#9fc8ff'; ctx.lineWidth = 1.6; ctx.stroke();
+    for (var li = 0; li < 4; li++) {
+      var la = G.t * 3 + li * 1.57;
+      ctx.beginPath();
+      ctx.arc(ux2 + Math.cos(la) * 21, uy2 + 3 + Math.sin(la) * 9, 2.6, 0, 6.2832);
+      ctx.fillStyle = ['#ff9ad5', '#ffe27a', '#8fe8ff', '#b6ff9a'][li];
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* 🛰️ 우주 정거장 바닥 — 은빛 판금 */
+  if (t.type === 'station') {
+    var ttx = (p0.x + p2.x) / 2, tty = (p0.y + p2.y) / 2;
+    ctx.save();
+    ctx.globalAlpha = ap * 0.5;
+    ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(p0.x + 10, p0.y + 4); ctx.lineTo(ttx, tty); ctx.lineTo(p2.x - 10, p2.y - 4);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(ttx + 12, tty - 1, 2.2, 0, 6.2832);
+    ctx.fillStyle = '#8fe8ff'; ctx.fill();
     ctx.restore();
   }
 
@@ -4084,21 +4751,25 @@ function drawPortal(ctx, po) {
 function drawSpin(ctx, s) {
   var cz = s.z + 0.5;
   var c = proj(s.x, s.y, cz);
+  var kind = s.kind || '';
+  var c0 = kind === 'star' ? '#fff6b0' : (kind === 'lolli' ? '#ffe3f7' : '#ffe9a8');
+  var c1 = kind === 'star' ? '#7fd8ff' : (kind === 'lolli' ? '#ff8bd0' : '#ffc93c');
+  var c2 = kind === 'star' ? '#6b8bff' : (kind === 'lolli' ? '#ff5aa8' : '#ff7a3c');
   ctx.save();
   // 바닥 그림자 링
   var ring = proj(s.x, s.y, s.z + 0.05);
   ctx.beginPath();
   ctx.ellipse(ring.x, ring.y, s.len * TILE_W * 0.5 * 0.62, s.len * TILE_H * 0.5 * 0.62, 0, 0, 6.2832);
-  ctx.fillStyle = 'rgba(60,90,140,.12)';
+  ctx.fillStyle = kind === 'star' ? 'rgba(120,150,255,.18)' : 'rgba(60,90,140,.12)';
   ctx.fill();
   // 막대 두 개 (서로 반대)
   for (var i = 0; i < 2; i++) {
     var a = s.a + i * Math.PI;
     var ea = proj(s.x + Math.cos(a) * s.len, s.y + Math.sin(a) * s.len, cz);
     var gr = ctx.createLinearGradient(c.x, c.y, ea.x, ea.y);
-    gr.addColorStop(0, '#ffe9a8');
-    gr.addColorStop(0.5, '#ffc93c');
-    gr.addColorStop(1, '#ff7a3c');
+    gr.addColorStop(0, c0);
+    gr.addColorStop(0.5, c1);
+    gr.addColorStop(1, c2);
     ctx.strokeStyle = gr;
     ctx.lineWidth = 11;
     ctx.lineCap = 'round';
@@ -4106,11 +4777,28 @@ function drawSpin(ctx, s) {
     ctx.strokeStyle = 'rgba(255,255,255,.75)';
     ctx.lineWidth = 3.2;
     ctx.beginPath(); ctx.moveTo(c.x, c.y - 2); ctx.lineTo(ea.x, ea.y - 2); ctx.stroke();
-    // 끝 구슬
-    ctx.beginPath();
-    ctx.arc(ea.x, ea.y, 7.5, 0, 6.2832);
-    ctx.fillStyle = '#ff9f5a'; ctx.fill();
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    // 끝 구슬 — 🍭 롤리팝은 나선 무늬, ⭐ 별 막대는 반짝이는 별
+    if (kind === 'star') {
+      ctx.save();
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = '#fff8c8';
+      star(ctx, ea.x, ea.y, 5, 11, 4.4);
+      ctx.fill();
+      ctx.restore();
+    } else if (kind === 'lolli') {
+      ctx.beginPath();
+      ctx.arc(ea.x, ea.y, 8.5, 0, 6.2832);
+      ctx.fillStyle = '#ffd6f0'; ctx.fill();
+      ctx.strokeStyle = '#ff6fbe'; ctx.lineWidth = 2.4; ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(ea.x, ea.y, 4.6, 0.4, 4.2);
+      ctx.strokeStyle = '#ff6fbe'; ctx.lineWidth = 2; ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(ea.x, ea.y, 7.5, 0, 6.2832);
+      ctx.fillStyle = '#ff9f5a'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    }
   }
   // 중심 기둥
   var base = proj(s.x, s.y, s.z);
@@ -4126,6 +4814,7 @@ function drawSpin(ctx, s) {
 
 /* 👾 쿠파 스타일 블록 보스 — 초록 몸통 + 노란 배 + 가시 등껍질 + 노란 뿔 + 빨간 갈기 */
 function drawEnemy(ctx, e) {
+  if (e.kind === 'snow') { drawSnowman(ctx, e); return; }
   var p = proj(e.px, e.py, e.z);
   var netted = !!(e.netUntil && e.netUntil > Date.now());
   var bob = netted ? 0 : Math.sin(G.t * 7 + (e.ph || 0) * 2) * 1.5;
@@ -4139,7 +4828,9 @@ function drawEnemy(ctx, e) {
   ctx.fill();
   ctx.scale(f, 1);
   ctx.translate(0, -bob);
-  ctx.scale(1.24, 1.24);          /* 쿠파답게 아이들보다 조금 더 큼직하게 */
+  /* 👑 거대 대왕 쿠파는 훨씬 크게! */
+  var eScale = e.king ? 1.95 : 1.24;
+  ctx.scale(eScale, eScale);
 
   var G1 = '#63c444', G2 = '#3f9427', G3 = '#2e6f1c';
   var BEL = '#ffd86b', BEL2 = '#e0ab35';
@@ -4302,8 +4993,154 @@ function drawEnemy(ctx, e) {
   // 👾 머리 위 표시 (피해야 할 적!)
   ctx.save();
   ctx.globalAlpha = 0.9;
-  emo(ctx, '👾', p.x, p.y - 80 - bob, 18);
+  emo(ctx, e.king ? '👑' : '👾', p.x, p.y - (e.king ? 132 : 80) - bob, e.king ? 30 : 18);
   ctx.restore();
+  if (e.king) {
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = 'rgba(80,20,120,.5)';
+    roundRect(ctx, p.x - 40, p.y - 120, 80, 15, 7); ctx.fill();
+    ctx.fillStyle = '#ffeaa0';
+    ctx.font = '11px Jua, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🕸️ 그물로 잡으면 +50!', p.x, p.y - 112);
+    ctx.restore();
+  }
+}
+
+/* ⛄ 5탄 눈사람 적 — 부딪히면 -30 코인 */
+function drawSnowman(ctx, e) {
+  var p = proj(e.px, e.py, e.z);
+  var netted = !!(e.netUntil && e.netUntil > Date.now());
+  var bob = netted ? 0 : Math.sin(G.t * 6 + (e.ph || 0) * 2) * 1.6;
+  var f = e.face || 1;
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 17, 7, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(60,90,140,.16)';
+  ctx.fill();
+  ctx.scale(f, 1);
+  ctx.translate(0, -bob);
+  ctx.scale(1.12, 1.12);
+  /* 아래 몸통 */
+  ctx.beginPath(); ctx.arc(0, -14, 15, 0, 6.2832);
+  ctx.fillStyle = '#fdfeff'; ctx.fill();
+  ctx.strokeStyle = '#cfe0ef'; ctx.lineWidth = 2; ctx.stroke();
+  /* 중간 몸통 */
+  ctx.beginPath(); ctx.arc(0, -34, 11.5, 0, 6.2832);
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+  ctx.strokeStyle = '#d8e6f2'; ctx.lineWidth = 1.8; ctx.stroke();
+  /* 머리 */
+  ctx.beginPath(); ctx.arc(0, -51, 9.6, 0, 6.2832);
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+  ctx.strokeStyle = '#d8e6f2'; ctx.lineWidth = 1.8; ctx.stroke();
+  /* 눈 · 당근 코 · 단추 */
+  ctx.fillStyle = '#2b3448';
+  ctx.beginPath(); ctx.arc(-3.4, -53, 1.5, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.arc(3.2, -53, 1.5, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#ff8a3d';
+  ctx.beginPath(); ctx.moveTo(0, -50.4); ctx.lineTo(8.5, -49); ctx.lineTo(0, -47.8); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#5b6b86';
+  [[0, -37], [0, -31], [0, -19], [0, -13]].forEach(function (b) {
+    ctx.beginPath(); ctx.arc(b[0], b[1], 1.5, 0, 6.2832); ctx.fill();
+  });
+  /* 나무 팔 */
+  ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-10, -34); ctx.lineTo(-20, -42); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-15, -39); ctx.lineTo(-19, -33); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(10, -34); ctx.lineTo(19, -40); ctx.stroke();
+  /* 삐침 모자 */
+  ctx.fillStyle = '#3f4a63';
+  roundRect(ctx, -9, -63, 18, 8, 2); ctx.fill();
+  roundRect(ctx, -6.5, -72, 13, 10, 3); ctx.fill();
+  ctx.strokeStyle = '#e8452e'; ctx.lineWidth = 2.4;
+  ctx.beginPath(); ctx.moveTo(-6.5, -64); ctx.lineTo(6.5, -64); ctx.stroke();
+  ctx.restore();
+  if (netted) {
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = '#f2f9ff'; ctx.lineWidth = 2;
+    for (var nx2 = -18; nx2 <= 18; nx2 += 9) {
+      ctx.beginPath(); ctx.moveTo(p.x + nx2, p.y - 74); ctx.lineTo(p.x + nx2 + 4, p.y - 2); ctx.stroke();
+    }
+    for (var ny2 = -70; ny2 <= 0; ny2 += 12) {
+      ctx.beginPath(); ctx.moveTo(p.x - 22, p.y + ny2); ctx.lineTo(p.x + 22, p.y + ny2 + 3); ctx.stroke();
+    }
+    ctx.restore();
+    emo(ctx, '🕸️', p.x, p.y - 88 - Math.abs(Math.sin(G.t * 3)) * 5, 18);
+    return;
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  emo(ctx, '⛄', p.x, p.y - 82 - bob, 17);
+  ctx.restore();
+}
+
+/* 🐧 5탄 펭귄 — 닿으면 얼음땡! (점프 연타로 깨기) */
+function drawPenguin(ctx, e) {
+  var p = proj(e.px, e.py, e.z);
+  var netted = !!(e.netUntil && e.netUntil > Date.now());
+  var f = e.face || 1;
+  var waddle = netted ? 0 : Math.sin(G.t * 9 + (e.ph || 0) * 3) * 3.2;
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 13, 5.6, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(60,90,140,.16)'; ctx.fill();
+  ctx.scale(f, 1);
+  ctx.rotate(waddle * 0.012);
+  /* 몸통 */
+  ctx.beginPath();
+  ctx.ellipse(0, -17, 11, 15.5, 0, 0, 6.2832);
+  ctx.fillStyle = '#2f3f5c'; ctx.fill();
+  ctx.strokeStyle = '#202b40'; ctx.lineWidth = 1.6; ctx.stroke();
+  /* 배 */
+  ctx.beginPath();
+  ctx.ellipse(1.5, -15, 8, 12, 0, 0, 6.2832);
+  ctx.fillStyle = '#fdfdff'; ctx.fill();
+  /* 날개 */
+  ctx.beginPath();
+  ctx.ellipse(-9.5, -17, 3.6, 8, 0.35, 0, 6.2832);
+  ctx.fillStyle = '#26334c'; ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(10, -16, 3.4, 7.4, -0.3, 0, 6.2832);
+  ctx.fillStyle = '#26334c'; ctx.fill();
+  /* 발 */
+  ctx.fillStyle = '#ffb03a';
+  ctx.beginPath(); ctx.ellipse(-5, -1.5, 5, 2.8, 0, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(5, -1.5, 5, 2.8, 0, 0, 6.2832); ctx.fill();
+  /* 눈 · 부리 */
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(3, -26, 2.6, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.arc(-2.4, -26, 2.6, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#1d2433';
+  ctx.beginPath(); ctx.arc(3.6, -26, 1.4, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.arc(-1.8, -26, 1.4, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#ffa62e';
+  ctx.beginPath(); ctx.moveTo(1.2, -21.6); ctx.lineTo(7.6, -20.4); ctx.lineTo(1.2, -19.2); ctx.closePath(); ctx.fill();
+  /* 볼터치 */
+  ctx.fillStyle = 'rgba(255,150,190,.55)';
+  ctx.beginPath(); ctx.arc(5.5, -22.6, 2, 0, 6.2832); ctx.fill();
+  /* ❄️ 작은 눈 결정 */
+  ctx.globalAlpha = 0.75;
+  emo(ctx, '❄️', -8, -33, 9);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+  if (netted) {
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = '#f2f9ff'; ctx.lineWidth = 2;
+    for (var nx3 = -14; nx3 <= 14; nx3 += 7) {
+      ctx.beginPath(); ctx.moveTo(p.x + nx3, p.y - 38); ctx.lineTo(p.x + nx3 + 3, p.y - 2); ctx.stroke();
+    }
+    for (var ny3 = -34; ny3 <= 0; ny3 += 9) {
+      ctx.beginPath(); ctx.moveTo(p.x - 16, p.y + ny3); ctx.lineTo(p.x + 16, p.y + ny3 + 2); ctx.stroke();
+    }
+    ctx.restore();
+    emo(ctx, '🕸️', p.x, p.y - 52 - Math.abs(Math.sin(G.t * 3)) * 4, 15);
+    return;
+  }
 }
 
 /* 🫧 굴러오는 구슬 — 회랑을 좌우로 데구루루 */
@@ -4506,6 +5343,128 @@ function drawTrophy4(ctx) {
   ctx.fillStyle = '#a8306f';
   ctx.fillText(label, b.x, b.y - 109);
   ctx.restore();
+}
+
+/* 🏆 7탄 최종 황금 트로피 — 우주 정거장 꼭대기에서 반짝반짝 */
+function drawTrophy7(ctx) {
+  var b = proj(G.finish7.x, G.finish7.y, G.finish7.z);
+  var wob = Math.sin(G.t * 1.8) * 2;
+  ctx.save();
+  /* 빛무리 */
+  var halo = ctx.createRadialGradient(b.x, b.y - 90, 6, b.x, b.y - 90, 90);
+  halo.addColorStop(0, 'rgba(255,240,160,.65)');
+  halo.addColorStop(1, 'rgba(255,210,80,0)');
+  ctx.beginPath(); ctx.ellipse(b.x, b.y - 90, 84, 84, 0, 0, 6.2832);
+  ctx.fillStyle = halo; ctx.fill();
+  /* 받침 */
+  var g1 = ctx.createLinearGradient(b.x - 34, 0, b.x + 34, 0);
+  g1.addColorStop(0, '#ffe98a'); g1.addColorStop(0.5, '#fffbe0'); g1.addColorStop(1, '#e0a800');
+  roundRect(ctx, b.x - 30, b.y - 26, 60, 16, 5);
+  ctx.fillStyle = g1; ctx.fill();
+  ctx.strokeStyle = '#c08c0d'; ctx.lineWidth = 2; ctx.stroke();
+  roundRect(ctx, b.x - 22, b.y - 46, 44, 22, 4);
+  ctx.fillStyle = '#ffd24a'; ctx.fill(); ctx.stroke();
+  /* 컵 */
+  ctx.beginPath();
+  ctx.moveTo(b.x - 34, b.y - 136 + wob);
+  ctx.lineTo(b.x + 34, b.y - 136 + wob);
+  ctx.bezierCurveTo(b.x + 30, b.y - 86, b.x + 14, b.y - 52, b.x, b.y - 50);
+  ctx.bezierCurveTo(b.x - 14, b.y - 52, b.x - 30, b.y - 86, b.x - 34, b.y - 136 + wob);
+  ctx.closePath();
+  var g2 = ctx.createLinearGradient(b.x - 34, 0, b.x + 34, 0);
+  g2.addColorStop(0, '#ffd24a'); g2.addColorStop(0.35, '#fff8c0'); g2.addColorStop(0.7, '#ffd24a'); g2.addColorStop(1, '#d99b00');
+  ctx.fillStyle = g2; ctx.fill();
+  ctx.strokeStyle = '#c08c0d'; ctx.lineWidth = 3; ctx.stroke();
+  /* 손잡이 */
+  ctx.strokeStyle = '#ffcc33'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(b.x - 40, b.y - 116 + wob, 15, 1.4, 4.6); ctx.stroke();
+  ctx.beginPath(); ctx.arc(b.x + 40, b.y - 116 + wob, 15, -1.6, 1.7); ctx.stroke();
+  /* 반짝임 */
+  ctx.globalAlpha = 0.5 + 0.4 * Math.sin(G.t * 5);
+  ctx.fillStyle = '#ffffff';
+  star(ctx, b.x - 14, b.y - 118 + wob, 4, 9, 3.4); ctx.fill();
+  star(ctx, b.x + 20, b.y - 132 + wob, 4, 6, 2.2); ctx.fill();
+  ctx.globalAlpha = 1;
+  emo(ctx, '🏆', b.x, b.y - 152 + wob, 34);
+  /* 이름표 */
+  ctx.font = '14px Jua, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  var lbl = '🏆 최종 황금 트로피';
+  var w2 = ctx.measureText(lbl).width + 26;
+  roundRect(ctx, b.x - w2 / 2, b.y - 196, w2, 28, 14);
+  ctx.fillStyle = 'rgba(255,252,235,.97)'; ctx.fill();
+  ctx.lineWidth = 2.6; ctx.strokeStyle = '#ffc93c'; ctx.stroke();
+  ctx.fillStyle = '#8a5a00';
+  ctx.fillText(lbl, b.x, b.y - 182);
+  ctx.restore();
+}
+
+/* ☄️ 떨어지는 운석 — 7탄 하늘에서 불덩이가 후두둑 */
+function drawMeteors(ctx) {
+  var list = G.meteors || [];
+  for (var i = 0; i < list.length; i++) {
+    var m = list[i];
+    var p = proj(m.x, m.y, m.z);
+    var gp = proj(m.x, m.y, m.floor + 0.03);
+    /* 바닥 예고 그림자 */
+    ctx.save();
+    ctx.globalAlpha = 0.22 + 0.12 * Math.sin(G.t * 8);
+    ctx.beginPath();
+    ctx.ellipse(gp.x, gp.y, 20, 9, 0, 0, 6.2832);
+    ctx.fillStyle = '#ff7a3c'; ctx.fill();
+    ctx.restore();
+    /* 불꼬리 */
+    ctx.save();
+    var tg = ctx.createLinearGradient(p.x, p.y - 34, p.x + 8, p.y);
+    tg.addColorStop(0, 'rgba(255,120,40,0)');
+    tg.addColorStop(1, 'rgba(255,190,90,.9)');
+    ctx.strokeStyle = tg; ctx.lineWidth = 10; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(p.x + 4, p.y - 34); ctx.lineTo(p.x, p.y - 4); ctx.stroke();
+    ctx.restore();
+    emo(ctx, '☄️', p.x, p.y - 6, 26);
+  }
+}
+
+/* 🧊 얼음땡 — 플레이어를 감싼 반투명 얼음 큐브 */
+function drawIceCube(ctx) {
+  var p = G.p;
+  var b = proj(p.x, p.y, p.z);
+  var sh = 1 + Math.sin(G.t * 6) * 0.02;
+  ctx.save();
+  ctx.translate(b.x, b.y);
+  ctx.scale(sh, sh);
+  var g = ctx.createLinearGradient(-26, -70, 26, 0);
+  g.addColorStop(0, 'rgba(215,245,255,.72)');
+  g.addColorStop(0.5, 'rgba(160,225,255,.5)');
+  g.addColorStop(1, 'rgba(120,190,240,.62)');
+  ctx.fillStyle = g;
+  ctx.strokeStyle = 'rgba(255,255,255,.95)';
+  ctx.lineWidth = 2.4;
+  roundRect(ctx, -25, -68, 50, 66, 10);
+  ctx.fill(); ctx.stroke();
+  /* 얼음 결정 */
+  ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(-18, -60); ctx.lineTo(-2, -44); ctx.lineTo(-14, -26); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(18, -58); ctx.lineTo(4, -40); ctx.lineTo(16, -20); ctx.stroke();
+  emo(ctx, '❄️', 0, -44, 18);
+  ctx.restore();
+  /* 점프 연타 안내 */
+  var left = G.frozen ? Math.max(0, (G.frozen.until - Date.now()) / 1000) : 0;
+  if (G.frozen) {
+    ctx.save();
+    ctx.globalAlpha = 0.92;
+    var txt = '점프 톡톡! ' + G.frozen.taps + '/4';
+    ctx.font = '13px Jua, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var tw2 = ctx.measureText(txt).width + 20;
+    roundRect(ctx, b.x - tw2 / 2, b.y - 110, tw2, 24, 12);
+    ctx.fillStyle = 'rgba(230,250,255,.96)'; ctx.fill();
+    ctx.strokeStyle = '#6fc8f0'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#1c5b7a';
+    ctx.fillText(txt, b.x, b.y - 98);
+    ctx.restore();
+  }
 }
 
 /* ============================================================
@@ -5163,6 +6122,355 @@ function drawProp(ctx, p) {
       ctx.font = '13px Jua, sans-serif';
       ctx.fillStyle = '#8a5a00';
       ctx.fillText(sign.emoji + ' ' + sign.label, sp.x, sp.y - 46);
+      break;
+    }
+    /* ===================== ❄️ 5탄 얼음 왕국 ===================== */
+    case 'igloo': {
+      /* 🏠 눈 벽돌 이글루 — 돔 지붕 + 아치 입구 (입구는 화면 앞쪽이 트여 있어요) */
+      var ic0 = proj(x, y, z);
+      ctx.save();
+      ctx.translate(ic0.x, ic0.y);
+      /* 그림자 */
+      ctx.beginPath(); ctx.ellipse(0, 2, 86, 34, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(70,110,160,.16)'; ctx.fill();
+      /* 돔 (반원) */
+      var dome = ctx.createLinearGradient(-80, -120, 80, 0);
+      dome.addColorStop(0, '#ffffff');
+      dome.addColorStop(0.55, '#f2f9ff');
+      dome.addColorStop(1, '#cfe2f2');
+      ctx.beginPath();
+      ctx.moveTo(-82, -2);
+      ctx.bezierCurveTo(-82, -108, 82, -108, 82, -2);
+      ctx.closePath();
+      ctx.fillStyle = dome; ctx.fill();
+      ctx.strokeStyle = '#b6d2e8'; ctx.lineWidth = 2.4; ctx.stroke();
+      /* 눈 벽돌 줄눈 */
+      ctx.strokeStyle = 'rgba(150,185,215,.55)'; ctx.lineWidth = 1.6;
+      for (var ig = 1; ig <= 4; ig++) {
+        var yy = -2 - ig * 20;
+        var half = Math.sqrt(Math.max(0, 1 - Math.pow((ig * 20) / 104, 2))) * 82;
+        ctx.beginPath();
+        ctx.moveTo(-half, yy);
+        ctx.quadraticCurveTo(0, yy - 3, half, yy);
+        ctx.stroke();
+      }
+      for (var ig2 = -2; ig2 <= 2; ig2++) {
+        ctx.beginPath();
+        ctx.moveTo(ig2 * 26, -2);
+        ctx.lineTo(ig2 * 20, -96);
+        ctx.stroke();
+      }
+      /* 아치 입구 */
+      ctx.beginPath();
+      ctx.moveTo(-26, 0);
+      ctx.lineTo(-26, -30);
+      ctx.bezierCurveTo(-26, -60, 26, -60, 26, -30);
+      ctx.lineTo(26, 0);
+      ctx.closePath();
+      ctx.fillStyle = '#4d6d92'; ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.stroke();
+      /* 입구에서 새어 나오는 따뜻한 불빛 */
+      var warm = ctx.createRadialGradient(0, -14, 2, 0, -14, 30);
+      warm.addColorStop(0, 'rgba(255,206,120,.95)');
+      warm.addColorStop(1, 'rgba(255,160,60,0)');
+      ctx.beginPath(); ctx.ellipse(0, -10, 24, 18, 0, 0, 6.2832);
+      ctx.fillStyle = warm; ctx.fill();
+      emo(ctx, '🔥', 0, -12, 15);
+      /* 꼭대기 깃발 */
+      ctx.fillStyle = '#7fb8e0';
+      roundRect(ctx, -1.6, -118, 3.2, 16, 1.5); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(1.6, -117);
+      ctx.lineTo(18, -112);
+      ctx.lineTo(1.6, -107);
+      ctx.closePath();
+      ctx.fillStyle = '#8fd6ff'; ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.restore();
+      break;
+    }
+    case 'campfire': {
+      var cf = proj(x, y, z);
+      ctx.save();
+      ctx.translate(cf.x, cf.y);
+      /* 돌 테두리 + 장작 */
+      for (var st = 0; st < 6; st++) {
+        var sa = st * 1.05;
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(sa) * 20, Math.sin(sa) * 9, 5, 3.4, 0, 0, 6.2832);
+        ctx.fillStyle = '#9fb0c6'; ctx.fill();
+        ctx.strokeStyle = '#7d8ea6'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = 4.4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-10, -1); ctx.lineTo(10, -7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-10, -7); ctx.lineTo(10, -1); ctx.stroke();
+      /* 불꽃 */
+      var fl = 0.9 + 0.18 * Math.sin(G.t * 9);
+      ctx.beginPath();
+      ctx.moveTo(0, -6 - 26 * fl);
+      ctx.bezierCurveTo(12, -14, 10, -4, 0, -4);
+      ctx.bezierCurveTo(-10, -4, -12, -14, 0, -6 - 26 * fl);
+      ctx.fillStyle = 'rgba(255,150,40,.95)'; ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(0, -6 - 16 * fl);
+      ctx.bezierCurveTo(6, -10, 5, -4, 0, -4);
+      ctx.bezierCurveTo(-5, -4, -6, -10, 0, -6 - 16 * fl);
+      ctx.fillStyle = 'rgba(255,240,160,.95)'; ctx.fill();
+      ctx.globalAlpha = 0.35 + 0.15 * Math.sin(G.t * 6);
+      var glow = ctx.createRadialGradient(0, -14, 2, 0, -14, 44);
+      glow.addColorStop(0, 'rgba(255,190,90,.85)');
+      glow.addColorStop(1, 'rgba(255,160,60,0)');
+      ctx.beginPath(); ctx.ellipse(0, -12, 42, 30, 0, 0, 6.2832);
+      ctx.fillStyle = glow; ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+      break;
+    }
+    case 'snowPine': {
+      var spn = proj(x, y, z);
+      var sc = p.s || 1;
+      ctx.save();
+      ctx.translate(spn.x, spn.y);
+      ctx.scale(sc, sc);
+      ctx.beginPath(); ctx.ellipse(0, 1, 22, 8, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(70,110,160,.14)'; ctx.fill();
+      ctx.fillStyle = '#7a5334';
+      roundRect(ctx, -4, -22, 8, 24, 2); ctx.fill();
+      [[-30, 20, 46], [-46, 16, 38], [-60, 12, 30]].forEach(function (lv) {
+        ctx.beginPath();
+        ctx.moveTo(0, -lv[0] - 26);
+        ctx.lineTo(lv[1], -lv[0] + 2);
+        ctx.lineTo(-lv[1], -lv[0] + 2);
+        ctx.closePath();
+        ctx.fillStyle = '#3f8f5c'; ctx.fill();
+        ctx.strokeStyle = '#2f7048'; ctx.lineWidth = 1.4; ctx.stroke();
+        /* 쌓인 눈 */
+        ctx.beginPath();
+        ctx.moveTo(0, -lv[0] - 26);
+        ctx.lineTo(lv[1] * 0.62, -lv[0] - 4);
+        ctx.quadraticCurveTo(0, -lv[0] + 1, -lv[1] * 0.62, -lv[0] - 4);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fill();
+      });
+      ctx.restore();
+      break;
+    }
+    case 'icePillar': {
+      var ip = proj(x, y, z);
+      ctx.save();
+      ctx.translate(ip.x, ip.y);
+      var ipg = ctx.createLinearGradient(-16, -90, 18, 0);
+      ipg.addColorStop(0, 'rgba(232,250,255,.95)');
+      ipg.addColorStop(0.5, 'rgba(160,215,245,.9)');
+      ipg.addColorStop(1, 'rgba(110,170,210,.9)');
+      ctx.beginPath();
+      ctx.moveTo(-16, 0);
+      ctx.lineTo(-11, -62);
+      ctx.lineTo(2, -92);
+      ctx.lineTo(13, -60);
+      ctx.lineTo(17, 0);
+      ctx.closePath();
+      ctx.fillStyle = ipg; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-6, -8); ctx.lineTo(-3, -54); ctx.lineTo(2, -76);
+      ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2.6; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(0, 1, 19, 7, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fill();
+      ctx.restore();
+      break;
+    }
+    case 'iceCastle': {
+      var icc = proj(x, y, z);
+      ctx.save();
+      ctx.translate(icc.x, icc.y);
+      /* 성벽 + 탑 + 지붕 (장식) */
+      var wg = ctx.createLinearGradient(-70, -150, 70, 0);
+      wg.addColorStop(0, '#ffffff'); wg.addColorStop(1, '#bfe3f7');
+      ctx.fillStyle = wg;
+      ctx.strokeStyle = '#9fcde6'; ctx.lineWidth = 2;
+      roundRect(ctx, -78, -96, 156, 96, 8); ctx.fill(); ctx.stroke();
+      for (var cw = 0; cw < 5; cw++) {
+        ctx.beginPath();
+        ctx.rect(-78 + cw * 32, -108, 18, 14);
+        ctx.fillStyle = '#eaf8ff'; ctx.fill(); ctx.stroke();
+      }
+      /* 탑 두 개 */
+      [-62, 62].forEach(function (tx) {
+        roundRect(ctx, tx - 20, -150, 40, 150, 8);
+        ctx.fillStyle = wg; ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(tx - 26, -150);
+        ctx.lineTo(tx, -196);
+        ctx.lineTo(tx + 26, -150);
+        ctx.closePath();
+        ctx.fillStyle = '#8fd6ff'; ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.4; ctx.stroke();
+        emo(ctx, '❄️', tx, -168, 15);
+      });
+      /* 가운데 아치 문 */
+      ctx.beginPath();
+      ctx.moveTo(-26, 0); ctx.lineTo(-26, -40);
+      ctx.bezierCurveTo(-26, -76, 26, -76, 26, -40);
+      ctx.lineTo(26, 0); ctx.closePath();
+      ctx.fillStyle = '#31567a'; ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.restore();
+      break;
+    }
+    /* ===================== 🍬 6탄 디저트 ===================== */
+    case 'lollipop': {
+      var lp = proj(x, y, z);
+      var lsc = (p.s || 1) * 0.9;
+      ctx.save();
+      ctx.translate(lp.x, lp.y);
+      ctx.scale(lsc, lsc);
+      ctx.strokeStyle = '#fdfdff'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -62); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-1.4, 0); ctx.lineTo(-1.4, -60); ctx.stroke();
+      var col = p.tint || '#ff8fd6';
+      ctx.beginPath(); ctx.arc(0, -80, 26, 0, 6.2832);
+      ctx.fillStyle = col; ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3.4; ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -80, 16, 0.5, 2.2); ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -80, 9, 3.6, 5.4); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, -80, 5, 0, 6.2832);
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+      ctx.restore();
+      break;
+    }
+    case 'cakeStage': {
+      var cs = proj(x, y, z);
+      ctx.save();
+      ctx.translate(cs.x, cs.y);
+      var big2 = p.big ? 1.5 : 1;
+      ctx.scale(big2, big2);
+      /* 케이크 3단 */
+      var tiers = [[76, 30, -0.5, '#ffe0ef'], [58, 26, -30, '#fff3d0'], [40, 22, -56, '#ffe0ef']];
+      for (var ct2 = 0; ct2 < tiers.length; ct2++) {
+        var tr3 = tiers[ct2];
+        roundRect(ctx, -tr3[0] / 2, tr3[2] - tr3[1], tr3[0], tr3[1], 7);
+        ctx.fillStyle = tr3[3]; ctx.fill();
+        ctx.strokeStyle = '#f0b8d2'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(0, tr3[2] - tr3[1], tr3[0] / 2, 7, 0, 0, 6.2832);
+        ctx.fillStyle = '#fffdf8'; ctx.fill(); ctx.stroke();
+        if (ct2 < 2) emo(ctx, '🍓', (-1 + ct2) * 12, tr3[2] - tr3[1] - 8, 12);
+      }
+      /* 초 + 깃발 */
+      ctx.fillStyle = '#8fd6ff'; roundRect(ctx, -2, -96, 4, 16, 2); ctx.fill();
+      emo(ctx, '🕯️', 0, -100, 16);
+      ctx.restore();
+      break;
+    }
+    /* ===================== 🚀 7탄 우주 ===================== */
+    case 'rocket': {
+      var rk = proj(x, y, z);
+      ctx.save();
+      ctx.translate(rk.x, rk.y);
+      ctx.beginPath(); ctx.ellipse(0, 1, 26, 10, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(30,40,80,.25)'; ctx.fill();
+      /* 발사대 */
+      ctx.fillStyle = '#8fa2c4';
+      roundRect(ctx, -20, -22, 8, 24, 3); ctx.fill();
+      roundRect(ctx, 12, -22, 8, 24, 3); ctx.fill();
+      /* 로켓 몸통 */
+      var rg = ctx.createLinearGradient(-18, 0, 18, 0);
+      rg.addColorStop(0, '#ffffff'); rg.addColorStop(0.5, '#eef4ff'); rg.addColorStop(1, '#c3d3ee');
+      ctx.beginPath();
+      ctx.moveTo(0, -104);
+      ctx.bezierCurveTo(16, -78, 18, -42, 18, -20);
+      ctx.lineTo(-18, -20);
+      ctx.bezierCurveTo(-18, -42, -16, -78, 0, -104);
+      ctx.closePath();
+      ctx.fillStyle = rg; ctx.fill();
+      ctx.strokeStyle = '#9fb2d6'; ctx.lineWidth = 2; ctx.stroke();
+      /* 창 */
+      ctx.beginPath(); ctx.arc(0, -66, 8, 0, 6.2832);
+      ctx.fillStyle = '#8fe8ff'; ctx.fill();
+      ctx.strokeStyle = '#5fb6e0'; ctx.lineWidth = 2; ctx.stroke();
+      /* 날개 + 불꽃 */
+      ctx.fillStyle = '#ff6f9c';
+      ctx.beginPath(); ctx.moveTo(-18, -34); ctx.lineTo(-30, -12); ctx.lineTo(-18, -18); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(18, -34); ctx.lineTo(30, -12); ctx.lineTo(18, -18); ctx.closePath(); ctx.fill();
+      var rfl = 0.8 + 0.3 * Math.sin(G.t * 12);
+      ctx.beginPath();
+      ctx.moveTo(-9, -19);
+      ctx.quadraticCurveTo(0, 16 * rfl, 9, -19);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,170,60,.95)'; ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-4.5, -19);
+      ctx.quadraticCurveTo(0, 8 * rfl, 4.5, -19);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,245,180,.95)'; ctx.fill();
+      ctx.restore();
+      break;
+    }
+    case 'stationDome': {
+      var sd = proj(x, y, z);
+      ctx.save();
+      ctx.translate(sd.x, sd.y);
+      ctx.beginPath();
+      ctx.moveTo(-92, 0);
+      ctx.bezierCurveTo(-92, -120, 92, -120, 92, 0);
+      ctx.closePath();
+      var sdg = ctx.createLinearGradient(-70, -110, 70, 0);
+      sdg.addColorStop(0, 'rgba(210,235,255,.95)');
+      sdg.addColorStop(1, 'rgba(140,175,220,.75)');
+      ctx.fillStyle = sdg; ctx.fill();
+      ctx.strokeStyle = '#c9e4ff'; ctx.lineWidth = 3; ctx.stroke();
+      /* 창문 격자 */
+      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1.6;
+      for (var sg = -2; sg <= 2; sg++) {
+        ctx.beginPath(); ctx.moveTo(sg * 30, 0); ctx.lineTo(sg * 22, -86); ctx.stroke();
+      }
+      ctx.beginPath(); ctx.moveTo(-84, -34); ctx.quadraticCurveTo(0, -46, 84, -34); ctx.stroke();
+      /* 안쪽 불빛 */
+      ctx.beginPath(); ctx.ellipse(0, -22, 62, 26, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,235,150,.28)'; ctx.fill();
+      emo(ctx, '🛰️', 0, -78, 22);
+      ctx.restore();
+      break;
+    }
+    case 'planetBig': {
+      var pb = proj(x, y, z);
+      ctx.save();
+      ctx.translate(pb.x, pb.y);
+      var pbw = 0.85 + 0.15 * Math.sin(G.t * 0.8);
+      var pbg = ctx.createRadialGradient(-40, -60, 10, 0, -40, 130);
+      pbg.addColorStop(0, '#ffd6f0');
+      pbg.addColorStop(0.5, '#c79cff');
+      pbg.addColorStop(1, '#6b52b8');
+      ctx.beginPath(); ctx.arc(0, -46, 96 * pbw, 0, 6.2832);
+      ctx.fillStyle = pbg; ctx.fill();
+      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(0, -46, 106 * pbw, 0, 6.2832); ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+      break;
+    }
+    case 'saturn': {
+      var st2 = proj(x, y, z);
+      ctx.save();
+      ctx.translate(st2.x, st2.y);
+      ctx.beginPath(); ctx.arc(0, -34, 44, 0, 6.2832);
+      ctx.fillStyle = '#ffcf8a'; ctx.fill();
+      ctx.strokeStyle = '#e0a458'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.save();
+      ctx.translate(0, -34);
+      ctx.rotate(-0.34);
+      ctx.scale(1, 0.34);
+      ctx.beginPath(); ctx.arc(0, 0, 72, 0, 6.2832);
+      ctx.strokeStyle = 'rgba(255,235,190,.95)'; ctx.lineWidth = 8; ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 60, 0, 6.2832);
+      ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.restore();
+      ctx.restore();
       break;
     }
     case 'counter': {
@@ -6275,13 +7583,27 @@ function updateEnemies(dt) {
      2.2칸 안에 쿠파가 있으면 그물에 쏙! → 🕸️ 쿠파를 잡았다! +15 코인
    · 잡힌 쿠파는 15초 동안 꼼짝 못 해요! 그동안은 부딪혀도 코인이 안 깎여요.
    ============================================================ */
-var NET_RANGE = 2.2, NET_COOL = 0.55, NET_ANIM = 0.42, NET_CATCH_MS = 15000, NET_REWARD = 15;
+var NET_RANGE = 2.2, NET_COOL = 0.55, NET_ANIM = 0.42, NET_CATCH_MS = 15000, NET_REWARD = 15, NET_PEN_REWARD = 10;
 function netNearFoe() {
   var p = G.p;
   if (!p) return null;
   var best = null, bd = NET_RANGE;
   for (var i = 0; i < G.enemies.length; i++) {
     var e = G.enemies[i];
+    if (e.netUntil && e.netUntil > Date.now()) continue;
+    if (Math.abs((e.z || 0) - p.z) > 1.2) continue;
+    var d = Math.hypot(e.px - p.x, e.py - p.y);
+    if (d < bd) { bd = d; best = e; }
+  }
+  return best;
+}
+/* 🐧 펭귄도 그물로 잡을 수 있어요 */
+function netNearPen() {
+  var p = G.p;
+  if (!p) return null;
+  var best = null, bd = NET_RANGE;
+  for (var i = 0; i < (G.pens || []).length; i++) {
+    var e = G.pens[i];
     if (e.netUntil && e.netUntil > Date.now()) continue;
     if (Math.abs((e.z || 0) - p.z) > 1.2) continue;
     var d = Math.hypot(e.px - p.x, e.py - p.y);
@@ -6300,21 +7622,43 @@ function swingNet() {
   var p = G.p;
   var e2 = netNearFoe();
   if (!e2) {
+    /* 🐧 펭귄이 가까우면 펭귄을 잡아요 */
+    var pen2 = netNearPen();
+    if (pen2) {
+      pen2.netUntil = Date.now() + 12000;
+      pen2.netAt = Date.now();
+      G.net.lastCatch = Date.now();
+      addCoins(NET_PEN_REWARD, true);
+      spawnSpark(pen2.px, pen2.py, pen2.z + 0.6, '#ffffff', 12);
+      spawnSpark(pen2.px, pen2.py, pen2.z + 0.3, '#bfe9ff', 8);
+      G.parts.push({ k: 'heart', x: pen2.px, y: pen2.py, z: pen2.z + 1.0, vx: 0, vy: 0, vz: 1.05, life: 1.3, age: 0, ch: '+' + NET_PEN_REWARD });
+      AU.coin(); AU.pop();
+      G.fx = { emoji: '🕸️', ts: Date.now() };
+      toast('🕸️ 펭귄을 잡았다! +' + NET_PEN_REWARD + ' 코인! 12초 동안 꿈짝 못 해요', 2600);
+      FB.pushLive(true);
+      return true;
+    }
     spawnSpark(p.x + (p.face || 1) * 0.7, p.y, p.z + 0.75, '#dfeeff', 4);
     toast('🕸️ 휙—! 그물을 휘둘렀어요', 1100);
     return true;
   }
-  /* 🕸️ 잡았다! */
-  e2.netUntil = Date.now() + NET_CATCH_MS;
+  /* 🕸️ 잡았다! — 👑 대왕 쿠파는 특별 보너스 +50 */
+  var kingFirst = !!e2.king && !e2.kingBeaten;
+  var reward = kingFirst ? 50 : NET_REWARD;
+  if (e2.king) e2.kingBeaten = 1;
+  e2.netUntil = Date.now() + (e2.king ? 45000 : NET_CATCH_MS);
   e2.netAt = Date.now();
   G.net.lastCatch = Date.now();
-  addCoins(NET_REWARD, true);
-  spawnSpark(e2.px, e2.py, e2.z + 0.7, '#ffffff', 14);
-  spawnSpark(e2.px, e2.py, e2.z + 0.4, '#bfe6ff', 10);
-  G.parts.push({ k: 'heart', x: e2.px, y: e2.py, z: e2.z + 1.15, vx: 0, vy: 0, vz: 1.05, life: 1.3, age: 0, ch: '+' + NET_REWARD });
+  addCoins(reward, true);
+  spawnSpark(e2.px, e2.py, e2.z + 0.9, '#ffffff', 16);
+  spawnSpark(e2.px, e2.py, e2.z + 0.5, e2.king ? '#ffe08a' : '#bfe6ff', 12);
+  G.parts.push({ k: 'heart', x: e2.px, y: e2.py, z: e2.z + 1.35, vx: 0, vy: 0, vz: 1.05, life: 1.3, age: 0, ch: '+' + reward });
   AU.coin(); AU.pop();
-  G.fx = { emoji: '🕸️', ts: Date.now() };
-  toast('🕸️ 쿠파를 잡았다! +' + NET_REWARD + ' 코인!', 2600);
+  if (kingFirst) { AU.win(); spawnConfetti(70); }
+  G.fx = { emoji: e2.king ? '👑' : '🕸️', ts: Date.now() };
+  toast(e2.king
+    ? (kingFirst ? '👑 대왕 쿠파를 그물로 잡았다! 특별 보너스 +50 코인! 🎉' : '🕸️ 대왕 쿠파를 다시 잡았다! +' + reward + ' 코인!')
+    : ('🕸️ 쿠파를 잡았다! +' + NET_REWARD + ' 코인!'), 2800);
   FB.pushLive(true);
   return true;
 }
@@ -6326,7 +7670,7 @@ function updateNet(dt) {
   if (n.cool > 0) n.cool = Math.max(0, n.cool - dt);
   var el = $('#netBtn');
   if (!el) return;
-  var near = !!netNearFoe();
+  var near = !!netNearFoe() || !!netNearPen();
   if (near !== n.hot) { n.hot = near; el.classList.toggle('hot', near); }
   el.classList.toggle('cool', n.cool > 0.02);
 }
@@ -6353,6 +7697,156 @@ function updateRollers(dt) {
     spawnSpark(p.x, p.y, p.z + 0.4, '#ffffff', 7);
     AU.pop();
     toast('🫧 구슬에 부딪혔어요! 조심!', 1500);
+  }
+}
+
+/* ============================================================
+   ❄️ 5탄 — 얼음 미끄럼 · 🐧 펭귄 얼음땡 · 🥐 마카롱 바운스
+   🚀 7탄 — 달 저중력 · ☄️ 운석
+   ============================================================ */
+function isIceTile(t) { return !!t && (t.ice || t.type === 'ice' || t.type === 'iceDeep'); }
+
+/* 🧊 얼음땡 — 2.2초 꽁꽁 (점프 연타 4번이면 깨져요) */
+function freezePlayer(ms, by) {
+  var p = G.p;
+  var now = Date.now();
+  if (G.frozen) return false;
+  if (now < (p.penguinSafeUntil || 0)) return false;     // 해동 직후 2초 무적
+  if (G.piggy || G.seeSeat || G.coRide || G.swingSeat) return false;
+  G.frozen = { until: now + (ms || 2200), taps: 0, t0: now, by: by || '' };
+  G.freezes = (G.freezes || 0) + 1;
+  p.vx = 0; p.vy = 0;
+  AU.freeze();
+  spawnSpark(p.x, p.y, p.z + 0.6, '#bfe9ff', 12);
+  spawnSpark(p.x, p.y, p.z + 0.25, '#ffffff', 8);
+  toast('🧊 얼음땡! 점프 버튼을 톡톡톡 연타하면 얼음이 깨져요!', 2400);
+  return true;
+}
+function thawIce(broke) {
+  if (!G.frozen) return;
+  G.frozen = null;
+  var p = G.p;
+  p.penguinSafeUntil = Date.now() + 2000;      // 해동 뒤 2초는 펭귄에게 안 얼어요
+  AU.iceBreak(broke ? 1 : 0.7);
+  spawnSpark(p.x, p.y, p.z + 0.5, '#cdefff', 14);
+  spawnDust(p.x, p.y, p.z, 6);
+  toast(broke ? '💥 얼음이 깨졌어요! 다시 달려요!' : '❄️ 얼음이 녹았어요!', 1500);
+}
+function tapIce() {
+  if (!G.frozen) return;
+  G.frozen.taps++;
+  AU.click();
+  spawnSpark(G.p.x, G.p.y, G.p.z + 0.55, '#ffffff', 3);
+  if (G.frozen.taps >= 4) thawIce(true);
+}
+function updateFrozen(dt) {
+  var p = G.p;
+  p.vx = 0; p.vy = 0; p.move = false;
+  if (!p.air) {
+    var sup = supportTile(p.x, p.y, FOOT_R, p.z);
+    if (sup && sup.t.z > p.z - 0.62) { p.z = sup.t.z; p.groundZ = p.z; }
+    else { p.air = true; p.vz = 0; p.airTime = 0; p.walkOff = true; }
+  } else {
+    p.vz -= GRAV * (G.at7 ? 0.42 : 1) * dt;
+    p.z += p.vz * dt;
+    if (p.vz <= 0) {
+      var land = supportTile(p.x, p.y, LAND_R, p.z + 0.12);
+      if (land && p.z <= land.t.z + 0.06) {
+        p.z = land.t.z; p.vz = 0; p.air = false; p.groundZ = p.z; p.walkOff = false;
+      }
+    }
+  }
+  if (p.z < -4.5) { G.frozen = null; fallOut(); return; }
+  if (Date.now() >= G.frozen.until) thawIce(false);
+}
+
+/* 🐧 펭귄 — 얼음 왕국을 뒤뚱뒤뚱 (닿으면 얼음땡!) */
+function updatePenguins(dt) {
+  var list = G.pens || [];
+  if (!list.length) return;
+  var p = G.p;
+  for (var i = 0; i < list.length; i++) {
+    var e = list[i];
+    if (e.netUntil && e.netUntil > Date.now()) { e.wx = 0; e.wy = 0; continue; }
+    e.ph += dt * e.speed;
+    var u = (Math.sin(e.ph) + 1) * 0.5;
+    var nx = lerp(e.x0, e.x1, u), ny = lerp(e.y0, e.y1, u);
+    var dx = nx - e.px, dy = ny - e.py;
+    if (Math.abs(dx) + Math.abs(dy) > 0.0002) e.face = ((dx - dy) >= 0) ? 1 : -1;
+    e.px = nx; e.py = ny;
+    e.wx = dx; e.wy = dy;
+    if (G.frozen || G.piggy) continue;
+    if (p.air) continue;
+    if (Math.abs(p.z - (e.z || 0)) > 0.75) continue;
+    if (Math.hypot(p.x - e.px, p.y - e.py) > 0.68) continue;
+    freezePlayer(2200, e.id);
+  }
+}
+
+/* 🥐 마카롱·도넛 바운스 패드 */
+function pressMac(t, power) {
+  if (!t) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.mHitAt && now - t.mHitAt < 70) return;
+  t.mHitAt = now;
+  var pw = clamp(power === undefined ? 1 : power, 0.3, 1.4);
+  t.macSq = Math.min(1.2, (t.macSq || 0) + 0.85 * pw);
+  t.macV = (t.macV || 0) - 1.15 * pw;
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.2, '#fff0f7', 5);
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.2, t.mac === 'donut' ? '#ffb0d6' : '#ffc6e4', 4);
+  AU.macPop(pw);
+}
+function updateMacs(dt) {
+  for (var i = 0; i < G.tiles.length; i++) {
+    var t = G.tiles[i];
+    if (!t.mac) continue;
+    if (!t.macSq && !t.macV) continue;
+    t.macV += (-160 * t.macSq - 11 * t.macV) * dt;
+    t.macSq += t.macV * dt;
+    if (t.macSq > 1.2) { t.macSq = 1.2; if (t.macV > 0) t.macV = 0; }
+    if (t.macSq < -0.45) { t.macSq = -0.45; if (t.macV < 0) t.macV = 0; }
+    if (Math.abs(t.macSq) < 0.004 && Math.abs(t.macV) < 0.02) { t.macSq = 0; t.macV = 0; }
+  }
+}
+
+/* ☄️ 7탄 운석 — 별빛 길 위로 불덩이가 떨어져요 */
+function updateMeteors(dt) {
+  var list = G.meteors || (G.meteors = []);
+  var p = G.p;
+  if (G.at7 && G.meteorSpots && G.meteorSpots.length) {
+    G.meteorT = (G.meteorT || 0) - dt;
+    if (G.meteorT <= 0) {
+      G.meteorT = 1.35 + Math.random() * 0.9;
+      var sp = pick(G.meteorSpots);
+      list.push({ x: sp.x + rnd(-0.45, 0.45), y: sp.y + rnd(-0.45, 0.45), z: sp.z + 7.5, floor: sp.z, vz: -5.4, hitAt: 0 });
+    }
+  }
+  for (var i = list.length - 1; i >= 0; i--) {
+    var m = list[i];
+    m.vz -= 6.0 * dt;
+    m.z += m.vz * dt;
+    if (Math.random() < dt * 14) {
+      G.parts.push({
+        k: 'spark', x: m.x + rnd(-0.2, 0.2), y: m.y + rnd(-0.2, 0.2), z: m.z + rnd(0, 0.3),
+        vx: rnd(-0.5, 0.5), vy: rnd(-0.5, 0.5), vz: rnd(0, 0.6), life: 0.35, age: 0, r: rnd(2, 4), c: pick(['#ffb03a', '#ff7a2e', '#ffe08a'])
+      });
+    }
+    var bump = Math.abs(m.z - (p.z + 0.55)) < 0.8 && Math.hypot(m.x - p.x, m.y - p.y) < 0.78;
+    if (bump && Date.now() - (p.meteorAt || 0) > 1600) {
+      p.meteorAt = Date.now();
+      var dx2 = p.x - m.x, dy2 = p.y - m.y, dl2 = Math.hypot(dx2, dy2) || 1;
+      p.vx = dx2 / dl2 * 6.4; p.vy = dy2 / dl2 * 6.4;
+      if (!p.air) { p.vz = 3.2; p.air = true; }
+      spawnSpark(p.x, p.y, p.z + 0.6, '#ff8a3d', 12);
+      AU.err();
+      toast('☄️ 운석에 부딪혀 휙 날아갔어요!', 1800);
+    }
+    if (m.z <= m.floor + 0.08) {
+      spawnSpark(m.x, m.y, m.floor + 0.15, '#ffb03a', 10);
+      spawnDust(m.x, m.y, m.floor, 6);
+      AU.whoosh();
+      list.splice(i, 1);
+    }
   }
 }
 
@@ -6404,6 +7898,12 @@ function stepUp(tx, ty) {
 
 function updatePlayer(dt) {
   var p = G.p, inp = inputVector();
+  /* 🧊 얼음땡 — 꽁꽁 얼어 있는 동안은 움직이지 못해요 (점프 연타로 깨기) */
+  if (G.frozen) { updateFrozen(dt); return; }
+  /* 🗺️ 5·6·7탄 구역 — 발을 들이면 얼음 물리·달 저중력이 켜져요 */
+  var zn = zoneAt(p.x, p.y, p.z);
+  if (zn) G.zone = zn; else if (!p.air) G.zone = 0;
+  G.at5 = G.zone === 5; G.at6 = G.zone === 6; G.at7 = G.zone === 7;
   /* 🪑 놀이공원 시소에 앉아 있는 동안 */
   if (G.seeSeat && updateSeesawRide(dt)) return;
   /* 🌿 그네를 타고 흔들리는 동안 */
@@ -6430,8 +7930,8 @@ function updatePlayer(dt) {
     var sp = spec.speed * (inp.len > 0.92 ? 1 : Math.max(0.45, inp.len));
     tvx = wx * sp; tvy = wy * sp;
   }
-  /* 🧊 미끄러운 젤리 위에서는 가속·정지가 느려서 쭉 밀려가요 */
-  var accel = p.air ? 20 : (p.slip ? 7.5 : 42);
+  /* 🧊 미끄러운 젤리·얼음 위에서는 가속·정지가 느려서 쭉 밀려가요 */
+  var accel = p.air ? 20 : (p.ice ? 3.2 : (p.slip ? 7.5 : 42));
   p.vx = approach(p.vx || 0, tvx, accel * dt);
   p.vy = approach(p.vy || 0, tvy, accel * dt);
 
@@ -6459,6 +7959,7 @@ function updatePlayer(dt) {
       p.z = sup.t.z;
       p.groundZ = p.z;
       p.slip = !!sup.t.slip;
+      p.ice = isIceTile(sup.t);
       p.coyote = 0.13;
       if (sup.d > 0.06 && !moving) {
         p.x = lerp(p.x, sup.nx, Math.min(1, dt * 10));
@@ -6470,6 +7971,7 @@ function updatePlayer(dt) {
       p.z = sup.t.z;
       p.groundZ = p.z;
       p.slip = !!sup.t.slip;
+      p.ice = isIceTile(sup.t);
       p.coyote = 0.13;
     } else {
       /* 🕳️ 발판(블록)이 없는 곳으로 걸어 나가면 여기서 공중이 돼요.
@@ -6484,7 +7986,8 @@ function updatePlayer(dt) {
   } else {
     p.coyote = Math.max(0, (p.coyote || 0) - dt);
     p.airTime = (p.airTime || 0) + dt;
-    p.vz -= GRAV * dt;
+    /* 🚀 7탄 달 저중력 — 중력이 0.42배라 둥실둥실 천천히 떨어져요 */
+    p.vz -= GRAV * (G.at7 ? 0.42 : 1) * dt;
     var prevZ = p.z;
     p.z += p.vz * dt;
     // 착지: 발판을 살짝 벗어나도 끌어다 붙여 착지시켜요
@@ -6553,11 +8056,34 @@ function updatePlayer(dt) {
 
   if (p.z < -4.5) { fallOut(); return; }
 
-  /* 🏰 타워 점프맵: 발판에서 떨어져 그 층 아래로 내려가면
+  /* 🏰 타워 점프맵(그리고 ❄️🍬🚀 5·6·7탄): 발판에서 떨어져 아래로 내려가면
      방금 지나온 층 체크포인트 깃발에서 즉시 부활! */
-  if ((G.at3 || G.at4) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - 1.2) {
+  var fallLim = G.at7 ? 1.95 : 1.2;
+  if ((G.at3 || G.at4 || G.at5 || G.at6 || G.at7) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - fallLim) {
     fallOut(); return;
   }
+
+  /* ❄️ 눈밭 뽀드득 · 얼음 지잉 발소리 */
+  if (standsOn && !p.air && moving) {
+    var iceOn = isIceTile(standsOn), snowOn = standsOn.type === 'snow';
+    if (iceOn || snowOn) {
+      p.stepT = (p.stepT || 0) - dt;
+      if (p.stepT <= 0) {
+        p.stepT = iceOn ? 0.3 : 0.26;
+        p.stepN = (p.stepN || 0) + 1;
+        if (iceOn) AU.iceStep(); else AU.crunch(p.stepN);
+      }
+    } else p.stepT = 0;
+  } else p.stepT = 0;
+
+  /* 🥐 마카롱·도넛 바운스 패드 — 올라서면 퐁! */
+  var macId = (standsOn && standsOn.mac) ? (standsOn.x + ',' + standsOn.y) : '';
+  if (macId && p.macId !== macId) {
+    p.macId = macId;
+    pressMac(standsOn, 0.95);
+    p.vz = 11.6; p.air = true; p.squash = 0;
+    AU.macPop(1.05);
+  } else if (!macId) p.macId = '';
 
   // 체크포인트
   for (var i = 0; i < G.cps.length; i++) {
@@ -6644,6 +8170,30 @@ function updatePlayer(dt) {
     }
   }
 
+  // ❄️ 5탄 얼음 성 깃발 — 완주!
+  if (!G.finished5) {
+    var fc5 = G.finish5;
+    if (Math.abs(fc5.z - p.z) < 0.85 && Math.abs(p.x - fc5.x) < 2.4 && Math.abs(p.y - fc5.y) < 1.9) {
+      finishStage5();
+    }
+  }
+
+  // 🍬 6탄 케이크 꼭대기 — 완주!
+  if (!G.finished6) {
+    var fc6 = G.finish6;
+    if (Math.abs(fc6.z - p.z) < 0.85 && Math.abs(p.x - fc6.x) < 2.4 && Math.abs(p.y - fc6.y) < 2.2) {
+      finishStage6();
+    }
+  }
+
+  // 🏆 7탄 우주 정거장 최종 황금 트로피!
+  if (!G.finished7) {
+    var fc7 = G.finish7;
+    if (Math.abs(fc7.z - p.z) < 0.95 && Math.abs(p.x - fc7.x) < 1.7 && Math.abs(p.y - fc7.y) < 1.7) {
+      finishStage7();
+    }
+  }
+
   // 🚪 포털 문 — 문 앞에 서면 「이동」 버튼이 떠요
   G.portal = null;
   var pbest = 1.6;
@@ -6703,6 +8253,13 @@ function doLand(cand) {
   if (t.type === 'bounce') {
     p.vz = 9.4; p.air = true;
     AU.pop(); spawnHearts(p.x, p.y, 4);
+  }
+  /* 🥐 마카롱·도넛 — 밟으면 퐁! 하고 높이 튕겨요 */
+  if (t.mac) {
+    pressMac(t, 1.2);
+    p.vz = 12.1; p.air = true; p.squash = 0;
+    AU.macPop(1.2);
+    spawnHearts(p.x, p.y, 3);
   }
 }
 
@@ -6818,6 +8375,8 @@ function updatePiggyRide(dt) {
 
 function doJump() {
   if (G.paused) return;
+  /* 🧊 얼음에 갇혔을 때는 점프 연타로 얼음을 깨요! */
+  if (G.frozen) { tapIce(); return; }
   /* 🪑 시소에 앉아 있으면 점프 대신 내 쪽을 힘껏 밀어 올려요 */
   if (G.seeSeat) { G.seeKick = 0.42; AU.pop(); return; }
   /* 🎢 청룡열차를 타는 동안엔 점프 대신 그냥 달려요 */
@@ -6836,7 +8395,8 @@ function doJump() {
       return;
     }
   }
-  p.vz = (RIDE[G.ride] || RIDE.walk).jump;
+  /* 🚀 7탄 달 저중력 — 같은 힘으로도 더 높이 떠올라요 */
+  p.vz = (RIDE[G.ride] || RIDE.walk).jump * (G.at7 ? 1.12 : 1);
   /* 🤸 트램펄린 위 점프는 슈퍼 점프! 퐁! 스프링 소리 + 별 반짝이 */
   if (p.standTile && p.standTile.tramp && !p.air) {
     p.vz = 11.6;
@@ -6859,7 +8419,8 @@ function doJump() {
 function cutJump() {
   // 아이들도 쉽게: 점프 높이는 항상 같아요 (톡 짧게 눌러도 한 칸 턱을 넘을 수 있게)
   var p = G.p;
-  if (p.air && p.vz > 7.0) p.vz = 7.0;
+  var cap = G.at7 ? 8.2 : 7.0;
+  if (p.air && p.vz > cap) p.vz = cap;
 }
 
 function cycleRide() {
@@ -6917,6 +8478,9 @@ function goWorld(href) {
   AU.chime();
   if (href === '#tw3') { gotoStage3(); return; }
   if (href === '#tw4') { gotoStage4(); return; }
+  if (href === '#tw5') { gotoStage5(); return; }
+  if (href === '#tw6') { gotoStage6(); return; }
+  if (href === '#tw7') { gotoStage7(); return; }
   try { location.href = worldHref(href); } catch (e) {}
 }
 
@@ -6987,6 +8551,7 @@ function gotoStage4(silent) {
   G.finished4 = false;
   G.at3 = false;
   G.at4 = true;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.zone = 4;
   G.st4At = Date.now();
   G.paused = false;
   closeAllSheets();
@@ -6996,10 +8561,53 @@ function gotoStage4(silent) {
   if (!silent) toast('🫧 4탄 퐁실퐁실 왁뿌볼 타워! 말랑 구슬을 밟고 올라가요!', 2800);
 }
 
+/* 5·6·7탄 — 각 탄 시작 깃발로 (앞선 탄 완주 팝업이 다시 뜨지 않게) */
+function gotoStageN(n, silent) {
+  var cpIdx = n === 5 ? G.cp5Start : (n === 6 ? G.cp6Start : G.cp7Start);
+  resetTraps2();
+  if (cpIdx >= 0) {
+    G.cpIdx = cpIdx;
+    for (var i = 0; i < G.cps.length; i++) G.cps[i].on = (i === cpIdx);
+  }
+  var cp = G.cps[cpIdx] || (n === 5 ? { x: 99.2, y: -100.2, z: 8.6 } : (n === 6 ? { x: 49.4, y: -99.4, z: 9.2 } : { x: 26.4, y: -134, z: 11.2 }));
+  var p = G.p;
+  p.x = cp.x; p.y = cp.y; p.z = cp.z;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false;
+  p.face = 1; p.walk = 0; p.keyId = null; p.jellyId = null;
+  p.groundZ = cp.z; p.slip = false; p.ice = false; p.hurtAt = Date.now() - 1200;
+  p.macId = ''; p.stepT = 0;
+  G.petXY.x = cp.x - 0.9; G.petXY.y = cp.y + 0.9; G.petXY.z = cp.z;
+  snapCamera(cp.x, cp.y, cp.z);
+  G.finished = true; G.finished2 = true; G.finished3 = true;
+  G.finished4 = (n >= 5);
+  if (n <= 5) G.finished5 = false;
+  if (n <= 6) G.finished6 = false;
+  G.finished7 = false;
+  G.at3 = false; G.at4 = false;
+  G.zone = n;
+  G.at5 = n === 5; G.at6 = n === 6; G.at7 = n === 7;
+  if (n === 7) G.st7At = Date.now();
+  G.frozen = null; G.meteors = []; G.meteorT = 0;
+  G.paused = false;
+  closeAllSheets();
+  updateHint();
+  updateGravBadge();
+  AU.pop();
+  if (n === 5 && !silent) { AU.chime(); toast('❄️ 5탄 얼음 빙글빙글 왕국! 얼음에서는 쭉— 미끄러져요!', 2800); }
+  if (n === 6 && !silent) { AU.chime(); toast('🍬 6탄 달콤 디저트 하늘섬! 마카롱을 밟으면 퐁!', 2800); }
+  if (n === 7 && !silent) { AU.chime(); toast('🚀 7탄 우주 별빛 대모험! 달 중력이라 둥실둥실~', 2800); }
+}
+function gotoStage5(silent) { gotoStageN(5, silent); }
+function gotoStage6(silent) { gotoStageN(6, silent); }
+function gotoStage7(silent) { gotoStageN(7, silent); }
+
 /* 🏘️ 마을로 돌아가기 */
 function gotoVillage() {
   G.at3 = false;
   G.at4 = false;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.zone = 0;
+  G.frozen = null; G.meteors = [];
+  updateGravBadge();
   G.p.x = G.spawn.x; G.p.y = G.spawn.y; G.p.z = 0;
   G.p.vx = 0; G.p.vy = 0; G.p.vz = 0; G.p.air = false;
   G.p.face = 1; G.p.walk = 0; G.p.keyId = null;
@@ -7042,6 +8650,22 @@ function doAction() {
   else if (s.act === 'swingUp') { mountSwing(); }
   else if (s.act === 'bigSlide') { startBigSlide(); }
   else if (s.act === 'friend') { openFriendTalk(); }
+  else if (s.act === 'warm') { warmUp(); }
+}
+
+/* 🔥 이글루 모닥불 — 따뜻해지고 45초에 한 번 보너스 3 코인 */
+function warmUp() {
+  AU.bell();
+  spawnHearts(G.p.x, G.p.y, 5);
+  spawnSpark(G.p.x, G.p.y, G.p.z + 0.35, '#ffb03a', 8);
+  var now = Date.now();
+  if (!G.warmAt || now - G.warmAt > 45000) {
+    G.warmAt = now;
+    addCoins(3, true);
+    toast('🔥 따뜻해~ 모닥불 옆에서 3 코인도 받았어요!', 2400);
+  } else {
+    toast('🔥 아— 따뜻하다! 이글루 쉼터 최고!', 1800);
+  }
 }
 
 /* ============================================================
@@ -7132,6 +8756,15 @@ function drawWorld() {
     if (en2.px < minX - 3 || en2.px > maxX + 3 || en2.py < minY - 3 || en2.py > maxY + 3) continue;
     items.push({ d: en2.px + en2.py + 0.07, k: 18, o: en2 });
   }
+  /* 🐧 5탄 펭귄 */
+  for (i = 0; i < (G.pens || []).length; i++) {
+    var pn = G.pens[i];
+    if (pn.px < minX - 3 || pn.px > maxX + 3 || pn.py < minY - 3 || pn.py > maxY + 3) continue;
+    items.push({ d: pn.px + pn.py + 0.065, k: 19, o: pn });
+  }
+  if (G.finish7 && Math.abs(G.finish7.x - G.p.x) < 18 && Math.abs(G.finish7.y - G.p.y) < 18) {
+    items.push({ d: G.finish7.x + G.finish7.y + 0.02, k: 24, o: null });
+  }
   if (G.finish2 && Math.abs(G.finish2.x - G.p.x) < 18 && Math.abs(G.finish2.y - G.p.y) < 18) {
     items.push({ d: G.finish2.x + G.finish2.y + 0.01, k: 13, o: null });
   }
@@ -7180,6 +8813,8 @@ function drawWorld() {
     switch (it.k) {
       case 1: drawTile(ctx, it.o); break;
       case 2:
+        /* 🧊 얼음땡에 걸리면 얼음 큐브 안에 꽁꽁 */
+        if (G.frozen) { drawMe(ctx); drawIceCube(ctx); break; }
         /* 💥 적에게 부딪힌 뒤 1.8초는 깜빡이며 무적 */
         if (Date.now() - (G.p.hurtAt || 0) < 1800) {
           ctx.save();
@@ -7204,6 +8839,8 @@ function drawWorld() {
       case 16: drawTrophy4(ctx); break;
       case 17: drawRoller(ctx, it.o); break;
       case 18: drawEnemy(ctx, it.o); break;
+      case 19: drawPenguin(ctx, it.o); break;
+      case 24: drawTrophy7(ctx); break;
       case 20: drawSeesaw(ctx, it.o); break;
       case 21: drawTrackSeg(ctx, it.o); break;
       case 22: drawCoasterTrain(ctx); break;
@@ -7211,6 +8848,7 @@ function drawWorld() {
     }
   }
 
+  drawMeteors(ctx);
   drawFx(ctx);
   drawParts(ctx);
   ctx.restore();
@@ -7766,13 +9404,96 @@ function resetStage4() {
   toast('🔁 왁뿌볼 타워 다시 도전! 화이팅!');
 }
 
+/* ---------- ❄️ 5탄 얼음 성 완주 ---------- */
+function finishStage5() {
+  if (G.finished5) return;
+  G.finished5 = true;
+  AU.win(); AU.chime();
+  spawnConfetti(80);
+  addCoins(25, true);
+  if (SAVE) { SAVE.st5 = SAVE.st5 || {}; SAVE.st5.done = (SAVE.st5.done || 0) + 1; persist(); }
+  G.fx = { emoji: '❄️', ts: Date.now() };
+  toast('❄️ 5탄 얼음 왕국 완주! +25 코인! 이제 🍬 6탄 디저트 하늘섬으로!', 3200);
+  updateHint();
+}
+
+/* ---------- 🍬 6탄 디저트 하늘섬 완주 ---------- */
+function finishStage6() {
+  if (G.finished6) return;
+  G.finished6 = true;
+  AU.win(); AU.macPop(1.1);
+  spawnConfetti(80);
+  addCoins(25, true);
+  if (SAVE) { SAVE.st6 = SAVE.st6 || {}; SAVE.st6.done = (SAVE.st6.done || 0) + 1; persist(); }
+  G.fx = { emoji: '🍬', ts: Date.now() };
+  toast('🍬 6탄 디저트 하늘섬 완주! +25 코인! 이제 🚀 7탄 우주로!', 3200);
+  updateHint();
+}
+
+/* ---------- 🏆 7탄 최종 황금 트로피 ---------- */
+function finishStage7() {
+  if (G.finished7) return;
+  G.finished7 = true;
+  G.paused = true;
+  var time = Date.now() - (G.st7At || G.startAt);
+  AU.win();
+  spawnConfetti(220);
+  var bursts = 0;
+  var fw = setInterval(function () {
+    spawnConfetti(90);
+    AU.chime();
+    if (++bursts >= 3) clearInterval(fw);
+  }, 700);
+  addCoins(50, true);
+  if (SAVE) {
+    SAVE.st7 = SAVE.st7 || {};
+    SAVE.st7.best = SAVE.st7.best ? Math.min(SAVE.st7.best, time) : time;
+    SAVE.st7.done = (SAVE.st7.done || 0) + 1;
+    persist();
+  }
+  var el;
+  if ((el = $('#galTime'))) el.textContent = fmtTime(time);
+  if ((el = $('#galBest'))) el.textContent = fmtTime(SAVE && SAVE.st7 ? SAVE.st7.best : time);
+  if ((el = $('#galTitle'))) el.textContent = ME.name + ' 우주 대모험 완주! 🏆';
+  var g = $('#galaxyOverlay');
+  if (g) g.classList.add('open');
+  updateHint();
+}
+
+function resetStage5() {
+  G.finished5 = false;
+  resetTraps2();
+  gotoStage5(true);
+  toast('🔁 5탄 얼음 왕국 다시 도전! 화이팅!');
+}
+function resetStage6() {
+  G.finished6 = false;
+  resetTraps2();
+  G.meteors = [];
+  gotoStage6(true);
+  toast('🔁 6탄 디저트 하늘섬 다시 도전! 화이팅!');
+}
+function resetStage7() {
+  G.finished7 = false;
+  resetTraps2();
+  G.meteors = [];
+  $('#galaxyOverlay').classList.remove('open');
+  gotoStage7(true);
+  toast('🔁 7탄 우주 대모험 다시 도전! 화이팅!');
+}
+
 function resetRun() {
   G.finished = false;
   G.finished2 = false;
   G.finished3 = false;
   G.finished4 = false;
+  G.finished5 = false;
+  G.finished6 = false;
+  G.finished7 = false;
   G.at3 = false;
   G.at4 = false;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.zone = 0;
+  G.frozen = null; G.meteors = [];
   resetTraps2();
   G.coinsGot = 0; G.gatesSolved = 0;
   G.gates.forEach(function (g) {
@@ -7816,7 +9537,30 @@ function updateHint() {
   if (!el) return;
   var unsolved = G.gates.filter(function (g) { return !g.solved; });
   var p = G.p, txt;
-  if (G.park && p.x >= G.park.area.x0 - 1 && p.x <= G.park.area.x1 + 1 && p.y >= G.park.area.y0 - 1.5) {
+  if (G.at7) {
+    if (G.finished7) txt = '🏆 우주 대모험 완주! 정말 대단해!';
+    else if (p.y < -137 && p.z > 14.6) txt = '🕸️ 대왕 쿠파는 그물로! +50 코인!';
+    else if (p.z > 14.0) txt = '☄️ 운석 그림자 피하고 🌀 별 막대 조심!';
+    else if (p.z > 12.4) txt = '⭐ 별빛 징검다리를 둥실둥실 건너요';
+    else txt = '🚀 7탄 우주! 중력 0.42배로 둥실둥실~';
+  }
+  else if (G.at6) {
+    if (G.finished6) txt = '🍬 6탄 완주! 🚀 7탄 발사대가 앞에 있어요';
+    else if (p.y < -125) txt = '🎂 케이크 꼭대기! 🍭 회전 사탕 조심';
+    else if (p.y < -115) txt = '☁️ 구름 징검다리를 조심조심 건너요';
+    else if (p.y < -104) txt = '🍪 쿠키는 0.7초면 사라져요! 멈추지 마요';
+    else txt = '🍬 마카롱 밟으면 퐁! 위층으로 튕겨 올라요';
+  }
+  else if (G.at5) {
+    if (G.frozen) txt = '🧊 얼음땡! 점프 버튼을 톡톡톡 연타해서 얼음을 깨요!';
+    else if (G.finished5) txt = '❄️ 5탄 완주! 🍬 6탄 사탕 다리가 앞에 있어요';
+    else if (p.x < 66) txt = '🧊 빙산 발판 타고 얼음 성 깃발로!';
+    else if (p.x < 76) txt = '🐧 펭귄에 닿으면 얼음땡! 2초 뒤엔 녹아요';
+    else if (p.x < 89) txt = '🐧 펭귄은 점프 연타로 깨고 ⛄ 눈사람은 그물!';
+    else if (p.ice) txt = '❄️ 얼음에서는 쭉— 미끄러져요! 살살 조종해요';
+    else txt = '🏠 이글루 모닥불에서 손 녹이고 코인 챙겨요';
+  }
+  else if (G.park && p.x >= G.park.area.x0 - 1 && p.x <= G.park.area.x1 + 1 && p.y >= G.park.area.y0 - 1.5) {
     if (G.seeSeat) txt = '⬆️ 밀어 올리기 · ⬇️ 꾹 누르기 로 시소를 흔들어요!';
     else if (G.swingSeat) txt = '⬆️ 힘껏 발 구르기! 누를수록 앞뒤로 점점 크게 흔들려요';
     else if (G.coRide) txt = '🎢 청룡열차가 신나게 달려요! 🐉';
@@ -7851,6 +9595,15 @@ function updateHint() {
   else if (p.x < 7.6) txt = '⌨️ 키보드 블록을 밟아 봐! 쑥 눌리면서 톡톡 소리가 나!';
   else txt = '🌉 안내판 앞에서 타자를 쳐서 다리를 만들어요 (' + (3 - unsolved.length) + '/3)';
   el.textContent = (ME.emoji + ' ' + ME.name + ', ') + txt;
+}
+
+/* 🌙 달 저중력 배지 — 7탄 구역에서만 보여요 */
+function updateGravBadge() {
+  var el = $('#gravBadge');
+  if (!el) return;
+  var on = !!G.at7;
+  if (on === el.classList.contains('on')) return;
+  el.classList.toggle('on', on);
 }
 
 /* ============================================================
@@ -10542,6 +12295,12 @@ function bindUI() {
     gotoStage4();
   });
   $('#jlAgain').addEventListener('click', function () { resetStage4(); });
+  if ($('#galAgain')) $('#galAgain').addEventListener('click', function () { resetStage7(); });
+  if ($('#galHome')) $('#galHome').addEventListener('click', function () {
+    $('#galaxyOverlay').classList.remove('open');
+    G.paused = false;
+    gotoVillage();
+  });
   $('#jlHome').addEventListener('click', function () {
     $('#jellyOverlay').classList.remove('open');
     gotoVillage();
@@ -10662,6 +12421,14 @@ function bindUI() {
     if (jmp3) { closeAllSheets(); gotoStage3(); return; }
     var jmp4 = e.target.closest('[data-jump4]');
     if (jmp4) { closeAllSheets(); gotoStage4(); return; }
+    var jmp5 = e.target.closest('[data-jump5]');
+    if (jmp5) { closeAllSheets(); gotoStage5(); return; }
+    var jmp6 = e.target.closest('[data-jump6]');
+    if (jmp6) { closeAllSheets(); gotoStage6(); return; }
+    var jmp7 = e.target.closest('[data-jump7]');
+    if (jmp7) { closeAllSheets(); gotoStage7(); return; }
+    var jmp1 = e.target.closest('[data-jump1]');
+    if (jmp1) { closeAllSheets(); resetRun(); return; }
     var prk = e.target.closest('[data-park]');
     if (prk) { gotoPark(); return; }
     var menu = e.target.closest('[data-menu]');
@@ -10808,7 +12575,7 @@ function updateCamera(dt) {
   /* 🗺️ 지도 둘러보기: 손으로 화면을 끌고 있는 동안은 카메라가 그 자리에 머물러요 */
   if (G.camFree) return;
   /* 🏰 3탄·🫧 4탄 타워와 🎢 청룡열차에서는 높이를 거의 그대로 따라가서 위·아래가 함께 보여요 */
-  var zf = (G.at3 || G.at4 || G.coRide) ? 0.94 : 0.35;
+  var zf = (G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.coRide) ? 0.94 : 0.35;
   var tgt = proj(G.p.x, G.p.y, G.p.z * zf);
   var k = 1 - Math.pow(0.001, dt);
   G.cam.x = lerp(G.cam.x, tgt.x, k);
@@ -10867,9 +12634,12 @@ function loop(ts) {
     updateTraps(dt);
     updateJelly(dt);
     updateTramps(dt);
+    updateMacs(dt);
     updateSpins(dt);
     updateRollers(dt);
     updateEnemies(dt);
+    updatePenguins(dt);
+    updateMeteors(dt);
     updateSeesaw(dt);
     updateSwing(dt);
     updateNet(dt);
@@ -10877,6 +12647,7 @@ function loop(ts) {
     updatePlayer(dt);
     updatePet(dt);
     updateReveal(dt);
+    updateGravBadge();
     if (G.elapsedTick === undefined) G.elapsedTick = 0;
   }
   updateCamera(dt);
@@ -10943,7 +12714,8 @@ function init() {
       SAVE.coins = v;
       persist();
       updateCoinUI(true);
-      if (typeof FB !== 'undefined' && FB.ready) FB.pushCoins(ME.id, v);
+      /* 🧪 ?wctest=1 테스트 지갑이면 실제 가족 저장소는 건드리지 않아요 */
+      if (typeof FB !== 'undefined' && FB.ready && !WorldCoins.test) FB.pushCoins(ME.id, v);
     },
     onDenied: function () { toast('🪙 코인이 모자라요!'); }
   });
@@ -10971,7 +12743,11 @@ try {
         return {
           x: +p.x.toFixed(3), y: +p.y.toFixed(3), z: +p.z.toFixed(3), air: !!p.air,
           groundZ: p.groundZ, cp: G.cpIdx, at3: !!G.at3, at4: !!G.at4,
+          at5: !!G.at5, at6: !!G.at6, at7: !!G.at7, zone: G.zone || 0,
+          frozen: G.frozen ? { taps: G.frozen.taps, left: +(Math.max(0, G.frozen.until - Date.now()) / 1000).toFixed(2) } : null,
+          ice: !!p.ice, iceSpeed: +(Math.hypot(p.vx || 0, p.vy || 0)).toFixed(2), freezes: G.freezes || 0,
           fin: !!G.finished, fin2: !!G.finished2, fin3: !!G.finished3, fin4: !!G.finished4,
+          fin5: !!G.finished5, fin6: !!G.finished6, fin7: !!G.finished7,
           coins: SAVE ? SAVE.coins : null, hurt: p.hurtAt || 0, slip: !!p.slip,
           piggy: G.piggy || '', prompt: G.piggyPrompt ? G.piggyPrompt.act : '',
           ridePrompt: G.ridePrompt ? G.ridePrompt.act : '',
@@ -11006,6 +12782,30 @@ try {
       st2: function () { gotoStage2(); },
       st3: function () { gotoStage3(); },
       st4: function () { gotoStage4(); },
+      st5: function () { gotoStage5(); },
+      st6: function () { gotoStage6(); },
+      st7: function () { gotoStage7(); },
+      /* 🐧 얼음땡 · 🥐 마카롱 · ☄️ 운석 확인용 */
+      penguins: function () {
+        return (G.pens || []).map(function (e) {
+          return { id: e.id, x: +e.px.toFixed(2), y: +e.py.toFixed(2), z: e.z, netted: !!(e.netUntil && e.netUntil > Date.now()) };
+        });
+      },
+      freezeMe: function () { return freezePlayer(2200, 'test'); },
+      thaw: function () { thawIce(false); return !!G.frozen; },
+      tapIce: function (n) { for (var i = 0; i < (n || 1); i++) tapIce(); return G.frozen ? G.frozen.taps : 'thawed'; },
+      gravity: function () { return G.at7 ? 0.42 : 1; },
+      gravBadge: function () { var el = $('#gravBadge'); return el ? el.classList.contains('on') : false; },
+      macs: function () {
+        return G.tiles.filter(function (t) { return t.mac; }).map(function (t) { return { x: t.x, y: t.y, z: t.z, kind: t.mac, sq: +(t.macSq || 0).toFixed(2) }; });
+      },
+      meteors: function () { return (G.meteors || []).map(function (m) { return { x: +m.x.toFixed(2), y: +m.y.toFixed(2), z: +m.z.toFixed(2), floor: m.floor }; }); },
+      meteorSpots: function () { return (G.meteorSpots || []).slice(); },
+      zoneOf: function (x, y, z) { return zoneAt(x, y, z); },
+      iceTiles: function () {
+        return G.tiles.filter(function (t) { return isIceTile(t); }).length;
+      },
+      galaxyOpen: function () { var el = $('#galaxyOverlay'); return el ? el.classList.contains('open') : false; },
       village: function () { gotoVillage(); },
       parkGo: function () { gotoPark(); },
       park: function () {
@@ -11100,7 +12900,7 @@ try {
       crumbles: function () { return G.crmTiles.map(function (t) { return { x: t.x, y: t.y, z: t.z, st: t.cstate, hid: !!t.hidden }; }); },
       portals: function () { return G.portals.map(function (po) { return { id: po.id, x: po.x, y: po.y, z: po.z, href: po.href }; }); },
       spots: function () { return G.spots.map(function (sp) { return { x: sp.x, y: sp.y, z: sp.z, label: sp.label }; }); },
-      finishes: function () { return { f1: G.finish, f2: G.finish2, f3: G.finish3, f4: G.finish4 }; },
+      finishes: function () { return { f1: G.finish, f2: G.finish2, f3: G.finish3, f4: G.finish4, f5: G.finish5, f6: G.finish6, f7: G.finish7 }; },
       tile: function (x, y) { var t = G.map[Math.floor(x) + ',' + Math.floor(y)]; return t ? { x: t.x, y: t.y, z: t.z, type: t.type, hid: !!t.hidden, crm: !!t.crm, jelly: !!t.jelly } : null; },
       topUp: function (n) { var cur = WorldCoins.get(); if (cur < n) WorldCoins.earn(n - cur); return WorldCoins.get(); },
       openModal: function (id) { var el = document.getElementById(id); if (el) el.classList.add('open'); },
