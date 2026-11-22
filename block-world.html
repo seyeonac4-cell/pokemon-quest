@@ -224,6 +224,53 @@ body.co-on #coHud{display:block}
   color:#5a6a86;font-size:13.5px;box-shadow:0 6px 16px rgba(20,60,90,.2)
 }
 #coHud button:active{transform:scale(.96)}
+/* ---------------- 🌿 원더랜드: 그네 (앞뒤로 점점 크게) ---------------- */
+#swingPad{
+  position:absolute;left:0;right:0;bottom:calc(18px + var(--safe-b));z-index:26;
+  display:none;flex-direction:column;align-items:center;gap:10px;padding:0 14px;
+  pointer-events:none;
+}
+body.swing-on #swingPad{display:flex}
+body.swing-on #stick,body.swing-on #btnJump{display:none}
+body.swing-on #ridePill{display:none}
+#swingPad .swing-row{display:flex;gap:12px;justify-content:center;width:100%;max-width:430px}
+#swingPad button{
+  pointer-events:auto;touch-action:none;min-width:0;flex:1 1 0;
+  padding:14px 10px;border-radius:22px;border:3px solid #fff;
+  background:linear-gradient(180deg,#eafff2,#8fefb9 66%,#4fd695);
+  color:#12603f;font-size:21px;line-height:1.05;font-weight:700;
+  box-shadow:0 8px 20px rgba(35,189,122,.34),inset 0 -5px 0 rgba(0,0,0,.10);
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+}
+#swingPad button span{font-size:12.5px;font-weight:400;color:#2b7455;letter-spacing:-.02em}
+#swingPad button.off{background:linear-gradient(180deg,#f6f9ff,#dbe6f6 70%,#b9cbe4);color:#41577a;
+  box-shadow:0 8px 20px rgba(60,90,140,.24),inset 0 -5px 0 rgba(0,0,0,.08)}
+#swingPad button.off span{color:#60728f}
+#swingPad button:active,#swingPad button.pressed{transform:scale(.95)}
+/* ---------------- 🕸️ 그물 휘두르기 (기본 장비) ---------------- */
+#netBtn{
+  position:absolute;left:calc(16px + env(safe-area-inset-left,0px));
+  bottom:calc(158px + var(--safe-b));z-index:25;
+  width:76px;height:76px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  background:radial-gradient(circle at 34% 26%,#f7fbff,#cfe0f8 62%,#93b7ea);
+  color:#24405f;border:4px solid #fff;font-size:27px;line-height:1;
+  box-shadow:0 8px 20px rgba(60,100,170,.30),inset 0 -6px 0 rgba(0,0,0,.08);
+  pointer-events:auto;touch-action:none;transition:transform .08s,opacity .2s;
+}
+#netBtn b{font-size:11px;font-weight:700;letter-spacing:-.02em;margin-top:-1px}
+#netBtn:active{transform:scale(.93)}
+#netBtn.hot{
+  background:radial-gradient(circle at 34% 26%,#fff7fd,#ffd9f2 60%,#ff9dd9);
+  color:#7b2360;box-shadow:0 0 0 5px rgba(255,255,255,.6),0 10px 26px rgba(239,79,139,.45);
+  animation:netpulse 1.05s ease-in-out infinite;
+}
+#netBtn.cool{opacity:.5}
+body.see-on #netBtn,body.swing-on #netBtn,body.co-on #netBtn{opacity:0;pointer-events:none}
+@keyframes netpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@media (max-width:430px){
+  #netBtn{width:68px;height:68px;font-size:24px;bottom:calc(150px + var(--safe-b))}
+}
 @media (hover:hover) and (pointer:fine){
   #controls{display:none}
 }
@@ -788,6 +835,17 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
   </div>
   <div id="coHud"><button id="coOffBtn" type="button">⏏ 열차에서 내리기</button></div>
 
+  <!-- ===================== 🌿 원더랜드: 그네 ===================== -->
+  <div id="swingPad">
+    <div class="swing-row">
+      <button id="swingPumpBtn" type="button">⬆️<span>힘껏 발 구르기</span></button>
+      <button id="swingOffBtn" class="off" type="button">⬇️<span>그네 내리기</span></button>
+    </div>
+  </div>
+
+  <!-- ===================== 🕸️ 기본 장비: 그물 ===================== -->
+  <button id="netBtn" type="button" aria-label="그물 휘두르기">🕸️<b>그물</b></button>
+
   <!-- ===================== 🥨 츄러스 수레 ===================== -->
   <div id="churroBar">
     <button id="churroBegBtn" type="button">🥺 아빠한테 츄러스 조르기!</button>
@@ -873,7 +931,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
     <div class="sheet-head"><b>☰ 메뉴</b><button class="x" data-close="menuPanel" type="button" aria-label="닫기">✕</button></div>
     <div class="sheet-body">
       <div class="menu-list">
-        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 놀이공원 · 그로우 어 가든 · 드레스 투 임프레스 · 2~4탄</span></button>
+        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 원더랜드 · 그로우 어 가든 · 드레스 투 임프레스 · 2~4탄</span></button>
         <button type="button" data-menu="type">⌨️ 타자 놀이<span>톡톡톡 소리와 함께 낱말 연습</span></button>
         <button type="button" data-menu="pet">🐾 내 펫 돌보기<span>알 깨우기 · 밥주기 · 쓰다듬기</span></button>
         <button type="button" data-menu="play">🎭 역할놀이<span>소품 들기 · 우리 집 색깔</span></button>
@@ -901,7 +959,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         </div>
         <button class="world-row park" type="button" data-park="1">
           <span class="big-ic">🎡</span>
-          <span class="wt"><b>채씨네 놀이공원</b><small>같이 타고 조종하는 시소 · 신나는 청룡열차</small></span>
+          <span class="wt"><b>🎡 원더랜드</b><small>시소 · 청룡열차 · 그네 · 트램펄린 · 미끄럼틀</small></span>
           <span class="go">바로 가기 ›</span>
         </button>
         <button class="world-row" type="button" data-world="./grow-garden.html">
@@ -1118,6 +1176,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         <h3>🌉 타자 미션 · 점프맵</h3>
         <p>마을 동쪽 길로 나가면 점프맵이 있어요. 빛나는 안내판 앞에 서면 타자 미션이 열리고, 낱말을 다 치면 다리가 생겨 건너갈 수 있어요.<br>발판이 넓고 구멍도 한 칸뿐이라 가볍게만 점프해도 착지해요. 떨어져도 퐁퐁 쿠션에 받혀서 다시 올라갈 수 있어요!<br>
         👾 <b>중간 발판엔 쿠파가 순찰해요</b>: 부딪히면 <b>-30 코인</b>. 점프로 머리 위를 넘거나 반대쪽으로 걸어 피해 가요!<br>
+        🕸️ <b>쿠파가 2칸쯤 앞에 오면</b> 왼쪽 아래 <b>「🕸️ 그물」</b> 버튼! 그물에 잡으면 <b>+15 코인</b>이에요.<br>
         🕳️ <b>난간 없는 블록 밖으로 걸어 나가면 진짜로 아래로 떨어져요</b> — 체크포인트 깃발에서 다시 출발해요!</p>
       </div>
       <div class="help-sec">
@@ -1586,6 +1645,21 @@ var AU = (function () {
     var c = AC;
     hit({ at: c.currentTime, bp: 780, q: 0.6, a: 0.06, hold: 0.12, d: 0.5, g: 0.42 });
   }
+  /* 🌿 그네 — 앞뒤로 지나갈 때 슝— 바람 소리 (크게 흔들릴수록 시원하게) */
+  function swingWhoosh(v) {
+    if (!ctx() || muted) return;
+    var c = AC;
+    var L = clamp(v === undefined ? 0.7 : v, 0.2, 1);
+    hit({ at: c.currentTime, hp: 260, bp: 620 + 520 * L, q: 0.55, a: 0.03, hold: 0.07, d: 0.32, g: 0.24 + 0.22 * L });
+    hit({ at: c.currentTime + 0.05, bp: 1500 + 900 * L, q: 1.2, a: 0.02, d: 0.18, g: 0.10 + 0.12 * L });
+  }
+  /* 🌿 그네 — 발로 힘껏 구를 때 나는 사각사각·휘익 소리 */
+  function swingPush() {
+    if (!ctx() || muted) return;
+    var c = AC;
+    hit({ at: c.currentTime, bp: 1100, q: 1.6, a: 0.004, d: 0.09, g: 0.22 });
+    tone({ f: 190, to: 320, d: 0.12, type: 'triangle', g: 0.05, a: 0.01 });
+  }
   function scream() {
     if (!ctx() || muted) return;
     tone({ f: rnd(620, 700), to: rnd(980, 1120), d: 0.16, type: 'triangle', g: 0.07, delay: 0.02 });
@@ -1667,6 +1741,7 @@ var AU = (function () {
 
   return { click: click, clack: clack, keycap: keycap, typeKey: typeKey, chime: chime, coin: coin, jump: jump, land: land,
     err: err, msg: msg, win: win, pop: pop, sagrak: sagrak, jellyPop: jellyPop, setMuted: setMuted, isMuted: isMuted, unlock: unlock, seeCreak: seeCreak, coasterClack: coasterClack, whoosh: whoosh, scream: scream, bell: bell,
+    swingWhoosh: swingWhoosh, swingPush: swingPush,
     isRunning: isRunning, watchUnlock: watchUnlock, nudge: nudge };
 })();
 
@@ -1919,12 +1994,20 @@ function buildMap() {
       mx: x, my: y,
       press: 0, flash: 0,
       tramp: (opt && opt.tramp) ? 1 : 0,       // 🤸 트램펄린 매트
+      trampPad: (opt && opt.trampPad) || '',   // 🤸 한 판짜리 큰 트램펄린 묶음 이름
       trampSq: 0, trampV: 0
     };
     tiles.push(t);
     map[x + ',' + y] = t;
     if (t.crm) crmTiles.push(t);
     return t;
+  }
+  /* 같은 자리·같은 높이의 예전 타일을 지워요 (큰 트램펄린 판처럼 덮어쓸 때) */
+  function stripTiles(x, y, z) {
+    for (var i = tiles.length - 1; i >= 0; i--) {
+      var t = tiles[i];
+      if (t.x === x && t.y === y && Math.abs((t.z || 0) - (z || 0)) < 0.001) tiles.splice(i, 1);
+    }
   }
   function rect(x0, y0, x1, y1, z, type, opt) {
     for (var x = x0; x <= x1; x++) for (var y = y0; y <= y1; y++) add(x, y, z, type, opt);
@@ -2589,30 +2672,39 @@ function buildMap() {
   var finish4 = { x: J4.X(5, 1.0), y: J4.Y(5, 2.5), z: J4.Z(5) };
   spots.push({ x: J4.X(5, 1.6), y: J4.Y(5, 1.3), z: J4.Z(5), icon: '🏠', label: '마을로 돌아가기', act: 'village' });
 
-  /* ⑤ 🌱 그로우 어 가든 문 — 🎡 채씨네 놀이공원 남쪽 잔디 광장으로 이사했어요 */
+  /* ⑤ 🌱 그로우 어 가든 문 — 🎡 원더랜드 남쪽 잔디 광장으로 이사했어요 */
   portals.push({ id: 'garden', x: 5.3, y: 24.6, z: 0, icon: '🌱', title: '그로우 어 가든', prompt: '🌱 그로우 어 가든으로 갈까요?', href: './grow-garden.html', color: '#33cf87' });
 
-  /* ⑥ 👗 드레스 투 임프레스 문(놀이공원) + 🏰 3탄으로 이어지는 문(2탄 왕관 결승 구역) */
+  /* ⑥ 👗 드레스 투 임프레스 문(원더랜드) + 🏰 3탄으로 이어지는 문(2탄 왕관 결승 구역) */
   portals.push({ id: 'dress', x: 9.9, y: 24.4, z: 0, icon: '👗', title: '드레스 투 임프레스', prompt: '👗 드레스 투 임프레스로 갈까요?', href: './dress-up.html', color: '#a97bff' });
   /* 🛝·🤸 미끄럼틀·트램펄린 문 안내가 승강장 쪽에서 뜨지 않게 거리 체크는 문 앞 1.6칸로 */
   portals.push({ id: 'tw3', x: 98.5, y: 15, z: 6, icon: '🏰', title: '3탄 무지개 타워', prompt: '🏰 바로 3탄 무지개 타워로 이어서 도전!', href: '#tw3', color: '#ff7ac6' });
 
   /* ============================================================
-     9-6) 🎡 채씨네 놀이공원 — 1단계(1탄) 시작 광장 바로 남쪽
+     9-6) 🎡 원더랜드 — 1단계(1탄) 시작 광장 바로 남쪽
      ------------------------------------------------------------
-     · 시작 광장 남쪽 길 → 알록달록한 놀이공원 바닥 + 아치 간판
-     · 같이 타고 조종하는 시소 (왼쪽 자리 · 오른쪽 자리)
+     · 시작 광장 남쪽 길 → 알록달록한 원더랜드 바닥 + 아치 간판
+     · 가운데: 같이 타고 조종하는 시소 · 분수 · 회전목마
      · 공원을 한 바퀴 크게 도는 청룡열차 (롤러코스터)
-     · 대관람차 · 회전목마 · 풍선 · 조명 같은 구경거리
+     · 2026-11-22 넓힘 — 동·서·남쪽으로 공원을 크게 펼쳤어요(약 1.7배).
+       청룡열차 레일은 그대로 두고, 기구는 레일을 가리지 않는
+       바깥 광장에만 놓았습니다.
+         · 동쪽 광장 — 🛝 무지개 미끄럼틀(계단 포함)
+         · 남쪽 광장 — 🤸 큼직한 트램펄린 · 🌿 그네
      ============================================================ */
-  var PARK = { x0: 2, y0: 11, x1: 27, y1: 29, gx0: 5, gx1: 7 };
+  var PARK = { x0: 0, y0: 11, x1: 32, y1: 36, gx0: 5, gx1: 7 };
   var PARK_FLOOR = ['#ffd9e8', '#d5e9ff', '#ffefbe', '#d8f5df'];
-  /* 공원 안 산책로 — 입구 → 시소 → 청룡열차 승강장 */
+  /* 공원 안 산책로 — 입구 → 시소 → 승강장 → 남쪽·동쪽 광장 */
+  function prkBox(x, y, x0, y0, x1, y1) { return x >= x0 && x <= x1 && y >= y0 && y <= y1; }
   function parkPath(x, y) {
-    if (x >= 5 && x <= 8 && y >= 11 && y <= 18) return 1;
-    if (y >= 18 && y <= 21 && x >= 5 && x <= 14) return 1;
-    if (x >= 11 && x <= 14 && y >= 21 && y <= 26) return 1;
-    if (y >= 24 && y <= 26 && x >= 11 && x <= 19) return 1;
+    if (prkBox(x, y, 5, 11, 8, 18)) return 1;      // 입구에서 내려오는 길
+    if (prkBox(x, y, 5, 18, 14, 21)) return 1;     // 가운데 광장 길
+    if (prkBox(x, y, 11, 21, 14, 27)) return 1;    // 청룡열차 승강장 가는 길
+    if (prkBox(x, y, 11, 24, 19, 26)) return 1;    // 승강장 앞 광장
+    if (prkBox(x, y, 12, 27, 14, 30)) return 1;    // 남쪽 광장으로 내려가는 길
+    if (prkBox(x, y, 6, 28, 30, 30)) return 1;     // 남쪽 광장 산책로
+    if (prkBox(x, y, 25, 16, 26, 30)) return 1;    // 동쪽 광장 길
+    if (prkBox(x, y, 24, 19, 31, 20)) return 1;    // 미끄럼틀 앞 광장
     return 0;
   }
   for (var pkx = PARK.x0; pkx <= PARK.x1; pkx++) {
@@ -2623,7 +2715,7 @@ function buildMap() {
   }
   /* 입구 길 — 시작 광장(y=6)에서 공원 입구(y=11)로 이어져요 */
   rect(PARK.gx0, 7, PARK.gx1, 10, 0, 'lane');
-  props.push({ k: 'houseSign', x: 3.1, y: 6.1, z: 0, who: null, label: '놀이공원 →', emoji: '🎡' });
+  props.push({ k: 'houseSign', x: 3.1, y: 6.1, z: 0, who: null, label: '원더랜드 →', emoji: '🎡' });
   for (var pfy = 7; pfy <= 9; pfy++) {
     railTile(PARK.gx0 - 1, pfy, 0, { tint: '#87dcff', ry: 1 });
     railTile(PARK.gx1 + 1, pfy, 0, { tint: '#87dcff', ry: 1 });
@@ -2639,7 +2731,7 @@ function buildMap() {
   }
 
   /* 🎡 아치 간판 */
-  props.push({ k: 'parkArch', x: PARK.gx0 - 0.25, y: 10.15, z: 0, label: '채씨네 놀이공원', emoji: '🎡' });
+  props.push({ k: 'parkArch', x: PARK.gx0 - 0.25, y: 10.15, z: 0, label: '원더랜드', emoji: '🎡' });
   /* 🎡 구경거리 */
   props.push({ k: 'ferris', x: 23.2, y: 12.9, z: 0 });
   props.push({ k: 'carousel', x: 18.4, y: 22.4, z: 0 });
@@ -2649,22 +2741,30 @@ function buildMap() {
   /* 🎈 풍선 나눠 주는 삐에로 — 공원 입구 광장에서 손 흔들며 기다려요 */
   props.push({ k: 'clown', x: 4.6, y: 13.6, z: 0, label: '삐에로' });
   spots.push({ x: 5.5, y: 13.9, z: 0, icon: '🎈', label: '풍선 받기', act: 'balloon' });
-  /* 🥨 츄러스 수레 — 놀이공원 한가운데, 노릇노릇 향기가 풍기는 곳 */
-  props.push({ k: 'churro', x: 17.4, y: 11.9, z: 0 });
-  props.push({ k: 'balloons', x: 12.0, y: 12.2, z: 0, tint: '#ffd24a' });
-  props.push({ k: 'balloons', x: 25.8, y: 19.4, z: 0, tint: '#8fd0ff' });
-  props.push({ k: 'popcorn', x: 9.4, y: 13.0, z: 0 });
-  props.push({ k: 'icecream', x: 3.5, y: 16.4, z: 0 });
+  /* 🥨 츄러스 수레 — 입구 광장 산책로 바로 옆, 레일에 안 가리는 자리로 이사! */
+  props.push({ k: 'churro', x: 9.2, y: 14.2, z: 0 });
+  props.push({ k: 'balloons', x: 11.6, y: 12.0, z: 0, tint: '#ffd24a' });
+  props.push({ k: 'balloons', x: 28.6, y: 25.6, z: 0, tint: '#8fd0ff' });
+  props.push({ k: 'popcorn', x: 14.0, y: 12.4, z: 0 });
+  props.push({ k: 'icecream', x: 3.2, y: 16.2, z: 0 });
   props.push({ k: 'bench', x: 3.2, y: 21.4, z: 0 });
   props.push({ k: 'bench', x: 8.3, y: 21.6, z: 0 });
   props.push({ k: 'bench', x: 14.3, y: 21.4, z: 0 });
   props.push({ k: 'bench', x: 20.0, y: 19.0, z: 0 });
+  props.push({ k: 'bench', x: 17.4, y: 31.6, z: 0 });
+  props.push({ k: 'bench', x: 24.4, y: 31.6, z: 0 });
+  props.push({ k: 'bench', x: 30.2, y: 22.4, z: 0 });
   props.push({ k: 'parkLamp', x: 9.4, y: 18.2, z: 0 });
   props.push({ k: 'parkLamp', x: 16.4, y: 18.6, z: 0 });
   props.push({ k: 'parkLamp', x: 21.0, y: 25.4, z: 0 });
   props.push({ k: 'parkLamp', x: 4.2, y: 24.4, z: 0 });
+  props.push({ k: 'parkLamp', x: 6.6, y: 32.4, z: 0 });
+  props.push({ k: 'parkLamp', x: 14.4, y: 32.4, z: 0 });
+  props.push({ k: 'parkLamp', x: 23.4, y: 32.0, z: 0 });
+  props.push({ k: 'parkLamp', x: 26.6, y: 23.4, z: 0 });
   props.push({ k: 'houseSign', x: 8.6, y: 18.3, z: 0, who: null, label: '같이 타는 시소', emoji: '🪑' });
   props.push({ k: 'houseSign', x: 9.4, y: 24.9, z: 0, who: null, label: '청룡열차 타는 곳', emoji: '🎢' });
+  props.push({ k: 'houseSign', x: 7.9, y: 12.5, z: 0, who: null, label: '남쪽 광장 ↓ 트램펄린·그네', emoji: '🤸' });
   /* 화단·나무로 공원을 알록달록 */
   var pfi;
   for (pfi = 0; pfi < 26; pfi++) {
@@ -2676,26 +2776,41 @@ function buildMap() {
     flowers.push({ x: rnd(PARK.x1 + 0.1, PARK.x1 + 0.7), y: rnd(PARK.y0 + 1.2, PARK.y1 + 0.8), z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#5fd0ff']) });
   }
   trees.push({ x: 3.0, y: 14.2, z: 0, s: 0.92 });
-  trees.push({ x: 26.4, y: 27.4, z: 0, s: 0.95 });
   trees.push({ x: 4.0, y: 27.6, z: 0, s: 0.9 });
-  trees.push({ x: 26.2, y: 15.0, z: 0, s: 0.88 });
+  trees.push({ x: 30.8, y: 14.0, z: 0, s: 0.9 });
+  trees.push({ x: 31.0, y: 25.6, z: 0, s: 0.95 });
+  trees.push({ x: 1.6, y: 33.4, z: 0, s: 0.95 });
+  trees.push({ x: 30.4, y: 34.6, z: 0, s: 1.0 });
+  trees.push({ x: 15.6, y: 35.2, z: 0, s: 0.88 });
+  trees.push({ x: 1.2, y: 20.2, z: 0, s: 0.86 });
 
   /* 🪑 시소 — 왼쪽·오른쪽 자리에 앉아 서로 밀고 올라가요 */
   var seesaw = { x: 11.0, y: 19.6, arm: 2.0, z0: 0.7, a: 0, av: 0 };
   spots.push({ x: seesaw.x - 1.41, y: seesaw.y + 1.41, z: 0, icon: '🪑', label: '시소 왼쪽 타기', act: 'seeL' });
   spots.push({ x: seesaw.x + 1.41, y: seesaw.y - 1.41, z: 0, icon: '🪑', label: '시소 오른쪽 타기', act: 'seeR' });
 
-  /* 🤸 트램펄린 — 공원 북동쪽 잔디 위에 통통! (밟으면 쏙 눌리고 퐁!) */
-  add(19, 20, 0, 'lane', { tint: '#d8f5df', tramp: 1 });
-  spots.push({ x: 19.5, y: 21.2, z: 0, icon: '🤸', label: '트램펄린 올라타기', act: 'trampUp' });
+  /* 🤸 트램펄린 — 남쪽 광장에 큼직하게! 4×4 매트 (밟으면 쏙 눌렸다 퐁!)
+     16칸이 한 덩어리(trampPad)로 같이 출렁여서 크게 튀어 올라요 */
+  for (var tfx = 0; tfx < TRAMP.w; tfx++) {
+    for (var tfy = 0; tfy < TRAMP.d; tfy++) {
+      stripTiles(TRAMP.x + tfx, TRAMP.y + tfy, 0);
+      add(TRAMP.x + tfx, TRAMP.y + tfy, 0, 'lane', { tint: '#cfeaff', tramp: 1, trampPad: 'big1' });
+    }
+  }
+  props.push({ k: 'houseSign', x: TRAMP.x - 1.5, y: TRAMP.y - 1.2, z: 0, who: null, label: '트램펄린', emoji: '🤸' });
+  spots.push({ x: TRAMP.x + TRAMP.w + 1.25, y: TRAMP.y + 1.5, z: 0, icon: '🤸', label: '트램펄린 올라타기', act: 'trampUp' });
 
-  /* 🛝 무지개 미끄럼틀 — 4칸 높이! 뒤쪽 계단을 쭉 올라가 꼭대기에서 슝—! */
-  var SL = { x: 21, y: 21, topZ: 4, steps: 4 };   // 슬라이드 구조물 좌상단 기준점
+  /* 🌿 그네 — 남쪽 광장 동쪽, 앞뒤로 점점 크게 흔들리는 그네 */
+  props.push({ k: 'houseSign', x: SWING.x - 2.3, y: SWING.y - 1.6, z: 0, who: null, label: '그네', emoji: '🌿' });
+  spots.push({ x: SWING.x, y: SWING.y - 1.35, z: 0, icon: '🪑', label: '그네 타기', act: 'swingUp' });
+
+  /* 🛝 무지개 미끄럼틀 — 동쪽 광장에 시원하게! 4칸 높이, 계단으로 쭉 올라가 슝—! */
+  var SL = { x: 27, y: 16, topZ: 4, steps: 4 };   // 슬라이드 구조물 좌상단 기준점
   var SL_COLS = ['#ff8fc2', '#ffb45c', '#ffe95c', '#7fe0a8', '#6fc0f5', '#b79bff'];
-  /* 계단 (동쪽에서 서쪽으로 오르막, 1칸씩) */
+  /* 계단 — 동쪽 끝(1칸)에서 꼭대기(4칸)로 한 칸씩 올라가요 */
   for (var si2 = 0; si2 < SL.steps; si2++) {
     for (var sj2 = 0; sj2 < 2; sj2++) {
-      add(SL.x + 1 + si2, SL.y + sj2, si2 + 1, 'brick', { tint: SL_COLS[si2 % SL_COLS.length] });
+      add(SL.x + SL.steps - si2, SL.y + sj2, si2 + 1, 'brick', { tint: SL_COLS[si2 % SL_COLS.length] });
     }
   }
   /* 꼭대기 플랫폼 (2×2) */
@@ -2707,7 +2822,7 @@ function buildMap() {
     add(SL.x, SL.y + spy2 + 2, 0, 'stone', { tint: '#d9e4f2' });
   }
   spots.push({ x: SL.x + 0.5, y: SL.y + 2.2, z: SL.topZ, icon: '🛝', label: '슝~ 미끄러져 내려가기!', act: 'bigSlide' });
-  props.push({ k: 'houseSign', x: SL.x + 3.4, y: SL.y + 2.9, z: 0, who: null, label: '무지개 미끄럼틀', emoji: '🛝' });
+  props.push({ k: 'houseSign', x: SL.x - 2.6, y: SL.y + 6.6, z: 0, who: null, label: '무지개 미끄럼틀', emoji: '🛝' });
   props.push({ k: 'bigSlide', x: SL.x, y: SL.y, z: 0 });
 
   /* 🎢 청룡열차 — 공원을 한 바퀴 크게 도는 레일 (구불구불 · 오르락내리락) */
@@ -2830,7 +2945,10 @@ var G = {
   jumpLatch: false, hintTimer: 0, unread: 0, revealing: [], fx: null,
   /* 🎡 놀이공원 */
   park: null, see: null, seeSeat: '', seePushing: 0, seeBtn: 0, seeKick: 0, seeRemote: {}, seeSnd: 0,
-  co: null, coSegs: [], coRide: null, coTip: '', ridePrompt: null
+  co: null, coSegs: [], coRide: null, coTip: '', ridePrompt: null,
+  /* 🌿 그네 · 🕸️ 그물 */
+  swing: { a: 0, av: 0, kick: 0, snd: 0 }, swingSeat: false,
+  net: { anim: 0, cool: 0, lastCatch: 0, hot: false }
 };
 
 function buildWorld() {
@@ -3088,6 +3206,7 @@ function drawJellyTile(ctx, t) {
 function drawTile(ctx, t) {
   if (t.type === 'rail') { drawRail(ctx, t); return; }
   if (t.jelly) { drawJellyTile(ctx, t); return; }
+  if (t.trampPad) { drawTrampPadTile(ctx, t); return; }
   var c = TYPES[t.type] || TYPES.grass;
   var v = (t.seed - 0.5) * 0.07;
   var topC, rightC, leftC;
@@ -3316,6 +3435,103 @@ function drawTile(ctx, t) {
     ctx.restore();
   }
 
+  ctx.restore();
+}
+
+/* 🤸 큼직한 트램펄린 — 5×5 칸이 한 판!
+   바깥 한 줄은 알록달록 프레임, 안쪽 3×3은 파란 매트.
+   밟으면 매트만 쏙 내려앉았다가 퐁! (프레임은 그대로) */
+var TRAMP_FRAME_COLS = ['#ff5fa2', '#ffc400', '#38d17a', '#2f9cf5'];
+function drawTrampPadTile(ctx, t) {
+  function padAt(x, y) {
+    var q = G.map[x + ',' + y];
+    return !!(q && q.trampPad && q.trampPad === t.trampPad);
+  }
+  var nN = padAt(t.x, t.y - 1), nE = padAt(t.x + 1, t.y), nS = padAt(t.x, t.y + 1), nW = padAt(t.x - 1, t.y);
+  var isMat = nN && nE && nS && nW;          // 안쪽 = 매트
+  var pr = clamp(t.trampPress || 0, 0, 1.3);
+  var dip = isMat ? pr * 11 : 0;
+  var q0 = proj(t.x, t.y, 0), q1 = proj(t.x + 1, t.y, 0);
+  var q2 = proj(t.x + 1, t.y + 1, 0), q3 = proj(t.x, t.y + 1, 0);
+  var m0 = { x: q0.x, y: q0.y + dip }, m1 = { x: q1.x, y: q1.y + dip };
+  var m2 = { x: q2.x, y: q2.y + dip }, m3 = { x: q3.x, y: q3.y + dip };
+  var cx = (q0.x + q2.x) / 2, cy = (q0.y + q2.y) / 2;
+  ctx.save();
+  if (isMat) {
+    /* 안쪽 매트 */
+    poly(ctx, [q0, q1, q2, q3], '#2b5a86');                 // 홈
+    poly(ctx, [m0, m1, m2, m3], '#3fc8ee');                 // 매트
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(m0.x, m0.y); ctx.lineTo(m1.x, m1.y); ctx.lineTo(m2.x, m2.y); ctx.lineTo(m3.x, m3.y);
+    ctx.closePath();
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(255,255,255,.45)';
+    ctx.lineWidth = 1.7;
+    for (var gi = -9; gi <= 9; gi++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + gi * 17 - 130, cy - 70);
+      ctx.lineTo(cx + gi * 17 + 130, cy + 70);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - gi * 17 + 130, cy - 70);
+      ctx.lineTo(cx - gi * 17 - 130, cy + 70);
+      ctx.stroke();
+    }
+    ctx.restore();
+    poly(ctx, [m0, m1, m2, m3], null, 'rgba(255,255,255,.55)', 2);
+  } else {
+    /* 바깥 프레임 — 알록달록 */
+    var col = TRAMP_FRAME_COLS[Math.abs((t.x * 2 + t.y * 3)) % TRAMP_FRAME_COLS.length];
+    poly(ctx, [q0, q1, q2, q3], col);
+    /* 프레임 두께(살짝 솟은 느낌) */
+    poly(ctx, [{ x: q0.x, y: q0.y + 7 }, { x: q1.x, y: q1.y + 7 }, { x: q2.x, y: q2.y + 7 }, { x: q3.x, y: q3.y + 7 }], 'rgba(0,0,0,.10)');
+    /* 매트 쪽 안쪽 선 */
+    ctx.strokeStyle = 'rgba(43,90,134,.55)';
+    ctx.lineWidth = 2.6;
+    var inn = [];
+    if (nN) inn.push([q0, q1]); if (nE) inn.push([q1, q2]);
+    if (nS) inn.push([q2, q3]); if (nW) inn.push([q3, q0]);
+    for (var ii = 0; ii < inn.length; ii++) {
+      ctx.beginPath(); ctx.moveTo(inn[ii][0].x, inn[ii][0].y); ctx.lineTo(inn[ii][1].x, inn[ii][1].y); ctx.stroke();
+    }
+    /* 바깥 테두리 하이라이트 + 스프링 */
+    ctx.lineCap = 'round';
+    var out = [];
+    if (!nN) out.push([q0, q1, { x: 0, y: 1 }]);
+    if (!nE) out.push([q1, q2, { x: -1, y: 0.5 }]);
+    if (!nS) out.push([q2, q3, { x: 0, y: -1 }]);
+    if (!nW) out.push([q3, q0, { x: 1, y: -0.5 }]);
+    for (var oi = 0; oi < out.length; oi++) {
+      var a = out[oi][0], b = out[oi][1], iv = out[oi][2];
+      ctx.strokeStyle = 'rgba(255,255,255,.95)';
+      ctx.lineWidth = 3.4;
+      ctx.beginPath();
+      ctx.moveTo(a.x + iv.x * 4, a.y + iv.y * 4);
+      ctx.lineTo(b.x + iv.x * 4, b.y + iv.y * 4);
+      ctx.stroke();
+      /* 스프링 — 프레임 위에 조그맣게 */
+      ctx.strokeStyle = '#8fa8c6';
+      ctx.lineWidth = 2.2;
+      for (var sk = 1; sk <= 3; sk++) {
+        var u2 = sk / 4;
+        var sx2 = a.x + (b.x - a.x) * u2 + iv.x * 12;
+        var sy2 = a.y + (b.y - a.y) * u2 + iv.y * 12;
+        ctx.beginPath();
+        ctx.moveTo(sx2 - 4, sy2 - 1);
+        ctx.quadraticCurveTo(sx2 + 3, sy2 + 3, sx2 - 3, sy2 + 8);
+        ctx.stroke();
+      }
+    }
+    /* 바깥 모서리 스프링 다리 */
+    if ((!nN && !nW) || (!nN && !nE) || (!nS && !nW) || (!nS && !nE)) {
+      ctx.strokeStyle = '#7f93ad'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(q3.x, q3.y + 2); ctx.lineTo(q3.x, q3.y + 20); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(q2.x, q2.y + 2); ctx.lineTo(q2.x, q2.y + 20); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(q3.x - 9, q3.y + 21); ctx.lineTo(q3.x + 9, q3.y + 21); ctx.stroke();
+    }
+  }
   ctx.restore();
 }
 
@@ -3822,7 +4038,8 @@ function drawSpin(ctx, s) {
 /* 👾 쿠파 스타일 블록 보스 — 초록 몸통 + 노란 배 + 가시 등껍질 + 노란 뿔 + 빨간 갈기 */
 function drawEnemy(ctx, e) {
   var p = proj(e.px, e.py, e.z);
-  var bob = Math.sin(G.t * 7 + (e.ph || 0) * 2) * 1.5;
+  var netted = !!(e.netUntil && e.netUntil > Date.now());
+  var bob = netted ? 0 : Math.sin(G.t * 7 + (e.ph || 0) * 2) * 1.5;
   var f = e.face || 1;
   ctx.save();
   ctx.translate(p.x, p.y);
@@ -3967,6 +4184,31 @@ function drawEnemy(ctx, e) {
   });
 
   ctx.restore();
+
+  /* 🕸️ 그물에 잡힌 쿠파 — 하늘하늘 그물에 감싸여 꿈짝 못 해요 */
+  if (netted) {
+    ctx.save();
+    ctx.globalAlpha = 0.92;
+    ctx.strokeStyle = '#f2f9ff';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    var cxn = p.x, cyn = p.y - 22;
+    for (var gx2 = -20; gx2 <= 20; gx2 += 10) {
+      ctx.beginPath(); ctx.moveTo(cxn + gx2, cyn - 44); ctx.lineTo(cxn + gx2 + 4, cyn + 20); ctx.stroke();
+    }
+    for (var gy2 = -40; gy2 <= 16; gy2 += 11) {
+      ctx.beginPath(); ctx.moveTo(cxn - 24, cyn + gy2); ctx.lineTo(cxn + 24, cyn + gy2 + 3); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(150,200,255,.9)';
+    ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.ellipse(cxn, cyn - 12, 26, 34, 0, 0, 6.2832); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = 0.95;
+    emo(ctx, '🕸️', p.x, p.y - 96 - Math.abs(Math.sin(G.t * 3)) * 5, 20);
+    ctx.restore();
+    return;
+  }
 
   // 👾 머리 위 표시 (피해야 할 적!)
   ctx.save();
@@ -4922,7 +5164,7 @@ function drawProp(ctx, p) {
       }
       break;
     }
-    /* ---------------- 🎡 놀이공원 소품 ---------------- */
+    /* ---------------- 🎡 원더랜드 소품 ---------------- */
     case 'parkArch': {
       var ap1 = proj(x + 0.15, y + 0.5, 0), ap2 = proj(x + 3.15, y + 0.5, 0);
       var ah = 2.25;
@@ -4949,7 +5191,7 @@ function drawProp(ctx, p) {
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.font = '19px Jua,"Noto Sans KR",sans-serif';
       ctx.fillStyle = '#b0386c';
-      ctx.fillText((p.emoji || '🎡') + ' ' + (p.label || '채씨네 놀이공원'), mid.x, mid.y - bh / 2 - 6);
+      ctx.fillText((p.emoji || '🎡') + ' ' + (p.label || '원더랜드'), mid.x, mid.y - bh / 2 - 6);
       break;
     }
     case 'ferris': {
@@ -5237,13 +5479,17 @@ function drawProp(ctx, p) {
         var pt = { x: top.x + (bot.x - top.x) * e, y: top.y + (bot.y - top.y) * e, z: top.z * (1 - e) };
         var pp = proj(pt.x, pt.y, pt.z + 0.12);
         if (prev) {
-          ctx.strokeStyle = SLIDE_RAMP_COLOR(st2);
-          ctx.lineWidth = 9;
           ctx.lineCap = 'round';
+          /* 슬라이드 두께(흰 테두리 → 무지개색 → 윤기) */
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 30;
           ctx.beginPath(); ctx.moveTo(prev.px, prev.py); ctx.lineTo(pp.x, pp.y); ctx.stroke();
-          ctx.strokeStyle = 'rgba(255,255,255,.5)';
-          ctx.lineWidth = 2.4;
-          ctx.beginPath(); ctx.moveTo(prev.px, prev.py - 2); ctx.lineTo(pp.x, pp.y - 2); ctx.stroke();
+          ctx.strokeStyle = SLIDE_RAMP_COLOR(st2);
+          ctx.lineWidth = 24;
+          ctx.beginPath(); ctx.moveTo(prev.px, prev.py); ctx.lineTo(pp.x, pp.y); ctx.stroke();
+          ctx.strokeStyle = 'rgba(255,255,255,.62)';
+          ctx.lineWidth = 6;
+          ctx.beginPath(); ctx.moveTo(prev.px, prev.py - 5); ctx.lineTo(pp.x, pp.y - 5); ctx.stroke();
         }
         prev = { px: pp.x, py: pp.y };
       }
@@ -5251,11 +5497,17 @@ function drawProp(ctx, p) {
       for (var rg = 0; rg <= steps; rg += 2) {
         var u2 = rg / steps;
         var e2 = u2 * u2 * (3 - 2 * u2);
-        var rp = proj(top.x + (bot.x - top.x) * e2, top.y + (bot.y - top.y) * e2, top.z * (1 - e2) + 0.32);
-        var rb = proj(top.x + (bot.x - top.x) * e2, top.y + (bot.y - top.y) * e2, top.z * (1 - e2));
-        ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 3;
+        var rp = proj(top.x + (bot.x - top.x) * e2, top.y + (bot.y - top.y) * e2, top.z * (1 - e2) + 0.42);
+        var rb = proj(top.x + (bot.x - top.x) * e2, top.y + (bot.y - top.y) * e2, top.z * (1 - e2) + 0.16);
+        ctx.strokeStyle = 'rgba(255,255,255,.92)'; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.moveTo(rb.x, rb.y); ctx.lineTo(rp.x, rp.y); ctx.stroke();
       }
+      /* 꼭대기 발판 테두리 + 깃발 */
+      var dp = proj(top.x, top.y, top.z);
+      ctx.beginPath(); ctx.ellipse(dp.x, dp.y + 4, 44, 21, 0, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+      emo(ctx, '🛝', dp.x + 30, dp.y - 34, 20);
       /* 착지 쿠션 */
       var lb = proj(bot.x, bot.y, 0);
       ctx.beginPath(); ctx.ellipse(lb.x, lb.y + 2, 40, 17, 0, 0, 6.2832);
@@ -5672,10 +5924,22 @@ function pressTramp(t, power) {
   if (!t || !t.tramp) return;
   var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
   if (t.trHitAt && now - t.trHitAt < 65) return;
-  t.trHitAt = now;
   var p = clamp(power === undefined ? 1 : power, 0.3, 1.6);
-  t.trampSq = Math.min(1.4, (t.trampSq || 0) + 0.9 * p);
-  t.trampV = (t.trampV || 0) - 1.0 * p;
+  /* 🤸 큰 트램펄린은 한 판(16칸)이 통째로 출렁여요 */
+  var list = [t], i;
+  if (t.trampPad) {
+    list = [];
+    for (i = 0; i < G.tiles.length; i++) {
+      var q = G.tiles[i];
+      if (q.tramp && q.trampPad === t.trampPad) list.push(q);
+    }
+  }
+  for (i = 0; i < list.length; i++) {
+    var e = list[i];
+    e.trHitAt = now;
+    e.trampSq = Math.min(1.4, (e.trampSq || 0) + 0.9 * p);
+    e.trampV = (e.trampV || 0) - 1.0 * p;
+  }
   AU.sagrak(p);
 }
 function updateTramps(dt) {
@@ -5855,6 +6119,8 @@ function updateEnemies(dt) {
   var p = G.p;
   for (var i = 0; i < list.length; i++) {
     var e = list[i];
+    /* 🕸️ 그물에 잡힌 쿠파는 15초 동안 꿈짝 못 해요 (부딪혀도 안 아파요) */
+    if (e.netUntil && e.netUntil > Date.now()) { e.wx = 0; e.wy = 0; continue; }
     e.ph += dt * e.speed;
     var u = (Math.sin(e.ph) + 1) * 0.5;
     e.px = lerp(e.x0, e.x1, u);
@@ -5893,6 +6159,70 @@ function updateEnemies(dt) {
     AU.err(); AU.clack();
     toast(cut > 0 ? ('💥 앗, 적에게 부딪혔어요! -' + cut + ' 코인!') : '💥 앗, 적에게 부딪혔어요! 코인이 없어서 다행!', 2200);
   }
+}
+
+/* ============================================================
+   🕸️ 그물로 쿠파 잡기 — 기본 장비 (상점에서 살 필요 없이 바로!)
+   ------------------------------------------------------------
+   · 1탄·3탄·4탄 어느 코스에서든 「🕸️ 그물」 버튼을 누르면 휙— 휘둘러요.
+   · 부딪혀서 -30 코인이 되는 반경(0.62칸)보다 살짝 바깥인
+     2.2칸 안에 쿠파가 있으면 그물에 쏙! → 🕸️ 쿠파를 잡았다! +15 코인
+   · 잡힌 쿠파는 15초 동안 꼼짝 못 해요! 그동안은 부딪혀도 코인이 안 깎여요.
+   ============================================================ */
+var NET_RANGE = 2.2, NET_COOL = 0.55, NET_ANIM = 0.42, NET_CATCH_MS = 15000, NET_REWARD = 15;
+function netNearFoe() {
+  var p = G.p;
+  if (!p) return null;
+  var best = null, bd = NET_RANGE;
+  for (var i = 0; i < G.enemies.length; i++) {
+    var e = G.enemies[i];
+    if (e.netUntil && e.netUntil > Date.now()) continue;
+    if (Math.abs((e.z || 0) - p.z) > 1.2) continue;
+    var d = Math.hypot(e.px - p.x, e.py - p.y);
+    if (d < bd) { bd = d; best = e; }
+  }
+  return best;
+}
+function swingNet() {
+  if (!G.running || G.paused) return false;
+  if (G.seeSeat || G.coRide || G.swingSeat || G.bigSlide || G.piggy) return false;
+  if (G.net.cool > 0) return false;
+  G.net.cool = NET_COOL;
+  G.net.anim = NET_ANIM;
+  AU.unlock();
+  AU.whoosh();
+  var p = G.p;
+  var e2 = netNearFoe();
+  if (!e2) {
+    spawnSpark(p.x + (p.face || 1) * 0.7, p.y, p.z + 0.75, '#dfeeff', 4);
+    toast('🕸️ 휙—! 그물을 휘둘렀어요', 1100);
+    return true;
+  }
+  /* 🕸️ 잡았다! */
+  e2.netUntil = Date.now() + NET_CATCH_MS;
+  e2.netAt = Date.now();
+  G.net.lastCatch = Date.now();
+  addCoins(NET_REWARD, true);
+  spawnSpark(e2.px, e2.py, e2.z + 0.7, '#ffffff', 14);
+  spawnSpark(e2.px, e2.py, e2.z + 0.4, '#bfe6ff', 10);
+  G.parts.push({ k: 'heart', x: e2.px, y: e2.py, z: e2.z + 1.15, vx: 0, vy: 0, vz: 1.05, life: 1.3, age: 0, ch: '+' + NET_REWARD });
+  AU.coin(); AU.pop();
+  G.fx = { emoji: '🕸️', ts: Date.now() };
+  toast('🕸️ 쿠파를 잡았다! +' + NET_REWARD + ' 코인!', 2600);
+  FB.pushLive(true);
+  return true;
+}
+/* 그물 버튼 — 가까이에 쿠파가 있으면 반짝반짝 (지금이다! 신호) */
+function updateNet(dt) {
+  var n = G.net;
+  if (!n) return;
+  if (n.anim > 0) n.anim = Math.max(0, n.anim - dt);
+  if (n.cool > 0) n.cool = Math.max(0, n.cool - dt);
+  var el = $('#netBtn');
+  if (!el) return;
+  var near = !!netNearFoe();
+  if (near !== n.hot) { n.hot = near; el.classList.toggle('hot', near); }
+  el.classList.toggle('cool', n.cool > 0.02);
 }
 
 function updateRollers(dt) {
@@ -5970,6 +6300,8 @@ function updatePlayer(dt) {
   var p = G.p, inp = inputVector();
   /* 🪑 놀이공원 시소에 앉아 있는 동안 */
   if (G.seeSeat && updateSeesawRide(dt)) return;
+  /* 🌿 그네를 타고 흔들리는 동안 */
+  if (G.swingSeat && updateSwingRide(dt)) return;
   /* 🎢 청룡열차를 타고 달리는 동안 */
   if (G.coRide && updateCoasterRide(dt)) return;
   /* 🛝 무지개 미끄럼틀을 타고 내려가는 동안 */
@@ -6384,6 +6716,8 @@ function doJump() {
   if (G.seeSeat) { G.seeKick = 0.42; AU.pop(); return; }
   /* 🎢 청룡열차를 타는 동안엔 점프 대신 그냥 달려요 */
   if (G.coRide) return;
+  /* 🌿 그네에 앉아 있으면 점프 대신 앞뒤로 힘껏 발을 구를게요 */
+  if (G.swingSeat) { swingPump(); return; }
   /* 🎒 업힌 상태에서 점프를 누르면 아빠 등에서 내려와요 */
   if (G.piggy) { stopPiggy(); return; }
   var p = G.p;
@@ -6576,6 +6910,7 @@ function gotoVillage() {
 
 function doAction() {
   if (G.ridePrompt && G.ridePrompt.act === 'seeOff') { dismountSeesaw(); return; }
+  if (G.ridePrompt && G.ridePrompt.act === 'swingOff') { dismountSwing(); return; }
   if (G.ridePrompt && G.ridePrompt.act === 'coOff') { endCoaster(); return; }
   if (G.ridePrompt && G.ridePrompt.act === 'slideOff') { G.bigSlide = null; G.ridePrompt = null; updateActionPrompt(); return; }
   if (G.piggyPrompt && G.piggyPrompt.act === 'offpiggy') { stopPiggy(); return; }
@@ -6598,6 +6933,7 @@ function doAction() {
   else if (s.act === 'coaster') { boardCoaster(); }
   else if (s.act === 'balloon') { giveBalloon(); }
   else if (s.act === 'trampUp') { placeOnTramp(); }
+  else if (s.act === 'swingUp') { mountSwing(); }
   else if (s.act === 'bigSlide') { startBigSlide(); }
 }
 
@@ -6699,8 +7035,11 @@ function drawWorld() {
     items.push({ d: G.finish4.x + G.finish4.y + 0.01, k: 16, o: null });
   }
 
-  /* 🎡 놀이공원 — 시소 · 청룡열차 레일 · 열차 */
+  /* 🎡 원더랜드 — 시소 · 청룡열차 레일 · 열차 · 그네 */
   if (G.see) items.push({ d: G.see.x + G.see.y + 0.055, k: 20, o: G.see });
+  if (G.swing && SWING.x > minX - 4 && SWING.x < maxX + 4 && SWING.y > minY - 4 && SWING.y < maxY + 4) {
+    items.push({ d: SWING.x + SWING.y + 0.065, k: 23, o: G.swing });
+  }
   for (i = 0; i < G.coSegs.length; i++) {
     var cg = G.coSegs[i];
     if (cg.mx < minX - 3 || cg.mx > maxX + 3 || cg.my < minY - 3 || cg.my > maxY + 3) continue;
@@ -6715,7 +7054,7 @@ function drawWorld() {
 
   // 나
   var p = G.p;
-  if (!G.seeSeat && !G.coRide) items.push({ d: p.x + p.y + (G.piggy ? 0.09 : 0.05), k: 2, o: 'me' });
+  if (!G.seeSeat && !G.coRide && !G.swingSeat) items.push({ d: p.x + p.y + (G.piggy ? 0.09 : 0.05), k: 2, o: 'me' });
   // 펫
   if (G.pet && G.pet.type) items.push({ d: G.petXY.x + G.petXY.y + 0.045, k: 10, o: 'pet' });
   // 상대 가족 (여러 명 동시 접속)
@@ -6761,6 +7100,7 @@ function drawWorld() {
       case 20: drawSeesaw(ctx, it.o); break;
       case 21: drawTrackSeg(ctx, it.o); break;
       case 22: drawCoasterTrain(ctx); break;
+      case 23: drawSwing(ctx); break;
     }
   }
 
@@ -6825,10 +7165,11 @@ function drawMe(ctx) {
     hair: ME.hair || '#6b4a2f', style: ME.style || '', scale: ME.scale || 1,
     roleEmoji: roleEmoji
   });
-  /* 🎈 손에 든 풍선 · 🥨 츄러스 */
+  /* 🎈 손에 든 풍선 · 🥨 츄러스 + 🕸️ 그물 휘두르기 */
   var meSc = ME.scale || 1;
   if (SAVE && SAVE.balloon) drawHeldBalloon(ctx, base.x, base.y - lift * BLOCK_H, meSc, SAVE.balloon, p.face);
   if (churroActive()) drawHeldChurro(ctx, base.x, base.y - lift * BLOCK_H, meSc, p.face);
+  drawNetArc(ctx, base.x, base.y - lift * BLOCK_H, meSc, p.face);
 }
 
 function drawMyPet(ctx) {
@@ -7370,8 +7711,9 @@ function updateHint() {
   var p = G.p, txt;
   if (G.park && p.x >= G.park.area.x0 - 1 && p.x <= G.park.area.x1 + 1 && p.y >= G.park.area.y0 - 1.5) {
     if (G.seeSeat) txt = '⬆️ 밀어 올리기 · ⬇️ 꾹 누르기 로 시소를 흔들어요!';
+    else if (G.swingSeat) txt = '⬆️ 힘껏 발 구르기! 누를수록 앞뒤로 점점 크게 흔들려요';
     else if (G.coRide) txt = '🎢 청룡열차가 신나게 달려요! 🐉';
-    else txt = '🎡 놀이공원! 🪑 시소도 타고 🎢 청룡열차도 타요';
+    else txt = '🎡 원더랜드! 시소 · 청룡열차 · 그네 · 트램펄린 다 있어요';
   }
   else if (G.at4 && !G.finished4) {
     var jf = Math.max(0, Math.min(5, Math.round((p.z - 0.9) / 1.6)));
@@ -7776,7 +8118,7 @@ function updateReveal(dt) {
 }
 
 /* ============================================================
-   15-B. 🎡 채씨네 놀이공원 — 시소 · 청룡열차
+   15-B. 🎡 원더랜드 — 시소 · 청룡열차 · 그네 · 트램펄린 · 미끄럼틀
    ------------------------------------------------------------
    · 시소: 왼쪽/오른쪽 자리에 앉아 ⬆️밀기 · ⬇️누르기 로 조종해요.
      두 폰에서 같이 타면 서로 미는 힘이 실시간으로 오가요.
@@ -8108,6 +8450,58 @@ function giveBalloon() {
   spawnHearts(p.x, p.y, 3);
   toast('🎈 ' + it.name + ' 풍선 받았어요! 둥실둥실~', 2400);
   FB.pushLive(true);
+}
+
+/* 🕸️ 그물 휘두르기 — 손에서 반짝이는 그물이 부채꼴로 휙— */
+function drawNetArc(ctx, sx, sy, sc, face) {
+  var n = G.net;
+  if (!n || !n.anim || n.anim <= 0) return;
+  var u = 1 - clamp(n.anim / NET_ANIM, 0, 1);
+  var f = face === -1 ? -1 : 1;
+  sc = sc || 1;
+  var R = (24 + 62 * Math.sin(Math.min(1, u) * Math.PI)) * sc;
+  ctx.save();
+  ctx.translate(sx + f * 10 * sc, sy - 40 * sc);
+  ctx.scale(f, 1);
+  ctx.globalAlpha = 0.45 + 0.5 * Math.sin(Math.PI * Math.min(1, u));
+  ctx.lineCap = 'round';
+  /* 손잡이 */
+  ctx.strokeStyle = '#a9805a';
+  ctx.lineWidth = 4.4 * sc;
+  ctx.beginPath(); ctx.moveTo(0, 6 * sc); ctx.lineTo(R * 0.62, -R * 0.30); ctx.stroke();
+  /* 그물 테 (반짝) */
+  var hx = R * 0.78, hy = -R * 0.42;
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(hx, hy, R * 0.40, R * 0.30, -0.62, 0, 6.2832);
+  ctx.strokeStyle = '#f4fbff';
+  ctx.lineWidth = 3.4 * sc;
+  ctx.stroke();
+  ctx.clip();
+  /* 그물살 */
+  ctx.strokeStyle = 'rgba(238,247,255,.92)';
+  ctx.lineWidth = 1.7 * sc;
+  for (var i = -3; i <= 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(hx - R * 0.5 + i * R * 0.16, hy - R * 0.5);
+    ctx.lineTo(hx - R * 0.5 + i * R * 0.16 + R * 0.5, hy + R * 0.5);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(hx + R * 0.5 - i * R * 0.16, hy - R * 0.5);
+    ctx.lineTo(hx + R * 0.5 - i * R * 0.16 - R * 0.5, hy + R * 0.5);
+    ctx.stroke();
+  }
+  ctx.restore();
+  /* 반짝이 */
+  ctx.fillStyle = '#ffffff';
+  for (var s2 = 0; s2 < 4; s2++) {
+    var ang = -1.1 + s2 * 0.55 + u * 1.6;
+    var rr = R * (0.55 + 0.25 * s2 / 4);
+    ctx.beginPath();
+    ctx.arc(hx + Math.cos(ang) * rr * 0.7, hy + Math.sin(ang) * rr * 0.5, 2.2 * sc, 0, 6.2832);
+    ctx.fill();
+  }
+  ctx.restore();
 }
 
 /* ---------------- 🥨 츄러스 수레 · 아빠한테 조르기 ---------------- */
@@ -8490,6 +8884,172 @@ function updateSeesawRide(dt) {
   return true;
 }
 
+/* ============================================================
+   🌿 그네 — 앞뒤로 점점 크게 흔들려요
+   ------------------------------------------------------------
+   · 가까이 가서 「🪑 그네 타기」를 누르면 좌석에 쏙 앉아요.
+   · 「⬆️ 힘껏 발 구르기」를 누를 때마다 그네가 앞뒤로 점점 크게
+     슝— 슝— 흔들리고 바람 소리가 나요.
+   · 「⬇️ 그네 내리기」로 내려와요.
+   ============================================================ */
+function swingSeatPt() {
+  var a = (G.swing && G.swing.a) || 0;
+  return {
+    x: SWING.x + Math.sin(a) * SWING.rope,
+    y: SWING.y,
+    z: SWING.topZ - Math.cos(a) * SWING.rope
+  };
+}
+function mountSwing() {
+  if (G.swingSeat) return;
+  if (G.coRide) endCoaster(true);
+  if (G.seeSeat) dismountSeesaw(true);
+  if (G.bigSlide) G.bigSlide = null;
+  if (G.piggy) stopPiggy();
+  G.swingSeat = true;
+  G.swing.kick = 0;
+  G.ride = 'walk'; updateRideUI();
+  var sp = swingSeatPt(), p = G.p;
+  p.x = sp.x; p.y = sp.y; p.z = sp.z;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.squash = 0;
+  p.groundZ = sp.z; p.walk = 0; p.move = false; p.face = 1;
+  p.hurtAt = Date.now() - 1800;
+  document.body.classList.add('swing-on');
+  G.ridePrompt = null;                       // 아래 그네 버튼이 대신해요
+  G.spot = null; G.portal = null;
+  AU.chime(); spawnHearts(SWING.x, SWING.y, 4);
+  toast('🌿 그네 탔어요! ⬆️ 힘껏 발 구르기를 누르면 점점 크게 흔들려요', 3000);
+  FB.pushLive(true);
+  updateActionPrompt();
+}
+function dismountSwing(silent) {
+  if (!G.swingSeat) return;
+  G.swingSeat = false;
+  G.ridePrompt = null;
+  document.body.classList.remove('swing-on');
+  G.swing.a = 0; G.swing.av = 0; G.swing.kick = 0;
+  var p = G.p;
+  p.x = SWING.x; p.y = SWING.y + 1.2; p.z = 0;
+  p.groundZ = 0; p.air = false; p.walkOff = false;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.face = 1;
+  G.petXY.x = p.x - 0.9; G.petXY.y = p.y + 0.9; G.petXY.z = 0;
+  snapCamera(p.x, p.y, 0);
+  if (!silent) { AU.pop(); toast('⬇️ 그네에서 내려왔어요!'); }
+  FB.pushLive(true);
+  updateActionPrompt();
+}
+/* ⬆️ 힘껏 발 구르기 — 가는 쪽으로 힘을 더해 점점 크게! */
+function swingPump() {
+  var s = G.swing;
+  if (!s || !G.swingSeat) return;
+  var dir = s.av > 0.25 ? 1 : (s.av < -0.25 ? -1 : (s.a >= 0 ? -1 : 1));
+  s.av += dir * 0.9;
+  if (s.av > 4.4) s.av = 4.4;
+  if (s.av < -4.4) s.av = -4.4;
+  s.kick = 0.24;
+  AU.unlock();
+  AU.swingPush();
+  var sp = swingSeatPt();
+  spawnSpark(sp.x, sp.y, Math.max(0.1, sp.z - 0.1), '#fff3b0', 3);
+}
+function updateSwing(dt) {
+  var s = G.swing;
+  if (!s) return;
+  if (s.kick > 0) s.kick = Math.max(0, s.kick - dt);
+  var L = SWING.rope;
+  var prev = s.a;
+  s.av += (-(9.4 / L) * Math.sin(s.a) - 0.42 * s.av) * dt;
+  s.a += s.av * dt;
+  var lim = 1.02;
+  if (s.a > lim) { s.a = lim; if (s.av > 0) s.av *= -0.3; }
+  if (s.a < -lim) { s.a = -lim; if (s.av < 0) s.av *= -0.3; }
+  if (Math.abs(s.a) < 0.004 && Math.abs(s.av) < 0.05) { s.a = 0; s.av = 0; }
+  /* 슝— 바람 소리: 가운데를 지날 때마다, 크게 흔들릴수록 크게 */
+  if (prev * s.a < 0) {
+    var spd = Math.abs(s.av);
+    if (spd > 0.9 && G.t - (s.snd || 0) > 0.26) {
+      s.snd = G.t;
+      AU.swingWhoosh(Math.min(1, spd / 4.2));
+      if (spd > 2.6) spawnSpark(swingSeatPt().x, SWING.y, 0.18, '#ffffff', 4);
+    }
+  }
+}
+function updateSwingRide(dt) {
+  var s = G.swing, p = G.p;
+  if (!s) return false;
+  var sp = swingSeatPt();
+  p.x = sp.x; p.y = sp.y; p.z = sp.z;
+  p.groundZ = sp.z; p.air = false; p.move = false;
+  p.vx = 0; p.vy = 0; p.vz = 0;
+  p.face = 1;
+  p.walk += dt * 0.7;
+  G.ridePrompt = null;
+  G.spot = null; G.portal = null;
+  G.petXY.x = SWING.x - 1.5; G.petXY.y = SWING.y + 1.4; G.petXY.z = 0;
+  updateActionPrompt();
+  return true;
+}
+/* 그네 그리기 — 기둥 · 밧줄 · 파스텔 좌석 + 타고 있는 나 */
+function drawSwing(ctx) {
+  var s = G.swing || { a: 0 };
+  var a = s.a || 0;
+  var tx = SWING.x, ty = SWING.y, top = SWING.topZ, hw = SWING.halfW;
+  var seat = swingSeatPt();
+  var sh = proj(tx, ty, 0);
+  ctx.beginPath(); ctx.ellipse(sh.x, sh.y + 2, 64, 25, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(20,50,40,.13)'; ctx.fill();
+  /* A자 기둥 4개 */
+  var legs = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+  for (var i = 0; i < legs.length; i++) {
+    var sx2 = legs[i][0], sy2 = legs[i][1];
+    var b = proj(tx + sx2 * hw, ty + sy2 * 0.66, 0);
+    var tp = proj(tx + sx2 * hw, ty + sy2 * 0.07, top);
+    ctx.strokeStyle = '#cf9a68'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(tp.x, tp.y); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.moveTo(b.x - 2, b.y - 2); ctx.lineTo(tp.x - 2, tp.y + 2); ctx.stroke();
+  }
+  /* 위 가로대 */
+  var b0 = proj(tx - hw, ty, top), b1 = proj(tx + hw, ty, top);
+  ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.65)'; ctx.lineWidth = 4.4;
+  ctx.beginPath(); ctx.moveTo(b0.x, b0.y - 3); ctx.lineTo(b1.x, b1.y - 3); ctx.stroke();
+  /* 밧줄 2개 */
+  var rA = proj(tx, ty - 0.36, top), rB = proj(tx, ty + 0.36, top);
+  var sA = proj(seat.x, ty - 0.36, seat.z + 0.06), sB = proj(seat.x, ty + 0.36, seat.z + 0.06);
+  ctx.strokeStyle = '#8fa3bf'; ctx.lineWidth = 2.8;
+  ctx.beginPath(); ctx.moveTo(rA.x, rA.y); ctx.lineTo(sA.x, sA.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(rB.x, rB.y); ctx.lineTo(sB.x, sB.y); ctx.stroke();
+  /* 좌석 */
+  isoBox(ctx, seat.x - 0.17, ty - 0.46, seat.z, 0.34, 0.92, 0.13, '#ffb3d5', '#e35c95', '#c9417c');
+  /* 타고 있는 나 */
+  if (G.swingSeat) {
+    var sp = proj(seat.x, ty, seat.z + 0.12);
+    var look = SAVE ? SAVE.look : LOOK_DEFAULT;
+    var bub = null, bb = G.bubbles[ME.id];
+    if (bb && Date.now() - bb.ts < 20000) bub = bb.text;
+    ctx.save();
+    ctx.translate(sp.x, sp.y);
+    ctx.rotate(-a * 0.26);
+    ctx.translate(-sp.x, -sp.y);
+    drawAvatar(ctx, sp.x, sp.y, look, {
+      face: 1, walk: 0, moving: false, air: false, shadow: false,
+      name: ME.name, me: true, bubble: bub,
+      hair: ME.hair || '#6b4a2f', style: ME.style || '',
+      scale: (ME.scale || 1) * 0.94
+    });
+    ctx.restore();
+  }
+  /* 흔들릴수록 반짝이는 바람 */
+  if (Math.abs(a) > 0.5) {
+    ctx.save();
+    ctx.globalAlpha = 0.35 + 0.25 * Math.sin(G.t * 9);
+    emo(ctx, '💨', sh.x + (a > 0 ? 34 : -34), sh.y - 34, 16);
+    ctx.restore();
+  }
+}
+
 /* ---------------- 🎢 청룡열차 타기 ---------------- */
 function boardCoaster() {
   var co = G.co;
@@ -8594,12 +9154,14 @@ function gotoPark(silent) {
   G.paused = false;
   updateHint();
   AU.pop();
-  if (!silent) toast('🎡 채씨네 놀이공원! 시소도 타고 청룡열차도 타요!', 3000);
+  if (!silent) toast('🎡 원더랜드! 시소 · 청룡열차 · 그네 · 트램펄린 다 있어요!', 3000);
 }
 
 /* ---------------- 🤸 트램펄린 · 🛝 무지개 미끄럼틀 ---------------- */
-var TRAMP = { x: 19, y: 20 };
-var SLIDE = { x: 21, y: 21, topZ: 4, land: { x: 18.4, y: 23.4 } };
+var TRAMP = { x: 8, y: 31, w: 5, d: 5 };            // 트램펄린 좌상단 + 크기 (5×5 = 25칸)
+var SLIDE = { x: 27, y: 16, topZ: 4, land: { x: 27.6, y: 20.8 } };
+/* 🌿 그네 — 남쪽 광장. 앞뒤로 점점 크게 흔들려요 */
+var SWING = { x: 20.5, y: 32.6, halfW: 1.15, topZ: 2.45, rope: 1.85 };
 function SLIDE_RAMP_COLOR(i) {
   var cols = ['#ff6fa8', '#ff9a5c', '#ffd24a', '#7ede63', '#5fd0ff', '#b28bff'];
   return cols[Math.floor(i / 3) % cols.length];
@@ -8607,9 +9169,11 @@ function SLIDE_RAMP_COLOR(i) {
 function placeOnTramp() {
   if (G.coRide) endCoaster(true);
   if (G.seeSeat) dismountSeesaw(true);
+  if (G.swingSeat) dismountSwing(true);
   var p = G.p;
-  var tt = G.map[TRAMP.x + ',' + TRAMP.y] || null;
-  p.x = TRAMP.x + 0.5; p.y = TRAMP.y + 0.5; p.z = tt ? tt.z : 0;
+  var cx = TRAMP.x + TRAMP.w / 2, cy = TRAMP.y + TRAMP.d / 2;
+  var tt = G.map[Math.floor(cx) + ',' + Math.floor(cy)] || null;
+  p.x = cx; p.y = cy; p.z = tt ? tt.z : 0;
   p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.groundZ = p.z;
   p.standTile = tt;
   AU.unlock(); AU.pop();
@@ -8668,6 +9232,7 @@ function updateBigSlide(dt) {
   }
   if (s.u >= 1) {
     G.bigSlide = null;
+    G.ridePrompt = null;          // 내려온 뒤엔 「내리기」 버튼이 남지 않게
     var p2 = G.p;
     p2.x = SLIDE.land.x; p2.y = SLIDE.land.y; p2.z = 0;
     p2.groundZ = 0; p2.air = false; p2.move = false; p2.squash = 1;
@@ -9261,6 +9826,22 @@ function bindUI() {
     });
     if ($('#seeOffBtn')) $('#seeOffBtn').addEventListener('click', function () { dismountSeesaw(); });
     if ($('#coOffBtn')) $('#coOffBtn').addEventListener('click', function () { endCoaster(); });
+    /* 🌿 그네 — 힘껏 발 구르기(누를 때마다 점점 크게) · 내리기 */
+    if ($('#swingPumpBtn')) {
+      var spb = $('#swingPumpBtn');
+      spb.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        spb.classList.add('pressed');
+        swingPump();
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+        spb.addEventListener(ev, function () { spb.classList.remove('pressed'); });
+      });
+      spb.addEventListener('click', function (e) { e.preventDefault(); });
+    }
+    if ($('#swingOffBtn')) $('#swingOffBtn').addEventListener('click', function () { AU.click(); dismountSwing(); });
+    /* 🕸️ 그물 — 기본 장비, 언제든 */
+    if ($('#netBtn')) $('#netBtn').addEventListener('click', function () { AU.click(); swingNet(); });
     if ($('#churroBegBtn')) $('#churroBegBtn').addEventListener('click', function () { AU.unlock(); AU.click(); begChurro(); });
     if ($('#churroBuyBtn')) $('#churroBuyBtn').addEventListener('click', function () { AU.unlock(); AU.click(); buyChurroSelf(); });
     if ($('#churroGiveBtn')) $('#churroGiveBtn').addEventListener('click', function () { AU.unlock(); AU.click(); giveChurroByDad(); });
@@ -9397,6 +9978,7 @@ function bindUI() {
     G.keys[e.key] = true;
     if (e.key === ' ' || e.key === 'Spacebar') doJump();
     if (e.key === 'e' || e.key === 'E') doAction();
+    if (e.key === 'f' || e.key === 'F') swingNet();
     if (e.key === 'Enter') { if (!anySheetOpen() && !$$('.modal.open').length) $('#btnChat').click(); }
     if (e.key === 'Escape') { closeAllSheets(); }
   });
@@ -9540,6 +10122,8 @@ function loop(ts) {
     updateRollers(dt);
     updateEnemies(dt);
     updateSeesaw(dt);
+    updateSwing(dt);
+    updateNet(dt);
     updateBigSlide(dt);
     updatePlayer(dt);
     updatePet(dt);
@@ -9643,6 +10227,9 @@ try {
           piggy: G.piggy || '', prompt: G.piggyPrompt ? G.piggyPrompt.act : '',
           ridePrompt: G.ridePrompt ? G.ridePrompt.act : '',
           seeSeat: G.seeSeat || '', coaster: !!G.coRide,
+          swingSeat: !!G.swingSeat, swingA: +(G.swing.a || 0).toFixed(3), swingAV: +(G.swing.av || 0).toFixed(3),
+          netCool: +(G.net.cool || 0).toFixed(2), netAnim: +(G.net.anim || 0).toFixed(2),
+          netted: G.enemies.filter(function (e) { return e.netUntil > Date.now(); }).length,
           stand: p.standTile ? { x: p.standTile.x, y: p.standTile.y, z: p.standTile.z, type: p.standTile.type } : null
         };
       },
@@ -9677,10 +10264,32 @@ try {
           area: G.park ? G.park.area : null,
           see: G.see ? { x: G.see.x, y: G.see.y, a: +G.see.a.toFixed(3), av: +G.see.av.toFixed(3), seat: G.seeSeat || '', riders: G.seeCount || 0, remote: Object.keys(G.seeRemote || {}) } : null,
           coaster: G.co ? { total: +G.co.total.toFixed(2), stationS: +G.co.stationS.toFixed(2), segs: G.coSegs.length, riding: !!G.coRide, s: G.coRide ? +G.coRide.s.toFixed(2) : null, lap: G.coRide ? G.coRide.lap : 0 } : null,
-          spots: G.spots.filter(function (s) { return /시소|청룡/.test(s.label); }).map(function (s) { return { x: s.x, y: s.y, label: s.label, act: s.act }; })
+          spots: G.spots.filter(function (s) { return /시소|청룡|그네|트램펄린|미끄럼/.test(s.label); }).map(function (s) { return { x: s.x, y: s.y, label: s.label, act: s.act }; })
         };
       },
       seeRide: function (side) { mountSeesaw(side || 'L'); },
+      swing: function () {
+        return {
+          seat: !!G.swingSeat, a: +(G.swing.a || 0).toFixed(3), av: +(G.swing.av || 0).toFixed(3),
+          seatPt: (function () { var s = swingSeatPt(); return { x: +s.x.toFixed(2), y: +s.y.toFixed(2), z: +s.z.toFixed(2) }; })(),
+          pad: $('#swingPad') ? getComputedStyle($('#swingPad')).display !== 'none' : false,
+          pos: { x: +G.p.x.toFixed(2), y: +G.p.y.toFixed(2), z: +G.p.z.toFixed(2) },
+          at: SWING
+        };
+      },
+      swingGo: function () { mountSwing(); },
+      swingPump: function (n) { for (var i = 0; i < (n || 1); i++) swingPump(); },
+      swingOff: function () { dismountSwing(); },
+      netSwing: function () { return swingNet(); },
+      netState: function () {
+        return {
+          cool: +(G.net.cool || 0).toFixed(2), anim: +(G.net.anim || 0).toFixed(2),
+          hot: $('#netBtn') ? $('#netBtn').classList.contains('hot') : false,
+          canSee: $('#netBtn') ? getComputedStyle($('#netBtn')).opacity !== '0' : false,
+          nearby: (function () { var e = netNearFoe(); return e ? { x: +e.px.toFixed(2), y: +e.py.toFixed(2), z: e.z } : null; })(),
+          netted: G.enemies.map(function (e) { return { x: +e.px.toFixed(2), y: +e.py.toFixed(2), left: Math.max(0, Math.round(((e.netUntil || 0) - Date.now()) / 1000)) }; })
+        };
+      },
       seeOff: function () { dismountSeesaw(); },
       seeBtn: function (v) { G.seeBtn = v || 0; },
       seeKick: function () { G.seeKick = 0.42; },
@@ -9721,7 +10330,12 @@ try {
       setWallet: function (id, v) { WorldCoins.resetWallets([id || ME.id], v); return WorldCoins.get(id || ME.id); },
       tramp: function () {
         var t = G.map[TRAMP.x + ',' + TRAMP.y];
-        return t ? { x: t.x, y: t.y, tramp: !!t.tramp, sq: +(t.trampSq || 0).toFixed(2), z: G.p.z, air: !!G.p.air, pz: +G.p.vz.toFixed(2) } : null;
+        return t ? { x: t.x, y: t.y, tramp: !!t.tramp, pad: t.trampPad || '', sq: +(t.trampSq || 0).toFixed(2), z: G.p.z, air: !!G.p.air, pz: +G.p.vz.toFixed(2) } : null;
+      },
+      trampPad: function () {
+        var n = 0, sq = 0, i;
+        for (i = 0; i < G.tiles.length; i++) { if (G.tiles[i].trampPad) { n++; sq = Math.max(sq, G.tiles[i].trampSq || 0); } }
+        return { tiles: n, maxSq: +sq.toFixed(2), at: TRAMP };
       },
       trampGo: function () { placeOnTramp(); },
       slide: function () {
