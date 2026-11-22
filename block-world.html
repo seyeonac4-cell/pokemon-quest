@@ -829,7 +829,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 
 /* ---------------- ❄️🍬🚀 5·6·7탄 ---------------- */
 .stage-strip{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:2px 0 12px;
+  display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:2px 0 12px;
 }
 .stage-strip button{
   display:flex;flex-direction:column;align-items:center;gap:1px;
@@ -842,6 +842,11 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 .stage-strip button.s5{background:linear-gradient(160deg,#eaf8ff,#d3eeff);border-color:#b9e2fa;color:#1d6d92}
 .stage-strip button.s6{background:linear-gradient(160deg,#fff1f9,#ffe3f3);border-color:#ffc4e4;color:#a8306f}
 .stage-strip button.s7{background:linear-gradient(160deg,#eef0ff,#e0e4ff);border-color:#c3c8f6;color:#3c3f8f}
+.stage-strip button.s8{background:linear-gradient(160deg,#fffbe6,#ffefc2);border-color:#ffd76a;color:#8a5a00}
+.world-row.orchestra8{background:linear-gradient(135deg,#fff9e8,#fff3fb 55%,#eef2ff);border-color:#ffd76a}
+.world-row.orchestra8 .go{color:#8a5a00;background:#fff0c2}
+.mae-crown{font-size:64px;text-align:center;line-height:1.1;animation:eggwob 1.8s ease-in-out infinite}
+.mae-notes{text-align:center;font-size:17px;letter-spacing:5px;margin:2px 0 6px;opacity:.9}
 .world-row.ice5{background:linear-gradient(135deg,#f0fbff,#e4f5ff 55%,#f7fdff);border-color:#b6e3fa}
 .world-row.ice5 .go{color:#1d6d92;background:#dcf2ff}
 .world-row.sweet6{background:linear-gradient(135deg,#fff2f9,#ffe9f5 55%,#fff8fd);border-color:#ffc4e2}
@@ -1040,7 +1045,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
     <div class="sheet-head"><b>☰ 메뉴</b><button class="x" data-close="menuPanel" type="button" aria-label="닫기">✕</button></div>
     <div class="sheet-body">
       <div class="menu-list">
-        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 원더랜드 · 그로우 어 가든 · 드레스 투 임프레스 · 2~4탄</span></button>
+        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 원더랜드 · 그로우 어 가든 · 드레스 투 임프레스 · 2~8탄</span></button>
         <button type="button" data-menu="type">⌨️ 타자 놀이<span>톡톡톡 소리와 함께 낱말 연습</span></button>
         <button type="button" data-menu="pet">🐾 내 펫 돌보기<span>알 깨우기 · 밥주기 · 쓰다듬기</span></button>
         <button type="button" data-menu="play">🎭 역할놀이<span>소품 들기 · 우리 집 색깔</span></button>
@@ -1060,7 +1065,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
       <button class="x" data-close="worldPanel" type="button" aria-label="닫기">✕</button>
     </div>
     <div class="sheet-body">
-      <div class="stage-strip" id="stageStrip" role="group" aria-label="1~7탄 바로 가기">
+      <div class="stage-strip" id="stageStrip" role="group" aria-label="1~8탄 바로 가기">
         <button type="button" data-jump1="1"><b>1</b><span>마을</span></button>
         <button type="button" data-jump2="1"><b>2</b><span>함정</span></button>
         <button type="button" data-jump3="1"><b>3</b><span>무지개</span></button>
@@ -1068,11 +1073,12 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         <button type="button" data-jump5="1" class="s5"><b>5</b><span>얼음</span></button>
         <button type="button" data-jump6="1" class="s6"><b>6</b><span>디저트</span></button>
         <button type="button" data-jump7="1" class="s7"><b>7</b><span>우주</span></button>
+        <button type="button" data-jump8="1" class="s8"><b>8</b><span>연주</span></button>
       </div>
       <div class="world-list">
         <div class="world-row here">
           <span class="big-ic">🧱</span>
-          <span class="wt"><b>블록 월드</b><small>지금 여기 · 마을 · 점프맵 · 2탄 · 3탄 · 4탄 타워</small></span>
+          <span class="wt"><b>블록 월드</b><small>지금 여기 · 마을 · 점프맵 · 2~8탄</small></span>
           <span class="go">지금 여기</span>
         </div>
         <button class="world-row park" type="button" data-park="1">
@@ -1120,8 +1126,13 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
           <span class="wt"><b>7탄 우주 별빛 대모험</b><small>달 저중력 · UFO 발판 · 운석 · 대왕 쿠파 · 최종 트로피</small></span>
           <span class="go">바로 가기 ›</span>
         </button>
+        <button class="world-row orchestra8" type="button" data-jump8="1">
+          <span class="big-ic">🎻</span>
+          <span class="wt"><b>8탄 관현악 연주회</b><small>피아노 건반 다리 · 현 바운스 · 팀파니 · 마에스트로 단상</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
       </div>
-      <p class="shop-note">코스는 <b>1탄 → 2탄 → 3탄 → 4탄 → ❄️ 5탄 → 🍬 6탄 → 🚀 7탄</b> 순서로 걸어서 이어져요! 4탄 꼭대기에서 눈 디딤돌 다리로 5탄에 내려서고, 5탄 얼음 성 → 6탄 사탕 다리 → 7탄 발사대로 이어져요. 급할 땐 위 <b>1~7</b> 버튼이나 여기 <b>바로 가기</b>를 눌러요!</p>
+      <p class="shop-note">코스는 <b>1탄 → 2탄 → 3탄 → 4탄 → ❄️ 5탄 → 🍬 6탄 → 🚀 7탄 → 🎻 8탄</b> 순서로 걸어서 이어져요! 4탄 꼭대기에서 눈 디딤돌 다리로 5탄에 내려서고, 5탄 얼음 성 → 6탄 사탕 다리 → 7탄 발사대 → 우주 정거장 → 금음표 다리로 8탄에 이어져요. 급할 땐 위 <b>1~8</b> 버튼이나 여기 <b>바로 가기</b>를 눌러요!</p>
     </div>
   </div>
 
@@ -1294,15 +1305,34 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
       <div class="gal-crown">🏆</div>
       <div class="gal-stars">⭐✨🌟⭐✨</div>
       <h2 id="galTitle">우주 대모험 완주! 🏆</h2>
-      <p class="lead">5탄 얼음 왕국 · 6탄 디저트 하늘섬 · 7탄 우주를 모두 지나<br><b>최종 황금 트로피</b>를 차지했어요! 폭죽이 펑펑 터졌어요 🎆</p>
+      <p class="lead">5탄 얼음 왕국 · 6탄 디저트 하늘섬 · 7탄 우주를 모두 지나<br><b>최종 황금 트로피</b>를 차지했어요! 폭죽이 펑펑 터졌어요 🎆<br>정거장 너머 <b>🎻 황금 음표 다리</b>로 8탄 관현악 연주회도 이어져요!</p>
       <div class="result-grid">
         <div><span>걸린 시간</span><b id="galTime">0:00</b></div>
         <div><span>최단 기록</span><b id="galBest">0:00</b></div>
         <div><span>받은 상</span><b>+50</b></div>
         <div><span>대왕 쿠파</span><b>🕸️ +50</b></div>
       </div>
-      <button class="btn primary" id="galAgain" type="button">🔁 7탄 다시 도전</button>
-      <button class="btn blue mt8" id="galHome" type="button">🏠 마을로 돌아갈래</button>
+      <button class="btn primary" id="galNext8" type="button">🎻 바로 8탄 관현악 연주회로!</button>
+      <button class="btn blue mt8" id="galAgain" type="button">🔁 7탄 다시 도전</button>
+      <button class="btn ghost mt8" id="galHome" type="button">🏠 마을로 돌아갈래</button>
+    </div>
+  </div>
+
+  <!-- ===================== 🎻 8탄 마에스트로 완주 ===================== -->
+  <div class="modal" id="maestroOverlay">
+    <div class="modal-card">
+      <div class="mae-crown">🎼</div>
+      <div class="mae-notes">♪ ♫ 🎻 🎺 🥁 ♬</div>
+      <h2 id="maeTitle">관현악 연주회 완주! 🎻</h2>
+      <p class="lead">피아노 건반 다리 · 바이올린 현 · 팀파니를 모두 지나<br><b>마에스트로 지휘자 단상</b>에 올랐어요! 관현악 팡파르가 울려 퍼져요 🎆</p>
+      <div class="result-grid">
+        <div><span>걸린 시간</span><b id="maeTime">0:00</b></div>
+        <div><span>최단 기록</span><b id="maeBest">0:00</b></div>
+        <div><span>모은 코인</span><b id="maeCoins">0</b></div>
+        <div><span>받은 상</span><b>+60</b></div>
+      </div>
+      <button class="btn primary" id="maeAgain" type="button">🔁 8탄 관현악 연주회 다시 도전</button>
+      <button class="btn ghost mt8" id="maeHome" type="button">🏠 마을로 돌아갈래</button>
     </div>
   </div>
 
@@ -1389,6 +1419,15 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         ⭐ <b>별빛 징검다리</b> · 🛸 <b>UFO 발판</b> · 🌀 <b>회전 별 막대</b> · ☄️ <b>떨어지는 운석</b>(그림자가 생기면 피해요)을 지나 맨 꼭대기 <b>우주 정거장</b>으로!<br>
         👑 <b>거대 대왕 쿠파</b>를 🕸️ 그물로 잡으면 <b>특별 보너스 +50 코인</b>!<br>
         🏆 <b>최종 황금 트로피</b>에 닿으면 축하 폭죽과 함께 <b>공용 코인 +50</b>! 5·6·7탄을 모두 지나온 진짜 챔피언이에요!</p>
+      </div>
+      <div class="help-sec">
+        <h3>🎻 8탄 관현악 연주회</h3>
+        <p>7탄 <b>우주 정거장</b> 너머로 <b>황금 음표 다리</b>를 건너면 8탄이 시작돼요. (🌍 월드 이동에서 <b>바로 가기</b>도 돼요!)<br>
+        🎹 <b>거대 피아노 건반 다리</b>: 흰 건반을 밟을 때마다 <b>도·레·미·파·솔·라·시·도</b> 맑은 피아노 소리가 나고, 건반이 살짝 눌리며 🎵 음표가 떠요. 옆의 <b>검은 건반</b>을 밟으면 반음(도♯·레♯·파♯·솔♯·라♯)이 나요!<br>
+        🎻 <b>바이올린·첼로 현</b>을 밟으면 <b>띠잉~</b> 피치카토 화음과 함께 높이 튕겨 올라요.<br>
+        🥁 <b>팀파니 북</b>을 밟으면 <b>둥!</b> · 🎺 <b>회전 지휘봉</b>에 닿으면 휙 밀려나요. ☁️ 음표 구름을 밟고 건너요.<br>
+        🎼 <b>메트로놈</b>은 부딪히면 <b>-30 코인</b>, 🕸️ 그물로 잡으면 +15 코인이에요.<br>
+        🏆 맨 끝 <b>마에스트로 지휘자 단상</b>에 올라서면 관현악 <b>팡파르(도미솔도)</b>와 폭죽이 터지고 <b>공용 코인 +60</b>을 받아요!</p>
       </div>
       <div class="help-sec">
         <h3>🎒 아빠한테 업혀가기</h3>
@@ -1927,6 +1966,108 @@ var AU = (function () {
     hit({ at: t0 + 0.09, hp: 3600, bp: 6200, q: 1.1, a: 0.001, d: 0.03, g: 0.14 * L });
   }
 
+  /* ============================================================
+     🎻 8탄 — 피아노 · 바이올린 피치카토 · 팀파니 · 관현악 팡파르
+     ------------------------------------------------------------
+     · piano()   맑은 그랜드 피아노 (기본음 + 2·3·4배음 + 해머 '톡')
+     · pizz()    현을 손끝으로 튕긴 '띠잉~' 피치카토 화음
+     · timpani() 주전자 북을 '둥!' (낮은 사인 + 가죽 노이즈)
+     · metro()   메트로놈 '딱딱' 소리
+     · fanfare8() 8탄 완주 — 도미솔도 팡파르 + 도미솔도 화음 + 팀파니 롤
+     ============================================================ */
+  function piano(freq) {
+    var c = ctx(); if (!c || muted) return;
+    var f = freq || 440;
+    var t0 = c.currentTime + 0.003;
+    var L = 0.9;
+    /* 맑은 피아노 — 기본음 + 2·3·4배음, 두 번째 현은 살짝 어긋나게(detune) */
+    [[1, 0.24, 1.15, 0], [2, 0.10, 0.7, 1.5], [3, 0.055, 0.45, -2], [4, 0.030, 0.3, 2.5]].forEach(function (h) {
+      var o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f * h[0], t0);
+      if (h[3]) { try { o.detune.setValueAtTime(h[3], t0); } catch (e) {} }
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(h[1] * L, t0 + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + h[2]);
+      o.connect(g); g.connect(master);
+      o.start(t0); o.stop(t0 + h[2] + 0.05);
+    });
+    /* 해머가 현을 때리는 '톡' + 나무 몸통 */
+    hit({ at: t0, bp: Math.min(9000, f * 5.5), q: 2.4, a: 0.0006, hold: 0.0009, d: 0.02, g: 0.5 });
+    hit({ at: t0 + 0.001, lp: 900, lpQ: 1.1, a: 0.001, d: 0.035, g: 0.22 });
+  }
+
+  var pizzLast = 0;
+  function pizz(freq, lv) {
+    var c = ctx(); if (!c || muted) return;
+    var f = freq || 392;
+    var L = lv === undefined ? 1 : clamp(lv, 0.3, 1.3);
+    var nowMs = c.currentTime * 1000;
+    if (nowMs - pizzLast < 55) L *= 0.6;
+    pizzLast = nowMs;
+    var t0 = c.currentTime + 0.003;
+    /* 피치카토 — 근음 · 5도 · 옥타브를 살짝 늦게 퉁겨 화음이 되게 */
+    [1, 1.5, 2].forEach(function (h, i) {
+      var o = c.createOscillator(), g = c.createGain();
+      var at = t0 + i * 0.012;
+      o.type = i === 0 ? 'triangle' : 'sine';
+      o.frequency.setValueAtTime(f * h, at);
+      o.frequency.exponentialRampToValueAtTime(f * h * 0.985, at + 0.22);
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime((i === 0 ? 0.17 : 0.075) * L, at + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
+      o.connect(g); g.connect(master);
+      o.start(at); o.stop(at + 0.3);
+    });
+    /* 나무 몸통 울림 + 손끝이 현을 튕기는 소리 */
+    tone({ at: t0, f: f * 0.5, to: f * 0.48, d: 0.16, type: 'sine', g: 0.09 * L, a: 0.003 });
+    hit({ at: t0, bp: Math.min(8000, f * 7), q: 1.8, a: 0.0006, d: 0.03, g: 0.3 * L });
+  }
+
+  function timpani(lv) {
+    var c = ctx(); if (!c || muted) return;
+    var L = lv === undefined ? 1 : clamp(lv, 0.3, 1.4);
+    var t0 = c.currentTime + 0.002;
+    /* 둥! — 낮게 내려앉는 북소리 */
+    tone({ at: t0, f: 112, to: 49, d: 0.6, type: 'sine', g: 0.34 * L, a: 0.002 });
+    tone({ at: t0 + 0.004, f: 168, to: 84, d: 0.34, type: 'triangle', g: 0.11 * L, a: 0.002 });
+    tone({ at: t0 + 0.012, f: 232, to: 120, d: 0.5, type: 'sine', g: 0.06 * L, a: 0.006 });
+    hit({ at: t0, lp: 620, lpQ: 0.8, a: 0.0018, hold: 0.012, d: 0.2, g: 0.62 * L });
+    hit({ at: t0 + 0.002, bp: 1500, q: 1.1, a: 0.0008, d: 0.045, g: 0.3 * L });
+  }
+
+  function metro(lv) {
+    var c = ctx(); if (!c || muted) return;
+    var L = lv === undefined ? 1 : clamp(lv, 0.25, 1.2);
+    var t0 = c.currentTime + 0.001;
+    hit({ at: t0, bp: 3400, q: 3.2, a: 0.0004, hold: 0.0009, d: 0.008, g: 1.5 * L });
+    tone({ at: t0, f: 2100, to: 1500, d: 0.02, type: 'triangle', g: 0.07 * L, a: 0.0008 });
+  }
+
+  /* 🏆 8탄 완주 — 관현악 합주 팡파르 (도 → 미 → 솔 → 도) */
+  function fanfare8() {
+    var c = ctx(); if (!c || muted) return;
+    var t0 = c.currentTime + 0.05;
+    [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) {
+      var at = t0 + i * 0.17;
+      tone({ at: at, f: f, d: 0.3, type: 'triangle', g: 0.15, a: 0.006 });
+      tone({ at: at, f: f * 2, d: 0.22, type: 'sine', g: 0.05, a: 0.006 });
+      tone({ at: at, f: f * 0.5, d: 0.34, type: 'sawtooth', g: 0.030, a: 0.012 });
+    });
+    /* 마지막 — 도·미·솔·도·미 화음이 1.5초 울려요 */
+    var at2 = t0 + 0.78;
+    [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach(function (f) {
+      tone({ at: at2, f: f, d: 1.5, type: 'triangle', g: 0.085, a: 0.02 });
+      tone({ at: at2, f: f * 1.005, d: 1.4, type: 'sine', g: 0.05, a: 0.03 });
+    });
+    tone({ at: at2, f: 130.81, d: 1.6, type: 'sine', g: 0.14, a: 0.02 });
+    /* 팀파니 롤 */
+    for (var i2 = 0; i2 < 4; i2++) {
+      tone({ at: t0 + i2 * 0.14, f: 100, to: 60, d: 0.18, type: 'sine', g: 0.10 + i2 * 0.02, a: 0.002 });
+      hit({ at: t0 + i2 * 0.14, lp: 500, a: 0.002, d: 0.1, g: 0.3 });
+    }
+  }
+
   function setMuted(m) {
     muted = !!m;
     store('bw:mute', muted ? '1' : '0');
@@ -1999,6 +2140,7 @@ var AU = (function () {
     err: err, msg: msg, win: win, pop: pop, sagrak: sagrak, jellyPop: jellyPop, setMuted: setMuted, isMuted: isMuted, unlock: unlock, seeCreak: seeCreak, coasterClack: coasterClack, whoosh: whoosh, scream: scream, bell: bell,
     swingWhoosh: swingWhoosh, swingPush: swingPush,
     crunch: crunch, iceStep: iceStep, freeze: freeze, iceBreak: iceBreak, macPop: macPop,
+    piano: piano, pizz: pizz, timpani: timpani, metro: metro, fanfare8: fanfare8,
     isRunning: isRunning, watchUnlock: watchUnlock, nudge: nudge };
 })();
 
@@ -2230,7 +2372,27 @@ var TYPES = {
   star:   { top: '#fff3b0', right: '#ffd85c', left: '#dca91c' },
   space:  { top: '#6a7cb8', right: '#4a5790', left: '#333f6e' },
   ufo:    { top: '#d3e0ff', right: '#9aade8', left: '#6d81c6' },
-  station:{ top: '#e2ecfa', right: '#adbdd8', left: '#8497b6' }
+  station:{ top: '#e2ecfa', right: '#adbdd8', left: '#8497b6' },
+  // 🎻 8탄 관현악 연주회 — 무대 마루 · 피아노 건반
+  parquet:{ top: '#e0ae74', right: '#bd8a51', left: '#9a6b38' },
+  pkey:   { top: '#ffffff', right: '#e6eef8', left: '#cfd9e8' },
+  bkey:   { top: '#232a38', right: '#1a202b', left: '#12161f' },
+  string: { top: '#e8bd88', right: '#c79356', left: '#a4733b' },
+  timpani:{ top: '#f0d6a8', right: '#c9932f', left: '#8a5f16' }
+};
+
+/* 🎹 8탄 피아노 — 흰 건반 8개(도~도)와 검은 건반 5개 */
+var PIANO_W = [
+  { nm: '도', f: 261.63 }, { nm: '레', f: 293.66 }, { nm: '미', f: 329.63 }, { nm: '파', f: 349.23 },
+  { nm: '솔', f: 392.00 }, { nm: '라', f: 440.00 }, { nm: '시', f: 493.88 }, { nm: '도', f: 523.25 }
+];
+/* 검은 건반 — 흰 건반 사이 경계(도-레, 레-미, 파-솔, 솔-라, 라-시)에 놓여요 */
+var PIANO_B = {
+  0: { nm: '도♯', f: 277.18 },
+  1: { nm: '레♯', f: 311.13 },
+  3: { nm: '파♯', f: 369.99 },
+  4: { nm: '솔♯', f: 415.30 },
+  5: { nm: '라♯', f: 466.16 }
 };
 
 // ⌨️ 키캡 색 (알록달록 기계식 키보드)
@@ -2243,7 +2405,9 @@ var KEY_COLORS = ['#ff7a9c', '#ffa63d', '#ffd94a', '#7ee081', '#4ec5ff', '#b48bf
 var ZONES = {
   5: { x0: 52.4, x1: 110, y0: -116, y1: -92, z0: 7.8, z1: 12.0 },
   6: { x0: 28, x1: 52.6, y0: -134, y1: -95, z0: 8.6, z1: 14.0 },
-  7: { x0: 2, x1: 28.4, y0: -152, y1: -130, z0: 10.6, z1: 24.0 }
+  7: { x0: 3.6, x1: 28.4, y0: -152, y1: -130, z0: 10.6, z1: 24.0 },
+  /* 🎻 8탄 — 정거장 서쪽 황금 음표 다리부터 마에스트로 단상까지 (보통 중력) */
+  8: { x0: -60, x1: 3.6, y0: -162, y1: -130, z0: 13.0, z1: 22.5 }
 };
 function zoneAt(x, y, z) {
   for (var k in ZONES) {
@@ -3214,7 +3378,11 @@ function buildMap() {
   /* ⑤ 🏆 우주 정거장 — 거대 대왕 쿠파 + 최종 황금 트로피 */
   rect(4, -146, 13, -137, 15.2, 'station');
   for (var s7s = 4; s7s <= 13; s7s++) { railTile(s7s, -147, 15.2, { tint: '#a9c6ff' }); }
-  for (var s7s2 = -146; s7s2 <= -137; s7s2++) { railTile(3, s7s2, 15.2, { tint: '#a9c6ff' }); railTile(14, s7s2, 15.2, { tint: '#a9c6ff' }); }
+  for (var s7s2 = -146; s7s2 <= -137; s7s2++) {
+    /* 🎻 서쪽 난간 y -144~-142 는 8탄 황금 음표 다리로 나가는 문이에요 */
+    if (s7s2 < -144 || s7s2 > -142) railTile(3, s7s2, 15.2, { tint: '#a9c6ff' });
+    railTile(14, s7s2, 15.2, { tint: '#a9c6ff' });
+  }
   rect(4, -147, 13, -147, 16.4, 'station');
   props.push({ k: 'stationDome', x: 4.6, y: -146.4, z: 15.2 });
   props.push({ k: 'houseSign', x: 12.0, y: -146.8, z: 15.2, who: null, label: '우주 정거장', emoji: '🛰️' });
@@ -3229,6 +3397,124 @@ function buildMap() {
   coin(6, -144, 15.75); coin(9, -144, 15.75); coin(10, -145.4, 15.75, true);
   coin(5, -142, 15.75); coin(13.4, -142, 15.75);
   spots.push({ x: 4.8, y: -138.4, z: 15.2, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+
+  /* ============================================================
+     🎻 9-10) 8탄 — 관현악 연주회 (7탄 우주 정거장 → 황금 음표 다리)
+     ------------------------------------------------------------
+     · 🎹 거대 그랜드 피아노 건반 다리 — 흰 건반 8개(도~도)를 밟으면
+       맑은 피아노 소리, 검은 건반은 반음. 건반이 쑥 눌리고 🎵 음표가 떠요
+     · 🎻 바이올린·첼로 현 바운스 — 밟으면 "띠잉~" 피치카토 화음 + 높이 점프
+     · 🥁 팀파니 북 발판 — 밟으면 "둥!" · 🎺 회전 황금 지휘봉 장애물
+     · ☁️ 음표 구름 징검다리 · 🎼 메트로놈 적(부딪히면 -30, 그물로 +15)
+     · 🏆 마에스트로 지휘자 단상 — 관현악 팡파르 + 폭죽 + 60 코인
+     ============================================================ */
+  var Z8 = 15.2;
+
+  /* ① 우주 정거장 → 🎻 황금 음표 다리 */
+  rect(-5, -144, 3, -142, Z8, 'gold');
+  props.push({ k: 'musicArch', x: 1.0, y: -145.4, z: Z8, label: '8탄 관현악 연주회', emoji: '🎻' });
+  props.push({ k: 'noteProp', x: 2.2, y: -145.2, z: Z8 + 1.0, ic: '♪' });
+  props.push({ k: 'noteProp', x: 0.2, y: -145.2, z: Z8 + 1.35, ic: '♫' });
+  props.push({ k: 'noteProp', x: -1.8, y: -145.2, z: Z8 + 0.95, ic: '♩' });
+  props.push({ k: 'noteProp', x: -3.6, y: -145.2, z: Z8 + 1.2, ic: '♬' });
+  coin(2.2, -143.4, Z8 + 0.55);
+  coin(-0.4, -142.6, Z8 + 0.55);
+  coin(-3.2, -143.4, Z8 + 0.55, true);
+  cps.push({ x: 2.6, y: -142.5, z: Z8, on: false, s8: 1 });       // 8탄 시작 깃발
+
+  /* ② 🎹 거대 그랜드 피아노 건반 다리 — 흰 건반 8개 + 검은 건반 5개 */
+  for (var s8k = 0; s8k < 8; s8k++) {
+    for (var s8ky = -143; s8ky <= -141; s8ky++) {
+      var s8kt = add(-6 - s8k, s8ky, Z8, 'pkey', { step: 0.5 });
+      s8kt.note = s8k; s8kt.nm = PIANO_W[s8k].nm; s8kt.freq = PIANO_W[s8k].f;
+      s8kt.press = 0; s8kt.flash = 0;
+    }
+  }
+  var S8_SHARP = [0, 1, 3, 4, 5];
+  for (var s8b = 0; s8b < S8_SHARP.length; s8b++) {
+    var s8bk = S8_SHARP[s8b];
+    var s8bt = add(-7 - s8bk, -144, Z8 + 0.3, 'bkey', { step: 0.3 });
+    s8bt.note = s8bk; s8bt.sharp = 1; s8bt.nm = PIANO_B[s8bk].nm; s8bt.freq = PIANO_B[s8bk].f;
+    s8bt.press = 0; s8bt.flash = 0;
+  }
+  /* 검은 건반이 없는 칸은 흰 건반으로 채우고, 뒤쪽은 난간으로 막아요 */
+  var s8fill = [[-9, 2], [-13, 7]];
+  for (var s8fl = 0; s8fl < s8fill.length; s8fl++) {
+    var s8ft = add(s8fill[s8fl][0], -144, Z8, 'pkey', { step: 0.5 });
+    s8ft.note = s8fill[s8fl][1]; s8ft.nm = PIANO_W[s8fill[s8fl][1]].nm;
+    s8ft.freq = PIANO_W[s8fill[s8fl][1]].f; s8ft.press = 0; s8ft.flash = 0;
+  }
+  rect(-13, -145, -6, -145, Z8, 'parquet', { step: 0.5 });   // 피아노 뒤 나무 테두리
+  props.push({ k: 'houseSign', x: -9.6, y: -145.4, z: Z8, who: null, label: '피아노 건반을 밟아 봐!', emoji: '🎹' });
+  props.push({ k: 'instrument', x: -13.4, y: -144.6, z: Z8, ic: '🎼' });
+  coin(-8, -142.4, Z8 + 0.55); coin(-11, -142.4, Z8 + 0.55, true);
+  coin(-6.5, -141.5, Z8 + 0.55); coin(-12.5, -141.5, Z8 + 0.55);
+
+  /* ③ 🎻 바이올린·첼로 현 바운스 — 현을 밟으면 띠잉~ 통통! */
+  rect(-21, -144, -14, -141, Z8, 'parquet');
+  [-18, -16].forEach(function (s8sx, s8si) {
+    for (var s8sy = -143; s8sy <= -141; s8sy++) {
+      var s8sp = add(s8sx, s8sy, Z8, 'string', { step: 0.5 });
+      s8sp.str = 1; s8sp.press = 0; s8sp.vt = s8si ? 'cello' : 'violin';
+    }
+  });
+  props.push({ k: 'instrument', x: -20.4, y: -144.4, z: Z8, ic: '🎻', big: 1 });
+  props.push({ k: 'instrument', x: -14.6, y: -144.4, z: Z8, ic: '🪕' });
+  props.push({ k: 'houseSign', x: -17.4, y: -144.6, z: Z8, who: null, label: '현을 밟으면 띠잉~!', emoji: '🎻' });
+  coin(-17, -143.4, 18.6); coin(-17, -141.6, 18.95, true);        // 통통 튀어 오르며 줍는 공중 코인
+  cps.push({ x: -20.2, y: -142.4, z: Z8, on: false, s8: 1 });     // 8탄 현악 깃발
+
+  /* ④ 무대 계단 · 🥁 팀파니 · 🎺 회전 지휘봉 무대 */
+  rect(-23, -143, -22, -141, 15.9, 'parquet', { step: 0.6 });
+  rect(-31, -147, -24, -137, 16.5, 'parquet');
+  for (var s8r = -31; s8r <= -24; s8r++) {
+    railTile(s8r, -148, 16.5, { tint: '#e8c98f' });
+    railTile(s8r, -136, 16.5, { tint: '#e8c98f' });
+  }
+  function timpPad8(tx, ty) {
+    var t2 = add(tx, ty, 16.5, 'timpani', { step: 0.45 });
+    t2.timp = 1; t2.press = 0;
+    return t2;
+  }
+  timpPad8(-27, -144); timpPad8(-29, -142); timpPad8(-25, -140); timpPad8(-26, -146);
+  spins.push({ id: 's8sp0', x: -28, y: -143, z: 16.5, len: 1.9, speed: 1.35, a: 0, hitAt: 0, kind: 'trumpet' });
+  props.push({ k: 'houseSign', x: -30.4, y: -147.4, z: 16.5, who: null, label: '팀파니는 둥! 지휘봉 조심', emoji: '🥁' });
+  props.push({ k: 'instrument', x: -24.6, y: -146.4, z: 16.5, ic: '🎺' });
+  props.push({ k: 'instrument', x: -30.6, y: -139.4, z: 16.5, ic: '📯' });
+  coin(-26, -145, 17.05); coin(-29.5, -140, 17.05, true); coin(-25, -138.5, 17.05);
+  cps.push({ x: -27.4, y: -138.6, z: 16.5, on: false, s8: 1 });   // 8탄 무대 깃발
+  enemies.push({ id: 's8me0', x0: -20.6, y0: -143.6, x1: -20.6, y1: -141.4, z: Z8, speed: 0.95, ph: 0.6, px: -20.6, py: -143.6, hitAt: 0, face: 1, kind: 'metronome' });
+  enemies.push({ id: 's8me1', x0: -30.4, y0: -145.4, x1: -30.4, y1: -139.4, z: 16.5, speed: 1.05, ph: 2.2, px: -30.4, py: -145.4, hitAt: 0, face: 1, kind: 'metronome' });
+
+  /* ⑤ ☁️ 음표 구름 징검다리 */
+  rect(-34, -144, -33, -142, 16.7, 'cloud');
+  rect(-37, -147, -36, -145, 16.9, 'cloud');
+  rect(-40, -143, -39, -141, 17.0, 'cloud');
+  props.push({ k: 'noteProp', x: -33.5, y: -142.6, z: 17.7, ic: '🎵' });
+  props.push({ k: 'noteProp', x: -36.5, y: -145.4, z: 17.9, ic: '🎶' });
+  props.push({ k: 'noteProp', x: -39.5, y: -142.4, z: 18.0, ic: '♬' });
+  props.push({ k: 'houseSign', x: -34.2, y: -145.4, z: 16.7, who: null, label: '음표 구름을 밟고', emoji: '☁️' });
+  coin(-33.5, -143, 17.25); coin(-36.5, -146, 17.45, true); coin(-39.5, -142, 17.55);
+  cps.push({ x: -33.5, y: -143.0, z: 16.7, on: false, s8: 1 });   // 8탄 구름 깃발
+
+  /* ⑥ 🏆 마에스트로 지휘자 단상 (8탄 완주) */
+  rect(-47, -146, -41, -137, 17.1, 'parquet');
+  for (var s8f = -47; s8f <= -41; s8f++) {
+    railTile(s8f, -147, 17.1, { tint: '#e8c98f' });
+    railTile(s8f, -136, 17.1, { tint: '#e8c98f' });
+  }
+  for (var s8f2 = -146; s8f2 <= -137; s8f2++) railTile(-48, s8f2, 17.1, { tint: '#e8c98f' });
+  rect(-45, -143, -43, -140, 17.4, 'gold', { step: 0.35 });        // 지휘자 단상
+  props.push({ k: 'podium', x: -44.0, y: -143.6, z: 17.4 });
+  props.push({ k: 'instrument', x: -46.2, y: -145.4, z: 17.1, ic: '🎻', big: 1 });
+  props.push({ k: 'instrument', x: -41.8, y: -145.4, z: 17.1, ic: '🎺' });
+  props.push({ k: 'instrument', x: -46.2, y: -138.4, z: 17.1, ic: '🥁' });
+  props.push({ k: 'houseSign', x: -42.0, y: -146.4, z: 17.1, who: null, label: '마에스트로 지휘자 단상', emoji: '🎼' });
+  var finish8 = { x: -44.0, y: -141.5, z: 17.4 };
+  coin(-45, -144, 17.45, true); coin(-43, -142, 17.45); coin(-46, -140, 17.45);
+  cps.push({ x: -42.4, y: -142.4, z: 17.1, on: false, s8: 1 });   // 8탄 단상 앞 깃발
+  spots.push({ x: -41.6, y: -139.6, z: 17.1, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  enemies.push({ id: 's8me2', x0: -46.8, y0: -138.4, x1: -42.0, y1: -138.4, z: 17.1, speed: 1.0, ph: 1.4, px: -46.8, py: -138.4, hitAt: 0, face: 1, kind: 'metronome' });
 
   /* ⑤ 🌱 그로우 어 가든 문 — 🎡 원더랜드 남서쪽 잔디 (청룡열차 레일을 안 가리는 자리) */
   portals.push({ id: 'garden', x: 2.4, y: 25.6, z: 0, icon: '🌱', title: '그로우 어 가든', prompt: '🌱 그로우 어 가든으로 갈까요?', href: './grow-garden.html', color: '#33cf87' });
@@ -3479,6 +3765,7 @@ function buildMap() {
     props: props, spots: spots, houses: houses, keyTiles: keyTiles,
     movers: movers, spins: spins, portals: portals, crmTiles: crmTiles, rollers: rollers, enemies: enemies, finish2: finish2,
     finish3: finish3, finish4: finish4, finish5: finish5, finish6: finish6, finish7: finish7,
+    finish8: finish8,
     pens: pens, meteorSpots: meteorSpots, zones: ZONES,
     jellyTiles: jellyTiles, hops3: T3.hops, hops4: J4.hops,
     park: { area: PARK, see: seesaw, coaster: coaster },
@@ -3504,6 +3791,7 @@ var G = {
   finish5: { x: 60.2, y: -100.6, z: 8.6 }, finished5: false, cp5Start: -1, at5: false,
   finish6: { x: 33, y: -129, z: 11.0 }, finished6: false, cp6Start: -1, at6: false,
   finish7: { x: 8, y: -141, z: 15.2 }, finished7: false, cp7Start: -1, at7: false,
+  finish8: { x: -44, y: -141.5, z: 17.4 }, finished8: false, cp8Start: -1, at8: false,
   pens: [], meteorSpots: [], meteors: [], frozen: null, zone: 0, freezes: 0,
   p: { x: -9, y: 2.5, z: 0, vz: 0, air: false, face: 1, walk: 0, move: false, ground: 0, land: 0 },
   ride: 'walk', pet: null, petXY: { x: -9, y: 3.2 }, spot: null,
@@ -3541,9 +3829,12 @@ function buildWorld() {
   G.finish5 = m.finish5 || G.finish5;
   G.finish6 = m.finish6 || G.finish6;
   G.finish7 = m.finish7 || G.finish7;
+  G.finish8 = m.finish8 || G.finish8;
   G.pens = m.pens || [];
   G.meteorSpots = m.meteorSpots || [];
   G.zones = m.zones || ZONES; G.meteors = []; G.frozen = null; G.freezes = 0;
+  /* 🎹🎻🥁 8탄 — 소리가 나는 발판(피아노·현·팀파니) 모으기 */
+  G.soundTiles = G.tiles.filter(function (t) { return t.note != null || t.str || t.timp; });
   /* 🎡 놀이공원 — 시소 · 청룡열차 */
   G.park = m.park || null;
   G.see = G.park ? G.park.see : null;
@@ -3551,7 +3842,7 @@ function buildWorld() {
   G.coSegs = G.co ? buildCoasterSegs(G.co) : [];
   // 코스별 첫 체크포인트 위치 (s2 / s3 / s4 표시로 찾아요)
   G.cp2Start = -1; G.cp3Start = -1; G.cp4Start = -1;
-  G.cp5Start = -1; G.cp6Start = -1; G.cp7Start = -1;
+  G.cp5Start = -1; G.cp6Start = -1; G.cp7Start = -1; G.cp8Start = -1;
   for (var ci = 0; ci < G.cps.length; ci++) {
     if (G.cps[ci].s2 && G.cp2Start < 0) G.cp2Start = ci;
     if (G.cps[ci].s3 && G.cp3Start < 0) G.cp3Start = ci;
@@ -3559,6 +3850,7 @@ function buildWorld() {
     if (G.cps[ci].s5 && G.cp5Start < 0) G.cp5Start = ci;
     if (G.cps[ci].s6 && G.cp6Start < 0) G.cp6Start = ci;
     if (G.cps[ci].s7 && G.cp7Start < 0) G.cp7Start = ci;
+    if (G.cps[ci].s8 && G.cp8Start < 0) G.cp8Start = ci;
   }
   if (G.cp2Start < 0) G.cp2Start = 9;
   if (G.cp3Start < 0) G.cp3Start = G.cps.length - 1;
@@ -3566,6 +3858,7 @@ function buildWorld() {
   if (G.cp5Start < 0) G.cp5Start = G.cps.length - 1;
   if (G.cp6Start < 0) G.cp6Start = G.cps.length - 1;
   if (G.cp7Start < 0) G.cp7Start = G.cps.length - 1;
+  if (G.cp8Start < 0) G.cp8Start = G.cps.length - 1;
   /* 1탄 첫 체크포인트(처음에 켜져 있는 깃발)가 목록 어디에 있든 찾아 둡니다 */
   G.cp1Start = 0;
   for (var cf = 0; cf < G.cps.length; cf++) if (G.cps[cf].on) { G.cp1Start = cf; break; }
@@ -3791,6 +4084,11 @@ function drawJellyTile(ctx, t) {
 
 function drawTile(ctx, t) {
   if (t.type === 'rail') { drawRail(ctx, t); return; }
+  /* 🎻 8탄 — 피아노 건반 · 현 · 팀파니는 직접 그려요 */
+  if (t.type === 'pkey') { drawPianoKey(ctx, t); return; }
+  if (t.type === 'bkey') { drawBlackKey(ctx, t); return; }
+  if (t.type === 'string') { drawStringPad(ctx, t); return; }
+  if (t.type === 'timpani') { drawTimpaniPad(ctx, t); return; }
   if (t.jelly) { drawJellyTile(ctx, t); return; }
   if (t.trampPad) { drawTrampPadTile(ctx, t); return; }
   var c = TYPES[t.type] || TYPES.grass;
@@ -4404,6 +4702,162 @@ function drawKeycap(ctx, t) {
   }
 }
 
+/* ============================================================
+   🎹🎻🥁 8탄 — 피아노 건반 · 현 · 팀파니 발판 그리기
+   ============================================================ */
+/* 흰 건반 — 밟으면 press 만큼 쑥 내려가요 */
+function drawPianoKey(ctx, t) {
+  var press = clamp(t.press || 0, 0, 1);
+  var lift = 0.22 * (1 - press * 0.82);
+  var topZ = t.z + lift;
+  var m = 0.035;
+  var a = proj(t.x + m, t.y + m, topZ), b = proj(t.x + 1 - m, t.y + m, topZ);
+  var c = proj(t.x + 1 - m, t.y + 1 - m, topZ), d = proj(t.x + m, t.y + 1 - m, topZ);
+  var h = Math.max(4, (lift + 0.05) * BLOCK_H);
+  poly(ctx, [d, c, { x: c.x, y: c.y + h }, { x: d.x, y: d.y + h }], '#c9d4e4');
+  poly(ctx, [b, c, { x: c.x, y: c.y + h }, { x: b.x, y: b.y + h }], '#e6edf8');
+  var g = ctx.createLinearGradient(a.x, a.y, c.x, c.y);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.55, '#fdfbf3');
+  g.addColorStop(1, '#edf1f8');
+  poly(ctx, [a, b, c, d], g);
+  poly(ctx, [a, b, c, d], null, 'rgba(118,136,166,.5)', 1.1);
+  /* 건반 사이 홈 */
+  ctx.strokeStyle = 'rgba(140,158,186,.30)';
+  ctx.lineWidth = 1;
+  var s0 = proj(t.x + m, t.y + 1 - m, topZ), s1 = proj(t.x + m, t.y + m, topZ);
+  ctx.beginPath(); ctx.moveTo(s0.x, s0.y); ctx.lineTo(s1.x, s1.y); ctx.stroke();
+  /* 앞줄에만 음이름 */
+  if (t.y > -141.5) {
+    var cx = (a.x + c.x) / 2, cy = (a.y + c.y) / 2;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '13px Jua, sans-serif';
+    ctx.fillStyle = 'rgba(88,108,140,.42)';
+    ctx.fillText(t.nm || '', cx, cy + 5);
+  }
+  if (press > 0.05) {
+    var cx2 = (a.x + c.x) / 2, cy2 = (a.y + c.y) / 2;
+    ctx.globalAlpha = press * 0.5;
+    ctx.beginPath(); ctx.ellipse(cx2, cy2, 15, 8, 0, 0, 6.2832);
+    ctx.fillStyle = '#ffe9a8'; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* 검은 건반 — 흰 건반 사이에 살짝 솟아 있어요 */
+function drawBlackKey(ctx, t) {
+  var press = clamp(t.press || 0, 0, 1);
+  var lift = 0.15 * (1 - press * 0.8);
+  var topZ = t.z + lift;
+  var mx = 0.12, y0 = 0.02, y1 = 0.7;
+  var a = proj(t.x + mx, t.y + y0, topZ), b = proj(t.x + 1 - mx, t.y + y0, topZ);
+  var c = proj(t.x + 1 - mx, t.y + y1, topZ), d = proj(t.x + mx, t.y + y1, topZ);
+  var h = Math.max(4, (lift + 0.12) * BLOCK_H);
+  poly(ctx, [d, c, { x: c.x, y: c.y + h }, { x: d.x, y: d.y + h }], '#141a24');
+  poly(ctx, [b, c, { x: c.x, y: c.y + h }, { x: b.x, y: b.y + h }], '#232a38');
+  var g = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+  g.addColorStop(0, '#3b4358');
+  g.addColorStop(0.45, '#242b3a');
+  g.addColorStop(1, '#151a24');
+  poly(ctx, [a, b, c, d], g);
+  poly(ctx, [a, b, c, d], null, 'rgba(255,255,255,.30)', 1);
+  /* 유리처럼 반짝 */
+  ctx.globalAlpha = 0.25 + press * 0.45;
+  ctx.strokeStyle = '#dfe9ff';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(a.x + (c.x - a.x) * 0.22, a.y + 4);
+  ctx.lineTo(a.x + (c.x - a.x) * 0.5, a.y + 12);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* 🎻 바이올린·첼로 현 — 밟으면 줄이 쏙 내려가고 통통 튀어요 */
+function drawStringPad(ctx, t) {
+  var press = clamp(t.press || 0, 0, 1);
+  var c0 = proj(t.x + 0.5, t.y + 0.5, t.z);
+  /* 그림자 */
+  ctx.beginPath(); ctx.ellipse(c0.x, c0.y + 2, 31, 15, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(60,40,20,.16)'; ctx.fill();
+  /* 나무 몸통 — 바이올린(밝은 단풍나무) · 첼로(진한 갈색) */
+  ctx.beginPath(); ctx.ellipse(c0.x, c0.y - 4, 30, 15, 0, 0, 6.2832);
+  var g = ctx.createLinearGradient(c0.x - 30, c0.y - 18, c0.x + 30, c0.y + 10);
+  if (t.vt === 'cello') {
+    g.addColorStop(0, '#c98a54');
+    g.addColorStop(0.5, '#9d5f2f');
+    g.addColorStop(1, '#6f3d17');
+  } else {
+    g.addColorStop(0, '#f7cd96');
+    g.addColorStop(0.5, '#dd9f58');
+    g.addColorStop(1, '#a9713a');
+  }
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = t.vt === 'cello' ? '#5e3413' : '#8d5a2b'; ctx.lineWidth = 1.6; ctx.stroke();
+  /* 줄 감개 쪽 어두운 테 */
+  ctx.globalAlpha = 0.35;
+  ctx.beginPath(); ctx.ellipse(c0.x - 20, c0.y - 6, 8, 4, 0, 0, 6.2832);
+  ctx.fillStyle = '#3a2410'; ctx.fill();
+  ctx.globalAlpha = 1;
+  /* 줄 3개 — 누르면 가운데가 쏙 */
+  var dip = press * 5.5;
+  ctx.strokeStyle = 'rgba(255,255,255,.95)';
+  ctx.lineWidth = 1.5;
+  [-7, 1, 9].forEach(function (oy, i) {
+    ctx.beginPath();
+    ctx.moveTo(c0.x - 24, c0.y - 9 + oy * 0.35);
+    ctx.quadraticCurveTo(c0.x, c0.y - 5 + oy * 0.35 + dip * (i === 1 ? 1.5 : 1), c0.x + 24, c0.y - 9 + oy * 0.35);
+    ctx.stroke();
+  });
+  /* 현 받침(브리지) */
+  ctx.fillStyle = '#f6e6c8';
+  roundRect(ctx, c0.x - 3, c0.y - 12 - press * 2, 6, 12, 2); ctx.fill();
+  ctx.strokeStyle = '#b98a52'; ctx.lineWidth = 1; ctx.stroke();
+  if (press > 0.05) {
+    ctx.globalAlpha = press * 0.55;
+    ctx.beginPath(); ctx.ellipse(c0.x, c0.y - 8, 24, 12, 0, 0, 6.2832);
+    ctx.fillStyle = '#ffe3f4'; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* 🥁 팀파니 북 — 밟으면 가죽이 둥! 하고 내려앉아요 */
+function drawTimpaniPad(ctx, t) {
+  var press = clamp(t.press || 0, 0, 1);
+  var c0 = proj(t.x + 0.5, t.y + 0.5, t.z);
+  var dip = press * 7;
+  ctx.beginPath(); ctx.ellipse(c0.x, c0.y + 2, 31, 15, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(60,40,20,.18)'; ctx.fill();
+  /* 주전자(황동) 옆면 */
+  ctx.beginPath(); ctx.ellipse(c0.x, c0.y - 2, 29, 14, 0, 0, 6.2832);
+  var co = ctx.createLinearGradient(c0.x - 29, c0.y - 16, c0.x + 29, c0.y + 10);
+  co.addColorStop(0, '#f6d18a');
+  co.addColorStop(0.5, '#cc972f');
+  co.addColorStop(1, '#8a5f16');
+  ctx.fillStyle = co; ctx.fill();
+  ctx.strokeStyle = '#6f4a10'; ctx.lineWidth = 1.6; ctx.stroke();
+  /* 가죽 머리 */
+  ctx.beginPath(); ctx.ellipse(c0.x, c0.y - 6 + dip, 23, 10, 0, 0, 6.2832);
+  var hg = ctx.createRadialGradient(c0.x - 6, c0.y - 11 + dip, 2, c0.x, c0.y - 6 + dip, 25);
+  hg.addColorStop(0, '#fffdf4');
+  hg.addColorStop(1, '#f0e0be');
+  ctx.fillStyle = hg; ctx.fill();
+  ctx.strokeStyle = '#cbb08a'; ctx.lineWidth = 1.2; ctx.stroke();
+  /* 말렛 두 개 */
+  ctx.strokeStyle = '#7b5432'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(c0.x - 22, c0.y - 22); ctx.lineTo(c0.x - 8, c0.y - 12 + dip); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(c0.x + 22, c0.y - 22); ctx.lineTo(c0.x + 8, c0.y - 12 + dip); ctx.stroke();
+  ctx.beginPath(); ctx.arc(c0.x - 7, c0.y - 11 + dip, 3.6, 0, 6.2832);
+  ctx.fillStyle = '#fff6dc'; ctx.fill();
+  ctx.beginPath(); ctx.arc(c0.x + 7, c0.y - 11 + dip, 3.6, 0, 6.2832);
+  ctx.fillStyle = '#fff6dc'; ctx.fill();
+  if (press > 0.05) {
+    ctx.globalAlpha = press * 0.5;
+    ctx.beginPath(); ctx.ellipse(c0.x, c0.y - 6, 22, 10, 0, 0, 6.2832);
+    ctx.fillStyle = '#ffd98a'; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
 function drawWallShadow(ctx, t) {
   var g0 = proj(t.x, t.y, 0);
   var g2 = proj(t.x + 1, t.y + 1, 0);
@@ -4793,6 +5247,29 @@ function drawSpin(ctx, s) {
       ctx.beginPath();
       ctx.arc(ea.x, ea.y, 4.6, 0.4, 4.2);
       ctx.strokeStyle = '#ff6fbe'; ctx.lineWidth = 2; ctx.stroke();
+    } else if (kind === 'trumpet') {
+      /* 🎺 황금 트럼펫 — 나팔 끝이 반짝 */
+      ctx.save();
+      ctx.translate(ea.x, ea.y);
+      ctx.rotate(Math.atan2(ea.y - c.y, ea.x - c.x));
+      var tg = ctx.createLinearGradient(-10, -8, 12, 8);
+      tg.addColorStop(0, '#ffe9a3');
+      tg.addColorStop(0.5, '#ffce4a');
+      tg.addColorStop(1, '#d99411');
+      ctx.beginPath();
+      ctx.moveTo(-10, -4);
+      ctx.lineTo(6, -4);
+      ctx.lineTo(15, -12);
+      ctx.lineTo(15, 12);
+      ctx.lineTo(6, 4);
+      ctx.lineTo(-10, 4);
+      ctx.closePath();
+      ctx.fillStyle = tg; ctx.fill();
+      ctx.strokeStyle = '#b98407'; ctx.lineWidth = 1.8; ctx.stroke();
+      ctx.globalAlpha = 0.75;
+      ctx.beginPath(); ctx.arc(11, 0, 3, 0, 6.2832);
+      ctx.fillStyle = '#fff8d6'; ctx.fill();
+      ctx.restore();
     } else {
       ctx.beginPath();
       ctx.arc(ea.x, ea.y, 7.5, 0, 6.2832);
@@ -4815,6 +5292,7 @@ function drawSpin(ctx, s) {
 /* 👾 쿠파 스타일 블록 보스 — 초록 몸통 + 노란 배 + 가시 등껍질 + 노란 뿔 + 빨간 갈기 */
 function drawEnemy(ctx, e) {
   if (e.kind === 'snow') { drawSnowman(ctx, e); return; }
+  if (e.kind === 'metronome') { drawMetronome(ctx, e); return; }
   var p = proj(e.px, e.py, e.z);
   var netted = !!(e.netUntil && e.netUntil > Date.now());
   var bob = netted ? 0 : Math.sin(G.t * 7 + (e.ph || 0) * 2) * 1.5;
@@ -5144,6 +5622,63 @@ function drawPenguin(ctx, e) {
 }
 
 /* 🫧 굴러오는 구슬 — 회랑을 좌우로 데구루루 */
+/* 🎼 메트로놈 — 음표 얼굴의 나무 메트로놈 적 (부딪히면 -30, 그물로 잡히면 멈춤) */
+function drawMetronome(ctx, e) {
+  var p = proj(e.px, e.py, e.z);
+  var netted = !!(e.netUntil && e.netUntil > Date.now());
+  var f = e.face || 1;
+  var beat = netted ? 0.25 : Math.sin(G.t * 2.7 + (e.ph || 0) * 3);
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.beginPath(); ctx.ellipse(0, 0, 21, 8, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(40,30,10,.22)'; ctx.fill();
+  ctx.scale(f, 1);
+  /* 나무 피라미드 몸통 */
+  ctx.beginPath();
+  ctx.moveTo(0, -92);
+  ctx.lineTo(25, 0);
+  ctx.lineTo(-25, 0);
+  ctx.closePath();
+  var g = ctx.createLinearGradient(-25, -92, 25, 0);
+  g.addColorStop(0, '#e6b273');
+  g.addColorStop(0.55, '#c38a48');
+  g.addColorStop(1, '#96642f');
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = '#7b4f22'; ctx.lineWidth = 2; ctx.stroke();
+  /* 악보 띠 + 음표 얼굴 */
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  roundRect(ctx, -16, -58, 32, 15, 4); ctx.fill();
+  ctx.save();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '11px "Apple Color Emoji","Noto Color Emoji",Jua,sans-serif';
+  ctx.fillStyle = '#7b4f22';
+  ctx.fillText('🎵', 0, -50);
+  ctx.restore();
+  /* 눈 — 신나게 깜빡 */
+  var blink = netted ? 0 : (Math.sin(G.t * 3 + (e.ph || 0)) > 0.9 ? 0.2 : 1);
+  ctx.fillStyle = '#3a2a12';
+  ctx.beginPath(); ctx.ellipse(-6, -30, 2.4, 3.2 * blink, 0, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(6, -30, 2.4, 3.2 * blink, 0, 0, 6.2832); ctx.fill();
+  /* 진자 — 좌우로 흔들 */
+  ctx.save();
+  ctx.translate(0, -18);
+  ctx.rotate(beat * 0.34);
+  ctx.strokeStyle = '#5a3a16'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -64); ctx.stroke();
+  ctx.fillStyle = netted ? '#c9b48a' : '#ffd24a';
+  roundRect(ctx, -6, -46, 12, 12, 3); ctx.fill();
+  ctx.restore();
+  /* 그물에 잡혔을 때 */
+  if (netted) {
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.6;
+    for (var nw = -2; nw <= 2; nw++) {
+      ctx.beginPath(); ctx.moveTo(nw * 9, -84); ctx.lineTo(nw * 9 + 6, 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-24, -60 + nw * 14); ctx.lineTo(24, -60 + nw * 14); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
 function drawRoller(ctx, r) {
   var p = proj(r.px, r.py, r.z);
   var a = r.ph;
@@ -6473,6 +7008,131 @@ function drawProp(ctx, p) {
       ctx.restore();
       break;
     }
+    /* ===================== 🎻 8탄 관현악 연주회 ===================== */
+    case 'noteProp': {
+      /* 떠다니는 음표 — 살랑살랑 반짝 */
+      var nb = proj(x + 0.5, y + 0.5, z);
+      var nbob = Math.sin(G.t * 2.2 + x * 0.7) * 4;
+      ctx.save();
+      ctx.globalAlpha = 0.16 + 0.12 * Math.sin(G.t * 3 + y);
+      ctx.beginPath(); ctx.arc(nb.x, nb.y + nbob, 18, 0, 6.2832);
+      ctx.fillStyle = '#fff6c4'; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = '24px "Apple Color Emoji","Noto Color Emoji",Jua,sans-serif';
+      ctx.fillStyle = '#ffd24a';
+      ctx.globalAlpha = 0.96;
+      ctx.fillText(p.ic || '♪', nb.x, nb.y + nbob);
+      ctx.restore();
+      break;
+    }
+    case 'instrument': {
+      /* 무대 위 악기 — 나무 스탠드 + 악기 + 은은한 불빛 */
+      var ib = proj(x + 0.5, y + 0.5, z);
+      ctx.save();
+      var ig2 = ctx.createRadialGradient(ib.x, ib.y - 40, 3, ib.x, ib.y - 40, 34);
+      ig2.addColorStop(0, 'rgba(255,242,190,.55)');
+      ig2.addColorStop(1, 'rgba(255,220,120,0)');
+      ctx.beginPath(); ctx.ellipse(ib.x, ib.y - 38, 32, 30, 0, 0, 6.2832);
+      ctx.fillStyle = ig2; ctx.fill();
+      /* 스탠드 */
+      ctx.fillStyle = '#a9743c';
+      roundRect(ctx, ib.x - 13, ib.y - 9, 26, 8, 3); ctx.fill();
+      ctx.fillStyle = '#8f5e2c';
+      roundRect(ctx, ib.x - 3, ib.y - 26, 6, 18, 2); ctx.fill();
+      emo(ctx, p.ic || '🎻', ib.x, ib.y - (p.big ? 52 : 44), p.big ? 34 : 26);
+      ctx.restore();
+      break;
+    }
+    case 'musicArch': {
+      /* 🎻 황금 음표 아치 — 8탄 입구 간판 */
+      var ma = proj(x + 0.5, y + 0.5, z);
+      ctx.save();
+      /* 기둥 */
+      ctx.fillStyle = '#e9b53c';
+      roundRect(ctx, ma.x - 88, ma.y - 112, 12, 112, 5); ctx.fill();
+      roundRect(ctx, ma.x + 76, ma.y - 112, 12, 112, 5); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,.35)';
+      roundRect(ctx, ma.x - 86, ma.y - 110, 4, 106, 2); ctx.fill();
+      roundRect(ctx, ma.x + 78, ma.y - 110, 4, 106, 2); ctx.fill();
+      /* 아치 띠 */
+      ctx.beginPath();
+      ctx.moveTo(ma.x - 88, ma.y - 98);
+      ctx.quadraticCurveTo(ma.x, ma.y - 178, ma.x + 88, ma.y - 98);
+      ctx.lineTo(ma.x + 88, ma.y - 82);
+      ctx.quadraticCurveTo(ma.x, ma.y - 158, ma.x - 88, ma.y - 82);
+      ctx.closePath();
+      var ag = ctx.createLinearGradient(ma.x - 88, ma.y - 160, ma.x + 88, ma.y - 80);
+      ag.addColorStop(0, '#fff0b8');
+      ag.addColorStop(0.45, '#ffd24a');
+      ag.addColorStop(1, '#e8a41c');
+      ctx.fillStyle = ag; ctx.fill();
+      ctx.strokeStyle = '#b98407'; ctx.lineWidth = 2; ctx.stroke();
+      /* 전구 반짝 */
+      for (var li = 0; li < 7; li++) {
+        var lt = li / 6;
+        var lx = ma.x - 74 + lt * 148;
+        var ly = ma.y - 104 - Math.sin(lt * Math.PI) * 54;
+        ctx.globalAlpha = 0.45 + 0.5 * Math.abs(Math.sin(G.t * 3 + li));
+        ctx.beginPath(); ctx.arc(lx, ly, 3.4, 0, 6.2832);
+        ctx.fillStyle = '#fffdf0'; ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      /* 간판 */
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = '14px Jua, sans-serif';
+      roundRect(ctx, ma.x - 82, ma.y - 76, 164, 27, 10);
+      ctx.fillStyle = 'rgba(255,253,246,.97)'; ctx.fill();
+      ctx.strokeStyle = '#ffc93c'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#8a5a00';
+      ctx.fillText((p.emoji || '🎻') + ' ' + (p.label || ''), ma.x, ma.y - 62);
+      ctx.restore();
+      break;
+    }
+    case 'podium': {
+      /* 🏆 마에스트로 지휘자 단상 — 악보대 + 지휘봉 + 왕관 반짝 */
+      var po = proj(x + 0.5, y + 0.5, z);
+      ctx.save();
+      /* 악보대 */
+      ctx.fillStyle = '#8a5a00';
+      roundRect(ctx, po.x - 2.5, po.y - 40, 5, 40, 2); ctx.fill();
+      ctx.save();
+      ctx.translate(po.x, po.y - 46);
+      ctx.rotate(-0.14);
+      roundRect(ctx, -23, -16, 46, 27, 5);
+      ctx.fillStyle = '#fffdf4'; ctx.fill();
+      ctx.strokeStyle = '#e8b53c'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = 'rgba(120,100,70,.42)'; ctx.lineWidth = 1;
+      for (var ls = 0; ls < 4; ls++) {
+        ctx.beginPath(); ctx.moveTo(-17, -9 + ls * 5); ctx.lineTo(17, -9 + ls * 5); ctx.stroke();
+      }
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = '15px "Apple Color Emoji","Noto Color Emoji",Jua,sans-serif';
+      ctx.fillText('🎼', 0, -3);
+      ctx.restore();
+      /* 지휘봉 — 살랑살랑 */
+      var sw = Math.sin(G.t * 2.4);
+      ctx.save();
+      ctx.translate(po.x + 17, po.y - 64);
+      ctx.rotate(-0.85 + sw * 0.22);
+      ctx.strokeStyle = '#fff8dc'; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -36); ctx.stroke();
+      ctx.fillStyle = '#ffd24a';
+      ctx.beginPath(); ctx.arc(0, 0, 3.4, 0, 6.2832); ctx.fill();
+      ctx.restore();
+      /* 왕관 빛 */
+      ctx.globalAlpha = 0.4 + 0.3 * Math.sin(G.t * 3);
+      var pg = ctx.createRadialGradient(po.x, po.y - 74, 2, po.x, po.y - 74, 36);
+      pg.addColorStop(0, 'rgba(255,246,190,.95)');
+      pg.addColorStop(1, 'rgba(255,220,120,0)');
+      ctx.beginPath(); ctx.ellipse(po.x, po.y - 74, 36, 34, 0, 0, 6.2832);
+      ctx.fillStyle = pg; ctx.fill();
+      ctx.globalAlpha = 1;
+      emo(ctx, '👑', po.x, po.y - 78, 22);
+      ctx.restore();
+      break;
+    }
     case 'counter': {
       isoBox(ctx, x, y, z, 2.6, 0.9, 0.95, '#d9a05e', '#b9813f', '#9b6a30');
       isoBox(ctx, x + 0.1, y + 0.1, z + 0.95, 2.4, 0.7, 0.08, '#f4e3c8');
@@ -7181,6 +7841,14 @@ function spawnSpark(x, y, z, col, n) {
     });
   }
 }
+/* 🎵 8탄 — 떠오르는 음표 파티클 */
+function spawnNote(x, y, z, ch) {
+  G.parts.push({
+    k: 'heart', x: x + rnd(-0.15, 0.15), y: y + rnd(-0.15, 0.15), z: z,
+    vx: rnd(-0.35, 0.35), vy: rnd(-0.2, 0.2), vz: rnd(1.3, 2.1),
+    life: rnd(0.85, 1.25), age: 0, ch: ch || pick(['🎵', '🎶', '♪'])
+  });
+}
 function spawnConfetti(n) {
   for (var i = 0; i < (n || 40); i++) {
     G.confetti.push({
@@ -7313,6 +7981,49 @@ function updateKeys(dt) {
     var t = G.keyTiles[i];
     t.press = approach(t.press || 0, 0, dt * 6.5);
     t.flash = Math.max(0, (t.flash || 0) - dt * 3.2);
+  }
+}
+
+/* ============================================================
+   🎹🎻🥁 8탄 — 밟으면 소리가 나는 발판
+   ============================================================ */
+function pressPiano(t) {
+  if (!t || t.note == null) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.hitAt && now - t.hitAt < 70) return;
+  t.hitAt = now;
+  t.press = 1;
+  t.flash = 1;
+  G.lastSound = { k: t.sharp ? 'piano#' : 'piano', nm: t.nm, f: t.freq, ts: Date.now() };
+  AU.piano(t.freq);
+  spawnNote(t.x + 0.5, t.y + 0.5, t.z + 0.35, t.sharp ? '♪' : pick(['🎵', '🎶', '♪']));
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.12, t.sharp ? '#ffe07a' : '#ffffff', 3);
+}
+function pressString(t) {
+  if (!t || !t.str) return;
+  t.press = 1;
+  G.lastSound = { k: 'pizz', f: 392 + ((t.x * 7 + t.y * 3) % 3) * 55, ts: Date.now() };
+  AU.pizz(392 + ((t.x * 7 + t.y * 3) % 3) * 55, 1);
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.15, '#ffd6f0', 6);
+  spawnNote(t.x + 0.5, t.y + 0.5, t.z + 0.55, pick(['🎻', '🎶', '♪']));
+}
+function pressTimpani(t) {
+  if (!t || !t.timp) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.hitAt && now - t.hitAt < 90) return;
+  t.hitAt = now;
+  t.press = 1;
+  G.lastSound = { k: 'timpani', ts: Date.now() };
+  AU.timpani(1);
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.2, '#ffcf6a', 7);
+  spawnNote(t.x + 0.5, t.y + 0.5, t.z + 0.6, '🥁');
+}
+function updatePiano(dt) {
+  var list = G.soundTiles || [];
+  for (var i = 0; i < list.length; i++) {
+    var t = list[i];
+    if (t.press) t.press = approach(t.press, 0, dt * 5.5);
+    if (t.flash) t.flash = Math.max(0, t.flash - dt * 3.2);
   }
 }
 
@@ -7545,6 +8256,9 @@ function updateEnemies(dt) {
     var sgn = Math.cos(e.ph) >= 0 ? 1 : -1;
     e.wx = ux * sgn; e.wy = uy * sgn;
     e.face = ((e.wx - e.wy) >= 0) ? 1 : -1;
+    /* 🎼 메트로놈은 가까이 있을 때만 가끔 '딱딱' 하고 박자를 세요 */
+    if (e.kind === 'metronome' && !(e.netUntil && e.netUntil > Date.now()) &&
+        Math.abs(e.px - p.x) < 9 && Math.abs(e.py - p.y) < 9 && Math.random() < dt * 0.9) AU.metro(0.4);
     /* 불꽃 입김 (가끔 후우~) */
     if (Math.random() < dt * 0.9) {
       G.parts.push({
@@ -7903,7 +8617,7 @@ function updatePlayer(dt) {
   /* 🗺️ 5·6·7탄 구역 — 발을 들이면 얼음 물리·달 저중력이 켜져요 */
   var zn = zoneAt(p.x, p.y, p.z);
   if (zn) G.zone = zn; else if (!p.air) G.zone = 0;
-  G.at5 = G.zone === 5; G.at6 = G.zone === 6; G.at7 = G.zone === 7;
+  G.at5 = G.zone === 5; G.at6 = G.zone === 6; G.at7 = G.zone === 7; G.at8 = G.zone === 8;
   /* 🪑 놀이공원 시소에 앉아 있는 동안 */
   if (G.seeSeat && updateSeesawRide(dt)) return;
   /* 🌿 그네를 타고 흔들리는 동안 */
@@ -8017,6 +8731,28 @@ function updatePlayer(dt) {
     if (p.air) p.keyId = null;
   }
 
+  /* 🎹 8탄 피아노 건반 — 새 건반을 밟을 때마다 맑은 피아노 소리 */
+  if (standsOn && standsOn.note != null) {
+    var pnId = standsOn.x + ',' + standsOn.z + ',' + (standsOn.sharp ? 1 : 0);
+    if (p.pianoId !== pnId) { p.pianoId = pnId; pressPiano(standsOn); }
+  } else if (!p.air) p.pianoId = null;
+
+  /* 🎻 현 바운스 — 밟으면 띠잉~ 하고 위로 통통 */
+  if (standsOn && standsOn.str) {
+    var stId = standsOn.x + ',' + standsOn.y;
+    if (p.strId !== stId) {
+      p.strId = stId;
+      pressString(standsOn);
+      p.vz = 12.4; p.air = true; p.squash = 0; p.walkOff = false;
+    }
+  } else if (!p.air) p.strId = '';
+
+  /* 🥁 팀파니 — 밟으면 둥! */
+  if (standsOn && standsOn.timp) {
+    var tpId = standsOn.x + ',' + standsOn.y;
+    if (p.timpId !== tpId) { p.timpId = tpId; pressTimpani(standsOn); }
+  } else if (!p.air) p.timpId = '';
+
   // ⌨️ 키캡 밟기 (걸어서 새 키를 밟을 때마다 톡!)
   if (standsOn && standsOn.key) {
     var kid2 = standsOn.x + ',' + standsOn.y;
@@ -8059,7 +8795,7 @@ function updatePlayer(dt) {
   /* 🏰 타워 점프맵(그리고 ❄️🍬🚀 5·6·7탄): 발판에서 떨어져 아래로 내려가면
      방금 지나온 층 체크포인트 깃발에서 즉시 부활! */
   var fallLim = G.at7 ? 1.95 : 1.2;
-  if ((G.at3 || G.at4 || G.at5 || G.at6 || G.at7) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - fallLim) {
+  if ((G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.at8) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - fallLim) {
     fallOut(); return;
   }
 
@@ -8194,6 +8930,15 @@ function updatePlayer(dt) {
     }
   }
 
+  // 🎻 8탄 마에스트로 지휘자 단상 — 올라서면 관현악 팡파르!
+  if (!G.finished8) {
+    var fc8 = G.finish8;
+    /* 단상 위에 두 발로 올라섰을 때만 (공중에서 스치면 아직) */
+    if (!p.air && Math.abs(fc8.z - p.z) < 0.6 && Math.abs(p.x - fc8.x) < 1.5 && Math.abs(p.y - fc8.y) < 1.6) {
+      finishStage8();
+    }
+  }
+
   // 🚪 포털 문 — 문 앞에 서면 「이동」 버튼이 떠요
   G.portal = null;
   var pbest = 1.6;
@@ -8241,6 +8986,15 @@ function doLand(cand) {
   if (t.jelly) pressJelly(t, 1.05);            // 🫧 말랑 구슬 착지 → 사그락! 퐁실!
   else { AU.land(); spawnDust(p.x, p.y, p.z, 4); }
   if (t.key) pressKey(t);
+  if (t.note != null) pressPiano(t);
+  if (t.timp) pressTimpani(t);
+  if (t.str) {
+    /* 🎻 현을 밟고 착지 — 띠잉~ 하고 다시 높이! */
+    pressString(t);
+    p.vz = 12.4; p.air = true; p.squash = 0; p.walkOff = false;
+    spawnNote(t.x + 0.5, t.y + 0.5, t.z + 0.7, '🎻');
+    return;
+  }
   if (p.buf > 0) { p.buf = 0; doJump(); return; }
   if (t.tramp) {
     /* 🤸 트램펄린 — 착지하면 보잉— 자동으로 통통! */
@@ -8481,6 +9235,7 @@ function goWorld(href) {
   if (href === '#tw5') { gotoStage5(); return; }
   if (href === '#tw6') { gotoStage6(); return; }
   if (href === '#tw7') { gotoStage7(); return; }
+  if (href === '#tw8') { gotoStage8(); return; }
   try { location.href = worldHref(href); } catch (e) {}
 }
 
@@ -8563,13 +9318,13 @@ function gotoStage4(silent) {
 
 /* 5·6·7탄 — 각 탄 시작 깃발로 (앞선 탄 완주 팝업이 다시 뜨지 않게) */
 function gotoStageN(n, silent) {
-  var cpIdx = n === 5 ? G.cp5Start : (n === 6 ? G.cp6Start : G.cp7Start);
+  var cpIdx = n === 5 ? G.cp5Start : (n === 6 ? G.cp6Start : (n === 7 ? G.cp7Start : G.cp8Start));
   resetTraps2();
   if (cpIdx >= 0) {
     G.cpIdx = cpIdx;
     for (var i = 0; i < G.cps.length; i++) G.cps[i].on = (i === cpIdx);
   }
-  var cp = G.cps[cpIdx] || (n === 5 ? { x: 99.2, y: -100.2, z: 8.6 } : (n === 6 ? { x: 49.4, y: -99.4, z: 9.2 } : { x: 26.4, y: -134, z: 11.2 }));
+  var cp = G.cps[cpIdx] || (n === 5 ? { x: 99.2, y: -100.2, z: 8.6 } : (n === 6 ? { x: 49.4, y: -99.4, z: 9.2 } : (n === 7 ? { x: 26.4, y: -134, z: 11.2 } : { x: 2.6, y: -143, z: 15.2 })));
   var p = G.p;
   p.x = cp.x; p.y = cp.y; p.z = cp.z;
   p.vx = 0; p.vy = 0; p.vz = 0; p.air = false;
@@ -8582,11 +9337,13 @@ function gotoStageN(n, silent) {
   G.finished4 = (n >= 5);
   if (n <= 5) G.finished5 = false;
   if (n <= 6) G.finished6 = false;
-  G.finished7 = false;
+  if (n <= 7) G.finished7 = false;
+  if (n <= 8) G.finished8 = false;
   G.at3 = false; G.at4 = false;
   G.zone = n;
-  G.at5 = n === 5; G.at6 = n === 6; G.at7 = n === 7;
+  G.at5 = n === 5; G.at6 = n === 6; G.at7 = n === 7; G.at8 = n === 8;
   if (n === 7) G.st7At = Date.now();
+  if (n === 8) { G.st8At = Date.now(); G.finished7 = true; }
   G.frozen = null; G.meteors = []; G.meteorT = 0;
   G.paused = false;
   closeAllSheets();
@@ -8596,16 +9353,18 @@ function gotoStageN(n, silent) {
   if (n === 5 && !silent) { AU.chime(); toast('❄️ 5탄 얼음 빙글빙글 왕국! 얼음에서는 쭉— 미끄러져요!', 2800); }
   if (n === 6 && !silent) { AU.chime(); toast('🍬 6탄 달콤 디저트 하늘섬! 마카롱을 밟으면 퐁!', 2800); }
   if (n === 7 && !silent) { AU.chime(); toast('🚀 7탄 우주 별빛 대모험! 달 중력이라 둥실둥실~', 2800); }
+  if (n === 8 && !silent) { AU.chime(); AU.pizz(523.25, 0.9); toast('🎻 8탄 관현악 연주회! 피아노 건반을 밟아 봐!', 2900); }
 }
 function gotoStage5(silent) { gotoStageN(5, silent); }
 function gotoStage6(silent) { gotoStageN(6, silent); }
 function gotoStage7(silent) { gotoStageN(7, silent); }
+function gotoStage8(silent) { gotoStageN(8, silent); }
 
 /* 🏘️ 마을로 돌아가기 */
 function gotoVillage() {
   G.at3 = false;
   G.at4 = false;
-  G.at5 = false; G.at6 = false; G.at7 = false; G.zone = 0;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false; G.zone = 0;
   G.frozen = null; G.meteors = [];
   updateGravBadge();
   G.p.x = G.spawn.x; G.p.y = G.spawn.y; G.p.z = 0;
@@ -9482,6 +10241,47 @@ function resetStage7() {
   toast('🔁 7탄 우주 대모험 다시 도전! 화이팅!');
 }
 
+/* ---------- 🎻 8탄 마에스트로 단상 완주 ---------- */
+function finishStage8() {
+  if (G.finished8) return;
+  G.finished8 = true;
+  G.paused = true;
+  var time = Date.now() - (G.st8At || G.startAt);
+  AU.fanfare8();
+  spawnConfetti(200);
+  var bursts = 0;
+  var fw = setInterval(function () {
+    spawnConfetti(80);
+    AU.chime();
+    if (++bursts >= 3) clearInterval(fw);
+  }, 680);
+  addCoins(60);
+  if (SAVE) {
+    SAVE.st8 = SAVE.st8 || {};
+    SAVE.st8.best = SAVE.st8.best ? Math.min(SAVE.st8.best, time) : time;
+    SAVE.st8.done = (SAVE.st8.done || 0) + 1;
+    persist();
+  }
+  var el;
+  if ((el = $('#maeTime'))) el.textContent = fmtTime(time);
+  if ((el = $('#maeCoins'))) el.textContent = G.coinsGot;
+  if ((el = $('#maeBest'))) el.textContent = fmtTime((SAVE && SAVE.st8) ? SAVE.st8.best : time);
+  if ((el = $('#maeTitle'))) el.textContent = ME.name + ' 마에스트로! 🎻';
+  $('#galaxyOverlay').classList.remove('open');
+  var mo = $('#maestroOverlay');
+  if (mo) mo.classList.add('open');
+  updateHint();
+}
+
+function resetStage8() {
+  G.finished8 = false;
+  resetTraps2();
+  G.meteors = [];
+  $('#maestroOverlay').classList.remove('open');
+  gotoStage8(true);
+  toast('🔁 8탄 관현악 연주회 다시 도전! 화이팅!');
+}
+
 function resetRun() {
   G.finished = false;
   G.finished2 = false;
@@ -9490,9 +10290,10 @@ function resetRun() {
   G.finished5 = false;
   G.finished6 = false;
   G.finished7 = false;
+  G.finished8 = false;
   G.at3 = false;
   G.at4 = false;
-  G.at5 = false; G.at6 = false; G.at7 = false; G.zone = 0;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false; G.zone = 0;
   G.frozen = null; G.meteors = [];
   resetTraps2();
   G.coinsGot = 0; G.gatesSolved = 0;
@@ -9543,6 +10344,14 @@ function updateHint() {
     else if (p.z > 14.0) txt = '☄️ 운석 그림자 피하고 🌀 별 막대 조심!';
     else if (p.z > 12.4) txt = '⭐ 별빛 징검다리를 둥실둥실 건너요';
     else txt = '🚀 7탄 우주! 중력 0.42배로 둥실둥실~';
+  }
+  else if (G.at8) {
+    if (G.finished8) txt = '🎻 마에스트로 완주! 관현악 연주회 정말 멋졌어!';
+    else if (p.x < -40) txt = '🎼 지휘자 단상에 올라서면 팡파르가 터져요!';
+    else if (p.x < -32) txt = '☁️ 음표 구름을 하나씩 밟고 건너요';
+    else if (p.x < -24) txt = '🥁 팀파니는 둥! 🎺 회전 지휘봉을 점프로 피해요';
+    else if (p.x < -14) txt = '🎻 현을 밟으면 띠잉~ 하고 높이 튕겨요!';
+    else txt = '🎹 피아노 건반을 밟으면 도레미파솔라시도!';
   }
   else if (G.at6) {
     if (G.finished6) txt = '🍬 6탄 완주! 🚀 7탄 발사대가 앞에 있어요';
@@ -11141,8 +11950,16 @@ function cleanText(t) {
 
 var seenChat = {};
 var seenGift = {};
+/* 🧪 ?wctest=1 · ?bwtest=1 테스트 중에는 Firebase RTDB 에 아무것도 쓰지 않아요
+   (kids·worldCoins·blockWorld·worldVoice 모두 읽기만 해요) */
+var FB_TEST = (function () {
+  try {
+    var q = new URLSearchParams(location.search || '');
+    return q.get('wctest') === '1' || q.get('bwtest') === '1';
+  } catch (e) { return false; }
+})();
 var FB = {
-  ready: false, db: null, root: null, lastLive: 0, lastPush: 0, liveTimer: 0, conn: false,
+  ready: false, test: FB_TEST, db: null, root: null, lastLive: 0, lastPush: 0, liveTimer: 0, conn: false,
   init: function () {
     if (typeof firebase === 'undefined' || !firebase.initializeApp) {
       setTimeout(function () { FB.init(); }, 900);
@@ -11211,7 +12028,7 @@ var FB = {
     } catch (e) {}
   },
   pushGift: function (g) {
-    if (!FB.ready) return;
+    if (!FB.ready || FB.test) return;
     try { FB.root.child('gifts').push().set(g); } catch (e) {}
   },
   /* 🪑 시소 — 지금 어느 자리에 앉아서 어느 쪽으로 미는지 (같은 공원에 있는 가족끼리 실시간) */
@@ -11242,18 +12059,18 @@ var FB = {
     } catch (e) {}
   },
   pushChurroAsk: function () {
-    if (!FB.ready) return;
+    if (!FB.ready || FB.test) return;
     try { FB.root.child('park/churro/ask').set({ who: ME.id, ts: Date.now() }); } catch (e) {}
   },
   pushChurroBuy: function (who, by) {
-    if (!FB.ready) return;
+    if (!FB.ready || FB.test) return;
     try {
       FB.root.child('park/churro/buy').set({ who: who, by: by || 'dad', ts: Date.now() });
       FB.root.child('park/churro/ask').remove();
     } catch (e) {}
   },
   pushSee: function (side, push) {
-    if (!FB.ready) return;
+    if (!FB.ready || FB.test) return;
     var now = Date.now();
     if (!side) {
       FB.lastSee = 0;
@@ -11267,11 +12084,12 @@ var FB = {
     } catch (e) {}
   },
   watchOther: function () {
+    if (FB.test) return;
     try { FB.root.child('live/' + ME.id).onDisconnect().remove(); } catch (e) {}
     try { FB.root.child('park/see/' + ME.id).onDisconnect().remove(); } catch (e) {}
   },
   pushLive: function (force) {
-    if (!FB.ready || !SAVE || !G.running) return;
+    if (!FB.ready || FB.test || !SAVE || !G.running) return;
     var now = Date.now();
     if (!force && now - FB.lastPush < (G.p.move || G.p.air || G.piggy ? 300 : 1800)) return;
     FB.lastPush = now;
@@ -11292,7 +12110,7 @@ var FB = {
     try { FB.root.child('live/' + ME.id).set(data); } catch (e) {}
   },
   pushChat: function (msg) {
-    if (!FB.ready) return null;
+    if (!FB.ready || FB.test) return null;
     try {
       var r = FB.root.child('chat').push();
       r.set({ who: msg.who, text: msg.text, ts: msg.ts });
@@ -11300,7 +12118,7 @@ var FB = {
     } catch (e) { return null; }
   },
   pushCoins: function (who, n) {
-    if (!FB.ready) return;
+    if (!FB.ready || FB.test) return;
     try { FB.root.child('coins/' + who).set(n); } catch (e) {}
   }
 };
@@ -12295,6 +13113,17 @@ function bindUI() {
     gotoStage4();
   });
   $('#jlAgain').addEventListener('click', function () { resetStage4(); });
+  if ($('#galNext8')) $('#galNext8').addEventListener('click', function () {
+    $('#galaxyOverlay').classList.remove('open');
+    G.paused = false;
+    gotoStage8();
+  });
+  if ($('#maeAgain')) $('#maeAgain').addEventListener('click', function () { resetStage8(); });
+  if ($('#maeHome')) $('#maeHome').addEventListener('click', function () {
+    $('#maestroOverlay').classList.remove('open');
+    G.paused = false;
+    gotoVillage();
+  });
   if ($('#galAgain')) $('#galAgain').addEventListener('click', function () { resetStage7(); });
   if ($('#galHome')) $('#galHome').addEventListener('click', function () {
     $('#galaxyOverlay').classList.remove('open');
@@ -12427,6 +13256,8 @@ function bindUI() {
     if (jmp6) { closeAllSheets(); gotoStage6(); return; }
     var jmp7 = e.target.closest('[data-jump7]');
     if (jmp7) { closeAllSheets(); gotoStage7(); return; }
+    var jmp8 = e.target.closest('[data-jump8]');
+    if (jmp8) { closeAllSheets(); gotoStage8(); return; }
     var jmp1 = e.target.closest('[data-jump1]');
     if (jmp1) { closeAllSheets(); resetRun(); return; }
     var prk = e.target.closest('[data-park]');
@@ -12575,7 +13406,7 @@ function updateCamera(dt) {
   /* 🗺️ 지도 둘러보기: 손으로 화면을 끌고 있는 동안은 카메라가 그 자리에 머물러요 */
   if (G.camFree) return;
   /* 🏰 3탄·🫧 4탄 타워와 🎢 청룡열차에서는 높이를 거의 그대로 따라가서 위·아래가 함께 보여요 */
-  var zf = (G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.coRide) ? 0.94 : 0.35;
+  var zf = (G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.at8 || G.coRide) ? 0.94 : 0.35;
   var tgt = proj(G.p.x, G.p.y, G.p.z * zf);
   var k = 1 - Math.pow(0.001, dt);
   G.cam.x = lerp(G.cam.x, tgt.x, k);
@@ -12653,6 +13484,7 @@ function loop(ts) {
   updateCamera(dt);
   if (G.running) {
     updateKeys(dt);
+    updatePiano(dt);
     drawWorld();
   }
   if (G.running && ts - lastLiveCheck > 320) {
@@ -12747,7 +13579,8 @@ try {
           frozen: G.frozen ? { taps: G.frozen.taps, left: +(Math.max(0, G.frozen.until - Date.now()) / 1000).toFixed(2) } : null,
           ice: !!p.ice, iceSpeed: +(Math.hypot(p.vx || 0, p.vy || 0)).toFixed(2), freezes: G.freezes || 0,
           fin: !!G.finished, fin2: !!G.finished2, fin3: !!G.finished3, fin4: !!G.finished4,
-          fin5: !!G.finished5, fin6: !!G.finished6, fin7: !!G.finished7,
+          fin5: !!G.finished5, fin6: !!G.finished6, fin7: !!G.finished7, fin8: !!G.finished8,
+          at8: !!G.at8,
           coins: SAVE ? SAVE.coins : null, hurt: p.hurtAt || 0, slip: !!p.slip,
           piggy: G.piggy || '', prompt: G.piggyPrompt ? G.piggyPrompt.act : '',
           ridePrompt: G.ridePrompt ? G.ridePrompt.act : '',
@@ -12785,6 +13618,28 @@ try {
       st5: function () { gotoStage5(); },
       st6: function () { gotoStage6(); },
       st7: function () { gotoStage7(); },
+      st8: function () { gotoStage8(); },
+      reset8: function () { resetStage8(); },
+      /* 🎹🎻🥁 8탄 소리 발판 확인 */
+      piano: function () {
+        return G.tiles.filter(function (t) { return t.type === 'pkey' || t.type === 'bkey'; })
+          .map(function (t) { return { x: t.x, y: t.y, z: t.z, nm: t.nm, f: t.freq, sharp: !!t.sharp, press: +(t.press || 0).toFixed(2) }; });
+      },
+      strings: function () {
+        return G.tiles.filter(function (t) { return !!t.str; })
+          .map(function (t) { return { x: t.x, y: t.y, z: t.z, press: +(t.press || 0).toFixed(2) }; });
+      },
+      timpani: function () {
+        return G.tiles.filter(function (t) { return !!t.timp; })
+          .map(function (t) { return { x: t.x, y: t.y, z: t.z, press: +(t.press || 0).toFixed(2) }; });
+      },
+      metronomes: function () {
+        return G.enemies.filter(function (e) { return e.kind === 'metronome'; })
+          .map(function (e) { return { id: e.id, x: +e.px.toFixed(2), y: +e.py.toFixed(2), z: e.z, netted: !!(e.netUntil && e.netUntil > Date.now()) }; });
+      },
+      maeOpen: function () { var el = $('#maestroOverlay'); return el ? el.classList.contains('open') : false; },
+      fbTest: function () { return !!FB.test; },
+      lastSound: function () { return G.lastSound || null; },
       /* 🐧 얼음땡 · 🥐 마카롱 · ☄️ 운석 확인용 */
       penguins: function () {
         return (G.pens || []).map(function (e) {
