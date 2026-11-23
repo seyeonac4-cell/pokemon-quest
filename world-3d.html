@@ -106,7 +106,7 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 #cross.show{opacity:1}
 
 /* ---------- 알림 · 배너 ---------- */
-#toast{position:absolute;left:50%;transform:translate(-50%,6px);top:calc(128px + env(safe-area-inset-top,0px));
+#toast{position:absolute;left:50%;transform:translate(-50%,6px);top:calc(154px + env(safe-area-inset-top,0px));
   padding:8px 15px;border-radius:14px;background:rgba(38,28,60,.9);color:#fff;font-size:13px;font-weight:800;
   box-shadow:0 8px 22px rgba(20,10,40,.3);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;
   max-width:82vw;text-align:center;word-break:keep-all}
@@ -1104,9 +1104,9 @@ function boot() {
     });
     // 출발대 4개
     POOL.laneX.forEach((lx, i) => {
-      addBox(scene, 0.54, 0.34, 0.64, lx, POOL.deck + 0.17, POOL.z0 - 0.44, '#ffffff');
-      addBox(scene, 0.48, 0.06, 0.5, lx, POOL.deck + 0.37, POOL.z0 - 0.44, '#4a90e2', { cast: false });
-      makeSign([String(i + 1)], lx, POOL.deck + 0.98, POOL.z0 - 0.44, 0.42, 0.42, { post: false });
+      addBox(scene, 0.46, 0.3, 0.56, lx, POOL.deck + 0.15, POOL.z0 - 0.42, '#ffffff');
+      addBox(scene, 0.42, 0.06, 0.46, lx, POOL.deck + 0.33, POOL.z0 - 0.42, '#4a90e2', { cast: false });
+      makeSign([String(i + 1)], lx, POOL.deck + 0.72, POOL.z0 - 0.42, 0.44, 0.44, { post: false });
     });
     // 결승선 (바닥 줄무늬)
     for (let i = 0; i < 8; i++) {
@@ -1368,6 +1368,13 @@ function boot() {
 
   function doJump() {
     if (locked() || sheetOpen() || P.riding) return;
+    if (P.swim) {
+      splashWater(P.x, P.z, 8);
+      ripple(P.x, P.z, 0xffffff);
+      AU.splash();
+      return;
+    }
+    if (P.stuck) return;
     if (P.grounded || P.coyote > 0) {
       P.vy = JUMP_V; P.grounded = false; P.coyote = 0;
       AU.jump();
@@ -1839,7 +1846,7 @@ function boot() {
     const fwd = P.swim ? 0.45 : 0;
     const wantTarget = tmpV2.set(P.x + Math.sin(P.face) * fwd, P.y + (P.swim ? 0.45 : 1.5), P.z + Math.cos(P.face) * fwd);
     camTarget.lerp(wantTarget, 1 - Math.exp(-14 * dt));
-    const dist = P.swim ? 4.6 : camDist;
+    const dist = P.swim ? (RACE.on ? 5.0 : 4.6) : camDist;
     const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const want = tmpV.set(
       camTarget.x + Math.sin(yaw) * dist * cp,
@@ -1974,8 +1981,8 @@ function boot() {
     } else {
       u.armL.rotation.set(-1.55 + s * 1.45, 0, 0.18);
       u.armR.rotation.set(-1.55 - s * 1.45, 0, -0.18);
-      u.legL.rotation.set(s * 0.42, 0, 0);
-      u.legR.rotation.set(-s * 0.42, 0, 0);
+      u.legL.rotation.set(s * 0.32, 0, 0);
+      u.legR.rotation.set(-s * 0.32, 0, 0);
     }
   }
 
@@ -2272,7 +2279,7 @@ function boot() {
     P.vy = 0; P.grounded = true; P.face = 0;
     P.stroke = RACE.stroke || P.stroke;
     P.tilt = (P.stroke === 'back' ? -1 : 1);
-    yaw = Math.PI; pitch = 0.24;
+    yaw = Math.PI; pitch = 0.42;
     P.lockUntil = performance.now() + 200;
     paintStroke();
   }
