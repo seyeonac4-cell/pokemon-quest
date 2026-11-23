@@ -1004,6 +1004,9 @@ function boot() {
     // 바닥에 흩어진 동전
     meshP(g, GEOS.cyl, 1.92, 0.12, 2.42, 0.09, 0.02, 0.09, '#ffd94a');
     meshP(g, GEOS.cyl, 2.98, 0.12, 1.95, 0.08, 0.02, 0.08, '#ffc31f');
+    coinStack(g, 2.06, 2.12, 4, 0.1, 0.85);
+    coinStack(g, 2.78, 2.14, 6, 0.1, 0.7);
+    billBundle(g, 2.32, 2.48, 0.1, 0.7);
     // 봉투(지폐) 다발을 선반 위에도
     billBundle(g, SX + 0.1, SZ + 0.02, 1.35, 0.15);
     // 선반 둘째 칸에 인형 하나
@@ -1044,7 +1047,7 @@ function boot() {
     for (let i = 0; i < HOUSE_OBJS.length; i++) {
       const h = HOUSE_OBJS[i];
       const mine = h === inHouse;
-      const above = mine && cy > h.H - 0.02;          // 카메라가 지붕 위로 올라가면 인형의 집처럼
+      const above = mine && cy > h.H - 0.40;          // 카메라가 지붕 위로 올라가면 인형의 집처럼
       const k = Math.min(1, dt * 8);
       h.cut += ((above ? 1 : 0) - h.cut) * k;
       const op = 1 - h.cut * 0.80;
@@ -1062,6 +1065,11 @@ function boot() {
       }
     }
     // 🚪 문 앞에 오면 한 번만 알려 줘요
+    // 집 안에서는 내 이름표가 화면을 가리지 않게 잠깐 숨겨요
+    for (let i = 0; i < meAvatar.children.length; i++) {
+      const ch = meAvatar.children[i];
+      if (ch.isSprite && ch.visible === !!inHouse) ch.visible = !inHouse;
+    }
     const now = performance.now();
     if (inHouse) doorHintAt = 0;
     else if (now - doorHintAt > 24000) {
@@ -2243,7 +2251,9 @@ function boot() {
       const halfX = inH.W / 2 - 0.65, halfZ = inH.D / 2 - 0.65;
       camPos.x = Math.max(inH.x - halfX, Math.min(inH.x + halfX, camPos.x));
       camPos.z = Math.max(inH.z - halfZ, Math.min(inH.z + halfZ, camPos.z));
-      camPos.y = Math.max(0.9, Math.min(inH.H - 0.45, camPos.y));
+      // 고개를 폭 숙이면 위에서 내려다보는 '인형의 집' 시점
+      if (pitch <= 0.6) camPos.y = Math.max(0.9, Math.min(inH.H - 0.45, camPos.y));
+      else camPos.y = Math.min(inH.H + 1.3, camPos.y);
     }
     // 벽·미끄럼틀이 카메라를 가리면 캐릭터 쪽으로 당겨요
     let camUse = camPos;
