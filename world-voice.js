@@ -33,12 +33,24 @@
 
    테스트/디버그
      window.__WV.state() / toggle() / on() / off() / peers()
+
+   v1.4 (2026-11-23)
+     · 화면 아래에 "지금 상대 목소리가 들리는지"를 또렷하게 표시
+       (형원 마이크가 꺼져 있어요 / 연결 중 / 🔊 듣는 중 / 새로고침 필요)
+     · 가족 칩에 마이크 꺼진 사람은 이름 + 🔇 로 표시, 꺼지면 토스트로 알림
+     · 서로 판(version)을 주고받아 옛 판이면 "새로고침 필요"를 알려 줌
+     · 상대 중계 소리가 막히면 스스로 살려요 (멈춤 감지 → 머리말부터 다시,
+       그래도 안 되면 Web Audio 로 직접 풀어 재생 — MSE 가 안 되는 기기 대비)
+     · 소리를 막는 브라우저 정책에 걸리면 1.3초마다 다시 재생 시도(🔊 버튼도 같이)
+     · 내 목소리가 연결에 안 실렸으면 다시 맺어서 양쪽 다 보내게 함
+     · worldVoice/diag/{pid} 에 기기 진단(버전·수신 상태·마이크 크기)을
+       10초마다 짧게 남김 — 안 들릴 때 원인을 바로 볼 수 있음
    ============================================================ */
 (function (global) {
   'use strict';
   if (global.WorldVoice && global.WorldVoice.version) return;
 
-  var VERSION = '1.3';
+  var VERSION = '1.4';
   var PATH = 'family-lim-7660/worldVoice';
   var ROOM = 'main';
   var K_ACTIVE = 'lim_active_kid';
@@ -128,7 +140,7 @@
     who: FORCE_WHO || 'yunjin', pid: '', world: '',
     micOn: false, micBusy: false, stream: null,
     myVer: 1, peers: {}, conns: {}, attempts: {},
-    audios: {}, analysers: {}, speaking: {}, heard: {},
+    audios: {}, analysers: {}, speaking: {}, heard: {}, level: {},
     transport: null, seenSig: {}, candBox: {}, idled: false, lastAct: now(),
     timers: [], ac: null, audioBlocked: false, retryT: {}
   };
@@ -171,7 +183,9 @@
       'box-shadow:0 3px 9px rgba(30,50,80,.16);transition:background .2s,border-color .2s,transform .2s}',
       '.wv-chip .e{font-size:13px;line-height:1}',
       '.wv-chip .n{font-size:10.5px}',
+      '.wv-chip .x{font-size:9.5px;opacity:.9;margin-left:-1px}',
       '.wv-chip.on{background:linear-gradient(180deg,#ecfff8,#c9f7e5);border-color:#4fdcb2;color:#0d6b4c}',
+      '.wv-chip.off{background:rgba(255,255,255,.86);border-style:dashed;color:#8b98b1}',
       '.wv-chip.spk{animation:wv-spk .9s ease-in-out infinite;border-color:#25c79a}',
       '.wv-chip.wait{background:rgba(255,255,255,.82);color:#7b88a3;border-style:dashed}',
       '@keyframes wv-spk{0%,100%{transform:scale(1);box-shadow:0 3px 9px rgba(30,50,80,.16)}',
@@ -282,6 +296,25 @@
     toastT = setTimeout(function () { if (el.toast) el.toast.classList.remove('show'); }, ms || 3000);
   }
 
+  /* 가족 마이크가 꺼지거나 켜지면 한 번씩 알려 줘요
+     ("왜 안 들리지" 싶을 때 화면만 봐도 알 수 있게) */
+  var micSnap = {};
+  function checkPeerMics() {
+    var cur = {};
+    Object.keys(S.peers).forEach(function (pid) {
+      var p = S.peers[pid];
+      if (!p || !p.who) return;
+      cur[p.who] = cur[p.who] || !!p.micOn;
+    });
+    Object.keys(cur).forEach(function (who) {
+      if (!(who in micSnap)) { micSnap[who] = cur[who]; return; }
+      if (micSnap[who] && !cur[who]) toast(person(who).name + ' 마이크가 꺼졌어요 🔇 (그 폰에서 🎙️를 눌러야 들려요)', 3600);
+      else if (!micSnap[who] && cur[who] && S.micOn) toast(person(who).name + ' 마이크 켜짐 🔉', 2000);
+      micSnap[who] = cur[who];
+    });
+    Object.keys(micSnap).forEach(function (who) { if (!(who in cur)) delete micSnap[who]; });
+  }
+
   var announceT = 0;
   function announceSoon() {
     if (announceT) return;
@@ -305,12 +338,71 @@
     renderChips();
   }
 
-  /* 연결 상태 한 줄: 연결 중 / 🔊 연결됨 / 🔁 느린 연결 */
+  /* 연결 상태 한 줄: 상대 마이크 꺼짐 / 옛 버전 / 연결 중 / 수신 중 */
+  function peerNames(pidList) {
+    var seen = {}, out = [];
+    pidList.forEach(function (pid) {
+      var p = S.peers[pid];
+      if (!p || !p.who || seen[p.who]) return;
+      seen[p.who] = 1;
+      out.push(person(p.who).name);
+    });
+    return out.length ? out.join('·') : '가족';
+  }
+  function micOnPeers() {
+    return Object.keys(S.peers).filter(function (pid) { return S.peers[pid] && S.peers[pid].micOn; });
+  }
+  function verNum(v) {
+    var n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+  /* 새 버전은 서로 판(version)을 알려 줘요 — 옛 판이면 "새로고침 필요"를 보여 줘요 */
+  function isOldPeer(p) {
+    if (!p) return false;
+    if (!p.v) return true;
+    return verNum(p.v) < verNum(VERSION) - 0.001;
+  }
+  function oldVerPeers() {
+    return Object.keys(S.peers).filter(function (pid) {
+      var p = S.peers[pid];
+      if (!p || !p.micOn) return false;
+      return isOldPeer(p);
+    });
+  }
+  /* 지금 실제로 상대 목소리가 재생되고 있나 — WebRTC 소리 / 연결 / 중계 */
+  /* WebRTC 로 연결됐고 상대 목소리 크기가 잡히나 */
+  function p2pSound() {
+    return Object.keys(S.conns).some(function (pid) {
+      if (!p2pConnected(pid)) return false;
+      return (S.level[pid] || 0) > 0.006;
+    });
+  }
+  function p2pLive() {
+    return Object.keys(S.conns).some(function (pid) { return p2pConnected(pid); });
+  }
+  function receivingNow() {
+    if (p2pSound()) return 'sound';
+    if (p2pLive()) return 'link';
+    var relay = Object.keys(RLY.rx).some(function (pid) {
+      var R = RLY.rx[pid];
+      if (!R) return false;
+      if (R.dmode) return (R.decN || 0) > 0 && (now() - (R.decAt || 0) < 3500) && (!S.ac || S.ac.state === 'running');
+      return !!(R.audio && !R.audio.paused && (now() - (R.lastChunkAt || 0) < 3500));
+    });
+    return relay ? 'sound' : '';
+  }
   function statusOf() {
-    if (S.audioBlocked) return { t: '🔇 소리가 막혀 있어요', k: 'wait' };
-    if (anyConnected()) return { t: '🔊 연결됨', k: 'ok' };
-    if (RLY.out || Object.keys(RLY.rx).length) return { t: '🔁 느린 연결로 듣는 중', k: 'relay' };
-    if (S.micOn && Object.keys(S.peers).length) return { t: '연결 중…', k: 'wait' };
+    var micPeers = micOnPeers();
+    var olds = oldVerPeers();
+    var anyPeer = Object.keys(S.peers).length > 0;
+    var hear = receivingNow();
+    if (S.audioBlocked) return { t: '🔇 소리가 막혔어요 — 🔊 버튼을 눌러 주세요', k: 'wait' };
+    if (anyPeer && !micPeers.length) return { t: '🔇 ' + peerNames(Object.keys(S.peers)) + ' 마이크가 꺼져 있어요', k: 'wait' };
+    if (olds.length) return { t: '⚠️ ' + peerNames(olds) + ' 폰은 새로고침이 필요해요', k: 'wait' };
+    if (hear === 'sound') return { t: '🔊 ' + peerNames(micPeers) + ' 목소리 듣는 중', k: 'ok' };
+    if (hear === 'link') return { t: '🔗 ' + peerNames(micPeers) + ' 연결됨 · 말하면 들려요', k: 'ok' };
+    if (micPeers.length) return { t: '⏳ ' + peerNames(micPeers) + ' 목소리 연결 중…', k: 'relay' };
+    if (S.micOn) return { t: '가족을 기다리는 중', k: 'wait' };
     return null;
   }
 
@@ -367,6 +459,7 @@
     return list;
   }
 
+  /* 말하는 중이면 반짝, 마이크가 꺼진 가족은 이름 + 🔇 로 보여 줘요 */
   var chipSig = '';
   function renderChips() {
     if (!el.chips) return;
@@ -387,9 +480,10 @@
     list.slice(0, 4).forEach(function (it) {
       var p = person(it.who);
       var c = document.createElement('span');
-      c.className = 'wv-chip' + (it.micOn ? ' on' : '') + (it.speaking ? ' spk' : '');
-      c.setAttribute('title', p.name + (it.micOn ? ' · 마이크 켜짐' : ' · 듣는 중'));
-      c.innerHTML = '<span class="e">' + p.emo + '</span>' + (it.micOn ? '<span class="n">' + p.name + '</span>' : '');
+      c.className = 'wv-chip' + (it.micOn ? ' on' : ' off') + (it.speaking ? ' spk' : '');
+      c.setAttribute('title', p.name + (it.micOn ? ' · 마이크 켜짐' : ' · 마이크 꺼짐(이 사람 목소리는 안 들려요)'));
+      c.innerHTML = '<span class="e">' + p.emo + '</span><span class="n">' + p.name + '</span>' +
+                    (it.micOn ? '' : '<span class="x">🔇</span>');
       el.chips.appendChild(c);
     });
   }
@@ -417,6 +511,7 @@
           myRef = root.child('peers/' + S.pid);
           try { myRef.onDisconnect().remove(); } catch (e) { }
           try { root.child('rel/' + S.pid).onDisconnect().remove(); } catch (e) { }
+          try { root.child('diag/' + S.pid).onDisconnect().remove(); } catch (e) { }
 
           root.child('peers').on('value', function (snap) {
             var v = snap.val() || {};
@@ -431,9 +526,10 @@
                 if (t - p.ts > 4 * 60 * 1000) { try { root.child('peers/' + pid).remove().catch(function () { }); } catch (e) { } }
                 return;
               }
-              out[pid] = { who: p.who, micOn: !!p.micOn, ver: p.ver || 0, ts: p.ts, world: p.world || '' };
+              out[pid] = { who: p.who, micOn: !!p.micOn, ver: p.ver || 0, v: p.v || '', ts: p.ts, world: p.world || '' };
             });
             if (peerCb) peerCb(out);
+            try { checkPeerMics(); } catch (e) { }
           }, function () { });
 
           /* 나에게 온 offer / answer / 후보 */
@@ -468,7 +564,19 @@
 
           started = true;
           this.announce();
-          /* 1시간 넘은 옛 시그널 자국(앱이 강제 종료된 경우 등)은 조용히 치워요 */
+          /* 1시간 넘은 옛 시그널 자국·10분 넘은 옛 진단 자국은 조용히 치워요 */
+          try {
+            root.child('diag').once('value', function (snap) {
+              var v = snap.val() || {}, t = now();
+              Object.keys(v).forEach(function (pid) {
+                if (pid === S.pid) return;
+                var d = v[pid] || {};
+                if (!d.ts || t - d.ts > 10 * 60 * 1000) {
+                  try { root.child('diag/' + pid).remove().catch(function () { }); } catch (e) { }
+                }
+              });
+            });
+          } catch (e) { }
           try {
             root.child('sig').once('value', function (snap) {
               var v = snap.val() || {}, t = now();
@@ -494,7 +602,7 @@
         if (!myRef) return;
         try {
           myRef.update({
-            who: S.who, micOn: S.micOn ? 1 : 0, ver: S.myVer,
+            who: S.who, micOn: S.micOn ? 1 : 0, ver: S.myVer, v: VERSION,
             ts: now(), world: S.world || ''
           }).catch(function () { });
         } catch (e) { }
@@ -504,6 +612,7 @@
         try { if (myRef) myRef.remove().catch(function () { }); } catch (e) { }
         try { root.child('sig/' + S.pid).remove().catch(function () { }); } catch (e) { }
         try { root.child('rel/' + S.pid).remove().catch(function () { }); } catch (e) { }
+        try { root.child('diag/' + S.pid).remove().catch(function () { }); } catch (e) { }
       },
       send: function (to, kind, data) {
         if (!root) return;
@@ -570,6 +679,11 @@
           cb('gone', pid, null, null);
         }, function () { });
       },
+      /* ---- 기기 진단(무엇이 들리고 있는지) — 문제 생겼을 때 읽어 보려고 ---- */
+      diag: function (obj) {
+        if (!root) return;
+        try { root.child('diag/' + S.pid).update(obj).catch(function () { }); } catch (e) { }
+      },
       close: function () {
         try { if (root) { root.child('peers').off(); root.child('sig/' + S.pid).off(); } } catch (e) { }
       }
@@ -584,7 +698,7 @@
     function post(m) { try { if (bc) bc.postMessage(m); } catch (e) { } }
     function state() {
       if (S.idled) return;   /* 5분 무활동이면 내 자리를 비워 둬요 */
-      post({ t: 'wv', pid: S.pid, who: S.who, micOn: S.micOn ? 1 : 0, ver: S.myVer, ts: now(), world: S.world });
+      post({ t: 'wv', pid: S.pid, who: S.who, micOn: S.micOn ? 1 : 0, ver: S.myVer, v: VERSION, ts: now(), world: S.world });
     }
     function emit() {
       var t = now(), out = {};
@@ -601,7 +715,7 @@
         if (!m || !m.t) return;
         if (m.t === 'wv') {
           if (m.pid === S.pid) return;
-          peers[m.pid] = { who: m.who, micOn: !!m.micOn, ver: m.ver || 0, ts: m.ts || now(), world: m.world || '' };
+          peers[m.pid] = { who: m.who, micOn: !!m.micOn, ver: m.ver || 0, v: m.v || '', ts: m.ts || now(), world: m.world || '' };
           emit();
         } else if (m.t === 'sig' && m.to === S.pid) {
           onSignal(m.from, m.kind, { sid: m.sid, sdp: m.sdp, cand: m.cand });
@@ -637,6 +751,7 @@
       relayChunk: function (seq, b64) { post({ t: 'rq', pid: S.pid, seq: seq, d: b64 }); },
       relayPrune: function () { },
       relayStop: function () { post({ t: 'rx', pid: S.pid }); },
+      diag: function () { },
       relayWatch: function (fn) {
         relCb = fn;
         /* 이미 켜저 있던 참가자의 최근 중계 조각을 한 번 보내 줘요 */
@@ -688,7 +803,10 @@
         if (now() - c.goneAt > 20000) { try { if (S.transport && S.transport.dropPeer) S.transport.dropPeer(pid); } catch (e) { } closeConn(pid); }
         return;
       }
-      if (!desired(p) || c.key !== pairKey(p)) { S.attempts[pid] = 0; closeConn(pid); }
+      if (!desired(p) || c.key !== pairKey(p)) { S.attempts[pid] = 0; closeConn(pid); return; }
+      /* 내 마이크는 켰는데 이 연결에 내 목소리가 안 실렸으면(먼저 듣기만 했을 때)
+         다시 맺어서 내 목소리도 보내요 */
+      if (S.micOn && !c.hasOut) { S.attempts[pid] = 0; closeConn(pid); }
     });
     Object.keys(S.peers).forEach(function (pid) {
       var p = S.peers[pid];
@@ -711,6 +829,7 @@
     DBG.pc++;
     var c = {
       pid: pid, pc: pc, sid: sid, key: sid.split('#')[0], initiator: initiator, alive: true,
+      hasOut: !!(S.stream && S.micOn),
       outCands: [], inCands: [], sdpSent: false, t0: now()
     };
     S.conns[pid] = c;
@@ -823,8 +942,11 @@
     if (kind === 'offer') {
       DBG.offerIn++;
       var p = S.peers[from];
+      /* 자리를 비운(이미 사라진) 기기에서 온 offer 는 무시해요 —
+         유령 연결에 재생기를 만들어 소리가 묻히는 것을 막어요 */
+      if (!p) return;
       /* 이제 필요 없어진 연결이면(마이크 다 꺼짐) 무시 */
-      if (p && !desired(p)) return;
+      if (!desired(p)) return;
       if (cur) closeConn(from);
       var c = makePC(from, data.sid, false);
       if (!c) { dbgErr('makePC-answer', 'null'); return; }
@@ -905,15 +1027,39 @@
       S.audios[pid] = a;
     }
     try { a.srcObject = stream; } catch (e) { }
+    try {
+      a.muted = false;
+      a.volume = 1;
+      a.defaultMuted = false;
+    } catch (e) { }
+    if (!a.__wvPause) {
+      a.__wvPause = 1;
+      a.addEventListener('pause', function () { if (S.audios[pid] === a) { try { playAudio(a); } catch (e) { } } });
+    }
     playAudio(a);
     try { setupAnalyser(pid, stream); } catch (e) { }
   }
 
+  var playRetryT = 0;
+  function schedulePlayRetry() {
+    if (playRetryT) return;
+    playRetryT = setTimeout(function () {
+      playRetryT = 0;
+      try { unlockAudio(); } catch (e) { }
+    }, 1300);
+  }
+
   function playAudio(a) {
+    if (!a) return;
+    try { a.muted = false; } catch (e) { }
     try {
       var pr = a.play();
-      if (pr && pr.then) pr.then(function () { S.audioBlocked = false; renderStat(); }, function () { S.audioBlocked = true; renderStat(); });
-    } catch (e) { S.audioBlocked = true; renderStat(); }
+      if (pr && pr.then) pr.then(function () { S.audioBlocked = false; renderStat(); }, function () {
+        S.audioBlocked = true;
+        renderStat();
+        schedulePlayRetry();      /* 브라우저가 막으면 화면을 한 번 만질 때까지 계속 다시 시도해요 */
+      });
+    } catch (e) { S.audioBlocked = true; renderStat(); schedulePlayRetry(); }
   }
 
   function unlockAudio() {
@@ -926,11 +1072,28 @@
   function detachRemote(pid) {
     var a = S.audios[pid];
     if (a) { try { a.srcObject = null; } catch (e) { } try { a.parentNode.removeChild(a); } catch (e) { } delete S.audios[pid]; }
+    delete S.level[pid];
     if (S.analysers[pid]) {
       try { S.analysers[pid].src.disconnect(); } catch (e) { }
       delete S.analysers[pid];
     }
     delete S.speaking[pid];
+  }
+
+  /* 내 마이크가 실제로 소리를 잡고 있는지(진단용) */
+  function setupMicAnalyser(stream) {
+    var AC = global.AudioContext || global.webkitAudioContext;
+    if (!AC || !stream) return;
+    if (S.micAn) { try { S.micAn.src.disconnect(); } catch (e) { } S.micAn = null; }
+    if (!S.ac) { try { S.ac = new AC(); } catch (e) { return; } }
+    if (S.ac.state === 'suspended') { try { S.ac.resume(); } catch (e) { } }
+    try {
+      var src = S.ac.createMediaStreamSource(stream);
+      var an = S.ac.createAnalyser();
+      an.fftSize = 512;
+      src.connect(an);
+      S.micAn = { src: src, an: an, buf: new Uint8Array(an.fftSize) };
+    } catch (e) { }
   }
 
   function setupAnalyser(pid, stream) {
@@ -960,6 +1123,14 @@
   var levelT = 0;
   function pollLevels() {
     var any = false;
+    if (S.micAn) {
+      try {
+        S.micAn.an.getByteTimeDomainData(S.micAn.buf);
+        var ms = 0;
+        for (var k = 0; k < S.micAn.buf.length; k++) { var mv = (S.micAn.buf[k] - 128) / 128; ms += mv * mv; }
+        S.micRms = Math.sqrt(ms / S.micAn.buf.length);
+      } catch (e) { }
+    }
     Object.keys(S.analysers).forEach(function (pid) {
       var o = S.analysers[pid];
       if (!o) return;
@@ -969,6 +1140,7 @@
         var sum = 0;
         for (var i = 0; i < o.buf.length; i++) { var v = (o.buf[i] - 128) / 128; sum += v * v; }
         var rms = Math.sqrt(sum / o.buf.length);
+        S.level[pid] = rms;
         if (rms > 0.035) S.speaking[pid] = now();
       } catch (e) { }
     });
@@ -1088,8 +1260,12 @@
   /* ---------- 듣는 쪽 ---------- */
   function rxEnsure(pid) {
     return RLY.rx[pid] || (RLY.rx[pid] = {
-      hdr: '', q: [], sb: null, ms: null, audio: null, url: '',
-      joined: now(), opening: false, got: 0, hdrN: 0, err: ''
+      hdr: '', mime: '', q: [], sb: null, ms: null, audio: null, url: '',
+      joined: now(), opening: false, openAt: 0, got: 0, hdrN: 0, err: '',
+      lastChunkAt: 0, lastSeq: 0, rebuilds: 0, rebuiltAt: 0,
+      stallRef: -1, stallAt: 0,
+      dmode: false, dparts: [], dropped: 0, playedTo: 0, schedEnd: 0,
+      decAt: 0, decBusy: false, decN: 0
     });
   }
 
@@ -1113,14 +1289,29 @@
   function rxHdr(pid, b64, mime) {
     if (!b64) return;
     var R = RLY.rx[pid];
-    if (R && R.hdr === b64) return;
-    if (R) rxReset(pid);            /* 새 녹음이 시작되면 처음부터 다시 */
+    if (R && R.hdr === b64) { R.lastHdrAt = now(); return; }   /* 같은 머리말 반복은 무시 */
+    var keepRebuilds = R ? (R.rebuilds || 0) : 0;
+    var keepDecode = R ? !!R.dmode : false;
+    if (R) rxReset(pid);                 /* 새 녹음이 시작되면 처음부터 다시 */
     R = rxEnsure(pid);
     R.hdr = b64;
+    R.mime = mime || '';
     R.hdrN++;
-    if (mime) RLY.mime = mime;
+    R.rebuilds = keepRebuilds;
+    R.dmode = keepDecode;
+    R.dparts = [];                       /* 새 녹음 조각은 앞 녹음과 섞이면 안 돼요 */
+    R.dropped = 0;
     R.joined = now();
+    R.lastHdrAt = now();
     renderChips(); render();
+  }
+
+  /* 최근 조각을 조금 들고 있어요 — MSE 가 안 되는 기기에서 직접 풀어 재생할 때 씀 */
+  function rxKeep(pid, u8) {
+    var R = RLY.rx[pid];
+    if (!R) return;
+    R.dparts.push(u8);
+    if (R.dparts.length > 40) { R.dparts.shift(); R.dropped++; }
   }
 
   function rxChunk(pid, b64, seq) {
@@ -1133,8 +1324,13 @@
       if (R.lastSeq && q <= R.lastSeq) return;          /* 중복·순서 엇갈림은 버림 */
       R.lastSeq = q;
     }
+    R.lastChunkAt = now();
     S.heard[pid] = now();
+    var u8;
+    try { u8 = b64ToU8(b64); } catch (e) { return; }
+    rxKeep(pid, u8);
     if (now() - R.joined < 400) return;                /* 접속 직후 밀린 옛 조각은 버림 */
+    if (R.dmode) { rxDecodePump(pid, R); return; }
     if (!R.audio) { rxOpen(pid, R); return; }           /* 첫 조각은 재생기 만드는 데 씀 */
     R.q.push(b64);
     R.got++;
@@ -1143,49 +1339,160 @@
   }
 
   function rxOpen(pid, R) {
-    if (!global.MediaSource) return;
+    if (!global.MediaSource) { rxToDecode(pid); return; }
     if (R.opening) return;
     R.opening = true;
+    R.openAt = now();
     var audio = document.createElement('audio');
     audio.autoplay = true;
     audio.setAttribute('playsinline', '');
+    audio.muted = false;
+    audio.volume = 1;
     audio.style.display = 'none';
     audio.dataset.wvRelay = pid;
     audio.onerror = function () {
       var R2 = RLY.rx[pid];
-      if (R2) { R2.err = 'mediaerror'; }
-      rxReset(pid);
+      if (R2) { R2.err = 'media' + ((audio.error && audio.error.code) || ''); }
+      rxRebuild(pid);
     };
     (document.body || document.documentElement).appendChild(audio);
-    var ms = new MediaSource();
+    var ms;
+    try { ms = new global.MediaSource(); } catch (e) { R.opening = false; rxToDecode(pid); return; }
     R.ms = ms; R.audio = audio;
     try {
       R.url = URL.createObjectURL(ms);
       audio.src = R.url;
-    } catch (e) { R.opening = false; return; }
+    } catch (e) { R.opening = false; rxToDecode(pid); return; }
     ms.addEventListener('sourceopen', function () {
-      if (!R.ms || R.ms !== ms) return;
-      var types = [];
-      var m = (RLY.mime || 'audio/webm');
-      if (m.indexOf('mp4') >= 0) types = ['audio/mp4; codecs="mp4a.40.2"', 'audio/mp4'];
-      else types = ['audio/webm; codecs="opus"', 'audio/webm'];
+      if (!R.ms || R.ms !== ms || !R.hdr) return;
+      var m = (R.mime || RLY.mime || 'audio/webm');
+      var types = m.indexOf('mp4') >= 0
+        ? ['audio/mp4; codecs="mp4a.40.2"', 'audio/mp4']
+        : ['audio/webm; codecs="opus"', 'audio/webm;codecs=opus', 'audio/webm'];
       var sb = null;
-      for (var i = 0; i < types.length && !sb; i++) {
-        try { sb = ms.addSourceBuffer(types[i]); } catch (e) { }
-      }
-      if (!sb) { R.opening = false; return; }
+      try {
+        for (var i = 0; i < types.length && !sb; i++) {
+          var okType = true;
+          try { if (global.MediaSource.isTypeSupported && !global.MediaSource.isTypeSupported(types[i])) okType = false; } catch (e) { }
+          if (!okType) continue;
+          try { sb = ms.addSourceBuffer(types[i]); } catch (e) { }
+        }
+        for (var j = 0; j < types.length && !sb; j++) { try { sb = ms.addSourceBuffer(types[j]); } catch (e) { } }
+      } catch (e) { }
+      if (!sb) { R.opening = false; R.err = 'nosb'; rxToDecode(pid); return; }
       R.sb = sb;
       try { sb.mode = 'sequence'; } catch (e) { }
       sb.addEventListener('updateend', function () { rxPump(pid, R); });
-      try { if (R.hdr) sb.appendBuffer(b64ToU8(R.hdr)); } catch (e) { }
+      try { sb.appendBuffer(b64ToU8(R.hdr)); } catch (e) { R.err = 'hdr:' + ((e && e.name) || ''); }
       playAudio(audio);
       render();
     }, { once: true });
   }
 
+  /* MSE(미디어소스) 가 안 되는 기기 — 조각을 Web Audio 로 직접 풀어서 이어 재생해요
+     (0.3~0.6초쯤 늦게 들리지만 소리는 확실히 납니다) */
+  function rxToDecode(pid) {
+    var R = RLY.rx[pid];
+    if (!R || R.dmode) return;
+    var AC = global.AudioContext || global.webkitAudioContext;
+    if (!AC) { R.err = 'no-ac'; return; }
+    R.dmode = true;
+    R.err = R.err || 'decode';
+    try {
+      if (R.audio) {
+        R.audio.onerror = null;
+        try { R.audio.pause(); } catch (e) { }
+        try { R.audio.src = ''; } catch (e) { }
+        if (R.audio.parentNode) R.audio.parentNode.removeChild(R.audio);
+      }
+    } catch (e) { }
+    R.audio = null; R.sb = null; R.ms = null;
+    try { if (R.url) URL.revokeObjectURL(R.url); } catch (e) { }
+    R.url = '';
+    R.q.length = 0;
+    R.playedTo = 0;
+    R.schedEnd = 0;
+    render();
+  }
+
+  function rxDecodePump(pid, R) {
+    if (!R || !R.hdr || !R.dmode) return;
+    if (R.decBusy) return;
+    if (!R.dparts || !R.dparts.length) return;
+    if (now() - (R.decAt || 0) < 420) return;
+    var AC = global.AudioContext || global.webkitAudioContext;
+    if (!AC) return;
+    if (!S.ac) { try { S.ac = new AC(); } catch (e) { return; } }
+    if (S.ac.state !== 'running') {
+      try { S.ac.resume(); } catch (e) { }
+      if (S.ac.state !== 'running') { S.audioBlocked = true; renderStat(); return; }
+    }
+    R.decAt = now();
+    R.decBusy = true;
+    var keep = Math.min(30, R.dparts.length);
+    var winStart = ((R.dropped || 0) + (R.dparts.length - keep)) * 0.25;
+    var parts = [b64ToU8(R.hdr)].concat(R.dparts.slice(R.dparts.length - keep));
+    var blob;
+    try { blob = new Blob(parts, { type: R.mime || RLY.mime || 'audio/webm' }); } catch (e) { R.decBusy = false; return; }
+    var fr = new FileReader();
+    fr.onload = function () {
+      if (!S.ac || !S.ac.decodeAudioData) { R.decBusy = false; return; }
+      try {
+        S.ac.decodeAudioData(fr.result, function (buf) {
+          R.decBusy = false;
+          try {
+            var dur = buf.duration || 0;
+            var from = Math.max(0, (R.playedTo || 0) - winStart);
+            var to = dur - 0.10;
+            if (to - from < 0.05) {
+              if (dur > 0.3 && (R.playedTo || 0) < winStart) R.playedTo = winStart;
+              return;
+            }
+            var src = S.ac.createBufferSource();
+            src.buffer = buf;
+            var w = S.ac.currentTime + 0.04;
+            if (R.schedEnd && R.schedEnd > w && R.schedEnd - w < 1.2) w = R.schedEnd;
+            src.connect(S.ac.destination);
+            src.start(w, from, to - from);
+            R.schedEnd = w + (to - from);
+            R.playedTo = winStart + to;
+            R.decN = (R.decN || 0) + 1;
+            S.heard[pid] = now();
+          } catch (e) { R.err = 'dec2'; }
+        }, function () {
+          R.decBusy = false;
+          if (!R.decN) R.err = 'decode';      /* 아직 한 번도 못 풀었을 때만 오류로 표시 */
+        });
+      } catch (e) { R.decBusy = false; R.err = 'decode'; }
+    };
+    fr.onerror = function () { R.decBusy = false; };
+    try { fr.readAsArrayBuffer(blob); } catch (e) { R.decBusy = false; }
+  }
+
+  /* 재생기가 막히거나 깨졌으면 머리말부터 다시 붙여 살려요 */
+  function rxRebuild(pid) {
+    var R = RLY.rx[pid];
+    if (!R) return;
+    if (R.rebuiltAt && now() - R.rebuiltAt < 1200) return;
+    var keepHdr = R.hdr, keepMime = R.mime, keepSeq = R.lastSeq;
+    var rebuilds = (R.rebuilds || 0) + 1;
+    var keepParts = (R.dparts || []).slice(-8);
+    var keepDropped = (R.dropped || 0) + ((R.dparts || []).length - keepParts.length);
+    var playedTo = R.playedTo || 0;
+    rxReset(pid);
+    var R2 = rxEnsure(pid);
+    R2.hdr = keepHdr; R2.mime = keepMime; R2.lastSeq = keepSeq;
+    R2.rebuilds = rebuilds; R2.rebuiltAt = now();
+    R2.joined = now() - 1200;
+    R2.dparts = keepParts; R2.dropped = keepDropped;
+    R2.playedTo = playedTo;
+    if (rebuilds >= 2) rxToDecode(pid);       /* 두 번 실패하면 MSE 대신 직접 재생 */
+    render();
+  }
+
   function rxPump(pid, R) {
     if (!R || !R.sb || R.sb.updating || !R.q.length) return;
-    if (R.audio && R.audio.error) { rxReset(pid); return; }
+    if (R.audio && R.audio.error) { rxRebuild(pid); return; }
     var b = R.q.shift();
     try { R.sb.appendBuffer(b64ToU8(b)); }
     catch (e) {
@@ -1194,8 +1501,10 @@
         R.q.length = 0;
         try {
           if (R.sb.buffered.length) R.sb.remove(0, R.sb.buffered.start(0));
-          else R.sb.remove(0, R.audio && R.audio.currentTime || 0);
+          else if (R.audio) R.sb.remove(0, R.audio.currentTime || 0);
         } catch (e2) { }
+      } else {
+        rxRebuild(pid);
       }
     }
   }
@@ -1204,12 +1513,42 @@
   function rxCatchup() {
     Object.keys(RLY.rx).forEach(function (pid) {
       var R = RLY.rx[pid];
-      if (!R || !R.audio || !R.sb) return;
+      if (!R || R.dmode || !R.audio || !R.sb) return;
       try {
         if (!R.sb.buffered || !R.sb.buffered.length) return;
         var end = R.sb.buffered.end(R.sb.buffered.length - 1);
         if (end - R.audio.currentTime > 1.4) R.audio.currentTime = Math.max(0, end - 0.5);
       } catch (e) { }
+    });
+  }
+
+  /* 1초마다: 소리가 오는데 재생이 멈춰 있으면 살려요 (안드로이드에서 자주 있는 일) */
+  function rxHealth() {
+    Object.keys(RLY.rx).forEach(function (pid) {
+      var R = RLY.rx[pid];
+      if (!R || !R.hdr) return;
+      var live = (now() - (R.lastChunkAt || 0) < 3500);
+      if (!live) {
+        if (R.audio && !R.audio.paused) { try { R.audio.pause(); } catch (e) { } }
+        return;
+      }
+      if (R.dmode) { rxDecodePump(pid, R); return; }
+      if (!R.sb) {
+        if (R.opening && now() - (R.openAt || 0) > 2500) { R.opening = false; R.err = 'open-timeout'; rxRebuild(pid); }
+        return;
+      }
+      if (!R.audio) return;
+      if (R.audio.paused) playAudio(R.audio);
+      var ct = 0;
+      try { ct = R.audio.currentTime || 0; } catch (e) { }
+      if (R.stallRef < 0) { R.stallRef = ct; R.stallAt = now(); }
+      else if (Math.abs(ct - R.stallRef) < 0.04) {
+        if (now() - (R.stallAt || 0) > 2600) { R.stallRef = -1; rxRebuild(pid); }
+      } else {
+        R.stallRef = ct;
+        R.stallAt = now();
+      }
+      rxPump(pid, R);
     });
   }
 
@@ -1297,10 +1636,14 @@
       });
       S.micOn = true; S.micBusy = false; S.myVer++;
       S.idled = false; S.lastAct = now();
+      try { setupMicAnalyser(stream); } catch (e) { }
       render();
       if (S.transport) { S.transport.announce(); syncMesh(); }
       unlockAudio();
-      toast('🎙️ 마이크 켜짐! 이야기해 보세요', 2200);
+      var mp = micOnPeers();
+      var allPeers = Object.keys(S.peers);
+      var extra = (allPeers.length && !mp.length) ? (' · ' + peerNames(allPeers) + ' 마이크가 꺼져 있어요 🔇') : '';
+      toast('🎙️ 마이크 켜짐! 이야기해 보세요' + extra, 2600);
     }).catch(function (err) {
       S.micBusy = false; S.micOn = false; render();
       dbgErr('mic:' + ((err && err.name) || '?'), err);
@@ -1318,6 +1661,9 @@
       });
     }
     S.stream = null;
+    try { if (S.micAn) { S.micAn.src.disconnect(); } } catch (e) { }
+    S.micAn = null;
+    S.micRms = -1;
     S.myVer++;
     try { relayStopOut(); } catch (e) { }
     closeAllConns();
@@ -1326,6 +1672,43 @@
     if (reason === 'user') toast('마이크 껐어요 🔇', 1800);
     else if (reason === 'idle') toast('5분 동안 조용해서 마이크를 껐어요 💤', 3200);
     else if (reason === 'blocked') toast('하은이 대화 중이라 마이크를 잠깐 껐어요 🎤', 3000);
+  }
+
+  /* ============================================================
+     기기 진단 — 이 폰이 뭔 듣고 있는지 Firebase 에 짧게 남깁니다
+     (worldVoice/diag/{pid}, 10초마다 · 창을 닫으면 지워짐)
+     ============================================================ */
+  function pushDiag() {
+    if (TEST || !S.transport || !S.transport.diag) return;
+    var rx = Object.keys(RLY.rx).map(function (pid) {
+      var R = RLY.rx[pid] || {};
+      var ct = 0;
+      try { ct = R.audio ? +(R.audio.currentTime || 0).toFixed(1) : 0; } catch (e) { }
+      return (R.dmode ? 'D' : 'M') + (R.hdr ? 'h' : '-') + (R.sb ? 's' : '-') +
+             ((R.audio && !R.audio.paused) ? 'p' : '-') + ' g' + (R.got || 0) + ' d' + (R.decN || 0) +
+             ' c' + ct + (R.err ? ' e' + String(R.err).slice(0, 16) : '');
+    }).join(' ; ').slice(0, 200);
+    var peerStr = Object.keys(S.peers).map(function (pid) {
+      var p = S.peers[pid] || {};
+      return (p.who || '?') + (p.micOn ? '1' : '0') + '@' + (p.v || '-');
+    }).join(',');
+    var pcs = Object.keys(S.conns).map(function (pid) {
+      try { return S.conns[pid].pc.connectionState; } catch (e) { return '?'; }
+    }).join(',');
+    try {
+      S.transport.diag({
+        v: VERSION, who: S.who, w: (S.world || '').slice(0, 12),
+        mic: S.micOn ? 1 : 0, blk: S.audioBlocked ? 1 : 0,
+        ac: (S.ac && S.ac.state) ? S.ac.state : '-',
+        au: Object.keys(S.audios).length, pc: pcs.slice(0, 40),
+        rl: (RLY.out ? 1 : 0) + '/' + (RLY.seq || 0),
+        mv: (S.micRms == null ? '-' : (+S.micRms).toFixed(3)),
+        peers: peerStr.slice(0, 120), rx: rx,
+        st: (statusOf() || {}).t || '',
+        ua: (((UA.match(/Android[^;)]*/) || [''])[0]) + ' ' + ((UA.match(/Chrome\/[\d.]+/) || [''])[0])).slice(0, 60),
+        ts: now()
+      });
+    } catch (e) { }
   }
 
   /* ============================================================
@@ -1342,17 +1725,23 @@
 
     /* 시험 모드에서는 Firebase 에 절대 쓰지 않아요 */
     S.transport = TEST ? makeLocal() : makeFirebase();
+    var relayWatched = false;
+    function watchRelay() {
+      if (relayWatched) return;
+      try { S.transport.relayWatch(relayOnMessage); relayWatched = true; } catch (e) { }
+    }
     var ok = false;
     try { ok = S.transport.start(onPeers); } catch (e) { ok = false; }
-    if (ok) { try { S.transport.relayWatch(relayOnMessage); } catch (e) { } }
+    if (ok) watchRelay();
     if (!ok && !TEST) {
-      /* SDK 가 아직 안 떴으면 잠깐 기다렸다 다시 (인터넷 느릴 때) */
+      /* SDK 가 아직 안 됐으면 잠깐 기다렸다 다시 (인터넷 느릴 때)
+         — 몇 번째 시도에서 붙든 중계(상대 목소리)는 꼭 들어야 해요 */
       var tries = 0;
       var t = setInterval(function () {
         tries++;
         var done = false;
         try { done = S.transport.start(onPeers); } catch (e) { done = false; }
-        if (done && tries === 1) { try { S.transport.relayWatch(relayOnMessage); } catch (e) { } }
+        if (done) watchRelay();
         if (done || tries > 20) clearInterval(t);
       }, 800);
       S.timers.push(t);
@@ -1367,10 +1756,13 @@
     /* 상대 목소리 크기 감지 */
     S.timers.push(setInterval(pollLevels, 300));
 
-    /* 중계 모드 전환 감시 + 늦게 쌓인 소리 따라잡기 */
+    /* 중계 모드 전환 감시 + 늦게 쌓인 소리 따라잡기 + 막힌 재생기 살리기 */
     S.timers.push(setInterval(function () { try { relayWatchdog(); } catch (e) { } }, 1000));
     S.timers.push(setInterval(function () { try { rxCatchup(); } catch (e) { } }, 800));
+    S.timers.push(setInterval(function () { try { rxHealth(); } catch (e) { } }, 1000));
     S.timers.push(setInterval(function () { renderStat(); }, 1200));
+    /* 기기 진단 — 무엇이 들리고 있는지 worldVoice/diag 에 남겨 둬요 */
+    S.timers.push(setInterval(function () { try { pushDiag(); } catch (e) { } }, 10000));
 
     /* 하은이 대화처럼 마이크를 같이 쓰는 창이 열리면 안전하게 OFF */
     S.timers.push(setInterval(function () {
@@ -1466,7 +1858,7 @@
             var R = RLY.rx[pid];
             var buffered = 0;
             try { if (R.sb && R.sb.buffered.length) buffered = +(R.sb.buffered.end(R.sb.buffered.length - 1) - (R.audio ? R.audio.currentTime : 0)).toFixed(2); } catch (e) { }
-            return { pid: pid, hdr: !!R.hdr, playing: !!(R.audio && !R.audio.paused), q: R.q.length, ahead: buffered, got: R.got, hdrN: R.hdrN, age: Math.round((now() - R.joined) / 1000), err: R.err };
+            return { pid: pid, hdr: !!R.hdr, playing: !!(R.audio && !R.audio.paused), q: R.q.length, ahead: buffered, got: R.got, hdrN: R.hdrN, age: Math.round((now() - R.joined) / 1000), err: R.err, mode: R.dmode ? 'decode' : 'mse', rebuilds: R.rebuilds || 0, decN: R.decN || 0, playedTo: +(R.playedTo || 0).toFixed(2), sched: +(R.schedEnd || 0).toFixed(2) };
           })
         },
         status: (statusOf() || {}).t || '',
