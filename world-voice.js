@@ -398,8 +398,8 @@
     var hear = receivingNow();
     if (S.audioBlocked) return { t: '🔇 소리가 막혔어요 — 🔊 버튼을 눌러 주세요', k: 'wait' };
     if (anyPeer && !micPeers.length) return { t: '🔇 ' + peerNames(Object.keys(S.peers)) + ' 마이크가 꺼져 있어요', k: 'wait' };
-    if (olds.length) return { t: '⚠️ ' + peerNames(olds) + ' 폰은 새로고침이 필요해요', k: 'wait' };
     if (hear === 'sound') return { t: '🔊 ' + peerNames(micPeers) + ' 목소리 듣는 중', k: 'ok' };
+    if (olds.length) return { t: '⚠️ ' + peerNames(olds) + ' 폰은 새로고침이 필요해요', k: 'wait' };
     if (hear === 'link') return { t: '🔗 ' + peerNames(micPeers) + ' 연결됨 · 말하면 들려요', k: 'ok' };
     if (micPeers.length) return { t: '⏳ ' + peerNames(micPeers) + ' 목소리 연결 중…', k: 'relay' };
     if (S.micOn) return { t: '가족을 기다리는 중', k: 'wait' };
