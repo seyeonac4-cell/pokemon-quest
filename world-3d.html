@@ -106,7 +106,7 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 #cross.show{opacity:1}
 
 /* ---------- 알림 · 배너 ---------- */
-#toast{position:absolute;left:50%;transform:translate(-50%,6px);top:calc(154px + env(safe-area-inset-top,0px));
+#toast{position:absolute;left:50%;transform:translate(-50%,6px);top:calc(196px + env(safe-area-inset-top,0px));
   padding:8px 15px;border-radius:14px;background:rgba(38,28,60,.9);color:#fff;font-size:13px;font-weight:800;
   box-shadow:0 8px 22px rgba(20,10,40,.3);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;
   max-width:82vw;text-align:center;word-break:keep-all}
@@ -2438,7 +2438,8 @@ function boot() {
     list.sort((a, b) => a.ms - b.ms);
     let n = 0;
     const idx = list.findIndex((r) => r.me);
-    if (idx >= 0 && !RACE.awarded) {
+    const myRow = idx >= 0 ? list[idx] : null;
+    if (idx >= 0 && !RACE.awarded && myRow && myRow.ms < 99999) {
       RACE.awarded = true;
       n = RACE.mode === 'solo' ? 3 : ([10, 6, 4, 2][idx] || 2);
       try { earn(n); } catch (e) {}
@@ -2459,7 +2460,7 @@ function boot() {
     if (!keys.length) return;
     const lanes = FB.lanesData || {};
     const allDone = keys.every((k) => lanes[k] && lanes[k].done);
-    const late = RACE.t0 && (NOW() - RACE.t0 > 25000);
+    const late = RACE.t0 && (NOW() - RACE.t0 > 60000);
     if (!allDone && !late) return;
     const rows = keys.map((k) => ({ who: k, ms: (lanes[k] && lanes[k].ms) || 99999 })).sort((a, b) => a.ms - b.ms);
     RACE.finalSent = true;
@@ -2471,7 +2472,7 @@ function boot() {
       let h = '<h3>🏁 대결 결과</h3><p>' + (RACE.mode === 'family' ? '가족 수영 대결' : RACE.mode === 'bot' ? '로봇 물개와 대결' : '혼자 연습') + ' 기록이에요.</p>';
       RACE.results.forEach((r, i) => {
         const medal = ['🥇', '🥈', '🥉', '🏅'][i] || '🏅';
-        h += '<div class="rankRow' + (r.me ? ' me' : '') + '"><span class="rk">' + medal + '</span><span>' + r.name + '</span><span class="rt">' + (r.ms >= 99999 ? '포기' : (r.ms / 1000).toFixed(2) + '초') + '</span></div>';
+        h += '<div class="rankRow' + (r.me ? ' me' : '') + '"><span class="rk">' + medal + '</span><span>' + r.name + '</span><span class="rt">' + (r.ms >= 99999 ? '완주 못했어요' : (r.ms / 1000).toFixed(2) + '초') + '</span></div>';
       });
       if (RACE.coinNote) h += '<p style="margin:9px 0 2px;font-weight:900;color:#a2700a">' + RACE.coinNote + '</p>';
       h += '<button type="button" class="rBtn go" data-race="again">🔁 한 번 더</button>';
