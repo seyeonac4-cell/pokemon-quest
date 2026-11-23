@@ -852,7 +852,7 @@ function boot() {
     scene.add(g);
     const W = HW, D = HD, H = HH, t = WT, hw = W / 2, hd = D / 2;
     const info = { who: who, x: hx, z: hz, W: W, D: D, H: H, g: g,
-      roofMat: null, ceilMat: null, walls: [], cut: 0 };
+      roofMat: null, ceilMat: null, walls: [], wallSet: new Set(), cut: 0 };
     HOUSE_OBJS.push(info);
 
     // 벽 한 장 (충돌 + 카메라 가림 + 투명도 조절용 재질)
@@ -864,7 +864,10 @@ function boot() {
       ms.castShadow = true; ms.receiveShadow = true;
       g.add(ms);
       camBlockers.push(ms);
-      if (nx || nz) info.walls.push({ mat: wm, nx: nx || 0, nz: nz || 0, cut: 0 });
+      if (nx || nz) {
+        info.walls.push({ mat: wm, nx: nx || 0, nz: nz || 0, x: x, z: z, cut: 0 });
+        info.wallSet.add(ms);
+      }
       solidRect(hx + x, hz + z, w, d, y + h / 2, bottom || 0);
       return ms;
     }
@@ -890,7 +893,7 @@ function boot() {
     const roof = new THREE.Mesh(new THREE.ConeGeometry(W * 0.79, 2.3, 4), info.roofMat);
     roof.rotation.y = Math.PI / 4;
     roof.position.set(0, H + 1.15, 0);
-    roof.castShadow = true; roof.receiveShadow = true;
+    roof.castShadow = false; roof.receiveShadow = true;   // 지붕 그림자가 앞벽을 통째로 가리지 않게
     g.add(roof);
     // 굴뚝
     addBox(g, 0.7, 1.5, 0.7, 1.9, H + 1.7, -1.2, '#e9d9c0');
@@ -1041,7 +1044,7 @@ function boot() {
     for (let i = 0; i < HOUSE_OBJS.length; i++) {
       const h = HOUSE_OBJS[i];
       const mine = h === inHouse;
-      const above = mine && cy > h.H - 0.45;        // 카메라가 벽 위로 올라가면 인형의 집처럼
+      const above = mine && cy > h.H - 0.02;          // 카메라가 지붕 위로 올라가면 인형의 집처럼
       const k = Math.min(1, dt * 8);
       h.cut += ((above ? 1 : 0) - h.cut) * k;
       const op = 1 - h.cut * 0.80;
@@ -1049,8 +1052,11 @@ function boot() {
       if (Math.abs(h.ceilMat.opacity - op) > 0.002) h.ceilMat.opacity = op;
       for (let w = 0; w < h.walls.length; w++) {
         const wl = h.walls[w];
-        const toward = ((cx - P.x) * wl.nx + (cz - P.z) * wl.nz) > 0.4;
-        wl.cut += (((above && toward) ? 1 : 0) - wl.cut) * k;
+        // 카메라가 그 벽 바깥으로 나가 있으면 그 벽만 살짝 비쳐서 방 안이 보여요
+        const along = (cx - P.x) * wl.nx + (cz - P.z) * wl.nz;
+        const wd = (h.x + wl.x - P.x) * wl.nx + (h.z + wl.z - P.z) * wl.nz;
+        const want = (mine && along > wd + 0.05) ? 1 : 0;
+        wl.cut += (want - wl.cut) * k;
         const wo = 1 - wl.cut * 0.82;
         if (Math.abs(wl.mat.opacity - wo) > 0.002) wl.mat.opacity = wo;
       }
@@ -2240,7 +2246,9 @@ function boot() {
       if (dist > 0.4 && camBlockers.length) {
         raycaster.set(camTarget, tmpRayDir.clone().normalize());
         raycaster.far = dist;
-        const hits = raycaster.intersectObjects(camBlockers, false);
+        let hits = raycaster.intersectObjects(camBlockers, false);
+        // 내가 들어가 있는 집 벽은 카메라를 막지 않아요 (그 벽은 살짝 비쳐집니다)
+        if (inH && inH.wallSet) hits = hits.filter((hh) => !inH.wallSet.has(hh.object));
         camDbg.hit = hits.length ? +hits[0].distance.toFixed(2) : -1;
         if (hits.length && hits[0].distance > 0.6) {
           const d2 = Math.max(1.1, hits[0].distance - 0.35);
