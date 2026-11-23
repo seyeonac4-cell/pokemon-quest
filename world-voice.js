@@ -38,7 +38,7 @@
   'use strict';
   if (global.WorldVoice && global.WorldVoice.version) return;
 
-  var VERSION = '1.2';
+  var VERSION = '1.3';
   var PATH = 'family-lim-7660/worldVoice';
   var ROOM = 'main';
   var K_ACTIVE = 'lim_active_kid';
@@ -558,7 +558,7 @@
           }, function () { });
           relRef.child(pid + '/c').on('child_added', function (c) {
             var v = c.val();
-            if (v && v.d) cb('chunk', pid, v.d, null);
+            if (v && v.d) cb('chunk', pid, v.d, c.key);
           }, function () { });
         }, function () { });
         relRef.on('child_removed', function (snap) {
@@ -615,7 +615,7 @@
           var rc2 = relCache[m.pid] || (relCache[m.pid] = { hdr: '', c: [] });
           rc2.c.push({ s: m.seq, d: m.d });
           if (rc2.c.length > 12) rc2.c.shift();
-          if (relCb) relCb('chunk', m.pid, m.d, null);
+          if (relCb) relCb('chunk', m.pid, m.d, m.seq);
         } else if (m.t === 'rx') {
           delete relCache[m.pid];
           if (relCb) relCb('gone', m.pid, null, null);
@@ -644,7 +644,7 @@
           Object.keys(relCache).forEach(function (pid) {
             var rc = relCache[pid];
             if (rc.hdr) fn('hdr', pid, rc.hdr, null);
-            rc.c.slice(-2).forEach(function (it) { fn('chunk', pid, it.d, null); });
+            rc.c.slice(-2).forEach(function (it) { fn('chunk', pid, it.d, it.s); });
           });
         }, 60);
       },
@@ -1045,6 +1045,8 @@
       rec = new MediaRecorder(S.stream, mime ? { mimeType: mime, audioBitsPerSecond: 20000 } : { audioBitsPerSecond: 20000 });
     } catch (e) { dbgErr('relrec', e); return; }
     RLY.rec = rec;
+    RLY.hdrSent = false;      /* 새 녹음이면 첫 조각을 새 머리말로 보내요 */
+    RLY.recN = (RLY.recN || 0) + 1;
     RLY.mime = (rec.mimeType || mime || 'audio/webm').split(';')[0];
     RLY.encQ = Promise.resolve();
 
@@ -1055,6 +1057,8 @@
         if (!RLY.out || !b64 || b64.length > 24000) return;
         if (!RLY.hdrSent) {
           RLY.hdrSent = true;
+          RLY.hdr = b64;
+          RLY.hdrAt = now();
           if (S.transport && S.transport.relayHdr) S.transport.relayHdr(b64);
           return;
         }
@@ -1063,7 +1067,9 @@
         if (RLY.seq > 10 && (RLY.seq % 8) === 0 && S.transport.relayPrune) S.transport.relayPrune(RLY.seq - 8);
       }).catch(function () { });
     };
-    rec.onstop = function () { if (RLY.rec === rec) RLY.rec = null; };
+    rec.onstop = function () {
+      if (RLY.rec === rec) { RLY.rec = null; RLY.stopAt = now(); }
+    };
     try { rec.start(250); } catch (e) { dbgErr('relstart', e); RLY.rec = null; }
   }
 
@@ -1083,7 +1089,7 @@
   function rxEnsure(pid) {
     return RLY.rx[pid] || (RLY.rx[pid] = {
       hdr: '', q: [], sb: null, ms: null, audio: null, url: '',
-      joined: now(), opening: false
+      joined: now(), opening: false, got: 0, hdrN: 0, err: ''
     });
   }
 
@@ -1111,20 +1117,27 @@
     if (R) rxReset(pid);            /* 새 녹음이 시작되면 처음부터 다시 */
     R = rxEnsure(pid);
     R.hdr = b64;
+    R.hdrN++;
     if (mime) RLY.mime = mime;
     R.joined = now();
     renderChips(); render();
   }
 
-  function rxChunk(pid, b64) {
+  function rxChunk(pid, b64, seq) {
     if (!b64) return;
     var R = RLY.rx[pid];
     if (!R || !R.hdr) return;
     if (p2pConnected(pid)) { rxReset(pid); return; }   /* P2P 로 잘 들리면 중계는 안 써요 */
+    var q = parseInt(seq, 10);
+    if (!isNaN(q)) {
+      if (R.lastSeq && q <= R.lastSeq) return;          /* 중복·순서 엇갈림은 버림 */
+      R.lastSeq = q;
+    }
     S.heard[pid] = now();
     if (now() - R.joined < 400) return;                /* 접속 직후 밀린 옛 조각은 버림 */
     if (!R.audio) { rxOpen(pid, R); return; }           /* 첫 조각은 재생기 만드는 데 씀 */
     R.q.push(b64);
+    R.got++;
     if (R.q.length > 30) R.q.splice(0, R.q.length - 30);
     rxPump(pid, R);
   }
@@ -1138,6 +1151,11 @@
     audio.setAttribute('playsinline', '');
     audio.style.display = 'none';
     audio.dataset.wvRelay = pid;
+    audio.onerror = function () {
+      var R2 = RLY.rx[pid];
+      if (R2) { R2.err = 'mediaerror'; }
+      rxReset(pid);
+    };
     (document.body || document.documentElement).appendChild(audio);
     var ms = new MediaSource();
     R.ms = ms; R.audio = audio;
@@ -1167,9 +1185,11 @@
 
   function rxPump(pid, R) {
     if (!R || !R.sb || R.sb.updating || !R.q.length) return;
+    if (R.audio && R.audio.error) { rxReset(pid); return; }
     var b = R.q.shift();
     try { R.sb.appendBuffer(b64ToU8(b)); }
     catch (e) {
+      R.err = (e && e.name || '') + ':' + String((e && e.message) || '').slice(0, 60);
       if (e && e.name === 'QuotaExceededError') {
         R.q.length = 0;
         try {
@@ -1196,21 +1216,27 @@
   function relayOnMessage(kind, pid, a, b) {
     if (!pid || pid === S.pid) return;
     if (kind === 'hdr') { rxHdr(pid, a, b); return; }
-    if (kind === 'chunk') { rxChunk(pid, a); return; }
+    if (kind === 'chunk') { rxChunk(pid, a, b); return; }
     if (kind === 'gone') { rxReset(pid); return; }
   }
 
-  /* 6초 동안 P2P 가 안 되면 중계로 전환, 붙으면 원래대로 */
+  /* 6초 동안 P2P 가 안 되면 중계로 전환, 다 붙으면 원래대로
+     (세 명이 있을 때 한 명만 P2P 가 되는 경우도 그 한 명은 중계로 들려요) */
   function relayWatchdog() {
-    if (anyConnected()) {
-      if (RLY.out) relayStopOut();
+    var wantPeers = Object.keys(S.peers).filter(function (pid) { return S.peers[pid] && desired(S.peers[pid]); });
+    var missing = wantPeers.filter(function (pid) { return !p2pConnected(pid); });
+    if (!S.micOn || !S.stream || !missing.length) {
       RLY.waitSince = 0;
+      if (RLY.out) relayStopOut();
       return;
     }
-    var wantPeers = Object.keys(S.peers).filter(function (pid) { return S.peers[pid] && desired(S.peers[pid]); });
-    if (!S.micOn || !S.stream || !wantPeers.length) { RLY.waitSince = 0; if (RLY.out) relayStopOut(); return; }
     if (!RLY.waitSince) RLY.waitSince = now();
     if (!RLY.out && now() - RLY.waitSince > 6000) relayStartOut();
+    /* 머리말을 한 번씩 다시 보내 줘요 — 혹시 한쪽 재생기가 깨졌을 때 스스로 복구 */
+    if (RLY.out && RLY.hdr && now() - (RLY.hdrAt || 0) > 12000) {
+      RLY.hdrAt = now();
+      try { if (S.transport && S.transport.relayHdr) S.transport.relayHdr(RLY.hdr); } catch (e) { }
+    }
   }
 
   /* ============================================================
@@ -1435,12 +1461,12 @@
         }),
         audios: Object.keys(S.audios).length,
         relay: {
-          out: RLY.out, seq: RLY.seq, rec: RLY.rec ? RLY.rec.state : '',
+          out: RLY.out, seq: RLY.seq, recN: RLY.recN || 0, rec: RLY.rec ? RLY.rec.state : '',
           rx: Object.keys(RLY.rx).map(function (pid) {
             var R = RLY.rx[pid];
             var buffered = 0;
             try { if (R.sb && R.sb.buffered.length) buffered = +(R.sb.buffered.end(R.sb.buffered.length - 1) - (R.audio ? R.audio.currentTime : 0)).toFixed(2); } catch (e) { }
-            return { pid: pid, hdr: !!R.hdr, playing: !!(R.audio && !R.audio.paused), q: R.q.length, ahead: buffered };
+            return { pid: pid, hdr: !!R.hdr, playing: !!(R.audio && !R.audio.paused), q: R.q.length, ahead: buffered, got: R.got, hdrN: R.hdrN, age: Math.round((now() - R.joined) / 1000), err: R.err };
           })
         },
         status: (statusOf() || {}).t || '',
