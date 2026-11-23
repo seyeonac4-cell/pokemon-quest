@@ -1109,7 +1109,7 @@ function boot() {
     POOL.laneZ.forEach((lz, i) => {
       addBox(scene, 0.56, 0.3, 0.46, POOL.x0 - 0.42, POOL.deck + 0.15, lz, '#ffffff');
       addBox(scene, 0.46, 0.06, 0.42, POOL.x0 - 0.42, POOL.deck + 0.33, lz, '#4a90e2', { cast: false });
-      makeSign([String(i + 1)], POOL.x0 - 0.42, POOL.deck + 0.72, lz, 0.44, 0.44, { post: false });
+      makeSign([String(i + 1)], POOL.x0 - 0.42, POOL.deck + 0.62, lz, 0.34, 0.34, { post: false });
     });
     // 결승선 (동쪽 수직 줄무늬)
     for (let i = 0; i < 8; i++) {
@@ -3001,7 +3001,7 @@ function boot() {
   // 🔒 1인 1기기 좌석: 이미 다른 기기가 이 캐릭터로 놀고 있으면 안내하고 막아요
   if (window.WorldSeat) {
     try {
-      WorldSeat.init({ who: () => me, setWho: (w) => { setWho(w); } });
+      WorldSeat.init({ who: () => me, setWho: (w) => { const n = normWho(w); if (n && n !== me) setWho(n); } });
       WorldSeat.enter(me);
     } catch (e) {}
   }
