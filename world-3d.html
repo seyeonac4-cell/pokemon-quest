@@ -2908,7 +2908,7 @@ function boot() {
     meAvatar.rotation.order = 'YXZ';
     meAvatar.position.set(P.x + Math.sin(P.face) * lift, P.y, P.z + Math.cos(P.face) * lift);
     meAvatar.rotation.y = P.face + (P.swim && P.stroke === 'back' ? Math.PI : 0);
-    meAvatar.rotation.x = tilt * (P.stroke === 'back' ? -Math.PI / 2 : Math.PI / 2);
+    meAvatar.rotation.x = tilt * (Math.PI / 2);
     if (P.swim) swimPose(meAvatar, dt, P.stroke, P.speed > 0.6 ? 1 : 0.25);
     else animateAvatar(meAvatar, dt, P.speed, P.grounded, !!P.riding);
 
