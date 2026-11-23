@@ -660,20 +660,234 @@ function boot() {
   }
 
   /* ============================================================
-     6. 가족 집 4채
+     6. 가족 집 4채 — 진짜 문이 있는 집 (아이들이 직접 걸어 들어가요)
+        · 벽은 사방 벽 + 문틈, 안은 텅 빈 방 → 들어갔다 나올 수 있어요
+        · 방마다 먹을 것·인형·돈더미를 수북이 쌓아 두었어요
      ============================================================ */
+  const HW = 7.0, HD = 6.0, HH = 3.3, WT = 0.3, DOOR_W = 1.6, DOOR_H = 2.2;
   const HOUSES = ORDER.map((k, i) => ({ who: k, x: -13 + i * 8.6, z: -23 }));
+  const HOUSE_OBJS = [];          // 실내 판정·지붕 투명에 쓰는 집 정보
+
+  const ROOM = {
+    yunjin:   { floor: '#ffe8f2', rug: '#ff9ecd', rug2: '#ffe0ee', bed: '#ff7fae' },
+    hyungwon: { floor: '#fff7dc', rug: '#ffd45e', rug2: '#fff3c4', bed: '#ffd54a' },
+    mom:      { floor: '#e9faf4', rug: '#59d7b6', rug2: '#ccf6ea', bed: '#4fd1b0' },
+    dad:      { floor: '#eaf2ff', rug: '#5b95e8', rug2: '#d6e4ff', bed: '#4a90e2' }
+  };
+  const MENU = {
+    yunjin:   ['cake', 'donut', 'milk', 'cookie'],
+    hyungwon: ['cupcake', 'donut', 'milk', 'grape'],
+    mom:      ['fruit', 'sandwich', 'tea', 'cookie'],
+    dad:      ['burger', 'pizza', 'cola', 'cookie']
+  };
+  const DOLLZ = {
+    yunjin:   ['bunny', 'bear', 'fox'],
+    hyungwon: ['chick', 'puppy', 'bear'],
+    mom:      ['bear', 'bunny', 'duck'],
+    dad:      ['puppy', 'duck', 'chick']
+  };
+
+  /* ---------- 작은 소품 도우미 (geometry 는 하나를 나눠 써요) ---------- */
+  const GEOS = {
+    sph: new THREE.SphereGeometry(1, 12, 10),
+    cyl: new THREE.CylinderGeometry(1, 1, 1, 16),
+    cone: new THREE.ConeGeometry(1, 1, 12),
+    ring: new THREE.TorusGeometry(1, 0.4, 8, 18)
+  };
+  function meshP(par, geo, x, y, z, sx, sy, sz, color, opts) {
+    const o = opts || {};
+    const m = new THREE.Mesh(geo, o.material || mat(color, o.matOpts));
+    m.position.set(x, y, z);
+    m.scale.set(sx, sy == null ? sx : sy, sz == null ? sx : sz);
+    if (o.rx) m.rotation.x = o.rx;
+    if (o.ry) m.rotation.y = o.ry;
+    if (o.rz) m.rotation.z = o.rz;
+    m.castShadow = !!o.cast;
+    m.receiveShadow = !!o.receive;
+    par.add(m);
+    return m;
+  }
+  const FLAME = { emissive: 0xffc400, emissiveIntensity: 1.1 };
+  const GLOWY = { emissive: 0xffb300, emissiveIntensity: 0.9 };
+
+  /* ---------- 🍰 먹을 것 ---------- */
+  function food(par, kind, x, y, z, c) {
+    if (kind === 'cake') {
+      meshP(par, GEOS.cyl, x, y + 0.08, z, 0.30, 0.16, 0.30, '#ffd9a8', { cast: true });
+      meshP(par, GEOS.cyl, x, y + 0.18, z, 0.31, 0.05, 0.31, '#fff3e0');
+      meshP(par, GEOS.cyl, x, y + 0.27, z, 0.24, 0.13, 0.24, c);
+      meshP(par, GEOS.sph, x - 0.09, y + 0.39, z, 0.025, 0.10, 0.025, '#7fe0ff');
+      meshP(par, GEOS.sph, x + 0.09, y + 0.39, z, 0.025, 0.10, 0.025, '#ff8ec4');
+      meshP(par, GEOS.sph, x - 0.09, y + 0.48, z, 0.036, 0.055, 0.036, '#ffd23f', { matOpts: FLAME });
+      meshP(par, GEOS.sph, x + 0.09, y + 0.48, z, 0.036, 0.055, 0.036, '#ffd23f', { matOpts: FLAME });
+      meshP(par, GEOS.sph, x, y + 0.30, z + 0.22, 0.05, 0.05, 0.05, '#ff4f6d');
+    } else if (kind === 'cupcake') {
+      meshP(par, GEOS.cyl, x, y + 0.06, z, 0.10, 0.12, 0.10, '#e8b06a');
+      meshP(par, GEOS.sph, x, y + 0.17, z, 0.11, 0.09, 0.11, '#fff0f6');
+      meshP(par, GEOS.sph, x, y + 0.24, z, 0.035, 0.035, 0.035, '#ff4f6d');
+    } else if (kind === 'donut') {
+      meshP(par, GEOS.ring, x, y + 0.055, z, 0.14, 0.14, 0.16, c || '#ff9ecd', { rx: Math.PI / 2 });
+      meshP(par, GEOS.sph, x + 0.055, y + 0.09, z + 0.03, 0.018, 0.018, 0.018, '#fff2b0');
+    } else if (kind === 'cookie') {
+      meshP(par, GEOS.cyl, x, y + 0.03, z, 0.13, 0.06, 0.13, '#e0a86a');
+      meshP(par, GEOS.sph, x - 0.045, y + 0.062, z - 0.02, 0.022, 0.012, 0.022, '#5a3720');
+      meshP(par, GEOS.sph, x + 0.05, y + 0.062, z + 0.03, 0.02, 0.012, 0.02, '#5a3720');
+    } else if (kind === 'milk') {
+      addBox(par, 0.17, 0.30, 0.16, x, y + 0.15, z, '#ffffff', { cast: false });
+      addBox(par, 0.17, 0.09, 0.16, x, y + 0.24, z, c || '#ff6b8a', { cast: false });
+      addBox(par, 0.04, 0.10, 0.04, x + 0.03, y + 0.34, z - 0.02, '#8fd4ff', { cast: false });
+    } else if (kind === 'burger') {
+      meshP(par, GEOS.sph, x, y + 0.07, z, 0.19, 0.09, 0.19, '#e8b06a');
+      meshP(par, GEOS.cyl, x, y + 0.14, z, 0.19, 0.05, 0.19, '#7a4a2a');
+      meshP(par, GEOS.cyl, x, y + 0.18, z, 0.20, 0.03, 0.20, '#7cd15a');
+      meshP(par, GEOS.cyl, x, y + 0.20, z, 0.19, 0.02, 0.19, '#ffd23f');
+      meshP(par, GEOS.sph, x, y + 0.26, z, 0.19, 0.10, 0.19, '#e8b06a');
+    } else if (kind === 'pizza') {
+      meshP(par, GEOS.cyl, x, y + 0.03, z, 0.24, 0.06, 0.24, '#e0a86a');
+      meshP(par, GEOS.cyl, x, y + 0.07, z, 0.20, 0.03, 0.20, '#ffd45e');
+      [[-0.07, 0.05], [0.06, 0.06], [0, -0.08]].forEach((q) => {
+        meshP(par, GEOS.cyl, x + q[0], y + 0.09, z + q[1], 0.045, 0.02, 0.045, '#e8433f');
+      });
+    } else if (kind === 'cola') {
+      meshP(par, GEOS.cyl, x, y + 0.13, z, 0.10, 0.26, 0.10, '#e8433f');
+      meshP(par, GEOS.cyl, x, y + 0.27, z, 0.105, 0.03, 0.105, '#ffffff');
+      meshP(par, GEOS.cyl, x + 0.03, y + 0.36, z, 0.012, 0.14, 0.012, '#ffffff');
+    } else if (kind === 'tea') {
+      meshP(par, GEOS.cyl, x, y + 0.02, z, 0.13, 0.03, 0.13, '#ffffff');
+      meshP(par, GEOS.cyl, x, y + 0.09, z, 0.075, 0.13, 0.075, '#ffffff');
+      meshP(par, GEOS.ring, x + 0.09, y + 0.10, z, 0.05, 0.05, 0.05, '#ffffff');
+      meshP(par, GEOS.cyl, x, y + 0.14, z, 0.065, 0.02, 0.065, '#c98a3c');
+    } else if (kind === 'sandwich') {
+      addBox(par, 0.28, 0.06, 0.24, x, y + 0.03, z, '#f0cf9a', { cast: false });
+      addBox(par, 0.26, 0.05, 0.22, x, y + 0.08, z, '#7cd15a', { cast: false });
+      addBox(par, 0.26, 0.04, 0.22, x, y + 0.12, z, '#ff9b8a', { cast: false });
+      addBox(par, 0.28, 0.06, 0.24, x, y + 0.17, z, '#f0cf9a', { cast: false });
+    } else if (kind === 'fruit') {
+      meshP(par, GEOS.cyl, x, y + 0.05, z, 0.26, 0.10, 0.26, '#d9b06a');
+      meshP(par, GEOS.sph, x - 0.10, y + 0.15, z + 0.02, 0.10, 0.10, 0.10, '#e8433f');
+      meshP(par, GEOS.sph, x + 0.09, y + 0.14, z - 0.05, 0.09, 0.09, 0.09, '#ffa733');
+      meshP(par, GEOS.sph, x + 0.01, y + 0.15, z + 0.10, 0.085, 0.085, 0.085, '#8fd14a');
+      meshP(par, GEOS.sph, x + 0.01, y + 0.22, z - 0.01, 0.08, 0.08, 0.08, '#ffd54a');
+    } else if (kind === 'grape') {
+      meshP(par, GEOS.cyl, x, y + 0.04, z, 0.20, 0.08, 0.20, '#ffffff');
+      [[0, 0.10, 0], [-0.07, 0.14, 0.03], [0.07, 0.14, 0.02], [0, 0.13, 0.08], [0, 0.19, 0.02]].forEach((q) => {
+        meshP(par, GEOS.sph, x + q[0], y + q[1], z + q[2], 0.055, 0.055, 0.055, '#8d5bd9');
+      });
+    }
+  }
+
+  /* ---------- 🧸 인형 ---------- */
+  function doll(par, type, x, y, z, c, s) {
+    const g = new THREE.Group();
+    g.position.set(x, y, z);
+    g.scale.setScalar(s || 1);
+    par.add(g);
+    const dark = '#3a2a22';
+    meshP(g, GEOS.sph, 0, 0.16, 0, 0.155, 0.16, 0.145, c);          // 몸통
+    meshP(g, GEOS.sph, 0, 0.41, 0.005, 0.145, 0.14, 0.14, c);         // 머리
+    if (type === 'bunny') {
+      meshP(g, GEOS.sph, -0.07, 0.60, -0.01, 0.045, 0.135, 0.04, c);
+      meshP(g, GEOS.sph, 0.07, 0.60, -0.01, 0.045, 0.135, 0.04, c);
+      meshP(g, GEOS.sph, 0, 0.385, 0.13, 0.07, 0.05, 0.04, '#fff6fb');
+    } else if (type === 'bear') {
+      meshP(g, GEOS.sph, -0.10, 0.50, -0.02, 0.055, 0.055, 0.05, c);
+      meshP(g, GEOS.sph, 0.10, 0.50, -0.02, 0.055, 0.055, 0.05, c);
+      meshP(g, GEOS.sph, 0, 0.385, 0.12, 0.075, 0.055, 0.05, '#f6e2c8');
+    } else if (type === 'chick') {
+      meshP(g, GEOS.sph, 0, 0.55, 0, 0.03, 0.06, 0.03, c);
+      meshP(g, GEOS.cone, 0, 0.385, 0.15, 0.05, 0.09, 0.05, '#ffa733', { rx: Math.PI / 2 });
+    } else if (type === 'puppy') {
+      meshP(g, GEOS.sph, -0.12, 0.44, 0, 0.05, 0.10, 0.055, '#8a5a3a');
+      meshP(g, GEOS.sph, 0.12, 0.44, 0, 0.05, 0.10, 0.055, '#8a5a3a');
+      meshP(g, GEOS.sph, 0, 0.385, 0.12, 0.07, 0.05, 0.05, '#f6e2c8');
+    } else if (type === 'duck') {
+      meshP(g, GEOS.sph, 0, 0.385, 0.15, 0.07, 0.035, 0.06, '#ffa733');
+    } else if (type === 'fox') {
+      meshP(g, GEOS.cone, -0.08, 0.55, -0.01, 0.05, 0.13, 0.05, '#ff7f4a');
+      meshP(g, GEOS.cone, 0.08, 0.55, -0.01, 0.05, 0.13, 0.05, '#ff7f4a');
+      meshP(g, GEOS.sph, 0, 0.385, 0.13, 0.07, 0.05, 0.04, '#fff6fb');
+    }
+    meshP(g, GEOS.sph, -0.05, 0.425, 0.115, 0.022, 0.024, 0.018, dark);
+    meshP(g, GEOS.sph, 0.05, 0.425, 0.115, 0.022, 0.024, 0.018, dark);
+    return g;
+  }
+
+  /* ---------- 🪙 돈 (장식용 보물) ---------- */
+  function coinStack(par, x, z, n, y0, s) {
+    const sc = s || 1, h = 0.05 * n;
+    meshP(par, GEOS.cyl, x, y0 + h / 2, z, 0.13 * sc, h, 0.13 * sc, '#e8a92b');
+    meshP(par, GEOS.cyl, x, y0 + h + 0.008, z, 0.135 * sc, 0.014, 0.135 * sc, '#ffd94a');
+  }
+  function billBundle(par, x, z, y0, ry) {
+    addBox(par, 0.34, 0.05, 0.20, x, y0 + 0.025, z, '#4fbf68', { rotY: ry || 0, cast: false });
+    addBox(par, 0.34, 0.05, 0.20, x, y0 + 0.075, z, '#66d17c', { rotY: (ry || 0) + 0.14, cast: false });
+    addBox(par, 0.07, 0.11, 0.205, x, y0 + 0.05, z, '#f2e8cd', { rotY: ry || 0, cast: false });
+  }
+  function treasure(par, x, z, y0, c) {
+    addBox(par, 0.80, 0.42, 0.55, x, y0 + 0.21, z, '#b07a4a');
+    addBox(par, 0.84, 0.12, 0.58, x, y0 + 0.50, z - 0.10, c, { rotX: -0.38 });
+    addBox(par, 0.14, 0.14, 0.06, x, y0 + 0.28, z + 0.29, '#ffd75e');
+    meshP(par, GEOS.cyl, x - 0.16, y0 + 0.44, z, 0.15, 0.05, 0.15, '#ffd94a');
+    meshP(par, GEOS.cyl, x + 0.17, y0 + 0.45, z + 0.04, 0.13, 0.04, 0.13, '#ffc31f');
+    meshP(par, GEOS.sph, x, y0 + 0.47, z - 0.16, 0.10, 0.08, 0.09, '#ffe066', { matOpts: GLOWY });
+  }
+
+  /* ---------- 문 앞 발판 글자 ---------- */
+  function matTexture(txt, bg, fg) {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+    const q = c.getContext('2d');
+    q.fillStyle = bg; q.fillRect(0, 0, 256, 128);
+    q.strokeStyle = fg; q.lineWidth = 9; q.strokeRect(7, 7, 242, 114);
+    q.textAlign = 'center'; q.textBaseline = 'middle'; q.fillStyle = fg;
+    q.font = 'bold 46px "Jua", sans-serif';
+    q.fillText(txt, 128, 66);
+    const t = new THREE.CanvasTexture(c);
+    if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+
   function buildHouse(hx, hz, who) {
-    const p = PEOPLE[who], g = new THREE.Group();
+    const p = PEOPLE[who], r = ROOM[who], g = new THREE.Group();
     g.position.set(hx, 0, hz);
     scene.add(g);
-    const W = 6.4, D = 5.6, H = 3.2;
-    // 벽
-    camBlockers.push(addBox(g, W, H, D, 0, H / 2, 0, '#fffaf0'));
-    // 벽 하단 띠
-    addBox(g, W + 0.12, 0.5, D + 0.12, 0, 0.25, 0, p.house);
-    // 지붕 (네모뿔)
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(W * 0.79, 2.3, 4), mat(p.shirt2));
+    const W = HW, D = HD, H = HH, t = WT, hw = W / 2, hd = D / 2;
+    const info = { who: who, x: hx, z: hz, W: W, D: D, H: H, g: g,
+      roofMat: null, ceilMat: null, walls: [], cut: 0 };
+    HOUSE_OBJS.push(info);
+
+    // 벽 한 장 (충돌 + 카메라 가림 + 투명도 조절용 재질)
+    function wall(w, h, d, x, y, z, nx, nz, bottom) {
+      const wm = new THREE.MeshLambertMaterial({ color: '#fff7ec', transparent: true, opacity: 1 });
+      const ms = new THREE.Mesh(BOX, wm);
+      ms.scale.set(w, h, d);
+      ms.position.set(x, y, z);
+      ms.castShadow = true; ms.receiveShadow = true;
+      g.add(ms);
+      camBlockers.push(ms);
+      if (nx || nz) info.walls.push({ mat: wm, nx: nx || 0, nz: nz || 0, cut: 0 });
+      solidRect(hx + x, hz + z, w, d, y + h / 2, bottom || 0);
+      return ms;
+    }
+    // 뒤·옆벽
+    wall(W, H, t, 0, H / 2, -hd + t / 2, 0, -1);
+    wall(t, H, D, -hw + t / 2, H / 2, 0, -1, 0);
+    wall(t, H, D, hw - t / 2, H / 2, 0, 1, 0);
+    // 앞벽 — 가운데는 문
+    const pw = (W - DOOR_W) / 2, px = DOOR_W / 2 + pw / 2;
+    wall(pw, H, t, -px, H / 2, hd - t / 2, 0, 1);
+    wall(pw, H, t, px, H / 2, hd - t / 2, 0, 1);
+    wall(DOOR_W, H - DOOR_H, t, 0, (H + DOOR_H) / 2, hd - t / 2, 0, 0, DOOR_H);   // 문 위 벽
+
+    // 바깥 벽 하단 색 띠
+    addBox(g, W + 0.10, 0.5, 0.08, 0, 0.25, -hd - 0.02, p.house, { cast: false });
+    addBox(g, 0.08, 0.5, D + 0.10, -hw - 0.02, 0.25, 0, p.house, { cast: false });
+    addBox(g, 0.08, 0.5, D + 0.10, hw + 0.02, 0.25, 0, p.house, { cast: false });
+    addBox(g, pw, 0.5, 0.08, -px, 0.25, hd + 0.02, p.house, { cast: false });
+    addBox(g, pw, 0.5, 0.08, px, 0.25, hd + 0.02, p.house, { cast: false });
+
+    // 지붕 (들어가면 살짝 비쳐요)
+    info.roofMat = new THREE.MeshLambertMaterial({ color: p.shirt2, transparent: true, opacity: 1 });
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(W * 0.79, 2.3, 4), info.roofMat);
     roof.rotation.y = Math.PI / 4;
     roof.position.set(0, H + 1.15, 0);
     roof.castShadow = true; roof.receiveShadow = true;
@@ -681,30 +895,180 @@ function boot() {
     // 굴뚝
     addBox(g, 0.7, 1.5, 0.7, 1.9, H + 1.7, -1.2, '#e9d9c0');
     addBox(g, 0.9, 0.2, 0.9, 1.9, H + 2.5, -1.2, '#cdbba0');
-    // 문
-    addBox(g, 1.1, 1.9, 0.16, 0, 0.95, D / 2 + 0.02, '#9c6b43');
-    addBox(g, 0.16, 0.16, 0.1, 0.34, 1.0, D / 2 + 0.12, '#ffd75e');
-    // 창문 2개
+
+    // 문틀
+    addBox(g, DOOR_W + 0.30, 0.16, 0.14, 0, DOOR_H + 0.06, hd + 0.02, p.shirt2);
+    addBox(g, 0.16, DOOR_H + 0.1, 0.14, -DOOR_W / 2 - 0.07, DOOR_H / 2, hd + 0.02, p.shirt2);
+    addBox(g, 0.16, DOOR_H + 0.1, 0.14, DOOR_W / 2 + 0.07, DOOR_H / 2, hd + 0.02, p.shirt2);
+    // 활짝 열린 문짝
+    const hinge = new THREE.Group();
+    hinge.position.set(-DOOR_W / 2, 0, hd + 0.06);
+    hinge.rotation.y = -1.8;
+    g.add(hinge);
+    addBox(hinge, DOOR_W - 0.06, DOOR_H - 0.12, 0.08, (DOOR_W - 0.06) / 2, (DOOR_H - 0.12) / 2, 0, '#b07a4a');
+    addBox(hinge, 0.09, 0.09, 0.11, DOOR_W - 0.22, 1.0, 0.08, '#ffd75e');
+
+    // 문 앞 계단 · 발판
+    addBox(g, 2.1, 0.12, 0.9, 0, 0.06, hd + 0.5, '#e9dfcc', { receive: true });
+    solidRect(hx, hz + hd + 0.5, 2.1, 0.9, 0.12);
+    const matPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.5, 0.66),
+      new THREE.MeshLambertMaterial({ map: matTexture('어서와!', p.house, p.shirt2) })
+    );
+    matPlane.rotation.x = -Math.PI / 2;
+    matPlane.position.set(0, 0.128, hd + 0.52);
+    matPlane.receiveShadow = true;
+    g.add(matPlane);
+
+    // 창문 2개 (앞벽)
     [-1.9, 1.9].forEach((wx) => {
-      addBox(g, 1.15, 1.0, 0.14, wx, 2.0, D / 2 + 0.02, '#f6fbff');
-      addBox(g, 1.15, 0.09, 0.18, wx, 2.0, D / 2 + 0.06, '#cfe3f4', { cast: false });
-      addBox(g, 0.09, 1.0, 0.18, wx, 2.0, D / 2 + 0.06, '#cfe3f4', { cast: false });
-      addBox(g, 1.35, 1.2, 0.1, wx, 2.0, D / 2 - 0.02, p.house, { cast: false });
+      addBox(g, 1.32, 1.16, 0.08, wx, 2.0, hd + 0.02, p.house, { cast: false });
+      addBox(g, 1.14, 1.0, 0.1, wx, 2.0, hd + 0.06, '#f6fbff', { cast: false });
     });
+    // 문 위 등불
+    meshP(g, GEOS.sph, 0, DOOR_H + 0.42, hd + 0.12, 0.10, 0.12, 0.10, '#fff3c4', { matOpts: { emissive: 0xffcc66, emissiveIntensity: 1.0 } });
+
     // 집 이름판
-    makeSign([p.emoji + ' ' + p.name + '네 집'], hx, 4.0, hz + D / 2 + 0.4, 2.3, 0.72, { post: false });
-    // 앞마당 꽃
-    for (let i = 0; i < 7; i++) {
-      const fx = -2.4 + i * 0.8, fz = D / 2 + 1.0 + (i % 2) * 0.42;
-      addBox(g, 0.08, 0.34, 0.08, fx, 0.17, fz, '#4fa23a');
-      const petal = ['#ff7fae', '#ffd54a', '#8d6bff', '#ff9b4a'][i % 4];
-      const fl = new THREE.Mesh(new THREE.SphereGeometry(0.15, 7, 6), mat(petal));
-      fl.position.set(fx, 0.4, fz); g.add(fl);
-    }
-    solidRect(hx, hz, W, D, H);
+    makeSign([p.emoji + ' ' + p.name + '네 집'], hx, 4.05, hz + D / 2 + 0.4, 2.3, 0.72, { post: false });
+    // 앞마당 꽃 — 문 앞 길은 비워 둬요
+    [-1, 1].forEach((side) => {
+      for (let i = 0; i < 3; i++) {
+        const fx = side * (1.25 + i * 0.72), fz = hd + 1.05 + (i % 2) * 0.45;
+        addBox(g, 0.08, 0.34, 0.08, fx, 0.17, fz, '#4fa23a', { cast: false });
+        meshP(g, GEOS.sph, fx, 0.41, fz, 0.14, 0.12, 0.14, ['#ff7fae', '#ffd54a', '#8d6bff'][i]);
+      }
+    });
+
+    /* ---------- 🏠 집 안 ---------- */
+    // 바닥 · 러그
+    addBox(g, W - 2 * t, 0.10, D - t, 0, 0.05, t / 2, r.floor, { cast: false, receive: true });
+    solidRect(hx, hz + t / 2, W - 2 * t, D - t, 0.10);
+    addBox(g, 3.0, 0.05, 2.2, 0.1, 0.135, 0.5, r.rug2, { cast: false, receive: true });
+    addBox(g, 2.7, 0.04, 1.9, 0.1, 0.16, 0.5, r.rug, { cast: false, receive: true });
+    // 천장 (들어가면 살짝 비쳐요)
+    info.ceilMat = new THREE.MeshLambertMaterial({ color: '#fff4e6', transparent: true, opacity: 1 });
+    const ceil = new THREE.Mesh(new THREE.BoxGeometry(W - 2 * t, 0.12, D - 2 * t), info.ceilMat);
+    ceil.position.set(0, H - 0.06, 0);
+    ceil.receiveShadow = true;
+    g.add(ceil);
+    // 방 불빛
+    const lampLight = new THREE.PointLight(0xffe6c4, 11, 7.5, 1.6);
+    lampLight.position.set(0, H - 0.85, 0);
+    g.add(lampLight);
+    addBox(g, 0.05, 0.22, 0.05, 0, H - 0.18, 0, '#8a6a4a', { cast: false });
+    meshP(g, GEOS.sph, 0, H - 0.32, 0, 0.16, 0.12, 0.16, '#fff4cf', { matOpts: { emissive: 0xffd27a, emissiveIntensity: 1.0 } });
+
+    // 창가(뒷벽) 밝은 창
+    addBox(g, 2.0, 1.16, 0.06, 0, 1.95, -hd + t + 0.02, '#ffffff', { cast: false });
+    addBox(g, 1.84, 1.0, 0.08, 0, 1.95, -hd + t + 0.05, '#cfe9ff', { cast: false, matOpts: { emissive: 0x9ed4ff, emissiveIntensity: 0.55 } });
+
+    // 침대 (왼쪽 벽)
+    const BX = -2.35, BZ = -1.35;
+    addBox(g, 1.5, 0.30, 2.2, BX, 0.28, BZ, '#c99a6b');
+    addBox(g, 1.4, 0.20, 2.05, BX, 0.53, BZ, '#fffaf2');
+    addBox(g, 0.95, 0.16, 0.40, BX, 0.68, BZ - 0.75, r.bed);
+    addBox(g, 1.36, 0.12, 1.15, BX, 0.66, BZ + 0.35, r.rug);
+    solidRect(hx + BX, hz + BZ, 1.5, 2.2, 0.64);
+
+    // 탁자 (오른쪽) — 위에 먹을 것이 가득
+    const TX = 1.55, TZ = 0.8;
+    addBox(g, 1.6, 0.10, 1.0, TX, 0.57, TZ, '#e0b483');
+    [[-0.7, -0.4], [0.7, -0.4], [-0.7, 0.4], [0.7, 0.4]].forEach((q) => {
+      addBox(g, 0.1, 0.54, 0.1, TX + q[0], 0.27, TZ + q[1], '#c99a6b');
+    });
+    solidRect(hx + TX, hz + TZ, 1.6, 1.0, 0.62);
+
+    // 선반 (뒤 오른쪽) — 널빤지 세 칸
+    const SX = 2.3, SZ = -2.3;
+    addBox(g, 1.5, 1.8, 0.06, SX, 0.95, SZ - 0.13, '#d9b089');
+    addBox(g, 0.06, 1.8, 0.30, SX - 0.72, 0.95, SZ, '#c9a071');
+    addBox(g, 0.06, 1.8, 0.30, SX + 0.72, 0.95, SZ, '#c9a071');
+    addBox(g, 1.5, 0.06, 0.30, SX, 0.72, SZ, '#b98d63', { cast: false });
+    addBox(g, 1.5, 0.06, 0.30, SX, 1.32, SZ, '#b98d63', { cast: false });
+    addBox(g, 1.5, 0.06, 0.30, SX, 1.86, SZ, '#b98d63');
+    solidRect(hx + SX, hz + SZ, 1.5, 0.32, 1.8);
+
+    // 보물상자 (왼쪽 앞)
+    treasure(g, -2.35, 1.8, 0.1, p.shirt2);
+    solidRect(hx - 2.35, hz + 1.8, 0.86, 0.6, 0.58);
+
+    // 돈더미 (오른쪽 앞 구석)
+    coinStack(g, 2.55, 2.05, 5, 0.1);
+    coinStack(g, 2.30, 2.35, 3, 0.1);
+    coinStack(g, 2.72, 2.35, 8, 0.1, 0.85);
+    billBundle(g, 2.05, 1.95, 0.1, 0.4);
+    billBundle(g, 2.55, 1.72, 0.1, -0.3);
+    // 바닥에 흩어진 동전
+    meshP(g, GEOS.cyl, 1.92, 0.12, 2.42, 0.09, 0.02, 0.09, '#ffd94a');
+    meshP(g, GEOS.cyl, 2.98, 0.12, 1.95, 0.08, 0.02, 0.08, '#ffc31f');
+    // 봉투(지폐) 다발을 선반 위에도
+    billBundle(g, SX + 0.1, SZ + 0.02, 1.35, 0.15);
+    // 선반 둘째 칸에 인형 하나
+    doll(g, DOLLZ[who][2], SX - 0.42, 1.35, SZ + 0.02, '#d8e8ff', 0.62);
+
+    // 먹을 것 4가지
+    const slots = [[-0.34, -0.17], [0.34, -0.20], [-0.30, 0.24], [0.36, 0.22]];
+    MENU[who].forEach((kind, i) => {
+      const s = slots[i];
+      food(g, kind, TX + s[0], 0.62, TZ + s[1], p.shirt);
+    });
+    // 탁자 옆 방석
+    addBox(g, 0.5, 0.12, 0.5, -1.0, 0.21, 1.9, p.house, { cast: false });
+
+    // 인형 3마리 — 침대·러그·바닥
+    const dc = ['#ffb8d8', '#ffe08a', '#bfe4ff', '#ffd2b0'];
+    doll(g, DOLLZ[who][0], BX + 0.15, 0.64, BZ - 0.42, dc[0], 1.05);
+    doll(g, DOLLZ[who][1], -0.55, 0.17, 1.55, dc[1], 1.15);
+    doll(g, DOLLZ[who][0], 0.85, 0.17, 1.85, dc[3], 0.8);
+
     return g;
   }
   HOUSES.forEach((h) => buildHouse(h.x, h.z, h.who));
+
+  /* ---------- 실내 판정 · 지붕/벽 투명(인형의 집처럼) ---------- */
+  function houseOf(x, z, pad) {
+    const q = pad === undefined ? -0.2 : pad;
+    for (let i = 0; i < HOUSE_OBJS.length; i++) {
+      const h = HOUSE_OBJS[i];
+      if (Math.abs(x - h.x) < h.W / 2 + q && Math.abs(z - h.z) < h.D / 2 + q) return h;
+    }
+    return null;
+  }
+  let inHouse = null, doorHintAt = 0;
+  function updateHouses(dt) {
+    inHouse = houseOf(P.x, P.z, -0.1);
+    const cx = camera.position.x, cy = camera.position.y, cz = camera.position.z;
+    for (let i = 0; i < HOUSE_OBJS.length; i++) {
+      const h = HOUSE_OBJS[i];
+      const mine = h === inHouse;
+      const above = mine && cy > h.H - 0.45;        // 카메라가 벽 위로 올라가면 인형의 집처럼
+      const k = Math.min(1, dt * 8);
+      h.cut += ((above ? 1 : 0) - h.cut) * k;
+      const op = 1 - h.cut * 0.80;
+      if (Math.abs(h.roofMat.opacity - op) > 0.002) h.roofMat.opacity = op;
+      if (Math.abs(h.ceilMat.opacity - op) > 0.002) h.ceilMat.opacity = op;
+      for (let w = 0; w < h.walls.length; w++) {
+        const wl = h.walls[w];
+        const toward = ((cx - P.x) * wl.nx + (cz - P.z) * wl.nz) > 0.4;
+        wl.cut += (((above && toward) ? 1 : 0) - wl.cut) * k;
+        const wo = 1 - wl.cut * 0.82;
+        if (Math.abs(wl.mat.opacity - wo) > 0.002) wl.mat.opacity = wo;
+      }
+    }
+    // 🚪 문 앞에 오면 한 번만 알려 줘요
+    const now = performance.now();
+    if (inHouse) doorHintAt = 0;
+    else if (now - doorHintAt > 24000) {
+      for (let i = 0; i < HOUSE_OBJS.length; i++) {
+        const h = HOUSE_OBJS[i];
+        if (Math.abs(P.x - h.x) < 1.15 && Math.abs(P.z - (h.z + h.D / 2 + 0.6)) < 1.2) {
+          doorHintAt = now;
+          toast('🚪 ' + PEOPLE[h.who].name + '네 집이에요! 문으로 들어가 볼까요?', 2600);
+          break;
+        }
+      }
+    }
+  }
 
   /* ============================================================
      7. 나무 · 돌 · 마을 광장
@@ -1858,7 +2222,8 @@ function boot() {
     const fwd = P.swim ? 0.45 : 0;
     const wantTarget = tmpV2.set(P.x + Math.sin(P.face) * fwd, P.y + (P.swim ? 0.45 : 1.5), P.z + Math.cos(P.face) * fwd);
     camTarget.lerp(wantTarget, 1 - Math.exp(-14 * dt));
-    const dist = P.swim ? (RACE.on ? 5.0 : 4.6) : camDist;
+    const inH = houseOf(P.x, P.z, -0.2);
+    const dist = P.swim ? (RACE.on ? 5.0 : 4.6) : (inH ? Math.min(camDist, 3.4) : camDist);
     const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const want = tmpV.set(
       camTarget.x + Math.sin(yaw) * dist * cp,
@@ -2963,6 +3328,7 @@ function boot() {
 
     // 카메라 · 렌더
     updateCamera(dt);
+    updateHouses(dt);
     sun.position.set(P.x + 22, 34, P.z + 16);
     sun.target.position.set(P.x, 0, P.z);
     sun.target.updateMatrixWorld();
@@ -3032,6 +3398,8 @@ function boot() {
         swim: !!P.swim, stroke: P.stroke, tilt: +(P.tilt || 0).toFixed(2),
         stuck: !!P.stuck, race: RACE.on ? RACE.phase : 'idle', raceMode: RACE.mode,
         avatarVisible: meAvatar.visible,
+        house: inHouse ? inHouse.who : null,
+        roofOp: +HOUSE_OBJS[0].roofMat.opacity.toFixed(2),
         remotes: Object.keys(FB.remotes).length,
         colliders: colliders.length, coinsLeft: coins.filter((c) => c.alive).length,
         calls: renderer.info.render.calls, tris: renderer.info.render.triangles,
@@ -3040,6 +3408,8 @@ function boot() {
       };
     },
     teleport(x, y, z) { P.x = x; P.y = y; P.z = z; P.vy = 0; P.grounded = false; P.riding = null; P.swim = false; P.stuck = null; },
+    houses: () => HOUSE_OBJS.map((h) => ({ who: h.who, x: h.x, z: h.z, doorX: h.x, doorZ: +((h.z + h.D / 2) + 0.6).toFixed(2), roof: +h.roofMat.opacity.toFixed(2) })),
+    houseAt: (x, z) => { const h = houseOf(x, z); return h ? h.who : null; },
     slideAt(t) {
       P.riding = { t: Math.max(0, Math.min(0.95, t)) };
       P.rideSpeed = 0;
