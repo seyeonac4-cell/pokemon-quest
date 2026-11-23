@@ -1045,7 +1045,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
     <div class="sheet-head"><b>☰ 메뉴</b><button class="x" data-close="menuPanel" type="button" aria-label="닫기">✕</button></div>
     <div class="sheet-body">
       <div class="menu-list">
-        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 원더랜드 · 그로우 어 가든 · 드레스 투 임프레스 · 2~8탄</span></button>
+        <button type="button" data-menu="world">🌍 월드 이동<span>🎡 원더랜드 · 그로우 어 가든 · 드레스 투 임프레스 · 3D 놀이터 · 2~8탄</span></button>
         <button type="button" data-menu="type">⌨️ 타자 놀이<span>톡톡톡 소리와 함께 낱말 연습</span></button>
         <button type="button" data-menu="pet">🐾 내 펫 돌보기<span>알 깨우기 · 밥주기 · 쓰다듬기</span></button>
         <button type="button" data-menu="play">🎭 역할놀이<span>소품 들기 · 우리 집 색깔</span></button>
@@ -1094,6 +1094,11 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         <button class="world-row" type="button" data-world="./dress-up.html">
           <span class="big-ic">👗</span>
           <span class="wt"><b>드레스 투 임프레스</b><small>드레스 꾸미기 · 자매 패션쇼</small></span>
+          <span class="go">이동 ›</span>
+        </button>
+        <button class="world-row" type="button" data-world="./world-3d.html">
+          <span class="big-ic">🏡</span>
+          <span class="wt"><b>3D 놀이터</b><small>3D 가족 마을 · 집 구경 · 3D 놀이터</small></span>
           <span class="go">이동 ›</span>
         </button>
         <button class="world-row trap" type="button" data-jump2="1">
@@ -1436,7 +1441,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
       </div>
       <div class="help-sec">
         <h3>🚪 세 월드 문</h3>
-        <p>마을 광장 북쪽에 <b>🌱 그로우 어 가든</b>과 <b>👗 드레스 투 임프레스</b>로 가는 빛나는 문이 있어요. 문 앞에 서면 「이동」 버튼이 떠요. 위쪽 🌍 버튼이나 ☰ 메뉴에서도 바로 갈 수 있어요.</p>
+        <p><b>🎡 원더랜드 서쪽 잔디</b>에 <b>🏡 3D 놀이터</b>·<b>🌱 그로우 어 가든</b>·<b>👗 드레스 투 임프레스</b>로 가는 빛나는 문이 나란히 있어요. 문 앞에 서면 「이동」 버튼이 떠요. 위쪽 🌍 버튼이나 ☰ 메뉴에서도 바로 갈 수 있어요.</p>
       </div>
       <div class="help-sec">
         <h3>⌨️ 키보드 블록</h3>
@@ -3521,6 +3526,11 @@ function buildMap() {
 
   /* ⑥ 👗 드레스 투 임프레스 문(원더랜드) + 🏰 3탄으로 이어지는 문(2탄 왕관 결승 구역) */
   portals.push({ id: 'dress', x: 2.4, y: 30.4, z: 0, icon: '👗', title: '드레스 투 임프레스', prompt: '👗 드레스 투 임프레스로 갈까요?', href: './dress-up.html', color: '#a97bff' });
+  /* ⑥-2 🏡 3D 놀이터 문 — 원더랜드 서쪽 잔디, 그로우·드레스 문 위쪽 빈 자리
+     (청룡열차 레일·벤치·나무와 안 겹치는 곳 / world-3d.html 3D 가족 마을 놀이터) */
+  portals.push({ id: 'play3d', x: 2.2, y: 18.4, z: 0, icon: '🏡', title: '3D 놀이터', prompt: '🏡 3D 놀이터로 갈까요?', href: './world-3d.html', color: '#5cc8ff' });
+  props.push({ k: 'balloons', x: 4.4, y: 19.6, z: 0, tint: '#7fd8ff' });
+
   /* 🛝·🤸 미끄럼틀·트램펄린 문 안내가 승강장 쪽에서 뜨지 않게 거리 체크는 문 앞 1.6칸로 */
   portals.push({ id: 'tw3', x: 98.5, y: 15, z: 6, icon: '🏰', title: '3탄 무지개 타워', prompt: '🏰 바로 3탄 무지개 타워로 이어서 도전!', href: '#tw3', color: '#ff7ac6' });
 
