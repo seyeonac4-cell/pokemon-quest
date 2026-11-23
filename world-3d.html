@@ -158,6 +158,73 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 #glerr button{margin-top:14px;min-height:46px;padding:0 20px;border-radius:14px;background:#4a90e2;color:#fff;
   font-size:14.5px;font-weight:900}
 
+/* ---------- 오른쪽 도구 (블록 월드 문 · 수영 · 밧줄) ---------- */
+#tools{position:absolute;right:10px;bottom:calc(126px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column-reverse;align-items:flex-end;gap:7px;pointer-events:none;z-index:4;max-width:62vw}
+#toolActions{display:flex;flex-direction:column-reverse;align-items:flex-end;gap:7px}
+#toolActions:empty{display:none}
+#tools .tb2{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:42px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.96);border:2px solid #fff;
+  box-shadow:var(--shadow);font-size:13px;font-weight:900;color:var(--ink2);white-space:nowrap;
+  touch-action:manipulation;max-width:62vw;overflow:hidden;text-overflow:ellipsis;transition:transform .1s}
+#tools .tb2:active{transform:scale(.95)}
+#tools .tb2.gold{background:linear-gradient(180deg,#fff6c9,#ffd75e);color:#6b4700;border-color:#fff3c4}
+#tools .tb2.green{background:linear-gradient(180deg,#e6fff7,#8ff0cf);color:#0a5b42;border-color:#d6fff0}
+#tools .tb2.pink{background:linear-gradient(180deg,#ffe9f3,#ffb3d1);color:#7a2145;border-color:#ffdcea}
+#tools .tb2.blue{background:linear-gradient(180deg,#e8f5ff,#93d4ff);color:#0a4a72;border-color:#d5efff}
+
+#swimPanel{pointer-events:auto;width:178px;background:rgba(255,255,255,.96);border:2px solid #fff;border-radius:18px;
+  padding:9px 9px 8px;box-shadow:var(--shadow);display:none}
+#swimPanel .spT{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:900;
+  color:var(--muted);margin:0 2px 6px}
+#swimPanel .spT b{color:#0a4a72;font-size:12.5px}
+.spGrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.spGrid button{height:38px;border-radius:11px;background:#eef5ff;font-size:12.5px;font-weight:900;color:#3a4c74;
+  border:2px solid #e2ecfb;touch-action:manipulation}
+.spGrid button[aria-pressed="true"]{background:linear-gradient(180deg,#d9f0ff,#8fd4ff);border-color:#63bdf5;
+  color:#0a4a72;box-shadow:0 3px 9px rgba(40,120,180,.22)}
+.spWide{width:100%;margin-top:6px;min-height:40px;border-radius:12px;background:linear-gradient(180deg,#fff6c9,#ffd75e);
+  color:#6b4700;font-size:13px;font-weight:900;touch-action:manipulation;border:2px solid #ffe9a8}
+.spWide.gray{background:#eef2fb;color:#4a5878;border-color:#e2e9f7}
+.spWide:active{transform:scale(.97)}
+
+#countdown{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%) scale(.55);font-size:80px;
+  font-weight:900;color:#fff;text-shadow:0 8px 26px rgba(10,40,90,.55),0 2px 0 rgba(0,70,120,.35);
+  opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;z-index:5;letter-spacing:-.02em}
+#countdown.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#countdown.go{color:#ffe066}
+
+#raceHud{position:absolute;left:50%;top:calc(92px + env(safe-area-inset-top,0px));transform:translateX(-50%);
+  display:none;flex-direction:column;gap:2px;min-width:188px;max-width:88vw;padding:7px 12px;border-radius:14px;
+  background:rgba(18,38,70,.62);color:#fff;font-size:12px;font-weight:800;pointer-events:none;z-index:4}
+#raceHud.show{display:flex}
+#raceHud .rl{display:flex;justify-content:space-between;gap:10px;white-space:nowrap}
+#raceHud .rl b{color:#ffe066}
+#raceHud .bar{height:5px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden;margin:2px 0 1px}
+#raceHud .bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#7fe8c6,#ffe066);border-radius:99px;transition:width .18s}
+
+#raceWrap{position:absolute;inset:0;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(20,30,60,0);transition:background .25s;z-index:7}
+#raceWrap.open{pointer-events:auto;background:rgba(20,30,60,.42)}
+#raceSheet{width:100%;max-width:440px;margin:0 10px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;
+  border-radius:24px 24px 20px 20px;padding:16px 14px 14px;box-shadow:0 -8px 34px rgba(20,30,60,.32);
+  transform:translateY(120%);transition:transform .26s cubic-bezier(.2,.9,.2,1);max-height:78vh;overflow:auto}
+#raceWrap.open #raceSheet{transform:none}
+#raceSheet h3{margin:0 0 4px;font-size:17px;font-weight:900;letter-spacing:-.02em}
+#raceSheet p{margin:0 0 10px;font-size:12.5px;line-height:1.45;color:var(--muted);font-weight:700}
+.rBtn{display:flex;align-items:center;gap:9px;width:100%;min-height:46px;padding:9px 12px;border-radius:16px;
+  background:#f4f7ff;border:2px solid #e6ecfa;font-size:14.5px;font-weight:900;color:var(--ink);text-align:left;
+  margin-bottom:7px;touch-action:manipulation}
+.rBtn:active{transform:scale(.98)}
+.rBtn small{display:block;font-size:11.5px;color:var(--muted);font-weight:700;margin-top:1px}
+.rBtn.go{background:linear-gradient(180deg,#fff6c9,#ffd75e);border-color:#ffe9a8;color:#6b4700}
+.rBtn.go small{color:#8a6a1a}
+.rankRow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#f6f9ff;
+  margin-bottom:5px;font-size:13.5px;font-weight:800;color:var(--ink)}
+.rankRow.me{background:#fff6d8;border:2px solid #ffe9a8}
+.rankRow .rk{width:20px;text-align:center;font-size:14px}
+.rankRow .rt{margin-left:auto;font-variant-numeric:tabular-nums}
+
 @media (max-width:360px){
   .pill{height:33px;font-size:13px;padding:0 10px}
   .tb{height:33px;font-size:13.5px;padding:0 8px}
@@ -195,6 +262,27 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 
   <div id="joy" aria-label="이동 조이스틱"><div id="joyKnob">🕹️</div></div>
   <button id="jumpBtn" type="button" aria-label="점프"><span class="ji">⬆️</span><span>점프</span></button>
+
+  <!-- 🚪 블록 월드 문 · 🏊 수영 · 🪢 밧줄 도구 -->
+  <div id="tools">
+    <div id="toolActions"></div>
+    <div id="swimPanel">
+      <div class="spT"><span>🏊 영법</span><b id="strokeNow">자유형</b></div>
+      <div class="spGrid">
+        <button type="button" data-stroke="free" aria-pressed="true">🏊‍♀️ 자유형</button>
+        <button type="button" data-stroke="back" aria-pressed="false">🙃 배영</button>
+        <button type="button" data-stroke="fly" aria-pressed="false">🦋 접영</button>
+        <button type="button" data-stroke="breast" aria-pressed="false">🐸 평영</button>
+      </div>
+      <button type="button" class="spWide" id="raceOpenBtn">🏁 대결 시작</button>
+      <button type="button" class="spWide gray" id="swimExitBtn">🏖️ 물 밖으로</button>
+    </div>
+  </div>
+  <div id="raceHud" aria-live="polite"></div>
+  <div id="countdown" aria-hidden="true"></div>
+  <div id="raceWrap">
+    <div id="raceSheet" role="dialog" aria-label="수영장 대결"></div>
+  </div>
 
   <div id="sheetWrap">
     <div id="sheet" role="dialog" aria-label="누구로 놀까요">
@@ -332,6 +420,12 @@ function boot() {
     star() { [740, 988, 1245, 1480].forEach((f, i) => setTimeout(() => this.tone(f, 0.16, 'triangle', 0.2), i * 85)); },
     slide() { this.tone(900, 0.45, 'sine', 0.14, 220); },
     pop() { this.tone(620, 0.09, 'square', 0.09, 900); },
+    splash() { this.tone(700, 0.24, 'sine', 0.16, 170); setTimeout(() => this.tone(430, 0.16, 'triangle', 0.1, 120), 45); },
+    squelch() { this.tone(120, 0.32, 'sawtooth', 0.1, 60); setTimeout(() => this.tone(88, 0.2, 'square', 0.06, 48), 120); },
+    cheer() { [660, 880, 1040, 1320].forEach((f, i) => setTimeout(() => this.tone(f, 0.14, 'triangle', 0.15), i * 70)); },
+    beep() { this.tone(880, 0.11, 'square', 0.1); },
+    go() { this.tone(1180, 0.26, 'triangle', 0.2, 700); },
+    whoosh() { this.tone(300, 0.3, 'sine', 0.11, 900); },
     windStart() {
       if (!this.ac || this.wind || !this.on) return;
       const len = 2 * this.ac.sampleRate;
@@ -614,7 +708,7 @@ function boot() {
      7. 나무 · 돌 · 마을 광장
      ============================================================ */
   (function trees() {
-    const spots = [[-27, 12], [-22, 26], [-8, 27], [4, 26], [15, 24], [24, 16], [27, 2], [26, -12],
+    const spots = [[-27, 12], [-22, 26], [-8, 27], [4, 26], [25, 27], [24, 16], [27, 2], [26, -12],
                    [-26, -8], [-24, -22], [20, -26], [-2, -30], [12, -12], [-6, 16]];
     spots.forEach((s, i) => {
       const x = s[0], z = s[1];
@@ -852,6 +946,237 @@ function boot() {
       });
     }
   }
+
+  /* ============================================================
+     11-B. 🚪 블록 월드 문 · 🏊 수영장 · 🐷 진흙탕 (월드 꾸미기)
+     ============================================================ */
+
+  /* ---------- 🚪 블록 월드로 가는 문 ---------- */
+  const PORTAL = { x: 3.6, z: 8.2 };
+  let portalGlow = null, portalRing = null;
+  const portalBricks = [];
+  (function buildPortal() {
+    const g = new THREE.Group();
+    g.position.set(PORTAL.x, 0, PORTAL.z);
+    scene.add(g);
+    // 단
+    addBox(g, 3.4, 0.2, 1.8, 0, 0.1, 0, '#e7defb');
+    addBox(g, 3.0, 0.06, 1.4, 0, 0.235, 0, '#cdbdf7', { cast: false });
+    // 기둥 (블록 6단)
+    const cols = ['#6f4fd0', '#8f6ff0', '#b3a0ff'];
+    [-1.2, 1.2].forEach((px) => {
+      for (let i = 0; i < 6; i++) {
+        addBox(g, 0.6, 0.46, 0.6, px, 0.45 + i * 0.5, 0, cols[i % 3]);
+        addBox(g, 0.66, 0.06, 0.66, px, 0.68 + i * 0.5, 0, '#efe8ff', { cast: false });
+      }
+      const orb = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), new THREE.MeshBasicMaterial({ color: 0xe9dfff }));
+      orb.position.set(px, 3.62, 0);
+      g.add(orb);
+    });
+    // 아치
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.24, 8, 22, Math.PI), mat('#7b5bd6'));
+    arc.position.set(0, 3.42, 0);
+    arc.castShadow = true;
+    g.add(arc);
+    // 반짝이는 문
+    const glowTex = (function () {
+      const c = document.createElement('canvas'); c.width = c.height = 64;
+      const x = c.getContext('2d');
+      const gr = x.createRadialGradient(32, 32, 4, 32, 32, 32);
+      gr.addColorStop(0, 'rgba(255,255,255,.95)');
+      gr.addColorStop(0.45, 'rgba(170,140,255,.55)');
+      gr.addColorStop(1, 'rgba(120,90,240,0)');
+      x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
+      const t = new THREE.CanvasTexture(c);
+      if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    })();
+    portalGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.7),
+      new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0.88, depthWrite: false, side: THREE.DoubleSide }));
+    portalGlow.position.set(0, 1.98, 0);
+    g.add(portalGlow);
+    portalRing = new THREE.Mesh(new THREE.TorusGeometry(1.02, 0.07, 8, 30),
+      new THREE.MeshBasicMaterial({ color: 0xd9c8ff, transparent: true, opacity: 0.85 }));
+    portalRing.position.set(0, 1.98, 0.03);
+    g.add(portalRing);
+    // 둥둥 떠 있는 블록
+    [[-0.78, 2.5, 0.18], [0.86, 2.15, 0.1], [0.05, 3.02, 0.28]].forEach((p) => {
+      const b = addBox(g, 0.3, 0.3, 0.3, p[0], p[1], p[2], '#ffd75e', { cast: false });
+      b.userData.baseY = p[1];
+      portalBricks.push(b);
+    });
+    makeSign(['🧱 블록 월드', '문으로 들어가요!'], PORTAL.x, 4.85, PORTAL.z + 0.1, 2.4, 1.2, { post: false });
+    solidRect(PORTAL.x - 1.2, PORTAL.z, 0.64, 0.64, 3.2);
+    solidRect(PORTAL.x + 1.2, PORTAL.z, 0.64, 0.64, 3.2);
+    solidRect(PORTAL.x, PORTAL.z, 3.0, 1.5, 0.2);
+  })();
+
+  /* ---------- 🏊 4레인 수영장 ---------- */
+  const POOL = {
+    x0: 9.6, x1: 18.4, z0: 15.6, z1: 28.4,
+    deck: 0.22, water: 0.62,
+    laneX: [10.7, 12.9, 15.1, 17.3],
+    startZ: 16.6, finishZ: 27.6
+  };
+  let waterMesh = null, waterTex = null;
+  function tileTexture(a, b) {
+    const c = document.createElement('canvas'); c.width = c.height = 128; c.width = 128; c.height = 128;
+    const g = c.getContext('2d');
+    g.fillStyle = a; g.fillRect(0, 0, 128, 128);
+    g.strokeStyle = b; g.lineWidth = 6;
+    for (let i = 0; i <= 128; i += 32) {
+      g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 128); g.stroke();
+      g.beginPath(); g.moveTo(0, i); g.lineTo(128, i); g.stroke();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+  function waterTexture() {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const gr = g.createLinearGradient(0, 0, 128, 128);
+    gr.addColorStop(0, '#3cb8f2'); gr.addColorStop(0.5, '#63d3ff'); gr.addColorStop(1, '#2ea6e8');
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 3; g.lineCap = 'round';
+    for (let i = 0; i < 5; i++) {
+      g.beginPath();
+      for (let x = 0; x <= 128; x += 8) {
+        const y = 16 + i * 24 + Math.sin((x / 128) * Math.PI * 2 + i) * 5;
+        if (x) g.lineTo(x, y); else g.moveTo(x, y);
+      }
+      g.stroke();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(3, 5);
+    if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+    return t;
+  }
+  (function buildPool() {
+    const cx = (POOL.x0 + POOL.x1) / 2, cz = (POOL.z0 + POOL.z1) / 2;
+    const W = POOL.x1 - POOL.x0, D = POOL.z1 - POOL.z0, t = 1.0;
+    // 데크(둘레) — 물이 들어갈 자리에는 바닥을 두지 않아요
+    const deckC = '#f6faff';
+    addBox(scene, W + t * 2, POOL.deck, t, cx, POOL.deck / 2, POOL.z0 - t / 2, deckC);
+    addBox(scene, W + t * 2, POOL.deck, t, cx, POOL.deck / 2, POOL.z1 + t / 2, deckC);
+    addBox(scene, t, POOL.deck, D, POOL.x0 - t / 2, POOL.deck / 2, cz, deckC);
+    addBox(scene, t, POOL.deck, D, POOL.x1 + t / 2, POOL.deck / 2, cz, deckC);
+    solidRect(cx, POOL.z0 - t / 2, W + t * 2, t, POOL.deck);
+    solidRect(cx, POOL.z1 + t / 2, W + t * 2, t, POOL.deck);
+    solidRect(POOL.x0 - t / 2, cz, t, D, POOL.deck);
+    solidRect(POOL.x1 + t / 2, cz, t, D, POOL.deck);
+    // 데크 파란 테두리
+    addBox(scene, W + 0.12, 0.05, 0.12, cx, POOL.deck + 0.025, POOL.z0 - 0.06, '#5fc7ee', { cast: false });
+    addBox(scene, W + 0.12, 0.05, 0.12, cx, POOL.deck + 0.025, POOL.z1 + 0.06, '#5fc7ee', { cast: false });
+    addBox(scene, 0.12, 0.05, D, POOL.x0 - 0.06, POOL.deck + 0.025, cz, '#5fc7ee', { cast: false });
+    addBox(scene, 0.12, 0.05, D, POOL.x1 + 0.06, POOL.deck + 0.025, cz, '#5fc7ee', { cast: false });
+    // 물속 바닥 · 벽
+    const ft = tileTexture('#8fdcf7', '#b6ecff');
+    ft.repeat.set(6, 9);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, D - 0.2), new THREE.MeshLambertMaterial({ map: ft }));
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set(cx, 0.035, cz);
+    floor.receiveShadow = true;
+    scene.add(floor);
+    addBox(scene, W, 0.6, 0.16, cx, 0.3, POOL.z0 + 0.08, '#69cdf2', { cast: false });
+    addBox(scene, W, 0.6, 0.16, cx, 0.3, POOL.z1 - 0.08, '#69cdf2', { cast: false });
+    addBox(scene, 0.16, 0.6, D, POOL.x0 + 0.08, 0.3, cz, '#69cdf2', { cast: false });
+    addBox(scene, 0.16, 0.6, D, POOL.x1 - 0.08, 0.3, cz, '#69cdf2', { cast: false });
+    // 물결
+    waterTex = waterTexture();
+    waterMesh = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.12, D - 0.12),
+      new THREE.MeshLambertMaterial({ map: waterTex, transparent: true, opacity: 0.8 }));
+    waterMesh.rotation.x = -Math.PI / 2;
+    waterMesh.position.set(cx, POOL.water, cz);
+    scene.add(waterMesh);
+    // 레인 줄 (빨강·하양 구슬)
+    const floatGeo = new THREE.SphereGeometry(0.1, 8, 6);
+    [11.8, 14.0, 16.2].forEach((lx) => {
+      let i = 0;
+      for (let z = POOL.z0 + 0.55; z < POOL.z1 - 0.3; z += 0.72) {
+        const m = new THREE.Mesh(floatGeo, mat(i++ % 2 ? '#ffffff' : '#ff5b6e'));
+        m.position.set(lx, POOL.water + 0.05, z);
+        scene.add(m);
+      }
+    });
+    // 출발대 4개
+    POOL.laneX.forEach((lx, i) => {
+      addBox(scene, 0.54, 0.34, 0.64, lx, POOL.deck + 0.17, POOL.z0 - 0.44, '#ffffff');
+      addBox(scene, 0.48, 0.06, 0.5, lx, POOL.deck + 0.37, POOL.z0 - 0.44, '#4a90e2', { cast: false });
+      makeSign([String(i + 1)], lx, POOL.deck + 0.98, POOL.z0 - 0.44, 0.42, 0.42, { post: false });
+    });
+    // 결승선 (바닥 줄무늬)
+    for (let i = 0; i < 8; i++) {
+      addBox(scene, W / 8, 0.02, 0.44, POOL.x0 + W / 16 + i * (W / 8), 0.06, POOL.finishZ,
+        i % 2 ? '#ffffff' : '#ff5b6e', { cast: false });
+    }
+    // 출발선
+    addBox(scene, W, 0.02, 0.22, cx, 0.06, POOL.startZ, '#ffffff', { cast: false });
+    makeSign(['🏁 결승선'], cx, 2.05, POOL.finishZ - 0.1, 1.5, 0.75, { post: false });
+    makeSign(['🏊‍♀️ 수영장', '4레인 · 대결!'], cx, 3.1, POOL.z0 - 3.0, 2.4, 1.2, { post: true });
+  })();
+
+  /* ---------- 🐷 진흙탕 (머드 퍼들) ---------- */
+  const MUD = [
+    { x: -18.5, z: 19.5, rx: 4.3, rz: 3.1 },
+    { x: -11.0, z: 26.6, rx: 1.9, rz: 1.5 },
+    { x: -25.4, z: 23.0, rx: 2.0, rz: 1.6 }
+  ];
+  const mudBubbles = [];
+  function mudTexture() {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d');
+    g.fillStyle = '#8a5f38'; g.fillRect(0, 0, 128, 128);
+    const sh = ['#7a5230', '#94663c', '#6b4a2e', '#9c6f45'];
+    for (let i = 0; i < 240; i++) {
+      g.fillStyle = sh[i % sh.length];
+      g.beginPath(); g.arc(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 7, 0, Math.PI * 2); g.fill();
+    }
+    g.fillStyle = 'rgba(255,255,255,.18)';
+    for (let i = 0; i < 12; i++) {
+      g.beginPath(); g.ellipse(Math.random() * 128, Math.random() * 128, 4 + Math.random() * 6, 2 + Math.random() * 3, 0, 0, Math.PI * 2); g.fill();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(2.4, 1.8);
+    if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+  (function buildMud() {
+    const tex = mudTexture();
+    MUD.forEach((p, i) => {
+      const m = new THREE.Mesh(new THREE.CircleGeometry(1, 30),
+        new THREE.MeshLambertMaterial({ map: tex, color: i === 0 ? 0xffffff : 0xf0e2d0 }));
+      m.rotation.x = -Math.PI / 2;
+      m.scale.set(p.rx, p.rz, 1);
+      m.position.set(p.x, 0.04, p.z);
+      m.receiveShadow = true;
+      scene.add(m);
+      for (let j = 0; j < 10; j++) {
+        const a = (j / 10) * Math.PI * 2 + i * 0.7;
+        const lump = new THREE.Mesh(new THREE.SphereGeometry(0.24 + (j % 3) * 0.07, 8, 6), mat('#6b4a2e'));
+        lump.position.set(p.x + Math.cos(a) * p.rx * 0.94, 0.07, p.z + Math.sin(a) * p.rz * 0.94);
+        lump.scale.y = 0.4;
+        lump.castShadow = false;
+        scene.add(lump);
+      }
+      for (let j = 0; j < 5; j++) {
+        const b = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), mat('#a37a4e'));
+        const bx = p.x + (Math.random() - 0.5) * p.rx * 1.1;
+        const bz = p.z + (Math.random() - 0.5) * p.rz * 1.1;
+        b.position.set(bx, 0.07, bz);
+        b.scale.y = 0.55;
+        b.userData.t = Math.random() * 3;
+        b.userData.baseY = 0.07;
+        scene.add(b);
+        mudBubbles.push(b);
+      }
+    });
+    makeSign(['🐷 진흙탕', '빠지면 밧줄이 필요해요!'], -18.5, 2.35, 15.1, 2.6, 1.3, { post: true });
+  })();
 
   /* ============================================================
      12. 블록 캐릭터
@@ -1252,7 +1577,7 @@ function boot() {
   if (WC) {
     if (TEST) { try { WC.connect = function () {}; } catch (e) {} }   // 🧪 서버로 아무것도 보내지 않아요
     try {
-      WC.init({ kid: me, test: TEST, onValue: paintCoins });
+      WC.init({ kid: me, test: TEST || qp('wctest') === '1' || qp('bwtest') === '1', onValue: paintCoins });
       WC.setKid(me);
       paintCoins(WC.get(me));
     } catch (e) {}
@@ -1279,6 +1604,13 @@ function boot() {
   function setWho(who) {
     const w = normWho(who);
     if (!w || w === me) { if (w) toast(PEOPLE[w].emoji + ' ' + PEOPLE[w].name + '으로 놀고 있어요'); return; }
+    const oldMe = me;
+    if (RACE.on) {
+      if (RACE.family && RACE.host === oldMe) { try { FB.swim.child('state').remove(); } catch (e) {} }
+      resetRaceLocal(); closeRaceSheet();
+    }
+    if (P.stuck) { P.stuck = null; mudBubble.visible = false; }
+    if (!NOFB && FB.ready && FB.mud) { try { FB.mud.child('stuck/' + oldMe).remove(); } catch (e) {} }
     me = w;
     store(K_ACTIVE, w);
     try { if (WC) { WC.setKid(w); paintCoins(WC.get(w)); } } catch (e) {}
@@ -1292,6 +1624,7 @@ function boot() {
     $('#profName').textContent = PEOPLE[me].name;
     P.riding = null; P.vy = 0;
     resetPlayer(w);
+    bindRescue();
     toast(PEOPLE[w].emoji + ' ' + PEOPLE[w].name + '으로 놀아요! ' + (ADULTS[w] ? '시간 제한 없음' : '20분 놀이 시작'));
     AU.pop();
     fbPush(true);
@@ -1302,6 +1635,8 @@ function boot() {
     P.x = -2.4 + (off[who] || 0); P.z = 12.5;
     P.y = 0; P.vy = 0; P.grounded = true; P.lockUntil = 0;
     P.face = 0;
+    P.swim = false; P.tilt = 0; P.stuck = null; P.swimWake = 0;
+    if (typeof mudBubble !== 'undefined' && mudBubble) mudBubble.visible = false;
     yaw = 0; pitch = 0.28;
   }
   $('#profEmo').textContent = PEOPLE[me].emoji;
@@ -1348,27 +1683,31 @@ function boot() {
     messagingSenderId: '186869020161',
     appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
   };
-  const FB = { ready: false, db: null, root: null, lastPush: 0, remotes: {}, avatars: {} };
+  const FB = { ready: false, db: null, root: null, lastPush: 0, remotes: {}, avatars: {},
+    offset: 0, offsetBound: false, swim: null, mud: null, lanesData: {}, stuckMap: {} };
   function fbPush(force) {
-    if (TEST || !FB.ready) return;
+    if (TEST || qp('wctest') === '1' || qp('bwtest') === '1' || !FB.ready) return;
     const now = performance.now();
-    const gap = (Math.abs(joy.x) + Math.abs(joy.y) > 0.05 || keys['w'] || keys['a'] || keys['s'] || keys['d'] || !P.grounded || P.riding) ? 220 : 1600;
+    const gap = (P.swim || P.stuck || Math.abs(joy.x) + Math.abs(joy.y) > 0.05 || keys['w'] || keys['a'] || keys['s'] || keys['d'] || !P.grounded || P.riding) ? 230 : 1600;
     if (!force && now - FB.lastPush < gap) return;
     FB.lastPush = now;
     const data = {
       who: me,
       x: Math.round(P.x * 10) / 10, y: Math.round(P.y * 10) / 10, z: Math.round(P.z * 10) / 10,
       face: Math.round(P.face * 100) / 100,
-      moving: (Math.abs(joy.x) + Math.abs(joy.y) > 0.05 || keys['w'] || keys['a'] || keys['s'] || keys['d']) ? 1 : 0,
+      moving: (P.swim || Math.abs(joy.x) + Math.abs(joy.y) > 0.05 || keys['w'] || keys['a'] || keys['s'] || keys['d']) ? 1 : 0,
       air: P.grounded ? 0 : 1,
       ride: P.riding ? 1 : 0,
+      swim: P.swim ? 1 : 0,
+      stroke: P.stroke || 'free',
+      mud: P.stuck ? 1 : 0,
       view: viewMode,
       ts: Date.now()
     };
     try { FB.root.child('live/' + me).set(data); } catch (e) {}
   }
   function fbInit() {
-    if (TEST) return;                       // 🧪 테스트에서는 Firebase 를 아예 만지지 않아요
+    if (TEST || qp('wctest') === '1' || qp('bwtest') === '1') return;   // 🧪 테스트에서는 Firebase 를 아예 만지지 않아요
     if (typeof firebase === 'undefined' || !firebase.initializeApp) { setTimeout(fbInit, 700); return; }
     try {
       const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(FB_CFG);
@@ -1417,17 +1756,34 @@ function boot() {
         scene.add(av);
         FB.avatars[k] = av;
       }
-      const tx = v.x, ty = v.y, tz = v.z;
+      const isSwim = !!v.swim;
+      const back = v.stroke === 'back';
+      const lift = isSwim ? 0.9 : 0;
+      const tx = v.x + Math.sin(v.face || 0) * lift;
+      const tz = v.z + Math.cos(v.face || 0) * lift;
+      const ty = v.y;
       const lerpK = 1 - Math.exp(-12 * dt);
       av.position.x += (tx - av.position.x) * lerpK;
       av.position.y += (ty - av.position.y) * lerpK;
       av.position.z += (tz - av.position.z) * lerpK;
-      let d = (v.face || 0) - av.rotation.y;
+      av.rotation.order = 'YXZ';
+      av.rotation.x = isSwim ? (back ? -Math.PI / 2 : Math.PI / 2) : 0;
+      let d = ((v.face || 0) + (isSwim && back ? Math.PI : 0)) - av.rotation.y;
       while (d > Math.PI) d -= Math.PI * 2;
       while (d < -Math.PI) d += Math.PI * 2;
       av.rotation.y += d * Math.min(1, dt * 10);
       const spd = v.moving ? 4.2 : 0;
-      animateAvatar(av, dt, spd, !v.air, !!v.ride);
+      if (isSwim) swimPose(av, dt, v.stroke || 'free', v.moving ? 1 : 0.25);
+      else animateAvatar(av, dt, spd, !v.air, !!v.ride);
+      if (v.mud && !av.userData.mudBub) {
+        const b = makeBubbleSprite(['🐷 도와주세요!', '밧줄이 필요해요'], 2.0, 1.0);
+        b.position.set(0, 2.55, 0);
+        av.add(b);
+        av.userData.mudBub = b;
+      } else if (!v.mud && av.userData.mudBub) {
+        av.remove(av.userData.mudBub);
+        av.userData.mudBub = null;
+      }
     }
     for (const k in FB.avatars) {
       if (seen[k]) continue;
@@ -1448,7 +1804,7 @@ function boot() {
   let fovBase = (window.innerWidth / window.innerHeight) < 0.85 ? 68 : 60;
   let fovNow = fovBase;
   function updateCamera(dt) {
-    const eyeY = P.y + 1.72;
+    const eyeY = P.y + (P.swim ? 0.7 : 1.72);
     if (P.riding) {
       const p = slideCurve.getPointAt(Math.min(0.999, P.riding.t));
       const tan = slideCurve.getTangentAt(Math.min(0.999, P.riding.t));
@@ -1480,13 +1836,15 @@ function boot() {
       return;
     }
     // 3인칭 백뷰
-    const wantTarget = tmpV2.set(P.x, P.y + 1.5, P.z);
+    const fwd = P.swim ? 0.45 : 0;
+    const wantTarget = tmpV2.set(P.x + Math.sin(P.face) * fwd, P.y + (P.swim ? 0.55 : 1.5), P.z + Math.cos(P.face) * fwd);
     camTarget.lerp(wantTarget, 1 - Math.exp(-14 * dt));
+    const dist = P.swim ? 4.1 : camDist;
     const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const want = tmpV.set(
-      camTarget.x + Math.sin(yaw) * camDist * cp,
-      camTarget.y + camDist * sp + 0.42,
-      camTarget.z + Math.cos(yaw) * camDist * cp
+      camTarget.x + Math.sin(yaw) * dist * cp,
+      camTarget.y + dist * sp + (P.swim ? 0.28 : 0.42),
+      camTarget.z + Math.cos(yaw) * dist * cp
     );
     if (want.y < 0.9) want.y = 0.9;
     camPos.lerp(want, 1 - Math.exp(-11 * dt));
@@ -1553,6 +1911,872 @@ function boot() {
   }
 
   /* ============================================================
+     19-B. 🚪 문 · 🏊 수영 · 🐷 진흙탕 · 🪢 밧줄 (플레이 규칙)
+     ============================================================ */
+  const NOFB = TEST || qp('wctest') === '1' || qp('bwtest') === '1';
+  const NOW = () => Date.now() + (FB.offset || 0);
+  function nameOf(w) { const pp = PEOPLE[w]; return pp ? pp.emoji + ' ' + pp.name : '가족'; }
+
+  /* ---------- 영법 4종 ---------- */
+  const STROKES = {
+    free:   { name: '자유형', emo: '🏊‍♀️', speed: 5.6 },
+    back:   { name: '배영',   emo: '🙃',  speed: 4.6 },
+    fly:    { name: '접영',   emo: '🦋',  speed: 5.1 },
+    breast: { name: '평영',   emo: '🐸',  speed: 3.9 }
+  };
+  const STROKE_ORDER = ['free', 'back', 'fly', 'breast'];
+  P.swim = false; P.tilt = 0; P.stroke = 'free';
+  P.stuck = null; P.stuckAt = 0; P.swimWake = 0; P.stuckWarn = false; P.mudFree = 0;
+
+  const insidePool = (x, z) => x > POOL.x0 + 0.04 && x < POOL.x1 - 0.04 && z > POOL.z0 + 0.04 && z < POOL.z1 - 0.04;
+  const POOL_LEN = POOL.finishZ - POOL.startZ;
+
+  /* ---------- 물결 · 물보라 ---------- */
+  const ripples = [];
+  const rippleGeo = new THREE.RingGeometry(0.3, 0.46, 20);
+  function ripple(x, z, color) {
+    const m = new THREE.Mesh(rippleGeo, new THREE.MeshBasicMaterial({
+      color: color || 0xffffff, transparent: true, opacity: 0.72, side: THREE.DoubleSide, depthWrite: false
+    }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(x, POOL.water + 0.012, z);
+    scene.add(m);
+    ripples.push({ m: m, life: 0, max: 1.15 });
+  }
+  function splashWater(x, z, n) { burst(new THREE.Vector3(x, POOL.water + 0.08, z), 0xe8f8ff, n || 10); }
+  function splashMud(x, z, n) { burst(new THREE.Vector3(x, 0.45, z), 0x8a5f38, n || 12); }
+
+  /* ---------- 영법 모션 (팔·다리 3D) ---------- */
+  let swimPhase = 0;
+  function swimPose(av, dt, stroke, k) {
+    const u = av && av.userData;
+    if (!u || !u.armL) return;
+    swimPhase += dt * (3.2 + (k || 0) * 3.6);
+    const s = Math.sin(swimPhase);
+    if (stroke === 'back') {
+      u.armL.rotation.set(-1.95 + s * 1.5, 0, 0.34);
+      u.armR.rotation.set(-1.95 - s * 1.5, 0, -0.34);
+      u.legL.rotation.set(s * 0.24, 0, 0);
+      u.legR.rotation.set(-s * 0.24, 0, 0);
+    } else if (stroke === 'fly') {
+      const w = Math.sin(swimPhase * 0.9);
+      u.armL.rotation.set(-2.05 + w * 1.95, 0, 0.32);
+      u.armR.rotation.set(-2.05 + w * 1.95, 0, -0.32);
+      u.legL.rotation.set(w * 0.5, 0, 0.05);
+      u.legR.rotation.set(w * 0.5, 0, -0.05);
+    } else if (stroke === 'breast') {
+      const w = (Math.sin(swimPhase * 0.8) + 1) / 2;
+      u.armL.rotation.set(-2.6 + w * 1.5, 0, 0.14 + w * 0.95);
+      u.armR.rotation.set(-2.6 + w * 1.5, 0, -0.14 - w * 0.95);
+      const f = Math.max(0, Math.sin(swimPhase * 0.8 + 0.6));
+      u.legL.rotation.set(-0.1, 0, 0.16 + f * 0.6);
+      u.legR.rotation.set(-0.1, 0, -0.16 - f * 0.6);
+    } else {
+      u.armL.rotation.set(-1.55 + s * 1.45, 0, 0.18);
+      u.armR.rotation.set(-1.55 - s * 1.45, 0, -0.18);
+      u.legL.rotation.set(s * 0.42, 0, 0);
+      u.legR.rotation.set(-s * 0.42, 0, 0);
+    }
+  }
+
+  /* ---------- 말풍선 ---------- */
+  function makeBubbleSprite(lines, w, h) {
+    const c = document.createElement('canvas'); c.width = 720; c.height = 360;
+    const g = c.getContext('2d');
+    const r = 46, x0 = 10, y0 = 10, x1 = 710, y1 = 300;
+    g.fillStyle = 'rgba(255,255,255,.97)';
+    g.strokeStyle = 'rgba(120,90,60,.55)';
+    g.lineWidth = 8;
+    g.beginPath();
+    g.moveTo(x0 + r, y0); g.lineTo(x1 - r, y0); g.quadraticCurveTo(x1, y0, x1, y0 + r);
+    g.lineTo(x1, y1 - r); g.quadraticCurveTo(x1, y1, x1 - r, y1);
+    g.lineTo(380, y1); g.lineTo(340, 350); g.lineTo(320, y1);
+    g.lineTo(x0 + r, y1); g.quadraticCurveTo(x0, y1, x0, y1 - r);
+    g.lineTo(x0, y0 + r); g.quadraticCurveTo(x0, y0, x0 + r, y0); g.closePath();
+    g.fill(); g.stroke();
+    g.fillStyle = '#3a2a1a';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (lines.length === 1) {
+      g.font = 'bold 62px "Jua", sans-serif';
+      g.fillText(lines[0], 360, 158);
+    } else {
+      g.font = 'bold 54px "Jua", sans-serif';
+      g.fillText(lines[0], 360, 118);
+      g.font = 'bold 41px "Jua", sans-serif';
+      g.fillStyle = '#5a4632';
+      g.fillText(lines[1], 360, 212);
+    }
+    const t = new THREE.CanvasTexture(c);
+    if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthTest: false }));
+    sp.scale.set(w || 3.4, h || 1.7, 1);
+    sp.renderOrder = 30;
+    return sp;
+  }
+  const mudBubble = makeBubbleSprite(['🐷 앗! 진흙탕에 빠졌어요!', '누군가 밧줄을 던져줘야 나올 수 있어요!'], 3.6, 1.8);
+  mudBubble.visible = false;
+  scene.add(mudBubble);
+
+  /* ---------- 🪢 밧줄 ---------- */
+  const ROPE = { mesh: null, on: false, t: 0, dur: 0.5, hold: 0, from: new THREE.Vector3(), to: new THREE.Vector3(), onEnd: null };
+  (function makeRope() {
+    const geo = new THREE.CylinderGeometry(0.05, 0.05, 1, 7, 1);
+    geo.translate(0, 0.5, 0);
+    ROPE.mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xd8a563 }));
+    ROPE.mesh.castShadow = false;
+    ROPE.mesh.visible = false;
+    scene.add(ROPE.mesh);
+  })();
+  const _upv = new THREE.Vector3(0, 1, 0);
+  function placeRope(a, b) {
+    if (!ROPE.mesh) return;
+    const d = a.distanceTo(b);
+    if (d < 0.02) { ROPE.mesh.visible = false; return; }
+    ROPE.mesh.visible = true;
+    ROPE.mesh.position.copy(a);
+    ROPE.mesh.scale.set(1, d, 1);
+    ROPE.mesh.quaternion.setFromUnitVectors(_upv, b.clone().sub(a).normalize());
+  }
+  function flingRope(from, to, dur, onEnd) {
+    ROPE.from.copy(from); ROPE.to.copy(to);
+    ROPE.t = 0; ROPE.hold = 0; ROPE.dur = dur || 0.5; ROPE.onEnd = onEnd || null; ROPE.on = true;
+    AU.whoosh();
+  }
+  function updateRope(dt) {
+    if (!ROPE.on) return;
+    ROPE.t += dt;
+    const k = Math.min(1, ROPE.t / ROPE.dur);
+    const tip = ROPE.from.clone().lerp(ROPE.to, k);
+    placeRope(ROPE.from, tip);
+    if (k >= 1) {
+      if (ROPE.onEnd) { const f = ROPE.onEnd; ROPE.onEnd = null; f(); }
+      ROPE.hold += dt;
+      if (ROPE.hold > 0.5) {
+        ROPE.on = false; ROPE.hold = 0;
+        if (ROPE.mesh) ROPE.mesh.visible = false;
+      }
+    }
+  }
+
+  /* ---------- 수영 상태 ---------- */
+  function paintStroke() {
+    $$('#swimPanel .spGrid button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.stroke === P.stroke ? 'true' : 'false'));
+    const el = $('#strokeNow');
+    if (el) el.textContent = (STROKES[P.stroke] || STROKES.free).name;
+  }
+  function setStroke(k) {
+    if (!STROKES[k] || P.stroke === k) return;
+    P.stroke = k;
+    paintStroke();
+    if (P.swim) { AU.pop(); toast(STROKES[k].emo + ' ' + STROKES[k].name + '!', 1400); }
+  }
+  function enterSwim() {
+    if (P.swim) return;
+    P.swim = true; P.stuck = null; P.riding = null;
+    P.vy = 0; P.grounded = true; P.tilt = 0;
+    P.y = POOL.water - 0.12;
+    P.lockUntil = performance.now() + 260;
+    splashWater(P.x, P.z, 18);
+    ripple(P.x, P.z, 0xbfefff);
+    AU.splash();
+    toast('🏊 물속에 들어왔어요! 영법을 골라 헤엄쳐요', 2600);
+    paintTools();
+  }
+  function exitSwim() {
+    if (!P.swim) return;
+    if (RACE.on) abortRaceLocal();
+    const west = Math.abs(P.x - POOL.x0) < Math.abs(P.x - POOL.x1);
+    P.x = west ? POOL.x0 - 0.75 : POOL.x1 + 0.75;
+    P.z = Math.min(POOL.z1 - 1.4, Math.max(POOL.z0 + 1.4, P.z));
+    P.y = POOL.deck; P.vy = 0; P.grounded = true; P.swim = false; P.tilt = 0;
+    P.lockUntil = performance.now() + 220;
+    AU.pop();
+    toast('🏖️ 수영장에서 나왔어요', 2000);
+    paintTools();
+  }
+  function updatePool(dt) {
+    if (!P.swim) {
+      P.tilt += (0 - P.tilt) * Math.min(1, dt * 10);
+      if (insidePool(P.x, P.z) && !P.stuck && !P.riding && P.y < 0.9) enterSwim();
+      return;
+    }
+    if (!insidePool(P.x, P.z)) { exitSwim(); return; }
+    P.y = POOL.water - 0.12 + Math.sin(performance.now() / 640) * 0.025;
+    P.grounded = true; P.vy = 0; P.riding = null;
+    const m = 0.42;
+    P.x = Math.min(POOL.x1 - m, Math.max(POOL.x0 + m, P.x));
+    P.z = Math.min(POOL.z1 - m, Math.max(POOL.z0 + m, P.z));
+    P.tilt += ((P.stroke === 'back' ? -1 : 1) - P.tilt) * Math.min(1, dt * 7);
+    if (RACE.on && (RACE.phase === 'countdown' || RACE.phase === 'run')) {
+      const lx = POOL.laneX[Math.max(0, Math.min(3, RACE.lane))];
+      P.x = Math.min(lx + 0.6, Math.max(lx - 0.6, P.x));
+    }
+    P.swimWake -= dt;
+    if (P.speed > 0.6 && P.swimWake <= 0) {
+      P.swimWake = 0.3;
+      ripple(P.x, P.z, P.stroke === 'back' ? 0x9fe8ff : 0xffffff);
+      if (Math.random() < 0.55) splashWater(P.x, P.z, P.stroke === 'fly' ? 8 : 4);
+    }
+  }
+
+  /* ---------- 🐷 진흙탕 ---------- */
+  function mudAt(x, z) {
+    for (let i = 0; i < MUD.length; i++) {
+      const p = MUD[i];
+      const dx = (x - p.x) / p.rx, dz = (z - p.z) / p.rz;
+      if (dx * dx + dz * dz < 0.7) return p;
+    }
+    return null;
+  }
+  function sinkIn(pud) {
+    if (P.stuck || P.swim) return;
+    P.stuck = pud; P.stuckAt = performance.now(); P.stuckWarn = false;
+    P.vy = 0; P.grounded = true; P.riding = null;
+    splashMud(P.x, P.z, 18);
+    AU.squelch();
+    mudBubble.visible = true;
+    mudBubble.position.set(P.x, P.y + 2.6, P.z);
+    toast('🐷 앗! 진흙탕에 빠졌어요! 누군가 밧줄을 던져줘야 나올 수 있어요!', 4200);
+    if (!NOFB && FB.ready) {
+      try { FB.mud.child('stuck/' + me).set({ who: me, x: +P.x.toFixed(2), z: +P.z.toFixed(2), at: NOW() }); } catch (e) {}
+    }
+    paintTools();
+  }
+  function freeFromMud(by) {
+    if (!P.stuck) return;
+    P.stuck = null;
+    P.mudFree = performance.now() + 2200;
+    const p = mudAt(P.x, P.z);
+    if (p) {
+      const a = Math.atan2((P.z - p.z) / p.rz, (P.x - p.x) / p.rx);
+      P.x = p.x + Math.cos(a) * p.rx * 1.06;
+      P.z = p.z + Math.sin(a) * p.rz * 1.06;
+    }
+    P.y = 0; P.vy = 0; P.grounded = true;
+    mudBubble.visible = false;
+    splashMud(P.x, P.z, 16);
+    AU.cheer();
+    if (by) toast('🪢 ' + nameOf(by) + '가 밧줄을 던져 줬어요! 고마워요 💛', 3600);
+    else toast('🪢 비상 밧줄로 진흙탕에서 나왔어요!', 3000);
+    if (!NOFB && FB.ready) { try { FB.mud.child('stuck/' + me).remove(); } catch (e) {} }
+    paintTools();
+  }
+  const PULL = { on: false, t: 0, dur: 0.85, y0: 0, by: null };
+  function startPull(by) {
+    PULL.on = true; PULL.t = 0; PULL.y0 = P.y; PULL.by = by || null;
+    if (!NOFB && FB.ready) { try { FB.mud.child('rescue/' + me).remove(); } catch (e) {} }
+  }
+  function updatePull(dt) {
+    if (!PULL.on) return;
+    PULL.t += dt;
+    const k = Math.min(1, PULL.t / PULL.dur);
+    const s = 1 - Math.pow(1 - k, 2);
+    P.y = PULL.y0 * (1 - s) + Math.sin(k * Math.PI) * 0.45;
+    if (k >= 1) {
+      const by = PULL.by;
+      PULL.on = false;
+      P.y = 0;
+      freeFromMud(by);
+    }
+  }
+  function doRescue(by, bx, bz) {
+    if (!P.stuck || PULL.on) return;
+    const from = new THREE.Vector3(
+      typeof bx === 'number' ? bx : P.x + 2.6,
+      typeof bx === 'number' ? 1.25 : 1.55,
+      typeof bz === 'number' ? bz : P.z - 2.4
+    );
+    flingRope(from, new THREE.Vector3(P.x, P.y + 1.1, P.z), 0.5, function () { startPull(by); });
+    AU.cheer();
+  }
+  function updateMud(dt) {
+    if (P.swim) return;
+    if (!P.stuck) {
+      if (performance.now() < (P.mudFree || 0)) return;
+      if (P.grounded && !P.riding && performance.now() > P.lockUntil) {
+        const p = mudAt(P.x, P.z);
+        if (p) sinkIn(p);
+      }
+      return;
+    }
+    P.grounded = true; P.vy = 0;
+    P.speed = 0;
+    if (PULL.on) return;
+    P.y += (-0.98 - P.y) * Math.min(1, dt * 4);
+    mudBubble.position.set(P.x, P.y + 2.7, P.z);
+    mudBubble.material.opacity = 0.94 + Math.sin(performance.now() / 420) * 0.06;
+    if (Math.random() < dt * 1.5) splashMud(P.x + (Math.random() - 0.5) * 1.2, P.z + (Math.random() - 0.5) * 1.2, 2);
+    const aloneNow = Object.keys(FB.remotes || {}).length === 0;
+    if (!P.stuckWarn && aloneNow && performance.now() - P.stuckAt > 15000) {
+      P.stuckWarn = true;
+      toast('🪢 혼자 있을 땐 오른쪽 「혼자일 때 도움 요청」으로 비상 밧줄을 쓸 수 있어요', 4200);
+    }
+  }
+
+  /* ---------- 다른 가족이 진흙탕에 빠졌을 때 ---------- */
+  function stuckList() {
+    const out = [];
+    const src = FB.stuckMap || {};
+    const now = NOW();
+    for (const k in src) {
+      const v = src[k];
+      if (!v || k === me) continue;
+      if (now - (v.at || 0) > 90000) continue;
+      out.push({ who: k, x: Number(v.x) || 0, z: Number(v.z) || 0 });
+    }
+    return out;
+  }
+  function nearestStuck() {
+    let best = null;
+    stuckList().forEach((s) => {
+      const d = Math.hypot(s.x - P.x, s.z - P.z);
+      if (d < 6.5 && (!best || d < best.d)) best = { who: s.who, x: s.x, z: s.z, d: d };
+    });
+    return best;
+  }
+  function rescueOther(who) {
+    if (NOFB || !FB.ready) { toast('지금은 밧줄을 던질 수 없어요'); return; }
+    const s = (FB.stuckMap || {})[who];
+    if (!s) { toast('이미 빠져나왔어요!'); return; }
+    try { FB.mud.child('rescue/' + who).set({ by: me, x: +P.x.toFixed(2), z: +P.z.toFixed(2), at: NOW() }); } catch (e) {}
+    flingRope(new THREE.Vector3(P.x, 1.35, P.z), new THREE.Vector3(Number(s.x) || 0, 0.8, Number(s.z) || 0), 0.55);
+    AU.cheer();
+    toast('🪢 ' + nameOf(who) + '에게 밧줄을 던졌어요!', 2800);
+    burst(new THREE.Vector3(Number(s.x) || 0, 0.7, Number(s.z) || 0), 0x8a5f38, 10);
+  }
+  function shoutForHelp() {
+    if (NOFB || !FB.ready) return;
+    try { FB.mud.child('stuck/' + me).update({ at: NOW(), ping: Date.now() }); } catch (e) {}
+    AU.squelch();
+    toast('📣 도와달라고 외쳤어요! 가족이 밧줄을 던져 줄 거예요', 3200);
+  }
+
+  /* ---------- 🏁 수영장 대결 ---------- */
+  const RACE = {
+    on: false, phase: 'idle', mode: 'solo', family: false,
+    stroke: 'free', lane: 1, startAt: 0, count: -1,
+    t0: 0, myT: 0, mineMs: 0, mineDone: false,
+    botT: 0, botMs: 0, botSpeed: 4.6,
+    results: null, coinNote: '', awarded: false, joined: {}, host: null, seq: 0,
+    lastPush: 0, doneAt: 0, waitAt: 0, invite: null, fin: false, fbWait: 0, finalSent: false
+  };
+  let raceOpen = false, raceHudT = 0;
+  function raceClock() { return RACE.family ? NOW() : performance.now(); }
+  function raceLocked() {
+    return RACE.on && (RACE.phase === 'wait' || RACE.phase === 'countdown' || (RACE.phase === 'run' && RACE.mineDone));
+  }
+  function prepareLane(lane) {
+    const lx = POOL.laneX[Math.max(0, Math.min(3, lane || 0))];
+    P.swim = true; P.stuck = null; P.riding = null;
+    P.x = lx; P.z = POOL.startZ; P.y = POOL.water - 0.12;
+    P.vy = 0; P.grounded = true; P.face = 0;
+    P.stroke = RACE.stroke || P.stroke;
+    P.tilt = (P.stroke === 'back' ? -1 : 1);
+    yaw = Math.PI; pitch = 0.24;
+    P.lockUntil = performance.now() + 200;
+    paintStroke();
+  }
+  function showCount(v) {
+    const el = $('#countdown');
+    if (!el) return;
+    el.textContent = String(v);
+    el.classList.add('show');
+    el.classList.toggle('go', v === '출발!');
+  }
+  function hideCountdown() { const el = $('#countdown'); if (el) el.classList.remove('show'); }
+  function paintRaceHud(force) {
+    const el = $('#raceHud');
+    if (!el) return;
+    if (!RACE.on || RACE.phase !== 'run') { el.classList.remove('show'); return; }
+    const t = performance.now();
+    if (!force && t - raceHudT < 120) return;
+    raceHudT = t;
+    el.classList.add('show');
+    const myT = Math.max(0, Math.min(1, (P.z - POOL.startZ) / POOL_LEN));
+    const ms = RACE.mineDone ? RACE.mineMs : Math.max(0, raceClock() - RACE.t0);
+    const title = RACE.mode === 'bot' ? '🤖 봇 대결' : RACE.mode === 'solo' ? '🏊 혼자 연습' : '👨‍👩‍👧 가족 대결';
+    let html = '<div class="rl"><span>' + title + '</span><b>' + (ms / 1000).toFixed(2) + '초</b></div>';
+    html += '<div class="bar"><i style="width:' + (myT * 100).toFixed(0) + '%"></i></div>';
+    if (RACE.mode === 'bot') {
+      html += '<div class="rl"><span>🤖 로봇 물개</span><span>' + (RACE.botMs ? (RACE.botMs / 1000).toFixed(2) + '초' : Math.round(Math.min(1, RACE.botT) * 100) + '%') + '</span></div>';
+    }
+    if (RACE.family) {
+      const lanes = FB.lanesData || {};
+      ORDER.forEach((k) => {
+        if (k === me) return;
+        const L = lanes[k];
+        if (!L) return;
+        html += '<div class="rl"><span>' + nameOf(k) + '</span><span>' + (L.done && L.ms ? (L.ms / 1000).toFixed(2) + '초' : Math.round((L.t || 0) * 100) + '%') + '</span></div>';
+      });
+    }
+    el.innerHTML = html;
+  }
+  function resetRaceLocal() {
+    RACE.on = false; RACE.phase = 'idle'; RACE.family = false;
+    RACE.results = null; RACE.coinNote = ''; RACE.mineDone = false; RACE.myT = 0; RACE.fin = false;
+    RACE.finalSent = false;
+    hideCountdown();
+    const el = $('#raceHud'); if (el) el.classList.remove('show');
+  }
+  function abortRaceLocal() {
+    resetRaceLocal();
+    paintTools();
+  }
+  function startLocalRace(mode) {
+    RACE.on = true; RACE.family = false; RACE.mode = mode || 'bot';
+    RACE.stroke = P.stroke; RACE.lane = 1;
+    RACE.results = null; RACE.coinNote = ''; RACE.awarded = false; RACE.fin = false;
+    RACE.mineDone = false; RACE.mineMs = 0; RACE.myT = 0;
+    RACE.botT = 0; RACE.botMs = 0; RACE.botSpeed = 4.4 + Math.random() * 0.6;
+    RACE.startAt = performance.now() + 3300; RACE.count = -1; RACE.doneAt = 0; RACE.fbWait = 0;
+    RACE.finalSent = false;
+    RACE.phase = 'countdown';
+    prepareLane(RACE.lane);
+    closeRaceSheet();
+    showCount(3);
+    paintRaceHud(true);
+    paintTools();
+    AU.pop();
+  }
+  function startFamilyRace() {
+    if (NOFB || !FB.ready) {
+      toast('가족 대결은 인터넷 연결이 필요해요 — 봇과 대결할게요!', 2800);
+      startLocalRace('bot');
+      return;
+    }
+    RACE.on = true; RACE.family = true; RACE.mode = 'family';
+    RACE.phase = 'wait'; RACE.stroke = P.stroke; RACE.host = me;
+    RACE.joined = {}; RACE.joined[me] = 1;
+    RACE.seq = Date.now(); RACE.results = null; RACE.coinNote = ''; RACE.awarded = false;
+    RACE.waitAt = performance.now(); RACE.fin = false; RACE.mineDone = false; RACE.lane = 0;
+    RACE.invite = null; RACE.finalSent = false;
+    try {
+      FB.swim.child('state').set({ phase: 'wait', host: me, seq: RACE.seq, at: NOW(), stroke: RACE.stroke, joined: { [me]: 1 } });
+      FB.swim.child('lanes').remove();
+    } catch (e) {}
+    openRaceSheet();
+    paintTools();
+    toast('🏁 가족을 기다리는 중… 같이 노는 가족이 없으면 🤖 봇과 대결!', 3200);
+  }
+  function joinFamilyRace() {
+    const st = RACE.invite;
+    if (!st || NOFB || !FB.ready) return;
+    RACE.on = true; RACE.family = true; RACE.mode = 'family';
+    RACE.phase = 'wait'; RACE.host = st.host; RACE.seq = st.seq;
+    RACE.joined = Object.assign({}, st.joined || {});
+    RACE.joined[me] = 1;
+    RACE.results = null; RACE.coinNote = ''; RACE.awarded = false; RACE.fin = false; RACE.mineDone = false;
+    RACE.invite = null; RACE.waitAt = performance.now(); RACE.finalSent = false;
+    try { FB.swim.child('state/joined/' + me).set(1); } catch (e) {}
+    openRaceSheet();
+    paintTools();
+    toast('🏁 대결 참가! 출발 신호를 기다려요', 2600);
+  }
+  function beginFamilyCountdown() {
+    if (!RACE.on || !RACE.family || RACE.host !== me) return;
+    const keys = ORDER.filter((k) => RACE.joined && RACE.joined[k]);
+    if (!keys.length) keys.push(me);
+    const lanes = {};
+    keys.forEach((k, i) => { lanes[k] = i; });
+    RACE.lane = lanes[me] || 0;
+    RACE.stroke = P.stroke;
+    RACE.startAt = NOW() + 4200; RACE.count = -1; RACE.phase = 'countdown';
+    RACE.mineDone = false; RACE.mineMs = 0; RACE.myT = 0; RACE.fin = false; RACE.awarded = false; RACE.doneAt = 0; RACE.results = null;
+    RACE.finalSent = false;
+    try {
+      FB.swim.child('state').update({ phase: 'countdown', startAt: RACE.startAt, lanes: lanes, stroke: RACE.stroke, seq: RACE.seq });
+      FB.swim.child('lanes').remove();
+    } catch (e) {}
+    prepareLane(RACE.lane);
+    closeRaceSheet();
+    showCount(3);
+    paintRaceHud(true);
+    paintTools();
+    AU.pop();
+  }
+  function fbLane(obj) {
+    if (NOFB || !FB.ready || !RACE.family) return;
+    try { FB.swim.child('lanes/' + me).update(obj); } catch (e) {}
+  }
+  function finishMine(el) {
+    RACE.mineMs = Math.max(1, Math.round(el));
+    RACE.mineDone = true;
+    RACE.doneAt = performance.now();
+    AU.cheer();
+    ripple(P.x, P.z, 0xffe066);
+    showBanner2('🏁 결승!', (RACE.mineMs / 1000).toFixed(2) + '초');
+    if (RACE.family) fbLane({ t: 1, ms: RACE.mineMs, done: 1, at: NOW() });
+  }
+  function renderResults(rows, fromFb) {
+    const list = (rows || []).map((r) => ({
+      who: r.who, me: !!(r.who && r.who === me) || !!r.me,
+      name: r.bot ? '🤖 로봇 물개' : nameOf(r.who),
+      ms: Number(r.ms) || 99999
+    }));
+    list.sort((a, b) => a.ms - b.ms);
+    let n = 0;
+    const idx = list.findIndex((r) => r.me);
+    if (idx >= 0 && !RACE.awarded) {
+      RACE.awarded = true;
+      n = RACE.mode === 'solo' ? 3 : ([10, 6, 4, 2][idx] || 2);
+      try { earn(n); } catch (e) {}
+    }
+    RACE.coinNote = n > 0 ? '🪙 코인 +' + n + ' 보너스!' : '';
+    RACE.results = list;
+    RACE.phase = 'done';
+    RACE.on = false;
+    hideCountdown();
+    const hud = $('#raceHud'); if (hud) hud.classList.remove('show');
+    openRaceSheet();
+    paintTools();
+  }
+  function maybeFinalizeFamily() {
+    if (!RACE.family || RACE.host !== me || RACE.finalSent) return;
+    if (RACE.phase !== 'run' && RACE.phase !== 'countdown') return;
+    const keys = ORDER.filter((k) => RACE.joined && RACE.joined[k]);
+    if (!keys.length) return;
+    const lanes = FB.lanesData || {};
+    const allDone = keys.every((k) => lanes[k] && lanes[k].done);
+    const late = RACE.t0 && (NOW() - RACE.t0 > 25000);
+    if (!allDone && !late) return;
+    const rows = keys.map((k) => ({ who: k, ms: (lanes[k] && lanes[k].ms) || 99999 })).sort((a, b) => a.ms - b.ms);
+    RACE.finalSent = true;
+    try { FB.swim.child('state').update({ phase: 'done', results: rows, at: NOW() }); } catch (e) {}
+  }
+  function raceSheetHTML() {
+    const st = STROKES[RACE.stroke] || STROKES.free;
+    if (RACE.results && RACE.results.length) {
+      let h = '<h3>🏁 대결 결과</h3><p>' + (RACE.mode === 'family' ? '가족 수영 대결' : RACE.mode === 'bot' ? '로봇 물개와 대결' : '혼자 연습') + ' 기록이에요.</p>';
+      RACE.results.forEach((r, i) => {
+        const medal = ['🥇', '🥈', '🥉', '🏅'][i] || '🏅';
+        h += '<div class="rankRow' + (r.me ? ' me' : '') + '"><span class="rk">' + medal + '</span><span>' + r.name + '</span><span class="rt">' + (r.ms >= 99999 ? '포기' : (r.ms / 1000).toFixed(2) + '초') + '</span></div>';
+      });
+      if (RACE.coinNote) h += '<p style="margin:9px 0 2px;font-weight:900;color:#a2700a">' + RACE.coinNote + '</p>';
+      h += '<button type="button" class="rBtn go" data-race="again">🔁 한 번 더</button>';
+      h += '<button type="button" class="rBtn" data-race="close">닫기</button>';
+      return h;
+    }
+    if (RACE.family && (RACE.phase === 'wait' || RACE.phase === 'countdown')) {
+      const keys = ORDER.filter((k) => RACE.joined && RACE.joined[k]);
+      const names = keys.length ? keys.map(nameOf).join(' · ') : nameOf(me);
+      return '<h3>🏁 가족 수영 대결</h3>' +
+        '<p>' + names + ' 같이 헤엄쳐요!<br>' + (RACE.host === me ? '가족이 다 모이면 출발을 눌러 주세요.' : '출발 신호를 기다리는 중…') + '</p>' +
+        (RACE.host === me ? '<button type="button" class="rBtn go" data-race="start">🚩 출발! (3·2·1)</button>' : '') +
+        '<button type="button" class="rBtn" data-race="abort">그만두기</button>';
+    }
+    return '<h3>🏁 수영장 대결</h3>' +
+      '<p>지금 영법: ' + st.emo + ' ' + st.name + ' · 출발대에서 결승선까지!' +
+      (NOFB ? '<br>🧪 테스트 모드 — 가족 대결은 꺼져 있어요' : '') + '</p>' +
+      '<div class="spGrid" style="margin-bottom:8px">' + STROKE_ORDER.map((k) =>
+        '<button type="button" data-stroke="' + k + '" aria-pressed="' + (P.stroke === k ? 'true' : 'false') + '">' + STROKES[k].emo + ' ' + STROKES[k].name + '</button>').join('') + '</div>' +
+      '<button type="button" class="rBtn go" data-race="bot">🤖 봇과 대결<small>로봇 물개와 한 판! 이기면 코인 +10</small></button>' +
+      '<button type="button" class="rBtn" data-race="solo">🏊 혼자 연습<small>기록만 재요 (코인 +3)</small></button>' +
+      (!NOFB && FB.ready ? '<button type="button" class="rBtn" data-race="family">👨‍👩‍👧 가족과 함께<small>지금 접속한 가족과 실시간 대결</small></button>' : '') +
+      '<button type="button" class="rBtn" data-race="close">닫기</button>';
+  }
+  function repaintRaceSheet() {
+    const el = $('#raceSheet');
+    if (!el) return;
+    el.innerHTML = raceSheetHTML();
+  }
+  function openRaceSheet() {
+    raceOpen = true;
+    const w = $('#raceWrap'); if (w) w.classList.add('open');
+    repaintRaceSheet();
+    paintTools();
+  }
+  function closeRaceSheet() {
+    raceOpen = false;
+    const w = $('#raceWrap'); if (w) w.classList.remove('open');
+    if (RACE.on && RACE.family && RACE.phase === 'wait') {
+      if (RACE.host === me) { try { FB.swim.child('state').remove(); } catch (e) {} }
+      resetRaceLocal();
+    }
+    paintTools();
+  }
+  function updateRace(dt) {
+    if (!RACE.on) return;
+    if (RACE.phase === 'wait') {
+      if (performance.now() - RACE.waitAt > 32000) {
+        if (RACE.host === me) { try { FB.swim.child('state').remove(); } catch (e) {} }
+        resetRaceLocal(); toast('🏁 가족이 오지 않아 대결을 접었어요 — 봇과 대결해요!', 3000);
+        closeRaceSheet(); paintTools(); startLocalRace('bot');
+      }
+      return;
+    }
+    if (RACE.phase === 'countdown') {
+      const left = RACE.startAt - raceClock();
+      const n = Math.max(1, Math.min(3, Math.ceil(left / 1000)));
+      if (left > 0 && n !== RACE.count) { RACE.count = n; showCount(n); AU.beep(); }
+      if (left <= 0) {
+        RACE.phase = 'run';
+        RACE.t0 = raceClock();
+        RACE.myT = 0; RACE.count = 0; RACE.doneAt = 0; RACE.fbWait = 0;
+        showCount('출발!');
+        AU.go();
+        setTimeout(hideCountdown, 750);
+        toast('🏁 조이스틱을 앞으로 밀어 힘차게 헤엄쳐요!', 2600);
+        paintTools();
+      }
+      return;
+    }
+    if (RACE.phase !== 'run') return;
+    const el = raceClock() - RACE.t0;
+    RACE.myT = Math.max(0, Math.min(1, (P.z - POOL.startZ) / POOL_LEN));
+    if (RACE.mode === 'bot' && !RACE.botMs) {
+      RACE.botT += (RACE.botSpeed * dt) / POOL_LEN;
+      if (RACE.botT >= 1) RACE.botMs = Math.round(el);
+    }
+    if (RACE.family && raceClock() - RACE.lastPush > 250) {
+      RACE.lastPush = raceClock();
+      fbLane({ t: +RACE.myT.toFixed(3), at: NOW() });
+    }
+    if (!RACE.mineDone && RACE.myT >= 0.999) finishMine(el);
+    if (RACE.family && RACE.mineDone && !RACE.fbWait) { RACE.fbWait = NOW(); maybeFinalizeFamily(); }
+    if (RACE.family && RACE.host === me) maybeFinalizeFamily();
+    if (RACE.mode !== 'family') {
+      const botDone = RACE.mode === 'solo' || !!RACE.botMs;
+      if (RACE.mineDone && botDone) {
+        if (!RACE.doneAt) RACE.doneAt = performance.now();
+        if (performance.now() - RACE.doneAt > 800) {
+          const rows = [{ who: me, me: true, ms: RACE.mineMs }];
+          if (RACE.mode === 'bot') rows.push({ bot: true, ms: RACE.botMs || 99999 });
+          renderResults(rows);
+        }
+      }
+    } else if (RACE.mineDone && performance.now() - RACE.doneAt > 26000) {
+      // 호스트가 사라져도 내 기록은 보여 줘요
+      const rows = [{ who: me, me: true, ms: RACE.mineMs }];
+      renderResults(rows);
+    }
+    paintRaceHud(false);
+  }
+  function onSwimState(st) {
+    if (NOFB) return;
+    FB.swimState = st;
+    if (!st || st.phase === 'wait') {
+      if (!st) {
+        if (RACE.invite) { RACE.invite = null; paintTools(); }
+      }
+      if (st && st.host && st.host !== me && st.joined && !st.joined[me]) {
+        if (NOW() - (st.at || 0) > 45000) return;   // 오래된 초대는 무시
+        const fresh = !RACE.invite || RACE.invite.seq !== st.seq;
+        RACE.invite = st;
+        if (fresh) {
+          toast('🏁 ' + nameOf(st.host) + '가 수영 대결을 걸었어요! 오른쪽 버튼으로 참가해요', 4200);
+          AU.star();
+          paintTools();
+        }
+      } else if (RACE.family && RACE.host === me && st && st.joined) {
+        RACE.joined = st.joined;
+        if (raceOpen) repaintRaceSheet();
+      }
+      if (!st && RACE.family && RACE.phase === 'wait') {
+        resetRaceLocal(); closeRaceSheet(); paintTools();
+      }
+      return;
+    }
+    if (st.phase === 'countdown' && st.host !== me) {
+      if (RACE.joined && RACE.joined[me] && RACE.phase !== 'run') {
+        RACE.on = true; RACE.family = true; RACE.mode = 'family';
+        RACE.host = st.host; RACE.seq = st.seq;
+        RACE.phase = 'countdown'; RACE.startAt = st.startAt; RACE.count = -1;
+        RACE.mineDone = false; RACE.myT = 0; RACE.fin = false; RACE.awarded = false; RACE.results = null; RACE.doneAt = 0;
+        RACE.stroke = st.stroke || P.stroke;
+        RACE.lane = (st.lanes && st.lanes[me]) || 0;
+        RACE.invite = null;
+        prepareLane(RACE.lane);
+        closeRaceSheet();
+        showCount(3);
+        paintRaceHud(true);
+        paintTools();
+      }
+      return;
+    }
+    if (st.phase === 'done' && st.results && RACE.family && RACE.joined && RACE.joined[me]) {
+      if (RACE.phase !== 'done') {
+        renderResults(st.results.map((r) => ({ who: r.who, ms: r.ms, me: r.who === me })));
+      }
+      return;
+    }
+    if (st.phase === 'idle' && RACE.family && RACE.phase !== 'run') { resetRaceLocal(); paintTools(); }
+  }
+
+  /* ---------- 오른쪽 도구 버튼 ---------- */
+  const toolActions = $('#toolActions');
+  let toolSig = '#';
+  function paintTools() {
+    const swimEl = $('#swimPanel');
+    const canShow = !sheetOpen() && !locked() && !raceOpen;
+    if (swimEl) swimEl.style.display = (P.swim && canShow) ? 'block' : 'none';
+    const acts = [];
+    if (canShow) {
+      if (RACE.invite && !RACE.on) {
+        acts.push({ a: 'join', cls: 'gold', label: '🏁 ' + nameOf(RACE.invite.host) + ' 수영 대결 참가' });
+      }
+      if (P.stuck) {
+        const live = Object.keys(FB.remotes || {}).length > 0;
+        if (live) acts.push({ a: 'shout', cls: 'pink', label: '📣 도와달라고 외치기' });
+        else acts.push({ a: 'selfrescue', cls: 'green', label: '🧑‍🌾 혼자일 때 도움 요청' });
+      } else if (!P.swim) {
+        if (Math.hypot(P.x - PORTAL.x, P.z - PORTAL.z) < 3.6) {
+          acts.push({ a: 'portal', cls: 'gold', label: '🧱 블록 월드로 이동' });
+        }
+        const s = nearestStuck();
+        if (s) acts.push({ a: 'rescue', who: s.who, cls: 'green', label: '🪢 ' + nameOf(s.who) + '에게 밧줄' });
+      }
+    }
+    const sig = acts.map((x) => x.a + (x.who || '')).join('|');
+    if (sig === toolSig) return;
+    toolSig = sig;
+    if (!toolActions) return;
+    toolActions.innerHTML = acts.map((x) =>
+      '<button type="button" class="tb2 ' + x.cls + '" data-act="' + x.a + '"' + (x.who ? ' data-who="' + x.who + '"' : '') + '>' + x.label + '</button>'
+    ).join('');
+  }
+  function gotoBlockWorld() {
+    AU.star();
+    let url = './block-world.html?who=' + encodeURIComponent(me);
+    if (NOFB) url += '&wctest=1';
+    toast('🧱 블록 월드로 이동!', 1200);
+    setTimeout(() => { location.href = url; }, 280);
+  }
+  if (toolActions) {
+    toolActions.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      const a = b.dataset.act;
+      if (a === 'portal') gotoBlockWorld();
+      else if (a === 'join') joinFamilyRace();
+      else if (a === 'rescue') rescueOther(b.dataset.who);
+      else if (a === 'shout') shoutForHelp();
+      else if (a === 'selfrescue') { AU.cheer(); doRescue(null); }
+    });
+  }
+  const swimPanelEl = $('#swimPanel');
+  if (swimPanelEl) {
+    swimPanelEl.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      if (b.dataset.stroke) setStroke(b.dataset.stroke);
+      else if (b.id === 'raceOpenBtn') openRaceSheet();
+      else if (b.id === 'swimExitBtn') exitSwim();
+    });
+  }
+  const raceSheetEl = $('#raceSheet');
+  if (raceSheetEl) {
+    raceSheetEl.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      if (b.dataset.stroke) { setStroke(b.dataset.stroke); repaintRaceSheet(); return; }
+      const a = b.dataset.race;
+      if (a === 'bot' || a === 'solo') startLocalRace(a);
+      else if (a === 'family') startFamilyRace();
+      else if (a === 'start') beginFamilyCountdown();
+      else if (a === 'abort') {
+        if (RACE.host === me) { try { FB.swim.child('state').remove(); } catch (err) {} }
+        resetRaceLocal(); closeRaceSheet(); paintTools();
+      } else if (a === 'again') { resetRaceLocal(); repaintRaceSheet(); paintTools(); }
+      else if (a === 'close') {
+        if (RACE.family && RACE.host === me) { try { FB.swim.child('state').remove(); } catch (err) {} }
+        resetRaceLocal(); closeRaceSheet(); paintTools();
+      }
+    });
+  }
+  const raceWrapEl = $('#raceWrap');
+  if (raceWrapEl) raceWrapEl.addEventListener('click', (e) => { if (e.target === raceWrapEl) closeRaceSheet(); });
+
+  /* ---------- 도움 요청 표시 기둥 ---------- */
+  let beacon = null;
+  function updateBeacon(dt) {
+    const list = stuckList();
+    if (!list.length) { if (beacon) beacon.visible = false; return; }
+    let near = list[0];
+    list.forEach((s) => { if (Math.hypot(s.x - P.x, s.z - P.z) < Math.hypot(near.x - P.x, near.z - P.z)) near = s; });
+    if (!beacon) {
+      beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.8, 9, 12, 1, true),
+        new THREE.MeshBasicMaterial({ color: 0x7fe8c6, transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false }));
+      scene.add(beacon);
+    }
+    beacon.visible = true;
+    beacon.position.set(near.x, 4.5, near.z);
+    beacon.rotation.y += dt * 0.8;
+  }
+
+  /* ---------- 월드 반짝임 ---------- */
+  function tickWorldFx(dt) {
+    const t = performance.now();
+    if (portalGlow) {
+      const k = 1 + Math.sin(t / 520) * 0.05;
+      portalGlow.scale.set(k, k, 1);
+      portalGlow.material.opacity = 0.74 + Math.sin(t / 380) * 0.16;
+    }
+    if (portalRing) portalRing.rotation.z += dt * 0.9;
+    for (let i = 0; i < portalBricks.length; i++) {
+      const b = portalBricks[i];
+      b.rotation.y += dt * (0.8 + i * 0.35);
+      b.position.y = (b.userData.baseY || 2.2) + Math.sin(t / 700 + i) * 0.09;
+    }
+    if (waterTex) { waterTex.offset.x += dt * 0.035; waterTex.offset.y += dt * 0.02; }
+    if (waterMesh) waterMesh.position.y = POOL.water + Math.sin(t / 900) * 0.008;
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const r = ripples[i];
+      r.life += dt;
+      if (r.life >= r.max) { scene.remove(r.m); r.m.material.dispose(); ripples.splice(i, 1); continue; }
+      const s = 1 + r.life * 2.6;
+      r.m.scale.set(s, s, 1);
+      r.m.material.opacity = 0.72 * (1 - r.life / r.max);
+    }
+    for (let i = 0; i < mudBubbles.length; i++) {
+      const b = mudBubbles[i];
+      b.userData.t += dt;
+      const s = 1 + Math.sin(b.userData.t * 2.2) * 0.35;
+      b.scale.set(s, 0.5 * Math.max(0.2, s), s);
+      b.position.y = b.userData.baseY + Math.abs(Math.sin(b.userData.t * 1.6)) * 0.03;
+    }
+  }
+
+  /* ---------- 실시간 연결(대결·진흙 구출) ---------- */
+  let rescueRef = null, lastRescueAt = 0;
+  function bindRescue() {
+    if (NOFB || !FB.ready || !FB.mud) return;
+    try {
+      if (rescueRef) rescueRef.off();
+      rescueRef = FB.mud.child('rescue/' + me);
+      rescueRef.on('value', (snap) => {
+        const v = snap.val();
+        if (!v || !v.by || v.by === me) return;
+        if (Math.abs(NOW() - (v.at || 0)) > 25000) return;
+        if (performance.now() - lastRescueAt < 1500) return;
+        lastRescueAt = performance.now();
+        doRescue(v.by, v.x, v.z);
+      }, () => {});
+    } catch (e) {}
+  }
+  function bindWorldSync() {
+    if (NOFB) return;
+    if (!FB.ready || !FB.db) { setTimeout(bindWorldSync, 800); return; }
+    try {
+      if (!FB.offsetBound) {
+        FB.offsetBound = true;
+        FB.db.ref('.info/serverTimeOffset').on('value', (s) => { FB.offset = Number(s.val()) || 0; }, () => {});
+      }
+      if (!FB.swim) {
+        FB.swim = FB.db.ref('family-lim-7660/world3dSwim');
+        FB.mud = FB.db.ref('family-lim-7660/world3dMud');
+        FB.swim.child('state').on('value', (s) => { onSwimState(s.val() || null); }, () => {});
+        FB.swim.child('lanes').on('value', (s) => { FB.lanesData = s.val() || {}; }, () => {});
+        FB.mud.child('stuck').on('value', (s) => { FB.stuckMap = s.val() || {}; paintTools(); }, () => {});
+      }
+      bindRescue();
+    } catch (e) { setTimeout(bindWorldSync, 1200); }
+  }
+
+  paintStroke();
+  paintTools();
+  bindWorldSync();
+
+  /* ============================================================
      20. 메인 루프
      ============================================================ */
   const clock = new THREE.Clock();
@@ -1560,7 +2784,8 @@ function boot() {
   let fbTimer = 0;
 
   function step(dt) {
-    const busy = locked() || sheetOpen();
+    tickWorldFx(dt);
+    const busy = locked() || sheetOpen() || raceOpen || raceLocked() || !!P.stuck;
     // 입력 → 이동
     let ix = 0, iy = 0;
     if (!busy && !P.riding && performance.now() > P.lockUntil) {
@@ -1574,11 +2799,24 @@ function boot() {
     if (mag > 1) { ix /= mag; iy /= mag; mag = 1; }
     const fx = -Math.sin(yaw), fz = -Math.cos(yaw);
     const rx = Math.cos(yaw), rz = -Math.sin(yaw);
-    let dx = (fx * iy + rx * ix) * SPEED * dt;
-    let dz = (fz * iy + rz * ix) * SPEED * dt;
-    P.speed = mag * SPEED;
+    const spd = P.swim ? (STROKES[P.stroke] || STROKES.free).speed : SPEED;
+    let dx = (fx * iy + rx * ix) * spd * dt;
+    let dz = (fz * iy + rz * ix) * spd * dt;
+    P.speed = mag * spd;
 
-    if (!P.riding) {
+    if (P.riding) {
+      updateRide(dt);
+    } else if (P.swim) {
+      // 물속: 벽·단을 타지 않고 물결 따라 둥실둥실
+      P.x += dx; P.z += dz;
+      if (mag > 0.06) {
+        const w = Math.atan2(ix * rx + iy * fx, ix * rz + iy * fz);
+        let df = w - P.face;
+        while (df > Math.PI) df -= Math.PI * 2;
+        while (df < -Math.PI) df += Math.PI * 2;
+        P.face += df * Math.min(1, dt * 10);
+      }
+    } else if (!P.stuck) {
       // 좌우 · 앞뒤 따로 움직여 벽에 부딪혀도 미끄러져요
       if (dx) { if (!blockedAt(P.x + dx, P.z)) P.x += dx; }
       if (dz) { if (!blockedAt(P.x, P.z + dz)) P.z += dz; }
@@ -1627,15 +2865,27 @@ function boot() {
         const near = nearestSlide(P.x, P.y, P.z);
         if (near) startRide(near.t);
       }
-    } else {
-      updateRide(dt);
     }
     P.coyote = Math.max(0, P.coyote - dt);
 
+    // 수영장 · 진흙탕 · 대결
+    updatePool(dt);
+    updateMud(dt);
+    updateRace(dt);
+    updatePull(dt);
+    updateRope(dt);
+    updateBeacon(dt);
+    paintTools();
+
     // 내 캐릭터
-    meAvatar.position.set(P.x, P.y, P.z);
-    meAvatar.rotation.y = P.face;
-    animateAvatar(meAvatar, dt, P.speed, P.grounded, !!P.riding);
+    const tilt = P.tilt || 0;
+    const lift = tilt * 0.9;
+    meAvatar.rotation.order = 'YXZ';
+    meAvatar.position.set(P.x + Math.sin(P.face) * lift, P.y, P.z + Math.cos(P.face) * lift);
+    meAvatar.rotation.y = P.face + (P.swim && P.stroke === 'back' ? Math.PI : 0);
+    meAvatar.rotation.x = tilt * (P.stroke === 'back' ? -Math.PI / 2 : Math.PI / 2);
+    if (P.swim) swimPose(meAvatar, dt, P.stroke, P.speed > 0.6 ? 1 : 0.25);
+    else animateAvatar(meAvatar, dt, P.speed, P.grounded, !!P.riding);
 
     // 코인 회전 · 되살아나기
     for (let i = 0; i < coins.length; i++) {
@@ -1702,7 +2952,8 @@ function boot() {
     renderer.render(scene, camera);
     if (!ready) {
       frameNo++;
-      if (frameNo === 3) { ready = true; $('#loading').classList.add('hide'); setTimeout(() => { const l = $('#loading'); if (l) l.style.display = 'none'; }, 500); showHint(); }
+      if (frameNo === 3) { ready = true; $('#loading').classList.add('hide'); setTimeout(() => { const l = $('#loading'); if (l) l.style.display = 'none'; }, 500); showHint();
+        setTimeout(() => { try { toast('🆕 블록 월드 문 · 🏊 수영장 · 🐷 진흙탕이 생겼어요!', 3600); } catch (e) {} }, 1400); }
     }
   }
 
@@ -1736,7 +2987,7 @@ function boot() {
 
   /* ---------- 테스트 · 디버그 창구 ---------- */
   window.W3D = {
-    version: '1.0', three: THREE.REVISION, test: TEST, who: () => me,
+    version: '2.0', three: THREE.REVISION, test: TEST, who: () => me,
     state() {
       return {
         ready, mode: viewMode, test: TEST, who: me,
@@ -1745,6 +2996,8 @@ function boot() {
         yaw: +yaw.toFixed(3), pitch: +pitch.toFixed(3),
         riding: !!P.riding, rideT: P.riding ? +P.riding.t.toFixed(3) : null,
         coins: WC ? WC.get(me) : null, star: STAR.got,
+        swim: !!P.swim, stroke: P.stroke, tilt: +(P.tilt || 0).toFixed(2),
+        stuck: !!P.stuck, race: RACE.on ? RACE.phase : 'idle', raceMode: RACE.mode,
         avatarVisible: meAvatar.visible,
         remotes: Object.keys(FB.remotes).length,
         colliders: colliders.length, coinsLeft: coins.filter((c) => c.alive).length,
@@ -1753,7 +3006,7 @@ function boot() {
         webgl: !!renderer.getContext()
       };
     },
-    teleport(x, y, z) { P.x = x; P.y = y; P.z = z; P.vy = 0; P.grounded = false; P.riding = null; },
+    teleport(x, y, z) { P.x = x; P.y = y; P.z = z; P.vy = 0; P.grounded = false; P.riding = null; P.swim = false; P.stuck = null; },
     slideAt(t) {
       P.riding = { t: Math.max(0, Math.min(0.95, t)) };
       P.rideSpeed = 0;
@@ -1768,7 +3021,42 @@ function boot() {
     jump: doJump,
     who: (w) => { setWho(w); return me; },
     slideTop: () => { const p = slideCurve.getPointAt(0); return { x: p.x, y: p.y, z: p.z }; },
-    starPos: () => ({ x: STAR.x, y: STAR.y, z: STAR.z })
+    starPos: () => ({ x: STAR.x, y: STAR.y, z: STAR.z }),
+    portal: () => ({ x: PORTAL.x, z: PORTAL.z }),
+    pool: () => ({ ...POOL }),
+    mud: () => MUD.map((m) => ({ x: m.x, z: m.z, rx: m.rx, rz: m.rz })),
+    swimIn(lane) {
+      const l = Math.max(0, Math.min(3, lane == null ? 0 : lane));
+      P.x = POOL.laneX[l]; P.z = (POOL.z0 + POOL.z1) / 2; P.y = 0;
+      P.vy = 0; P.grounded = true; P.riding = null; P.stuck = null;
+      enterSwim();
+      return { x: P.x, z: P.z, swim: P.swim };
+    },
+    swimOut: exitSwim,
+    stroke(k) { setStroke(k); return P.stroke; },
+    raceStart(mode) { startLocalRace(mode || 'bot'); return RACE.phase; },
+    raceInfo() {
+      return {
+        on: RACE.on, phase: RACE.phase, mode: RACE.mode, family: RACE.family,
+        stroke: RACE.stroke, mineMs: RACE.mineMs, mineDone: RACE.mineDone,
+        botT: +RACE.botT.toFixed(3), botMs: RACE.botMs,
+        t: +((P.z - POOL.startZ) / POOL_LEN).toFixed(3),
+        results: RACE.results, count: RACE.count, host: RACE.host, joined: RACE.joined
+      };
+    },
+    raceOpen: () => openRaceSheet(),
+    mudIn(i) {
+      const m = MUD[Math.max(0, Math.min(MUD.length - 1, i || 0))];
+      P.x = m.x; P.z = m.z; P.y = 0; P.vy = 0; P.grounded = true;
+      P.riding = null; P.swim = false; P.stuck = null; P.lockUntil = 0;
+      mudBubble.visible = false;
+      return { x: P.x, z: P.z };
+    },
+    isStuck: () => !!P.stuck,
+    rescue(by) { doRescue(by || null); },
+    rescueSelf() { doRescue(null); },
+    stuckMap: () => FB.stuckMap,
+    raceState: () => FB.swimState
   };
 }
 </script>
