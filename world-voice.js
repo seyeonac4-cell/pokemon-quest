@@ -34,6 +34,10 @@
    테스트/디버그
      window.__WV.state() / toggle() / on() / off() / peers()
 
+   v1.5 (2026-11-23)
+     · 마이크 자리를 화면 아래 → 화면 위(HUD·안내 띠 바로 아래)로 옮김
+       — 미니게임 방향 버튼(D-pad)·점프·행동 버튼을 가리지 않게
+     · 알약 크기를 조금 줄이고, 칩·상태·안내는 마이크 아래로 자라게
    v1.4 (2026-11-23)
      · 화면 아래에 "지금 상대 목소리가 들리는지"를 또렷하게 표시
        (형원 마이크가 꺼져 있어요 / 연결 중 / 🔊 듣는 중 / 새로고침 필요)
@@ -50,7 +54,7 @@
   'use strict';
   if (global.WorldVoice && global.WorldVoice.version) return;
 
-  var VERSION = '1.4';
+  var VERSION = '1.5';
   var PATH = 'family-lim-7660/worldVoice';
   var ROOM = 'main';
   var K_ACTIVE = 'lim_active_kid';
@@ -165,21 +169,24 @@
     var st = document.createElement('style');
     st.id = 'wv-style';
     st.textContent = [
-      '#wv-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(56px + env(safe-area-inset-bottom,0px));',
-      'z-index:2147483002;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;',
+      '#wv-bar{position:fixed;left:50%;transform:translateX(-50%);',
+      'top:calc(var(--wv-ty,8px) + env(safe-area-inset-top,0px));',
+      'z-index:2147483002;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;',
       'font-family:"Jua","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;',
       '-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}',
+      /* 위에서 아래로: 마이크 → 소리 듣기 → 가족 칩 → 상태 → 알림 (아래로 자라요) */
+      '#wv-mic{order:1}#wv-unmute{order:2}#wv-chips{order:3}#wv-stat{order:4}#wv-toast{order:5}',
 
-      '#wv-toast{max-width:64vw;padding:8px 14px;border-radius:14px;background:rgba(38,28,60,.93);color:#fff;',
-      'font-size:12.5px;font-weight:800;line-height:1.35;letter-spacing:-.02em;text-align:center;',
-      'box-shadow:0 8px 22px rgba(20,10,40,.32);opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;',
+      '#wv-toast{max-width:70vw;padding:0 14px;height:0;border-radius:12px;background:rgba(38,28,60,.93);color:#fff;',
+      'font-size:12px;font-weight:800;line-height:1.35;letter-spacing:-.02em;text-align:center;',
+      'box-shadow:0 8px 22px rgba(20,10,40,.32);opacity:0;overflow:hidden;transition:opacity .2s;',
       'pointer-events:none;word-break:keep-all}',
-      '#wv-toast.show{opacity:1;transform:none}',
+      '#wv-toast.show{opacity:1;height:auto;padding:7px 14px}',
 
       '#wv-chips{display:flex;align-items:center;gap:4px;min-height:0;pointer-events:none}',
-      '.wv-chip{display:inline-flex;align-items:center;gap:2px;height:23px;padding:0 7px 0 5px;border-radius:999px;',
+      '.wv-chip{display:inline-flex;align-items:center;gap:2px;height:21px;padding:0 6px 0 4px;border-radius:999px;',
       'background:rgba(255,255,255,.93);border:1.5px solid rgba(150,165,195,.32);color:#4d5c7a;',
-      'font-size:11px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;',
+      'font-size:10.5px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;',
       'box-shadow:0 3px 9px rgba(30,50,80,.16);transition:background .2s,border-color .2s,transform .2s}',
       '.wv-chip .e{font-size:13px;line-height:1}',
       '.wv-chip .n{font-size:10.5px}',
@@ -191,13 +198,13 @@
       '@keyframes wv-spk{0%,100%{transform:scale(1);box-shadow:0 3px 9px rgba(30,50,80,.16)}',
       '50%{transform:scale(1.07);box-shadow:0 0 0 3px rgba(63,214,176,.42),0 4px 14px rgba(20,130,95,.3)}}',
 
-      '#wv-mic{pointer-events:auto;display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 15px;',
+      '#wv-mic{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;height:33px;padding:0 11px;',
       'border-radius:999px;border:2px solid #fff;background:rgba(255,255,255,.96);color:#4a5a78;',
-      'font-family:inherit;font-size:13.5px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;',
+      'font-family:inherit;font-size:12px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;',
       'box-shadow:0 6px 16px rgba(30,50,80,.22);transition:transform .1s,background .2s,box-shadow .2s,color .2s;',
       'cursor:pointer;touch-action:manipulation}',
       '#wv-mic:active{transform:scale(.95)}',
-      '#wv-mic .wv-ico{font-size:16px;line-height:1}',
+      '#wv-mic .wv-ico{font-size:15px;line-height:1}',
       '#wv-mic .wv-dot{width:7px;height:7px;border-radius:50%;background:#b9c4d8;box-shadow:0 0 0 2px rgba(185,196,216,.25)}',
       '#wv-bar[data-on="1"] #wv-mic{background:linear-gradient(180deg,#84f3ca,#2ecf9c);color:#054433;border-color:#fff;',
       'box-shadow:0 0 0 3px rgba(63,214,176,.34),0 8px 20px rgba(18,150,110,.42);animation:wv-pulse 2.2s ease-in-out infinite}',
@@ -206,15 +213,15 @@
       '50%{box-shadow:0 0 0 6px rgba(63,214,176,.16),0 10px 26px rgba(18,150,110,.52)}}',
       '#wv-bar[data-busy="1"] #wv-mic{opacity:.72}',
 
-      '#wv-stat{display:none;align-items:center;gap:3px;height:22px;padding:0 9px;border-radius:999px;',
-      'background:rgba(24,18,40,.82);color:#fff;font-size:11px;font-weight:800;letter-spacing:-.02em;',
+      '#wv-stat{display:none;align-items:center;gap:3px;height:21px;padding:0 8px;border-radius:999px;',
+      'background:rgba(24,18,40,.82);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:-.02em;',
       'white-space:nowrap;pointer-events:none;box-shadow:0 3px 10px rgba(20,10,40,.25)}',
       '#wv-stat.show{display:inline-flex}',
       '#wv-stat.ok{background:linear-gradient(180deg,#eafff7,#c9f7e5);color:#0d6b4c}',
       '#wv-stat.relay{background:linear-gradient(180deg,#fff6e0,#ffe0a3);color:#7a4d00}',
       '#wv-stat.wait{background:rgba(24,18,40,.82);color:#ffd166}',
 
-      '#wv-unmute{display:none;pointer-events:auto;align-items:center;gap:4px;height:34px;padding:0 14px;',
+      '#wv-unmute{display:none;pointer-events:auto;align-items:center;gap:4px;height:30px;padding:0 12px;',
       'border-radius:999px;border:0;background:linear-gradient(180deg,#ffd166,#ffb020);color:#4a2c00;',
       'font-family:inherit;font-size:12.5px;font-weight:800;box-shadow:0 6px 16px rgba(150,90,0,.3);',
       'cursor:pointer;touch-action:manipulation;animation:wv-blink 1.6s ease-in-out infinite}',
@@ -222,9 +229,90 @@
       '#wv-unmute.show{display:inline-flex}',
       '@keyframes wv-blink{0%,100%{box-shadow:0 6px 16px rgba(150,90,0,.3)}50%{box-shadow:0 6px 22px rgba(255,170,40,.85)}}',
 
-      '@media (min-width:820px){#wv-bar{left:calc(50% - 210px);bottom:calc(60px + env(safe-area-inset-bottom,0px))}}'
+      '@media (min-width:820px){#wv-bar{gap:6px}}'
     ].join('');
     (document.head || document.documentElement).appendChild(st);
+  }
+
+  /* ---------- 어디에 앉힐까 ----------
+     예전엔 화면 아래 가운데(bottom:56px)에 있었는데, 그 자리가 바로
+     아이들 미니게임의 방향 버튼(D-pad)·점프 버튼·행동 버튼 자리라서
+     마이크가 방향 버튼을 가렸어요. 이제는 화면 위쪽 띠(HUD·안내 띠·
+     미니게임 머리) 바로 아래 빈 곳에 앉혀요.
+       · 가로로 겹치는 띠만 피하고, 화면 높이의 30%를 넘어가면 멈춤
+       · 화면을 통째로 덮는 판(캔버스 껍데기)은 장애물로 안 셈
+       · 마이크를 켜면 칩·상태가 "아래로" 자라서 위로는 안 올라감 */
+  var CHROME_SEL = ['#hud', '.hud', 'header.top', '.topbar', '.top-bar',
+                    '#hint', '#tipBar', '.tipbar', '#fairyBub', '#worldBar', '.worldbar',
+                    '.mhead', '.mgTop',
+                    /* 방 안에서 눌러 들어가는 자리(포털)·말걸기 창도 안 가리게 */
+                    '.zone', '[data-zone]', '[data-mzone]', '#prompt'];
+  var barTy = null;
+  function setBarTy(v) {
+    barTy = v;
+    if (el.bar) el.bar.style.setProperty('--wv-ty', v + 'px');
+  }
+  /* 지금 화면을 덮고 있는 판(시작 창·미니게임) 찾기
+     — 그 판 밖의 띠(가려진 HUD·안내)는 장애물로 안 셈. */
+  var DIALOG_SEL = ['#starter', '.miniwrap', '.modal', '.overlay', '.sheet', '.sheetwrap'];
+  function openDialog() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    for (var k = 0; k < DIALOG_SEL.length; k++) {
+      var list;
+      try { list = document.querySelectorAll(DIALOG_SEL[k]); } catch (e) { list = []; }
+      for (var i = 0; i < list.length; i++) {
+        var d = list[i], cs = getComputedStyle(d);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.05) continue;
+        var r = d.getBoundingClientRect();
+        if (r.width >= vw * 0.85 && r.height >= vh * 0.85) return d;
+      }
+    }
+    return null;
+  }
+  function placeBar() {
+    if (!el.bar) return;
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var lim = Math.max(48, Math.min(vh * 0.30, 260));
+    var root = openDialog();
+    var nodes = [];
+    for (var k = 0; k < CHROME_SEL.length; k++) {
+      var list;
+      try { list = document.querySelectorAll(CHROME_SEL[k]); } catch (e) { list = []; }
+      for (var i = 0; i < list.length; i++) {
+        if (root && !root.contains(list[i])) continue;
+        nodes.push(list[i]);
+      }
+    }
+    setBarTy(8);
+    for (var pass = 0; pass < 8; pass++) {
+      var r = el.bar.getBoundingClientRect();
+      if (!r.width) return;
+      var low = 0;
+      for (var n = 0; n < nodes.length; n++) {
+        var nb = nodes[n].getBoundingClientRect();
+        if (nb.width < 8 || nb.height < 8) continue;
+        if (nb.height > vh * 0.35) continue;             /* 화면을 덮는 껍데기는 건너뜀 */
+        if (nb.bottom <= r.top + 2) continue;            /* 이미 위에 있음 */
+        if (nb.top >= lim) continue;                     /* 너무 아래 띠는 무시 */
+        if (nb.right < r.left + 6 || nb.left > r.right - 6) continue;  /* 가로로 안 겹침 */
+        if (nb.bottom > low) low = nb.bottom;
+      }
+      if (!low) break;
+      var next = Math.min(lim, Math.round(low) + 6);
+      if (next <= barTy + 0.5) break;
+      setBarTy(next);
+    }
+  }
+  var placeT = 0;
+  function placeSoon(ms) {
+    if (placeT) return;
+    placeT = setTimeout(function () {
+      placeT = 0;
+      try { placeBar(); } catch (e) { }
+      /* 창이 서서히 닫히는 동안(0.4초)에도 한 번 더 */
+      setTimeout(function () { try { placeBar(); } catch (e) { } }, 900);
+      setTimeout(function () { try { placeBar(); } catch (e) { } }, 2200);
+    }, ms || 400);
   }
 
   function buildUI() {
@@ -286,6 +374,9 @@
       toast('🔊 소리를 켰어요', 1600);
     });
     render();
+    placeBar();
+    setTimeout(placeBar, 350);
+    setTimeout(placeBar, 1200);
   }
 
   function toast(msg, ms) {
@@ -1722,6 +1813,16 @@
     S.world = (S.cfg && S.cfg.world) || '';
 
     try { buildUI(); } catch (e) { }
+
+    /* 화면을 돌리거나 창 크기가 바뀌어도 방향 버튼을 안 가리게 다시 앉혀요 */
+    try {
+      window.addEventListener('resize', function () { setTimeout(placeBar, 60); }, { passive: true });
+      window.addEventListener('orientationchange', function () { setTimeout(placeBar, 260); }, { passive: true });
+      /* 시작 창을 닫거나 미니게임을 열어 화면이 바뀌면 다시 앉히기 */
+      ['pointerdown', 'click', 'touchend'].forEach(function (ev) {
+        document.addEventListener(ev, function () { placeSoon(450); }, { capture: true, passive: true });
+      });
+    } catch (e) { }
 
     /* 시험 모드에서는 Firebase 에 절대 쓰지 않아요 */
     S.transport = TEST ? makeLocal() : makeFirebase();
