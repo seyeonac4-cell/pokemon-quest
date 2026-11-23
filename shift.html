@@ -63,10 +63,18 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 /* ---------- 범례 ---------- */
 .legend{display:flex;gap:14px;align-items:center;padding:13px 20px 4px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+.legend span[hidden]{display:none!important}
 .sw{width:13px;height:13px;border-radius:5px;display:inline-block}
 .sw.n{background:linear-gradient(150deg,#4a49b4,#242257)}
 .sw.o{background:linear-gradient(150deg,#e4f6ee,#cfeade)}
 .sw.t{background:#fff;border:1.5px solid #3b3a94}
+.sw.b{background:linear-gradient(150deg,#ffedc9,#f6dfae)}
+/* ---------- 달 선택 탭 ---------- */
+.mtabs{display:flex;gap:7px;padding:12px 18px 0;flex-wrap:wrap}
+.mtabs[hidden]{display:none!important}
+.mtab{border:1.5px solid #e2e4f0;background:#fbfbfe;color:#5c6180;font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:-.01em;padding:7px 14px;border-radius:100px;cursor:pointer;transition:all .13s ease}
+.mtab.cur{background:linear-gradient(150deg,#4a49b4,#242257);border-color:#2b2970;color:#fff;box-shadow:0 6px 14px rgba(43,41,112,.22)}
+.mtab .now{display:inline-block;width:5px;height:5px;border-radius:50%;background:#f5b64a;margin-left:5px;vertical-align:middle;margin-bottom:1px}
 /* ---------- 달력 ---------- */
 .cal{padding:10px 14px 4px}
 .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:8px 0 7px}
@@ -94,6 +102,8 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 .cell.n .badge{color:#fff;background:rgba(255,255,255,.16)}
 .cell.o .badge{color:var(--off-ink);background:rgba(255,255,255,.72)}
 .cell.o.first .badge{color:#a9506b;background:rgba(255,255,255,.80)}
+.cell.b{background:linear-gradient(158deg,#fff8e8 0%,#ffedc9 100%);border-color:#f6dfae}
+.cell.b .badge{color:#8a5a12;background:rgba(255,255,255,.86)}
 .cell .mates{margin-top:auto;font-size:10.5px;line-height:1.3;color:#cfd3ff;text-align:center;font-weight:500;padding-bottom:1px;word-break:keep-all}
 .cell .mates i{display:block;font-style:normal;white-space:nowrap}
 /* ---------- 동료 순위 ---------- */
@@ -177,7 +187,7 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
     page-break-inside:avoid;break-inside:avoid;
   }
   /* 화면 전용 UI는 인쇄에서 숨김 */
-  .printbtn,.up,.upbtn,.upnote,.upmsg,.badge-inbox,.sheet,#upFile,.foot,
+  .printbtn,.up,.upbtn,.upnote,.upmsg,.badge-inbox,.sheet,#upFile,.foot,.mtabs,
   .head-actions,.toast,.banner,.backlink,a.dashboard-link{display:none!important}
   /* 헤더 */
   .head{padding:5mm 6mm 4.6mm;flex:0 0 auto;border-radius:0}
@@ -245,9 +255,12 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
       <div class="badge-inbox" id="inboxBadge">⏳ 새 근무표 분석 대기 중</div>
     </div>
 
+    <div class="mtabs" id="mtabs" hidden></div>
+
     <div class="legend">
       <span><i class="sw n"></i>나이트(N)</span>
       <span><i class="sw o"></i>휴무</span>
+      <span id="lgDae" hidden><i class="sw b"></i>대휴</span>
       <span><i class="sw t"></i>오늘</span>
     </div>
 
@@ -297,24 +310,54 @@ h1{margin:9px 0 3px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-he
 
 <script>
 const WD=['일','월','화','수','목','금','토'];
-let DATA=null;
+let DATA=null, VIEW=null;
 const TODAY=new Date();
 const TODAY_KEY=(TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0'));
 
 function fmt(d){return (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')';}
 
-fetch('./shift-data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{DATA=d;render();}).catch(e=>{
+fetch('./shift-data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+  DATA=d;
+  // 한 파일에 여러 달이 들어 있으면(months) 그 달들을 탭으로 보여 준다.
+  const ms=(Array.isArray(d.months)&&d.months.length)?d.months.filter(m=>m&&m.days&&m.days.length):[];
+  const list=ms.length?ms:[d];
+  const tm=TODAY_KEY.slice(0,7);
+  // 오늘이 속한 달을 먼저 보여 주고, 없으면 가장 최근 달을 보여 준다.
+  VIEW=list.find(m=>m.month===tm)||list.find(m=>m.month===d.defaultMonth)||list[list.length-1];
+  renderMonthTabs(list);
+  render();
+}).catch(e=>{
   document.getElementById('foot').textContent='근무 데이터를 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.';
 });
 
+function renderMonthTabs(list){
+  const box=document.getElementById('mtabs');
+  if(!list||list.length<2){box.hidden=true;box.innerHTML='';return;}
+  box.hidden=false;
+  box.innerHTML=list.map(m=>{
+    const isNow=m.month===TODAY_KEY.slice(0,7);
+    return '<button type="button" class="mtab'+(m.month===VIEW.month?' cur':'')+'" data-m="'+m.month+'">'
+      +m.monthNum+'월'+(isNow?'<i class="now"></i>':'')+'</button>';
+  }).join('');
+  box.querySelectorAll('.mtab').forEach(b=>b.addEventListener('click',()=>{
+    const list2=(Array.isArray(DATA.months)&&DATA.months.length)?DATA.months:[DATA];
+    const hit=list2.find(m=>m.month===b.dataset.m);
+    if(hit){VIEW=hit;renderMonthTabs(list2);render();}
+  }));
+}
+
 function render(){
-  const d=DATA;
+  const d=VIEW||DATA;
   document.getElementById('title').textContent=d.monthNum+'월 근무 달력';
   document.getElementById('nurseName').textContent=d.nurse.name;
   const nights=d.days.filter(x=>x.shift==='N').length;
-  const offs=d.days.filter(x=>x.shift!=='N').length;
+  const restDays=d.days.filter(x=>x.shift!=='N');
+  const noted=restDays.filter(x=>x.note);
+  const offs=restDays.length-noted.length;
   document.getElementById('sNight').textContent=nights;
   document.getElementById('sOff').textContent=offs;
+  const lgDae=document.getElementById('lgDae');
+  if(lgDae) lgDae.hidden=!(noted.length>0);
   document.getElementById('sMates').textContent=d.colleagues.length;
 
   // 달력 그리드
@@ -325,12 +368,13 @@ function render(){
   d.days.forEach(day=>{
     const c=document.createElement('div');
     const isNight=day.shift==='N';
-    c.className='cell '+(isNight?'n':'o')+((!isNight&&(day.weekday==='일'||day.weekday==='토'))?' first':'')+(day.date===TODAY_KEY?' today':'');
+    const isNote=!isNight&&!!day.note;
+    c.className='cell '+(isNight?'n':(isNote?'b':'o'))+((!isNight&&!isNote&&(day.weekday==='일'||day.weekday==='토'))?' first':'')+(day.date===TODAY_KEY?' today':'');
     let mates='';
     if(isNight&&day.colleagues.length){
       mates='<div class="mates">'+day.colleagues.map(n=>'<i>'+n+'</i>').join('')+'</div>';
     }
-    c.innerHTML='<div class="dnum">'+day.d+'</div><div class="badge">'+(isNight?'N':'휴무')+'</div>'+mates;
+    c.innerHTML='<div class="dnum">'+day.d+'</div><div class="badge">'+(isNight?'N':(day.note||'휴무'))+'</div>'+mates;
     c.onclick=()=>openSheet(day);
     grid.appendChild(c);
   });
@@ -349,27 +393,29 @@ function render(){
   const pf=document.getElementById('printFoot');
   if(pf){
     pf.innerHTML='<span><b>'+d.label+' '+d.unit+' 근무표</b> · 하루 나이트 '+(v.nightTotalPerDay||3)+'명(세연님 포함)</span>'+
-      '<span class="r">'+d.nurse.name+' 님 · N '+nights+'회 · 휴무 '+offs+'일</span>';
+      '<span class="r">'+d.nurse.name+' 님 · N '+nights+'회 · 휴무 '+offs+'일'+(noted.length?' · '+noted.map(x=>x.note+' '+x.d+'일').join(' · '):'')+'</span>';
   }
   document.getElementById('foot').innerHTML=
-    '<b>'+d.label+'</b> · 하루 나이트 인원 '+ (v.nightTotalPerDay||3) +'명(세연님 포함)<br>'+
+    '<b>'+d.label+'</b> · 하루 나이트 인원 '+ (v.nightTotalPerDay||3) +'명(세연님 포함)'+
+    (noted.length?' · 대휴 '+noted.map(x=>x.d+'일').join(', '):'')+'<br>'+
     '근무표 사진을 칸 단위로 확대해 읽고, 요약표(N수 '+nights+'·휴무 '+offs+')와 날짜별 NIGHT 인원으로 두 번 대조해 확인했어요.<br>'+
     '다음 달 근무표는 데이터(shift-data.json)만 바꾸면 이 달력이 그대로 갱신됩니다.';
 }
 
 function openSheet(day){
+  const d0=VIEW||DATA;
   const isNight=day.shift==='N';
-  document.getElementById('shTitle').textContent=(DATA.monthNum)+'월 '+day.d+'일 ('+day.weekday+')';
-  document.getElementById('shSub').textContent=isNight?'나이트 근무 · 함께 서는 동료 2명':'휴무';
-  let rows='<div class="row"><span>근무</span><span class="pill '+(isNight?'n':'o')+'">'+(isNight?'N · 나이트':'휴무')+'</span></div>';
+  document.getElementById('shTitle').textContent=(d0.monthNum)+'월 '+day.d+'일 ('+day.weekday+')';
+  document.getElementById('shSub').textContent=isNight?'나이트 근무 · 함께 서는 동료 2명':(day.note||'휴무');
+  let rows='<div class="row"><span>근무</span><span class="pill '+(isNight?'n':'o')+'">'+(isNight?'N · 나이트':(day.note||'휴무'))+'</span></div>';
   if(isNight){
     day.colleagues.forEach(c=>{
-      const p=(DATA.roster||[]).find(r=>r.name===c);
+      const p=(d0.roster||[]).find(r=>r.name===c);
       rows+='<div class="row"><span><b>'+c+'</b></span><span style="color:#7b8095;font-size:12px">이번 달 N '+(p?p.nCount:0)+'회</span></div>';
     });
   }else{
-    const nx=(DATA.days||[]).find(x=>x.d>day.d&&x.shift==='N');
-    if(nx) rows+='<div class="row"><span>다음 나이트</span><span style="font-weight:800">'+DATA.monthNum+'월 '+nx.d+'일 ('+nx.weekday+')</span></div>';
+    const nx=(d0.days||[]).find(x=>x.d>day.d&&x.shift==='N');
+    if(nx) rows+='<div class="row"><span>다음 나이트</span><span style="font-weight:800">'+d0.monthNum+'월 '+nx.d+'일 ('+nx.weekday+')</span></div>';
   }
   document.getElementById('shRows').innerHTML=rows;
   document.getElementById('sheet').classList.add('on');
