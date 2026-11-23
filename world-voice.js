@@ -38,7 +38,7 @@
   'use strict';
   if (global.WorldVoice && global.WorldVoice.version) return;
 
-  var VERSION = '1.1';
+  var VERSION = '1.2';
   var PATH = 'family-lim-7660/worldVoice';
   var ROOM = 'main';
   var K_ACTIVE = 'lim_active_kid';
@@ -61,6 +61,26 @@
     { urls: 'stun:global.stun.twilio.com:3478' }
   ];
 
+  /* TURN 서버(중계 서버) — 없어도 아래 RTDB 보조 중계가 있어요.
+     나중에 TURN 계정을 만들면 주소창에
+       ?turn=turn:서버:443?transport=tcp|turn:서버:3478&turnu=아이디&turnp=비번
+     으로 넣거나, 기기 저장값(wv_turn_v1)에 넣으면 그대로 씁니다. */
+  var TURN_PRESET = [];
+
+  function iceServers() {
+    var list = STUN.slice();
+    var extra = [];
+    try {
+      var tu = qp('turn');
+      if (tu) extra.push({ urls: tu.split('|'), username: qp('turnu') || '', credential: qp('turnp') || '' });
+    } catch (e) { }
+    try {
+      var s = safeGet('wv_turn_v1');
+      if (s) { var arr = JSON.parse(s); if (arr && arr.length) extra = arr.concat(extra); }
+    } catch (e) { }
+    return list.concat(extra, TURN_PRESET);
+  }
+
   var PEOPLE = {
     yunjin:   { name: '윤진', emo: '🦊' },
     hyungwon: { name: '형원', emo: '🐣' },
@@ -72,6 +92,11 @@
   var Q = null;
   try { Q = new URLSearchParams(location.search || ''); } catch (e) { Q = null; }
   function qp(k) { try { return Q ? Q.get(k) : null; } catch (e) { return null; } }
+
+  /* ?wvroom=시험방 — 주소창에 넣으면 가족방(main) 대신 다른 방을 써서
+     실제 데이터를 더럽히지 않고 시험할 수 있어요 */
+  var ROOM_OVR = qp('wvroom');
+  if (ROOM_OVR) ROOM = ROOM_OVR;
 
   function normWho(v) {
     if (!v) return null;
@@ -103,8 +128,8 @@
     who: FORCE_WHO || 'yunjin', pid: '', world: '',
     micOn: false, micBusy: false, stream: null,
     myVer: 1, peers: {}, conns: {}, attempts: {},
-    audios: {}, analysers: {}, speaking: {},
-    transport: null, seenSig: {}, idled: false, lastAct: now(),
+    audios: {}, analysers: {}, speaking: {}, heard: {},
+    transport: null, seenSig: {}, candBox: {}, idled: false, lastAct: now(),
     timers: [], ac: null, audioBlocked: false, retryT: {}
   };
   var DBG = { offerIn: 0, offerOut: 0, answerIn: 0, answerOut: 0, pc: 0, err: [] };
@@ -120,7 +145,7 @@
   /* ============================================================
      화면 (마이크 토글 + 가족 칩 + 안내 토스트)
      ============================================================ */
-  var el = { bar: null, chips: null, mic: null, ico: null, txt: null, toast: null };
+  var el = { bar: null, chips: null, mic: null, ico: null, txt: null, toast: null, stat: null, unmute: null };
   var toastT = 0;
 
   function injectStyle() {
@@ -167,6 +192,22 @@
       '50%{box-shadow:0 0 0 6px rgba(63,214,176,.16),0 10px 26px rgba(18,150,110,.52)}}',
       '#wv-bar[data-busy="1"] #wv-mic{opacity:.72}',
 
+      '#wv-stat{display:none;align-items:center;gap:3px;height:22px;padding:0 9px;border-radius:999px;',
+      'background:rgba(24,18,40,.82);color:#fff;font-size:11px;font-weight:800;letter-spacing:-.02em;',
+      'white-space:nowrap;pointer-events:none;box-shadow:0 3px 10px rgba(20,10,40,.25)}',
+      '#wv-stat.show{display:inline-flex}',
+      '#wv-stat.ok{background:linear-gradient(180deg,#eafff7,#c9f7e5);color:#0d6b4c}',
+      '#wv-stat.relay{background:linear-gradient(180deg,#fff6e0,#ffe0a3);color:#7a4d00}',
+      '#wv-stat.wait{background:rgba(24,18,40,.82);color:#ffd166}',
+
+      '#wv-unmute{display:none;pointer-events:auto;align-items:center;gap:4px;height:34px;padding:0 14px;',
+      'border-radius:999px;border:0;background:linear-gradient(180deg,#ffd166,#ffb020);color:#4a2c00;',
+      'font-family:inherit;font-size:12.5px;font-weight:800;box-shadow:0 6px 16px rgba(150,90,0,.3);',
+      'cursor:pointer;touch-action:manipulation;animation:wv-blink 1.6s ease-in-out infinite}',
+      '#wv-unmute:active{filter:brightness(.94)}',
+      '#wv-unmute.show{display:inline-flex}',
+      '@keyframes wv-blink{0%,100%{box-shadow:0 6px 16px rgba(150,90,0,.3)}50%{box-shadow:0 6px 22px rgba(255,170,40,.85)}}',
+
       '@media (min-width:820px){#wv-bar{left:calc(50% - 210px);bottom:calc(60px + env(safe-area-inset-bottom,0px))}}'
     ].join('');
     (document.head || document.documentElement).appendChild(st);
@@ -187,6 +228,9 @@
     var chips = document.createElement('div');
     chips.id = 'wv-chips';
 
+    var stat = document.createElement('div');
+    stat.id = 'wv-stat';
+
     var mic = document.createElement('button');
     mic.id = 'wv-mic';
     mic.type = 'button';
@@ -194,12 +238,20 @@
     mic.setAttribute('aria-label', '마이크 켜기');
     mic.innerHTML = '<span class="wv-ico">🎙️</span><span class="wv-txt">마이크</span><span class="wv-dot"></span>';
 
+    var un = document.createElement('button');
+    un.id = 'wv-unmute';
+    un.type = 'button';
+    un.textContent = '🔊 소리 듣기';
+
     bar.appendChild(toast);
+    bar.appendChild(stat);
     bar.appendChild(chips);
     bar.appendChild(mic);
+    bar.appendChild(un);
     (document.body || document.documentElement).appendChild(bar);
 
     el.bar = bar; el.toast = toast; el.chips = chips; el.mic = mic;
+    el.stat = stat; el.unmute = un;
     el.txt = mic.querySelector('.wv-txt');
     el.ico = mic.querySelector('.wv-ico');
 
@@ -212,6 +264,13 @@
       unlockAudio();
       toggle();
     });
+    un.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      S.audioBlocked = false;
+      unlockAudio();
+      render();
+      toast('🔊 소리를 켰어요', 1600);
+    });
     render();
   }
 
@@ -221,6 +280,15 @@
     el.toast.classList.add('show');
     clearTimeout(toastT);
     toastT = setTimeout(function () { if (el.toast) el.toast.classList.remove('show'); }, ms || 3000);
+  }
+
+  var announceT = 0;
+  function announceSoon() {
+    if (announceT) return;
+    announceT = setTimeout(function () {
+      announceT = 0;
+      try { if (S.transport) S.transport.announce(); } catch (e) { }
+    }, 80);
   }
 
   function render() {
@@ -233,7 +301,45 @@
       el.mic.setAttribute('aria-pressed', S.micOn ? 'true' : 'false');
       el.mic.setAttribute('aria-label', S.micOn ? '마이크 끄기' : '마이크 켜기');
     }
+    renderStat();
     renderChips();
+  }
+
+  /* 연결 상태 한 줄: 연결 중 / 🔊 연결됨 / 🔁 느린 연결 */
+  function statusOf() {
+    if (S.audioBlocked) return { t: '🔇 소리가 막혀 있어요', k: 'wait' };
+    if (anyConnected()) return { t: '🔊 연결됨', k: 'ok' };
+    if (RLY.out || Object.keys(RLY.rx).length) return { t: '🔁 느린 연결로 듣는 중', k: 'relay' };
+    if (S.micOn && Object.keys(S.peers).length) return { t: '연결 중…', k: 'wait' };
+    return null;
+  }
+
+  var statSig = '#';
+  function anyPausedRemote() {
+    var list = Object.keys(S.audios).map(function (pid) { return S.audios[pid]; });
+    Object.keys(RLY.rx).forEach(function (pid) { var R = RLY.rx[pid]; if (R && R.audio) list.push(R.audio); });
+    return list.some(function (a) {
+      try { return !!(a && a.paused && (a.srcObject || a.src)); } catch (e) { return false; }
+    });
+  }
+  function renderStat() {
+    if (!el.stat) return;
+    var st = statusOf();
+    var needsUn = S.audioBlocked || anyPausedRemote();
+    var sig = (st ? st.t + '|' + st.k : '-') + (needsUn ? '|u' : '');
+    if (sig === statSig) return;
+    statSig = sig;
+    if (st) {
+      el.stat.textContent = st.t;
+      el.stat.className = 'show ' + st.k;
+    } else {
+      el.stat.textContent = '';
+      el.stat.className = '';
+    }
+    if (el.unmute) {
+      if (needsUn) el.unmute.classList.add('show');
+      else el.unmute.classList.remove('show');
+    }
   }
 
   /* 가족 칩: 방에 들어와 있는 사람(마이크 켠 사람은 초록, 말하면 반짝) */
@@ -310,6 +416,7 @@
           root = db.ref(PATH + '/' + ROOM);
           myRef = root.child('peers/' + S.pid);
           try { myRef.onDisconnect().remove(); } catch (e) { }
+          try { root.child('rel/' + S.pid).onDisconnect().remove(); } catch (e) { }
 
           root.child('peers').on('value', function (snap) {
             var v = snap.val() || {};
@@ -329,7 +436,7 @@
             if (peerCb) peerCb(out);
           }, function () { });
 
-          /* 나에게 온 offer / answer */
+          /* 나에게 온 offer / answer / 후보 */
           root.child('sig/' + S.pid).on('value', function (snap) {
             var v = snap.val() || {};
             Object.keys(v).forEach(function (from) {
@@ -342,6 +449,16 @@
                 S.seenSig[k] = m.sid;
                 onSignal(from, kind, { sid: m.sid, sdp: m.sdp });
               });
+              if (box.cands) {
+                Object.keys(box.cands).forEach(function (ck) {
+                  var cd = box.cands[ck];
+                  if (!cd || !cd.sid || !cd.c) return;
+                  var k2 = from + '|cand|' + ck;
+                  if (S.seenSig[k2]) return;
+                  S.seenSig[k2] = 1;
+                  onSignal(from, 'cand', { sid: cd.sid, cand: cd.c });
+                });
+              }
             });
           }, function () { });
 
@@ -386,10 +503,16 @@
         if (!root) return;
         try { if (myRef) myRef.remove().catch(function () { }); } catch (e) { }
         try { root.child('sig/' + S.pid).remove().catch(function () { }); } catch (e) { }
+        try { root.child('rel/' + S.pid).remove().catch(function () { }); } catch (e) { }
       },
       send: function (to, kind, data) {
         if (!root) return;
         try {
+          if (kind === 'cand') {
+            root.child('sig/' + to + '/' + S.pid + '/cands').push({ sid: data.sid, c: data.cand, ts: now() })
+              .catch(function () { });
+            return;
+          }
           root.child('sig/' + to + '/' + S.pid + '/' + kind)
             .set({ sid: data.sid, sdp: data.sdp, ts: now() }).catch(function () { });
         } catch (e) { }
@@ -400,6 +523,53 @@
         try { root.child('sig/' + pid + '/' + S.pid).remove().catch(function () { }); } catch (e) { }
         try { root.child('sig/' + S.pid + '/' + pid).remove().catch(function () { }); } catch (e) { }
       },
+
+      /* ---- 보조 중계(목소리 조각) ---- */
+      relayHdr: function (b64) {
+        if (!root) return;
+        try { root.child('rel/' + S.pid + '/hdr').set({ d: b64, m: RLY.mime || '', ts: now() }).catch(function () { }); } catch (e) { }
+      },
+      relayChunk: function (seq, b64) {
+        if (!root) return;
+        try { root.child('rel/' + S.pid + '/c/' + seq).set({ d: b64, ts: now() }).catch(function () { }); } catch (e) { }
+      },
+      relayPrune: function (upto) {
+        if (!root) return;
+        for (var n = upto - 12; n < upto; n++) {
+          try { root.child('rel/' + S.pid + '/c/' + n).remove().catch(function () { }); } catch (e) { }
+        }
+      },
+      relayStop: function () {
+        if (!root) return;
+        try { root.child('rel/' + S.pid).remove().catch(function () { }); } catch (e) { }
+      },
+      relayWatch: function (cb) {
+        if (!root) return;
+        var relRef = root.child('rel');
+        var watched = {};
+        relRef.on('child_added', function (snap) {
+          var pid = snap.key;
+          if (!pid || pid === S.pid || watched[pid]) return;
+          watched[pid] = 1;
+          cb('peer', pid, null, null);
+          relRef.child(pid + '/hdr').on('value', function (h) {
+            var v = h.val();
+            if (v && v.d) cb('hdr', pid, v.d, v.m || '');
+          }, function () { });
+          relRef.child(pid + '/c').on('child_added', function (c) {
+            var v = c.val();
+            if (v && v.d) cb('chunk', pid, v.d, null);
+          }, function () { });
+        }, function () { });
+        relRef.on('child_removed', function (snap) {
+          var pid = snap.key;
+          if (watched[pid]) {
+            try { relRef.child(pid + '/hdr').off(); relRef.child(pid + '/c').off(); } catch (e) { }
+            delete watched[pid];
+          }
+          cb('gone', pid, null, null);
+        }, function () { });
+      },
       close: function () {
         try { if (root) { root.child('peers').off(); root.child('sig/' + S.pid).off(); } } catch (e) { }
       }
@@ -407,7 +577,8 @@
   }
 
   function makeLocal() {
-    var bc = null, cb = null, peers = {}, beat = 0;
+    var bc = null, cb = null, peers = {}, beat = 0, relCb = null;
+    var relCache = {};   /* 시험 모드에서는 새로 들어온 창에 최근 조각을 다시 보내 줘요 */
     var name = 'wv-mesh-' + (qp('wvroom') || ROOM);
     try { bc = new BroadcastChannel(name); } catch (e) { bc = null; }
     function post(m) { try { if (bc) bc.postMessage(m); } catch (e) { } }
@@ -433,7 +604,21 @@
           peers[m.pid] = { who: m.who, micOn: !!m.micOn, ver: m.ver || 0, ts: m.ts || now(), world: m.world || '' };
           emit();
         } else if (m.t === 'sig' && m.to === S.pid) {
-          onSignal(m.from, m.kind, { sid: m.sid, sdp: m.sdp });
+          onSignal(m.from, m.kind, { sid: m.sid, sdp: m.sdp, cand: m.cand });
+        } else if (m.t === 'rh') {
+          if (m.pid === S.pid) return;
+          var rc = relCache[m.pid] || (relCache[m.pid] = { hdr: '', c: [] });
+          rc.hdr = m.h;
+          if (relCb) relCb('hdr', m.pid, m.h, null);
+        } else if (m.t === 'rq') {
+          if (m.pid === S.pid) return;
+          var rc2 = relCache[m.pid] || (relCache[m.pid] = { hdr: '', c: [] });
+          rc2.c.push({ s: m.seq, d: m.d });
+          if (rc2.c.length > 12) rc2.c.shift();
+          if (relCb) relCb('chunk', m.pid, m.d, null);
+        } else if (m.t === 'rx') {
+          delete relCache[m.pid];
+          if (relCb) relCb('gone', m.pid, null, null);
         } else if (m.t === 'bye') {
           delete peers[m.pid]; emit();
         }
@@ -446,8 +631,23 @@
       start: function (c) { cb = c; state(); setTimeout(emit, 40); return true; },
       announce: state,
       remove: function () { post({ t: 'bye', pid: S.pid }); },
-      send: function (to, kind, data) { post({ t: 'sig', to: to, from: S.pid, kind: kind, sid: data.sid, sdp: data.sdp }); },
+      send: function (to, kind, data) { post({ t: 'sig', to: to, from: S.pid, kind: kind, sid: data.sid, sdp: data.sdp, cand: data.cand }); },
       dropPeer: function () { },
+      relayHdr: function (b64) { post({ t: 'rh', pid: S.pid, h: b64, m: RLY.mime || '' }); },
+      relayChunk: function (seq, b64) { post({ t: 'rq', pid: S.pid, seq: seq, d: b64 }); },
+      relayPrune: function () { },
+      relayStop: function () { post({ t: 'rx', pid: S.pid }); },
+      relayWatch: function (fn) {
+        relCb = fn;
+        /* 이미 켜저 있던 참가자의 최근 중계 조각을 한 번 보내 줘요 */
+        setTimeout(function () {
+          Object.keys(relCache).forEach(function (pid) {
+            var rc = relCache[pid];
+            if (rc.hdr) fn('hdr', pid, rc.hdr, null);
+            rc.c.slice(-2).forEach(function (it) { fn('chunk', pid, it.d, null); });
+          });
+        }, 60);
+      },
       close: function () { try { clearInterval(beat); } catch (e) { } try { if (bc) bc.close(); } catch (e) { } }
     };
   }
@@ -456,8 +656,21 @@
      WebRTC 그물(mesh)
      ============================================================ */
   function desired(p) { return !!(S.micOn || (p && p.micOn)); }
-  function pairKey(p) { return S.myVer + ':' + ((p && p.ver) || 0); }
+  /* 두 기기가 같은 열쇠를 갖도록 항상 작은 수부터 (예전엔 방향이 반대라
+     offer 를 받은 쪽이 방금 만든 연결을 스스로 닫아 버렸어요 — 소리가
+     안 들리던 원인) */
+  function pairKey(p) {
+    var a = S.myVer, b = (p && p.ver) || 0;
+    return a <= b ? (a + ':' + b) : (b + ':' + a);
+  }
   function isInitiator(pid) { return String(S.pid) < String(pid); }
+  function p2pConnected(pid) {
+    var c = S.conns[pid];
+    return !!(c && c.alive && c.pc && c.pc.connectionState === 'connected');
+  }
+  function anyConnected() {
+    return Object.keys(S.conns).some(function (pid) { return p2pConnected(pid); });
+  }
 
   function onPeers(map) {
     S.peers = map || {};
@@ -491,13 +704,25 @@
   function makePC(pid, sid, initiator) {
     var pc;
     try {
-      pc = new RTCPeerConnection({ iceServers: STUN, iceCandidatePoolSize: 2 });
+      pc = new RTCPeerConnection({ iceServers: iceServers(), iceCandidatePoolSize: 2 });
     } catch (e) {
       return null;
     }
     DBG.pc++;
-    var c = { pid: pid, pc: pc, sid: sid, key: sid.split('#')[0], initiator: initiator, alive: true };
+    var c = {
+      pid: pid, pc: pc, sid: sid, key: sid.split('#')[0], initiator: initiator, alive: true,
+      outCands: [], inCands: [], sdpSent: false, t0: now()
+    };
     S.conns[pid] = c;
+
+    /* 후보(candidate)는 조금씩 늦게 모여요 — 모이는 족족 바로 보내고
+       (trickle) 받는 쪽은 준비되면 차례로 넣어요 */
+    pc.onicecandidate = function (ev) {
+      if (!c.alive) return;
+      if (!ev.candidate) { c.gatherDone = true; return; }
+      if (c.sdpSent) sendCand(pid, sid, ev.candidate);
+      else c.outCands.push(ev.candidate);
+    };
 
     /* 보내는 쪽(마이크 ON)이면 내 목소리를, 아니면 듣기만 */
     if (S.stream && S.micOn) {
@@ -515,9 +740,37 @@
       var st = pc.connectionState;
       if (st === 'connected') { S.retryT[pid] = 0; S.attempts[pid] = 0; }
       else if (st === 'failed') retryConn(pid, c);
-      renderChips();
+      renderChips(); render();
     };
     return c;
+  }
+
+  /* ---------- 후보 보내기/받기 ---------- */
+  function sendCand(pid, sid, cand) {
+    try {
+      var j = cand && cand.toJSON ? cand.toJSON() : cand;
+      if (S.transport && S.transport.send) S.transport.send(pid, 'cand', { sid: sid, cand: j });
+    } catch (e) { }
+  }
+  function flushCands(c) {
+    if (!c || !c.alive) return;
+    c.sdpSent = true;
+    var out = c.outCands || [];
+    c.outCands = [];
+    out.forEach(function (cd) { sendCand(c.pid, c.sid, cd); });
+  }
+  function applyCand(c, cand) {
+    if (!c || !c.alive || !cand) return;
+    if (!c.pc.remoteDescription) { c.inCands.push(cand); return; }
+    try { c.pc.addIceCandidate(new RTCIceCandidate(cand)).catch(function () { }); } catch (e) { }
+  }
+  function flushInCands(c) {
+    if (!c) return;
+    var list = (S.candBox && S.candBox[c.sid]) || [];
+    if (S.candBox) delete S.candBox[c.sid];
+    list = list.concat(c.inCands || []);
+    c.inCands = [];
+    list.forEach(function (cd) { applyCand(c, cd); });
   }
 
   function connect(pid) {
@@ -539,9 +792,16 @@
         if (!pc.remoteDescription) {
           DBG.offerOut++;
           S.transport.send(pid, 'offer', { sid: sid, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+          flushCands(c);
         }
       })
       .catch(function (e) { dbgErr('offer', e); clearTimeout(abort); retryConn(pid, c); });
+
+    /* 7초 동안 연결이 안 되면 다시 시도 (느린 망 대비) */
+    var slow = setTimeout(function () {
+      if (c.alive && !p2pConnected(pid)) retryConn(pid, c);
+    }, 7000);
+    c.slowT = slow;
   }
 
   function waitIce(pc, ms) {
@@ -570,15 +830,24 @@
       if (!c) { dbgErr('makePC-answer', 'null'); return; }
       var pc = c.pc;
       pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
-        .then(function () { return pc.createAnswer(); })
+        .then(function () { flushInCands(c); return pc.createAnswer(); })
         .then(function (ans) { return pc.setLocalDescription(ans); })
         .then(function () { return waitIce(pc, 2400); })
         .then(function () {
           if (!c.alive || !pc.localDescription) return;
           DBG.answerOut++;
           S.transport.send(from, 'answer', { sid: data.sid, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+          flushCands(c);
         })
         .catch(function (e) { dbgErr('answer', e); closeConn(from); });
+      return;
+    }
+
+    if (kind === 'cand') {
+      if (!data.cand) return;
+      if (cur && cur.sid === data.sid) { applyCand(cur, data.cand); return; }
+      if (!S.candBox) S.candBox = {};
+      (S.candBox[data.sid] = S.candBox[data.sid] || []).push(data.cand);
       return;
     }
 
@@ -586,7 +855,9 @@
       DBG.answerIn++;
       if (!cur || cur.sid !== data.sid || !cur.initiator) return;
       if (cur.pc.remoteDescription) return;
-      cur.pc.setRemoteDescription(new RTCSessionDescription(data.sdp)).catch(function () { retryConn(from, cur); });
+      cur.pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
+        .then(function () { flushInCands(cur); })
+        .catch(function () { retryConn(from, cur); });
     }
   }
 
@@ -608,12 +879,13 @@
     var c = S.conns[pid];
     if (c) {
       c.alive = false;
-      try { c.pc.ontrack = null; c.pc.onconnectionstatechange = null; } catch (e) { }
+      try { clearTimeout(c.slowT); } catch (e) { }
+      try { c.pc.ontrack = null; c.pc.onconnectionstatechange = null; c.pc.onicecandidate = null; } catch (e) { }
       try { c.pc.close(); } catch (e) { }
       delete S.conns[pid];
     }
     detachRemote(pid);
-    renderChips();
+    renderChips(); render();
   }
 
   function closeAllConns() {
@@ -640,13 +912,15 @@
   function playAudio(a) {
     try {
       var pr = a.play();
-      if (pr && pr.catch) pr.catch(function () { S.audioBlocked = true; });
-    } catch (e) { S.audioBlocked = true; }
+      if (pr && pr.then) pr.then(function () { S.audioBlocked = false; renderStat(); }, function () { S.audioBlocked = true; renderStat(); });
+    } catch (e) { S.audioBlocked = true; renderStat(); }
   }
 
   function unlockAudio() {
     if (S.ac && S.ac.state === 'suspended') { try { S.ac.resume(); } catch (e) { } }
     Object.keys(S.audios).forEach(function (pid) { playAudio(S.audios[pid]); });
+    Object.keys(RLY.rx).forEach(function (pid) { var R = RLY.rx[pid]; if (R && R.audio) playAudio(R.audio); });
+    renderStat();
   }
 
   function detachRemote(pid) {
@@ -677,7 +951,11 @@
     S.analysers[pid] = { src: src, an: an, buf: new Uint8Array(an.fftSize) };
   }
 
-  function isSpeaking(pid) { return !!S.speaking[pid] && (now() - S.speaking[pid] < 1100); }
+  function isSpeaking(pid) {
+    if (S.speaking[pid] && (now() - S.speaking[pid] < 1100)) return true;
+    /* 중계로 들어오는 소리도 "듣는 중"으로 보여 줘요 */
+    return !!(S.heard[pid] && (now() - S.heard[pid] < 700));
+  }
 
   var levelT = 0;
   function pollLevels() {
@@ -695,6 +973,244 @@
       } catch (e) { }
     });
     if (any) renderChips();
+  }
+
+  /* ============================================================
+     🔁 보조 중계 모드 — WebRTC 가 안 붙을 때
+     ------------------------------------------------------------
+     같은 집 WiFi 가 아니거나 공유기가 기기끼리 직접 통신을 막아 두면
+     P2P(WebRTC) 는 붙지 않아요. 그래도 소리는 들려야 하니, 6초 동안
+     P2P 가 안 되면 자동으로 이 모드로 바꿉니다.
+       · 0.25초짜리 오디오 조각(Opus, 초당 약 2.5KB)을 Firebase 에 올리고
+       · 상대는 그 조각을 이어 붙여(MSE) 바로 재생해요.
+       · 0.5~1.5초쯤 늦게 들리지만 NAT·통신사와 상관없이 전달돼요.
+     P2P 가 붙으면 이 모드는 저절로 꺼집니다.
+     ============================================================ */
+  var RLY = {
+    out: false, rec: null, seq: 0, hdrSent: false, mime: '', waitSince: 0,
+    rx: {}, encQ: null
+  };
+
+  function b64ToU8(b64) {
+    var s = global.atob(b64), u8 = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) u8[i] = s.charCodeAt(i);
+    return u8;
+  }
+
+  function blobToB64(blob) {
+    return new Promise(function (resolve) {
+      try {
+        var fr = new FileReader();
+        fr.onload = function () {
+          var s = String(fr.result || '');
+          var i = s.indexOf(',');
+          resolve(i < 0 ? '' : s.slice(i + 1));
+        };
+        fr.onerror = function () { resolve(''); };
+        fr.readAsDataURL(blob);
+      } catch (e) { resolve(''); }
+    });
+  }
+
+  /* ---------- 보내는 쪽 ---------- */
+  function relayPickMime() {
+    var MR = global.MediaRecorder;
+    if (!MR) return '';
+    var cands = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+    for (var i = 0; i < cands.length; i++) {
+      try { if (MR.isTypeSupported(cands[i])) return cands[i]; } catch (e) { }
+    }
+    return '';
+  }
+
+  function relayStartOut() {
+    if (RLY.out) { if (!RLY.rec && S.stream && S.micOn) relayRecStart(); return; }
+    if (!S.stream || !S.micOn) return;
+    if (!global.MediaRecorder) return;
+    RLY.out = true; RLY.seq = 0; RLY.hdrSent = false;
+    relayRecStart();
+    announceSoon();
+    render();
+  }
+
+  function relayRecStart() {
+    if (!S.stream || !S.micOn) return;
+    if (RLY.rec) {
+      try { if (RLY.rec.state !== 'inactive') return; } catch (e) { }
+      RLY.rec = null;
+    }
+    var mime = relayPickMime();
+    var rec = null;
+    try {
+      rec = new MediaRecorder(S.stream, mime ? { mimeType: mime, audioBitsPerSecond: 20000 } : { audioBitsPerSecond: 20000 });
+    } catch (e) { dbgErr('relrec', e); return; }
+    RLY.rec = rec;
+    RLY.mime = (rec.mimeType || mime || 'audio/webm').split(';')[0];
+    RLY.encQ = Promise.resolve();
+
+    rec.ondataavailable = function (ev) {
+      var blob = ev.data;
+      if (!blob || !blob.size) return;
+      RLY.encQ = RLY.encQ.then(function () { return blobToB64(blob); }).then(function (b64) {
+        if (!RLY.out || !b64 || b64.length > 24000) return;
+        if (!RLY.hdrSent) {
+          RLY.hdrSent = true;
+          if (S.transport && S.transport.relayHdr) S.transport.relayHdr(b64);
+          return;
+        }
+        RLY.seq++;
+        if (S.transport && S.transport.relayChunk) S.transport.relayChunk(RLY.seq, b64);
+        if (RLY.seq > 10 && (RLY.seq % 8) === 0 && S.transport.relayPrune) S.transport.relayPrune(RLY.seq - 8);
+      }).catch(function () { });
+    };
+    rec.onstop = function () { if (RLY.rec === rec) RLY.rec = null; };
+    try { rec.start(250); } catch (e) { dbgErr('relstart', e); RLY.rec = null; }
+  }
+
+  function relayStopOut() {
+    if (!RLY.out) return;
+    RLY.out = false;
+    RLY.waitSince = 0;
+    RLY.hdrSent = false;
+    RLY.seq = 0;
+    try { if (RLY.rec) { RLY.rec.onstop = null; RLY.rec.stop(); } } catch (e) { }
+    RLY.rec = null;
+    try { if (S.transport && S.transport.relayStop) S.transport.relayStop(); } catch (e) { }
+    render();
+  }
+
+  /* ---------- 듣는 쪽 ---------- */
+  function rxEnsure(pid) {
+    return RLY.rx[pid] || (RLY.rx[pid] = {
+      hdr: '', q: [], sb: null, ms: null, audio: null, url: '',
+      joined: now(), opening: false
+    });
+  }
+
+  function rxReset(pid) {
+    var R = RLY.rx[pid];
+    if (!R) return;
+    delete RLY.rx[pid];
+    try { if (R.ms && R.ms.readyState === 'open') { try { R.ms.endOfStream(); } catch (e) { } } } catch (e) { }
+    try {
+      if (R.audio) {
+        R.audio.onerror = null;
+        R.audio.pause();
+        R.audio.src = '';
+        if (R.audio.parentNode) R.audio.parentNode.removeChild(R.audio);
+      }
+    } catch (e) { }
+    try { if (R.url) URL.revokeObjectURL(R.url); } catch (e) { }
+    render();
+  }
+
+  function rxHdr(pid, b64, mime) {
+    if (!b64) return;
+    var R = RLY.rx[pid];
+    if (R && R.hdr === b64) return;
+    if (R) rxReset(pid);            /* 새 녹음이 시작되면 처음부터 다시 */
+    R = rxEnsure(pid);
+    R.hdr = b64;
+    if (mime) RLY.mime = mime;
+    R.joined = now();
+    renderChips(); render();
+  }
+
+  function rxChunk(pid, b64) {
+    if (!b64) return;
+    var R = RLY.rx[pid];
+    if (!R || !R.hdr) return;
+    if (p2pConnected(pid)) { rxReset(pid); return; }   /* P2P 로 잘 들리면 중계는 안 써요 */
+    S.heard[pid] = now();
+    if (now() - R.joined < 400) return;                /* 접속 직후 밀린 옛 조각은 버림 */
+    if (!R.audio) { rxOpen(pid, R); return; }           /* 첫 조각은 재생기 만드는 데 씀 */
+    R.q.push(b64);
+    if (R.q.length > 30) R.q.splice(0, R.q.length - 30);
+    rxPump(pid, R);
+  }
+
+  function rxOpen(pid, R) {
+    if (!global.MediaSource) return;
+    if (R.opening) return;
+    R.opening = true;
+    var audio = document.createElement('audio');
+    audio.autoplay = true;
+    audio.setAttribute('playsinline', '');
+    audio.style.display = 'none';
+    audio.dataset.wvRelay = pid;
+    (document.body || document.documentElement).appendChild(audio);
+    var ms = new MediaSource();
+    R.ms = ms; R.audio = audio;
+    try {
+      R.url = URL.createObjectURL(ms);
+      audio.src = R.url;
+    } catch (e) { R.opening = false; return; }
+    ms.addEventListener('sourceopen', function () {
+      if (!R.ms || R.ms !== ms) return;
+      var types = [];
+      var m = (RLY.mime || 'audio/webm');
+      if (m.indexOf('mp4') >= 0) types = ['audio/mp4; codecs="mp4a.40.2"', 'audio/mp4'];
+      else types = ['audio/webm; codecs="opus"', 'audio/webm'];
+      var sb = null;
+      for (var i = 0; i < types.length && !sb; i++) {
+        try { sb = ms.addSourceBuffer(types[i]); } catch (e) { }
+      }
+      if (!sb) { R.opening = false; return; }
+      R.sb = sb;
+      try { sb.mode = 'sequence'; } catch (e) { }
+      sb.addEventListener('updateend', function () { rxPump(pid, R); });
+      try { if (R.hdr) sb.appendBuffer(b64ToU8(R.hdr)); } catch (e) { }
+      playAudio(audio);
+      render();
+    }, { once: true });
+  }
+
+  function rxPump(pid, R) {
+    if (!R || !R.sb || R.sb.updating || !R.q.length) return;
+    var b = R.q.shift();
+    try { R.sb.appendBuffer(b64ToU8(b)); }
+    catch (e) {
+      if (e && e.name === 'QuotaExceededError') {
+        R.q.length = 0;
+        try {
+          if (R.sb.buffered.length) R.sb.remove(0, R.sb.buffered.start(0));
+          else R.sb.remove(0, R.audio && R.audio.currentTime || 0);
+        } catch (e2) { }
+      }
+    }
+  }
+
+  /* 늦게 쌓인 소리는 건너뛰어 1초 안쪽으로 유지 */
+  function rxCatchup() {
+    Object.keys(RLY.rx).forEach(function (pid) {
+      var R = RLY.rx[pid];
+      if (!R || !R.audio || !R.sb) return;
+      try {
+        if (!R.sb.buffered || !R.sb.buffered.length) return;
+        var end = R.sb.buffered.end(R.sb.buffered.length - 1);
+        if (end - R.audio.currentTime > 1.4) R.audio.currentTime = Math.max(0, end - 0.5);
+      } catch (e) { }
+    });
+  }
+
+  function relayOnMessage(kind, pid, a, b) {
+    if (!pid || pid === S.pid) return;
+    if (kind === 'hdr') { rxHdr(pid, a, b); return; }
+    if (kind === 'chunk') { rxChunk(pid, a); return; }
+    if (kind === 'gone') { rxReset(pid); return; }
+  }
+
+  /* 6초 동안 P2P 가 안 되면 중계로 전환, 붙으면 원래대로 */
+  function relayWatchdog() {
+    if (anyConnected()) {
+      if (RLY.out) relayStopOut();
+      RLY.waitSince = 0;
+      return;
+    }
+    var wantPeers = Object.keys(S.peers).filter(function (pid) { return S.peers[pid] && desired(S.peers[pid]); });
+    if (!S.micOn || !S.stream || !wantPeers.length) { RLY.waitSince = 0; if (RLY.out) relayStopOut(); return; }
+    if (!RLY.waitSince) RLY.waitSince = now();
+    if (!RLY.out && now() - RLY.waitSince > 6000) relayStartOut();
   }
 
   /* ============================================================
@@ -777,6 +1293,7 @@
     }
     S.stream = null;
     S.myVer++;
+    try { relayStopOut(); } catch (e) { }
     closeAllConns();
     render();
     if (S.transport) { S.transport.announce(); syncMesh(); }
@@ -801,6 +1318,7 @@
     S.transport = TEST ? makeLocal() : makeFirebase();
     var ok = false;
     try { ok = S.transport.start(onPeers); } catch (e) { ok = false; }
+    if (ok) { try { S.transport.relayWatch(relayOnMessage); } catch (e) { } }
     if (!ok && !TEST) {
       /* SDK 가 아직 안 떴으면 잠깐 기다렸다 다시 (인터넷 느릴 때) */
       var tries = 0;
@@ -808,6 +1326,7 @@
         tries++;
         var done = false;
         try { done = S.transport.start(onPeers); } catch (e) { done = false; }
+        if (done && tries === 1) { try { S.transport.relayWatch(relayOnMessage); } catch (e) { } }
         if (done || tries > 20) clearInterval(t);
       }, 800);
       S.timers.push(t);
@@ -821,6 +1340,11 @@
 
     /* 상대 목소리 크기 감지 */
     S.timers.push(setInterval(pollLevels, 300));
+
+    /* 중계 모드 전환 감시 + 늦게 쌓인 소리 따라잡기 */
+    S.timers.push(setInterval(function () { try { relayWatchdog(); } catch (e) { } }, 1000));
+    S.timers.push(setInterval(function () { try { rxCatchup(); } catch (e) { } }, 800));
+    S.timers.push(setInterval(function () { renderStat(); }, 1200));
 
     /* 하은이 대화처럼 마이크를 같이 쓰는 창이 열리면 안전하게 OFF */
     S.timers.push(setInterval(function () {
@@ -854,7 +1378,7 @@
   function markActive() {
     S.lastAct = now();
     /* 화면을 한 번이라도 만지면 상대 목소리가 막혀 있던 것도 풀어요 */
-    if (S.audioBlocked) { S.audioBlocked = false; unlockAudio(); }
+    if (S.audioBlocked || anyPausedRemote()) unlockAudio();
     if (S.idled) {
       S.idled = false;
       if (S.transport) S.transport.announce();
@@ -873,6 +1397,8 @@
     try { if (S.micOn || !S.idled) { if (S.transport) S.transport.remove(); } } catch (e) { }
     try { closeAllConns(); } catch (e) { }
     try { if (S.stream) S.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) { } }); } catch (e) { }
+    try { relayStopOut(); } catch (e) { }
+    try { Object.keys(RLY.rx).forEach(rxReset); } catch (e) { }
     try { if (S.transport) S.transport.close(); } catch (e) { }
   }
   global.addEventListener('pagehide', cleanup);
@@ -908,6 +1434,16 @@
           return { pid: pid, state: S.conns[pid].pc.connectionState, initiator: S.conns[pid].initiator };
         }),
         audios: Object.keys(S.audios).length,
+        relay: {
+          out: RLY.out, seq: RLY.seq, rec: RLY.rec ? RLY.rec.state : '',
+          rx: Object.keys(RLY.rx).map(function (pid) {
+            var R = RLY.rx[pid];
+            var buffered = 0;
+            try { if (R.sb && R.sb.buffered.length) buffered = +(R.sb.buffered.end(R.sb.buffered.length - 1) - (R.audio ? R.audio.currentTime : 0)).toFixed(2); } catch (e) { }
+            return { pid: pid, hdr: !!R.hdr, playing: !!(R.audio && !R.audio.paused), q: R.q.length, ahead: buffered };
+          })
+        },
+        status: (statusOf() || {}).t || '',
         dbg: { offerIn: DBG.offerIn, offerOut: DBG.offerOut, answerIn: DBG.answerIn, answerOut: DBG.answerOut, pc: DBG.pc, err: DBG.err.slice() }
       };
     },
