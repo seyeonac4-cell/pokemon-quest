@@ -3086,6 +3086,19 @@ function boot() {
       return { x: P.x, z: P.z };
     },
     isStuck: () => !!P.stuck,
+    avatarInfo() {
+      try {
+        meAvatar.updateMatrixWorld(true);
+        const h = new THREE.Vector3(0, 1.86, 0).applyMatrix4(meAvatar.matrixWorld);
+        const f = new THREE.Vector3(0, 1.84, 0.3).applyMatrix4(meAvatar.matrixWorld);
+        return {
+          head: [+h.x.toFixed(2), +h.y.toFixed(2), +h.z.toFixed(2)],
+          facePt: [+f.x.toFixed(2), +f.y.toFixed(2), +f.z.toFixed(2)],
+          pos: [+P.x.toFixed(2), +P.y.toFixed(2), +P.z.toFixed(2)],
+          face: +P.face.toFixed(2), tilt: +(P.tilt || 0).toFixed(2)
+        };
+      } catch (e) { return { err: String(e) }; }
+    },
     drive(x, y) { window.__drive = { x: x || 0, y: y || 0 }; return window.__drive; },
     rescue(by) { doRescue(by || null); },
     rescueSelf() { doRescue(null); },
