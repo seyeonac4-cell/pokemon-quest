@@ -1350,6 +1350,8 @@ body:has(#mini:not(.hide)) #wt-badge{opacity:0 !important; pointer-events:none !
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 <script src="./world-coins.js?v=1"></script>
+<!-- 🔒 1인 1기기 좌석 — 한 캐릭터로 두 기기가 동시에 들어오지 못하게 (world-seat.js 공용) -->
+<script src="./world-seat.js?v=1"></script>
 <script>
 /* =========================================================
    🌱 그로우 어 가든 v3 — 2.5D 입체 정원 탐험
@@ -3994,6 +3996,14 @@ function switchKid(k){
   setFairy('<b>' + pLabel(k) + '</b>이에요! 흙 타일 위로 걸어가면 심기·물주기·수확 버튼이 떠요.');
 }
 
+/* 🔒 캐릭터 바꾸기도 좌석 확인을 거쳐요 —
+   이미 다른 기기가 그 캐릭터로 놀고 있으면 토스트로 알려 주고 바꾸지 않아요 */
+var switchKidRaw = switchKid;
+switchKid = function(k){
+  if(!window.WorldSeat) return switchKidRaw(k);
+  WorldSeat.switchTo(k);
+};
+
 /* ---------------- 20. 챌린지 룰렛 ---------------- */
 function chalLeft(g){
   g = g || G();
@@ -4885,6 +4895,11 @@ document.addEventListener('click', function(e){
   if(act === 'startAs'){
     const k = t.dataset.k;
     closeStarter();
+    /* 🔒 이미 다른 기기가 그 캐릭터로 놀고 있으면 안내 창으로 막아요 */
+    if(window.WorldSeat){
+      WorldSeat.switchTo(k);
+      return;
+    }
     if(k !== kid) switchKid(k);
     else toast(pLabel(k) + '으로 시작해요 🌱');
     return;
@@ -5083,6 +5098,19 @@ renderWeather(true);
 /* 처음 온 기기(또는 ?starter=1)면 👨‍👩‍👧‍👦 누구로 놀지 먼저 물어봐요 */
 if(starterWanted()) openStarter();
 setTimeout(function(){ setFairy(FAIRY_LINES[0]); }, 3600);
+
+/* 🔒 캐릭터 좌석 — 시작 화면이 떠 있으면 고를 때 확인하고,
+   ?who= 로 바로 들어온 때는 지금 캐릭터로 좌석을 먼저 확인해요 */
+if(window.WorldSeat){
+  WorldSeat.init({
+    who: function(){ return kid; },
+    setWho: function(k){
+      if(PEOPLE[k] && k !== kid) switchKidRaw(k);
+      else renderWorldBar();
+    }
+  });
+  if(!starterWanted()) WorldSeat.enter(kid, { apply: false });
+}
 
 /* 🪙 공용 코인 지갑 — 블록 월드·드레스와 같은 지갑을 실시간으로 봅니다 */
 WorldCoins.init({

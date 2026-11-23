@@ -1348,6 +1348,8 @@ body{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 <script src="./world-coins.js?v=1"></script>
+<!-- 🔒 1인 1기기 좌석 — 한 캐릭터로 두 기기가 동시에 들어오지 못하게 (world-seat.js 공용) -->
+<script src="./world-seat.js?v=1"></script>
 
 <script>
 (function(){
@@ -5961,6 +5963,10 @@ function famApplyIdentity(id, persist){
 /* 내 자리 차지(접속) + 앱을 닫으면 자동 삭제 */
 function famClaim(){
   if(!FAM.ready || !FAM.root || !FAM.meId) return;
+  /* 🔒 1인 1기기 좌석 — 지금 이 폰의 캐릭터를 다른 기기가 쓰고 있지 않은지 확인 */
+  if(window.WorldSeat && !(WorldSeat.phase() === 'in' && WorldSeat.who() === FAM.meId)){
+    WorldSeat.enter(FAM.meId, { apply: false });
+  }
   try{
     var ref = FAM.root.child('live/' + FAM.meId);
     ref.onDisconnect().remove();
@@ -6159,6 +6165,12 @@ function famWhere(){
 /* 내 캐릭터 바꾸기 (기기별 저장) */
 function famPick(id){
   if(FAMILY.indexOf(id) < 0) return;
+  if(window.WorldSeat) WorldSeat.switchTo(id);   /* 🔒 좌석 확인을 거쳐서 바뀌어요 */
+  else famPickRaw(id);
+}
+/* 🔒 좌석을 통과한 뒤 실제로 캐릭터를 바꾸는 본래 함수 */
+function famPickRaw(id){
+  if(FAMILY.indexOf(id) < 0) return;
   var old = FAM.meId;
   if(old && old !== id) lookSet(old);   /* 바꾸기 전 모습은 그 사람 것으로 보관 */
   FAM.lookReady = false;
@@ -6255,6 +6267,14 @@ if(BOOT_WHO){
   var SH_WHO = whoSharedGet();
   if(SH_WHO) famApplyIdentity(SH_WHO, true);
   else if(famStoredId()) famApplyIdentity(famStoredId(), false);
+}
+/* 🔒 캐릭터 좌석 — 지금 이 폰의 캐릭터로 좌석이 비었는지 서버에 확인해요.
+   이미 다른 기기가 그 캐릭터로 놀고 있으면 안내 창으로 막고, 다른 캐릭터를 골라 주세요. */
+if(window.WorldSeat){
+  WorldSeat.init({
+    who: function(){ return FAM.meId; },
+    setWho: function(w){ famPickRaw(w); }
+  });
 }
 renderWorldBar();
 if(Math.abs(PLAYER.x) < 0.05) PLAYER.x = spawnX();

@@ -1417,6 +1417,8 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin="anonymous"></script>
 <script src="./world-coins.js?v=2"></script>
+<!-- 🔒 1인 1기기 좌석 — 한 캐릭터로 두 기기가 동시에 들어오지 못하게 (world-seat.js 공용) -->
+<script src="./world-seat.js?v=1"></script>
 <script src="./pwa-install.js?v=1" defer></script>
 <script>
 try { navigator.serviceWorker && navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {}); } catch (e) {}
@@ -12540,8 +12542,9 @@ function bindUI() {
     if (whoPick) {
       var w = whoPick.getAttribute('data-switch');
       closeSheet('whoPanel');
-      setProfile(w);
-      whoSharedSet(w);
+      /* 🔒 이미 다른 기기가 그 캐릭터로 놀고 있으면 바꾸지 못하게 막아요 */
+      if (window.WorldSeat) WorldSeat.switchTo(w);
+      else { setProfile(w); whoSharedSet(w); }
       return;
     }
   });
@@ -12549,7 +12552,8 @@ function bindUI() {
   $('#startBtn').addEventListener('click', function () {
     if (!G.pickWho) return;
     AU.unlock();
-    bootWho(G.pickWho);
+    if (window.WorldSeat) WorldSeat.enter(G.pickWho);
+    else bootWho(G.pickWho);
   });
   $('#gateClose').addEventListener('click', function () { closeGate(true); AU.click(); });
   $('#finAgain').addEventListener('click', function () { resetRun(); AU.pop(); });
@@ -12781,9 +12785,21 @@ function init() {
   var bootPick = urlWho || hashWho;
   /* 🚪 ?who=나 #해시로 다른 월드에서 건너온 때만 바로 입장하고,
      그냥 열었으면 "누구로 놀까요?" 화면을 먼저 보여 줘요 */
+  /* 🔒 캐릭터 좌석 — 같은 기기에서 새로고침·포털 이동은 그대로 이어지고,
+     다른 기기가 이미 그 캐릭터로 놀고 있으면 안내 창으로 막아요 */
+  if (window.WorldSeat) {
+    WorldSeat.init({
+      who: function () { return ME_ID(); },
+      setWho: function (w) {
+        if (G.running) { setProfile(w); whoSharedSet(w); }
+        else { G.pickWho = w; bootWho(w); }
+      }
+    });
+  }
   if (WHO[bootPick]) {
     G.pickWho = bootPick;
-    bootWho(bootPick);
+    if (window.WorldSeat) WorldSeat.enter(bootPick);
+    else bootWho(bootPick);
   } else {
     // 저장된 마지막 프로필이 있으면 미리 골라 두기
     var last = store('bw:last');
