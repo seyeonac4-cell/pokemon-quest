@@ -729,6 +729,7 @@ function boot() {
     for (let i = 0; i < 16; i++) {
       const a = i * 2.2, r = 9 + (i % 5) * 3;
       const x = Math.cos(a) * r, z = Math.sin(a) * r + 2;
+      if (x > 2.6 && x < 34 && z > 13.6 && z < 27.4) continue;   // 수영장 자리엔 돌을 두지 않아요
       const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42 + (i % 3) * 0.1), mat('#cfd6e2'));
       m.position.set(x, 0.3, z); m.castShadow = true; scene.add(m);
     }
