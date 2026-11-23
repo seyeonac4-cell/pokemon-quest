@@ -327,6 +327,8 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 <script src="./world-coins.js?v=2"></script>
 <script src="./world-timer.js?v=3"></script>
 <script src="./world-voice.js?v=4"></script>
+<!-- 🔒 1인 1기기 좌석 — 한 캐릭터로 두 기기가 동시에 들어오지 못하게 (world-seat.js 공용) -->
+<script src="./world-seat.js?v=1"></script>
 <script>
 try{ if (window.WorldVoice) WorldVoice.init({ world: '3D 가족 마을' }); }catch(e){}
 </script>
@@ -708,7 +710,7 @@ function boot() {
      7. 나무 · 돌 · 마을 광장
      ============================================================ */
   (function trees() {
-    const spots = [[-27, 12], [-22, 26], [-8, 27], [4, 26], [25, 27], [24, 16], [27, 2], [26, -12],
+    const spots = [[-27, 12], [-22, 26], [-8, 27], [-2, 29], [29, 30], [10, 30.5], [27, 2], [26, -12],
                    [-26, -8], [-24, -22], [20, -26], [-2, -30], [12, -12], [-6, 16]];
     spots.forEach((s, i) => {
       const x = s[0], z = s[1];
@@ -1011,12 +1013,12 @@ function boot() {
     solidRect(PORTAL.x, PORTAL.z, 3.0, 1.5, 0.2);
   })();
 
-  /* ---------- 🏊 4레인 수영장 ---------- */
+  /* ---------- 🏊 4레인 수영장 (길게: 서 → 동 27m) ---------- */
   const POOL = {
-    x0: 9.6, x1: 18.4, z0: 15.6, z1: 28.4,
+    x0: 4.6, x1: 32.6, z0: 16.0, z1: 25.2,
     deck: 0.22, water: 0.62,
-    laneX: [10.7, 12.9, 15.1, 17.3],
-    startZ: 16.6, finishZ: 27.6
+    laneZ: [17.15, 19.45, 21.75, 24.05],
+    startX: 5.1, finishX: 32.0
   };
   let waterMesh = null, waterTex = null;
   function tileTexture(a, b) {
@@ -1075,7 +1077,7 @@ function boot() {
     addBox(scene, 0.12, 0.05, D, POOL.x1 + 0.06, POOL.deck + 0.025, cz, '#5fc7ee', { cast: false });
     // 물속 바닥 · 벽
     const ft = tileTexture('#8fdcf7', '#b6ecff');
-    ft.repeat.set(6, 9);
+    ft.repeat.set(16, 5);
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, D - 0.2), new THREE.MeshLambertMaterial({ map: ft }));
     floor.rotation.x = -Math.PI / 2;
     floor.position.set(cx, 0.035, cz);
@@ -1087,36 +1089,37 @@ function boot() {
     addBox(scene, 0.16, 0.6, D, POOL.x1 - 0.08, 0.3, cz, '#69cdf2', { cast: false });
     // 물결
     waterTex = waterTexture();
+    waterTex.repeat.set(9, 3);
     waterMesh = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.12, D - 0.12),
       new THREE.MeshLambertMaterial({ map: waterTex, transparent: true, opacity: 0.8 }));
     waterMesh.rotation.x = -Math.PI / 2;
     waterMesh.position.set(cx, POOL.water, cz);
     scene.add(waterMesh);
-    // 레인 줄 (빨강·하양 구슬)
+    // 레인 줄 3개 (서 → 동으로 길게)
     const floatGeo = new THREE.SphereGeometry(0.1, 8, 6);
-    [11.8, 14.0, 16.2].forEach((lx) => {
+    [18.3, 20.6, 22.9].forEach((lz) => {
       let i = 0;
-      for (let z = POOL.z0 + 0.55; z < POOL.z1 - 0.3; z += 0.72) {
+      for (let x = POOL.x0 + 0.55; x < POOL.x1 - 0.3; x += 0.72) {
         const m = new THREE.Mesh(floatGeo, mat(i++ % 2 ? '#ffffff' : '#ff5b6e'));
-        m.position.set(lx, POOL.water + 0.05, z);
+        m.position.set(x, POOL.water + 0.05, lz);
         scene.add(m);
       }
     });
-    // 출발대 4개
-    POOL.laneX.forEach((lx, i) => {
-      addBox(scene, 0.46, 0.3, 0.56, lx, POOL.deck + 0.15, POOL.z0 - 0.42, '#ffffff');
-      addBox(scene, 0.42, 0.06, 0.46, lx, POOL.deck + 0.33, POOL.z0 - 0.42, '#4a90e2', { cast: false });
-      makeSign([String(i + 1)], lx, POOL.deck + 0.72, POOL.z0 - 0.42, 0.44, 0.44, { post: false });
+    // 출발대 4개 (서쪽 데크)
+    POOL.laneZ.forEach((lz, i) => {
+      addBox(scene, 0.56, 0.3, 0.46, POOL.x0 - 0.42, POOL.deck + 0.15, lz, '#ffffff');
+      addBox(scene, 0.46, 0.06, 0.42, POOL.x0 - 0.42, POOL.deck + 0.33, lz, '#4a90e2', { cast: false });
+      makeSign([String(i + 1)], POOL.x0 - 0.42, POOL.deck + 0.72, lz, 0.44, 0.44, { post: false });
     });
-    // 결승선 (바닥 줄무늬)
+    // 결승선 (동쪽 수직 줄무늬)
     for (let i = 0; i < 8; i++) {
-      addBox(scene, W / 8, 0.02, 0.44, POOL.x0 + W / 16 + i * (W / 8), 0.06, POOL.finishZ,
+      addBox(scene, 0.44, 0.02, D / 8, POOL.finishX, 0.06, POOL.z0 + D / 16 + i * (D / 8),
         i % 2 ? '#ffffff' : '#ff5b6e', { cast: false });
     }
     // 출발선
-    addBox(scene, W, 0.02, 0.22, cx, 0.06, POOL.startZ, '#ffffff', { cast: false });
-    makeSign(['🏁 결승선'], cx, 2.05, POOL.finishZ - 0.1, 1.5, 0.75, { post: false });
-    makeSign(['🏊‍♀️ 수영장', '4레인 · 대결!'], cx, 3.1, POOL.z0 - 3.0, 2.4, 1.2, { post: true });
+    addBox(scene, 0.22, 0.02, D, POOL.startX, 0.06, cz, '#ffffff', { cast: false });
+    makeSign(['🏁 결승선'], POOL.x1 + 0.9, 2.3, cz, 1.6, 0.8, { post: false });
+    makeSign(['🏊‍♀️ 수영장', '4레인 · 길게 한 바퀴!'], cx, 3.1, POOL.z0 - 3.0, 2.6, 1.3, { post: true });
   })();
 
   /* ---------- 🐷 진흙탕 (머드 퍼들) ---------- */
@@ -1606,7 +1609,15 @@ function boot() {
   $('#profBtn').addEventListener('click', openSheet);
   $('#sheetClose').addEventListener('click', closeSheet);
   sheetWrap.addEventListener('click', (e) => { if (e.target === sheetWrap) closeSheet(); });
-  $$('.whoBtn').forEach((b) => b.addEventListener('click', () => { setWho(b.dataset.who); closeSheet(); }));
+  $$('.whoBtn').forEach((b) => b.addEventListener('click', () => { pickWho(b.dataset.who); }));
+
+  function pickWho(w) {
+    closeSheet();
+    if (window.WorldSeat) {
+      try { WorldSeat.switchTo(w); return; } catch (e) {}
+    }
+    setWho(w);
+  }
 
   function setWho(who) {
     const w = normWho(who);
@@ -1936,7 +1947,7 @@ function boot() {
   P.stuck = null; P.stuckAt = 0; P.swimWake = 0; P.stuckWarn = false; P.mudFree = 0;
 
   const insidePool = (x, z) => x > POOL.x0 + 0.04 && x < POOL.x1 - 0.04 && z > POOL.z0 + 0.04 && z < POOL.z1 - 0.04;
-  const POOL_LEN = POOL.finishZ - POOL.startZ;
+  const POOL_LEN = POOL.finishX - POOL.startX;
 
   /* ---------- 물결 · 물보라 ---------- */
   const ripples = [];
@@ -2092,9 +2103,9 @@ function boot() {
   function exitSwim() {
     if (!P.swim) return;
     if (RACE.on) abortRaceLocal();
-    const west = Math.abs(P.x - POOL.x0) < Math.abs(P.x - POOL.x1);
-    P.x = west ? POOL.x0 - 0.75 : POOL.x1 + 0.75;
-    P.z = Math.min(POOL.z1 - 1.4, Math.max(POOL.z0 + 1.4, P.z));
+    const north = Math.abs(P.z - POOL.z0) < Math.abs(P.z - POOL.z1);
+    P.z = north ? POOL.z0 - 0.75 : POOL.z1 + 0.75;
+    P.x = Math.min(POOL.x1 - 1.4, Math.max(POOL.x0 + 1.4, P.x));
     P.y = POOL.deck; P.vy = 0; P.grounded = true; P.swim = false; P.tilt = 0;
     P.lockUntil = performance.now() + 220;
     AU.pop();
@@ -2115,8 +2126,8 @@ function boot() {
     P.z = Math.min(POOL.z1 - m, Math.max(POOL.z0 + m, P.z));
     P.tilt += ((P.stroke === 'back' ? -1 : 1) - P.tilt) * Math.min(1, dt * 7);
     if (RACE.on && (RACE.phase === 'countdown' || RACE.phase === 'run')) {
-      const lx = POOL.laneX[Math.max(0, Math.min(3, RACE.lane))];
-      P.x = Math.min(lx + 0.6, Math.max(lx - 0.6, P.x));
+      const lz = POOL.laneZ[Math.max(0, Math.min(3, RACE.lane))];
+      P.z = Math.min(lz + 0.6, Math.max(lz - 0.6, P.z));
     }
     P.swimWake -= dt;
     if (P.speed > 0.6 && P.swimWake <= 0) {
@@ -2277,13 +2288,13 @@ function boot() {
     return RACE.on && (RACE.phase === 'wait' || RACE.phase === 'countdown' || (RACE.phase === 'run' && RACE.mineDone));
   }
   function prepareLane(lane) {
-    const lx = POOL.laneX[Math.max(0, Math.min(3, lane || 0))];
+    const lz = POOL.laneZ[Math.max(0, Math.min(3, lane || 0))];
     P.swim = true; P.stuck = null; P.riding = null;
-    P.x = lx; P.z = POOL.startZ; P.y = POOL.water + 0.14;
-    P.vy = 0; P.grounded = true; P.face = 0;
+    P.x = POOL.startX; P.z = lz; P.y = POOL.water + 0.14;
+    P.vy = 0; P.grounded = true; P.face = Math.PI / 2;
     P.stroke = RACE.stroke || P.stroke;
     P.tilt = (P.stroke === 'back' ? -1 : 1);
-    yaw = Math.PI; pitch = 0.42;
+    yaw = -Math.PI / 2; pitch = 0.42;
     P.lockUntil = performance.now() + 200;
     paintStroke();
   }
@@ -2303,7 +2314,7 @@ function boot() {
     if (!force && t - raceHudT < 120) return;
     raceHudT = t;
     el.classList.add('show');
-    const myT = Math.max(0, Math.min(1, (P.z - POOL.startZ) / POOL_LEN));
+    const myT = Math.max(0, Math.min(1, (P.x - POOL.startX) / POOL_LEN));
     const ms = RACE.mineDone ? RACE.mineMs : Math.max(0, raceClock() - RACE.t0);
     const title = RACE.mode === 'bot' ? '🤖 봇 대결' : RACE.mode === 'solo' ? '🏊 혼자 연습' : '👨‍👩‍👧 가족 대결';
     let html = '<div class="rl"><span>' + title + '</span><b>' + (ms / 1000).toFixed(2) + '초</b></div>';
@@ -2533,7 +2544,7 @@ function boot() {
     }
     if (RACE.phase !== 'run') return;
     const el = raceClock() - RACE.t0;
-    RACE.myT = Math.max(0, Math.min(1, (P.z - POOL.startZ) / POOL_LEN));
+    RACE.myT = Math.max(0, Math.min(1, (P.x - POOL.startX) / POOL_LEN));
     if (RACE.mode === 'bot' && !RACE.botMs) {
       RACE.botT += (RACE.botSpeed * dt) / POOL_LEN;
       if (RACE.botT >= 1) RACE.botMs = Math.round(el);
@@ -2987,6 +2998,13 @@ function boot() {
 
   /* ---------- 시작 ---------- */
   resetPlayer(me);
+  // 🔒 1인 1기기 좌석: 이미 다른 기기가 이 캐릭터로 놀고 있으면 안내하고 막아요
+  if (window.WorldSeat) {
+    try {
+      WorldSeat.init({ who: () => me, setWho: (w) => { setWho(w); } });
+      WorldSeat.enter(me);
+    } catch (e) {}
+  }
   // 처음엔 내 집 앞에서 카메라를 마을 쪽으로
   yaw = 0;
   meAvatar.position.set(P.x, P.y, P.z);
@@ -3040,8 +3058,9 @@ function boot() {
     mud: () => MUD.map((m) => ({ x: m.x, z: m.z, rx: m.rx, rz: m.rz })),
     swimIn(lane) {
       const l = Math.max(0, Math.min(3, lane == null ? 0 : lane));
-      P.x = POOL.laneX[l]; P.z = (POOL.z0 + POOL.z1) / 2; P.y = 0;
+      P.x = POOL.startX + 1; P.z = POOL.laneZ[l]; P.y = 0;
       P.vy = 0; P.grounded = true; P.riding = null; P.stuck = null;
+      P.face = Math.PI / 2; yaw = -Math.PI / 2; pitch = 0.28;
       enterSwim();
       return { x: P.x, z: P.z, swim: P.swim };
     },
@@ -3053,7 +3072,7 @@ function boot() {
         on: RACE.on, phase: RACE.phase, mode: RACE.mode, family: RACE.family,
         stroke: RACE.stroke, mineMs: RACE.mineMs, mineDone: RACE.mineDone,
         botT: +RACE.botT.toFixed(3), botMs: RACE.botMs,
-        t: +((P.z - POOL.startZ) / POOL_LEN).toFixed(3),
+        t: +((P.x - POOL.startX) / POOL_LEN).toFixed(3),
         results: RACE.results, count: RACE.count, host: RACE.host, joined: RACE.joined
       };
     },
