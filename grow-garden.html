@@ -4897,7 +4897,7 @@ document.addEventListener('click', function(e){
     closeStarter();
     /* 🔒 이미 다른 기기가 그 캐릭터로 놀고 있으면 안내 창으로 막아요 */
     if(window.WorldSeat){
-      WorldSeat.switchTo(k);
+      WorldSeat.enter(k);
       return;
     }
     if(k !== kid) switchKid(k);

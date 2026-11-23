@@ -299,12 +299,14 @@
       }
       S.seq++;
       var token = S.seq, applied = false;
+      var prev = (S.phase === 'in') ? S.me : null;
       S.phase = 'claim';
       S.me = w;
       claim(w, function (ok, cur, why) {
         if (token !== S.seq) return;
         if (ok) {
           armSeat(w);
+          if (prev && prev !== w) release(prev);      /* 앞에서 놀던 캐릭터 자리는 비워요 */
           hideBlocked();
           if (!applied && opts.apply !== false) { applied = true; applyWho(w); }
         } else if (why === 'taken') {
