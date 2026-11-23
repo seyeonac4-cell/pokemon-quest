@@ -2235,17 +2235,21 @@ function boot() {
   }
   function nearestStuck() {
     let best = null;
+    const t = performance.now();
     stuckList().forEach((s) => {
+      if (RESCUED_AT[s.who] && t - RESCUED_AT[s.who] < 15000) return;
       const d = Math.hypot(s.x - P.x, s.z - P.z);
       if (d < 6.5 && (!best || d < best.d)) best = { who: s.who, x: s.x, z: s.z, d: d };
     });
     return best;
   }
+  const RESCUED_AT = {};
   function rescueOther(who) {
     if (NOFB || !FB.ready) { toast('지금은 밧줄을 던질 수 없어요'); return; }
     const s = (FB.stuckMap || {})[who];
     if (!s) { toast('이미 빠져나왔어요!'); return; }
     try { FB.mud.child('rescue/' + who).set({ by: me, x: +P.x.toFixed(2), z: +P.z.toFixed(2), at: NOW() }); } catch (e) {}
+    RESCUED_AT[who] = performance.now();
     flingRope(new THREE.Vector3(P.x, 1.35, P.z), new THREE.Vector3(Number(s.x) || 0, 0.8, Number(s.z) || 0), 0.55);
     AU.cheer();
     toast('🪢 ' + nameOf(who) + '에게 밧줄을 던졌어요!', 2800);
@@ -2504,7 +2508,7 @@ function boot() {
   function updateRace(dt) {
     if (!RACE.on) return;
     if (RACE.phase === 'wait') {
-      if (performance.now() - RACE.waitAt > 32000) {
+      if (performance.now() - RACE.waitAt > 60000) {
         if (RACE.host === me) { try { FB.swim.child('state').remove(); } catch (e) {} }
         resetRaceLocal(); toast('🏁 가족이 오지 않아 대결을 접었어요 — 봇과 대결해요!', 3000);
         closeRaceSheet(); paintTools(); startLocalRace('bot');
