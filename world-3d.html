@@ -2238,6 +2238,13 @@ function boot() {
     );
     if (want.y < 0.9) want.y = 0.9;
     camPos.lerp(want, 1 - Math.exp(-11 * dt));
+    // 🏠 집 안에 있을 땐 카메라도 방 안에 머물러요 (벽 밖으로 나가면 안이 안 보여서)
+    if (inH) {
+      const halfX = inH.W / 2 - 0.65, halfZ = inH.D / 2 - 0.65;
+      camPos.x = Math.max(inH.x - halfX, Math.min(inH.x + halfX, camPos.x));
+      camPos.z = Math.max(inH.z - halfZ, Math.min(inH.z + halfZ, camPos.z));
+      camPos.y = Math.max(0.9, Math.min(inH.H - 0.45, camPos.y));
+    }
     // 벽·미끄럼틀이 카메라를 가리면 캐릭터 쪽으로 당겨요
     let camUse = camPos;
     try {
@@ -2255,17 +2262,6 @@ function boot() {
         }
       }
     } catch (e) {}
-    // 🏠 집 안에 있을 땐 카메라도 방 안에 머물러요 (벽 밖으로 나가면 안이 안 보여서)
-    if (inH) {
-      const halfX = inH.W / 2 - 0.65, halfZ = inH.D / 2 - 0.65;
-      const cxx = Math.max(inH.x - halfX, Math.min(inH.x + halfX, camUse.x));
-      const czz = Math.max(inH.z - halfZ, Math.min(inH.z + halfZ, camUse.z));
-      let cyy = Math.max(0.9, Math.min(inH.H - 0.45, camUse.y));
-      if (cxx !== camUse.x || czz !== camUse.z || cyy !== camUse.y) {
-        camUse = camUse.clone();
-        camUse.x = cxx; camUse.y = cyy; camUse.z = czz;
-      }
-    }
     camera.position.copy(camUse);
     camera.lookAt(camTarget.x, camTarget.y + 0.1, camTarget.z);
     setFov(fovBase, dt);
