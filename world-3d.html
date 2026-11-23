@@ -951,7 +951,7 @@ function boot() {
     // 천장 (들어가면 살짝 비쳐요)
     info.ceilMat = new THREE.MeshLambertMaterial({ color: '#fff4e6', transparent: true, opacity: 1 });
     const ceil = new THREE.Mesh(new THREE.BoxGeometry(W - 2 * t, 0.12, D - 2 * t), info.ceilMat);
-    ceil.position.set(0, H - 0.06, 0);
+    ceil.position.set(0, H - 0.14, 0);
     ceil.receiveShadow = true;
     g.add(ceil);
     // 방 불빛
