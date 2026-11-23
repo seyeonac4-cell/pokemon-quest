@@ -983,16 +983,16 @@ function boot() {
       const c = document.createElement('canvas'); c.width = c.height = 64;
       const x = c.getContext('2d');
       const gr = x.createRadialGradient(32, 32, 4, 32, 32, 32);
-      gr.addColorStop(0, 'rgba(255,255,255,.95)');
-      gr.addColorStop(0.45, 'rgba(170,140,255,.55)');
-      gr.addColorStop(1, 'rgba(120,90,240,0)');
+      gr.addColorStop(0, 'rgba(214,196,255,.92)');
+      gr.addColorStop(0.45, 'rgba(146,110,255,.62)');
+      gr.addColorStop(1, 'rgba(96,64,220,0)');
       x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
       const t = new THREE.CanvasTexture(c);
       if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
       return t;
     })();
     portalGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.7),
-      new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0.88, depthWrite: false, side: THREE.DoubleSide }));
+      new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0.82, depthWrite: false, side: THREE.DoubleSide }));
     portalGlow.position.set(0, 1.98, 0);
     g.add(portalGlow);
     portalRing = new THREE.Mesh(new THREE.TorusGeometry(1.02, 0.07, 8, 30),
@@ -1005,7 +1005,7 @@ function boot() {
       b.userData.baseY = p[1];
       portalBricks.push(b);
     });
-    makeSign(['🧱 블록 월드', '문으로 들어가요!'], PORTAL.x, 4.85, PORTAL.z + 0.1, 2.4, 1.2, { post: false });
+    makeSign(['🧱 블록 월드', '문으로 들어가요!'], PORTAL.x, 5.15, PORTAL.z + 0.15, 2.4, 1.2, { post: false });
     solidRect(PORTAL.x - 1.2, PORTAL.z, 0.64, 0.64, 3.2);
     solidRect(PORTAL.x + 1.2, PORTAL.z, 0.64, 0.64, 3.2);
     solidRect(PORTAL.x, PORTAL.z, 3.0, 1.5, 0.2);
@@ -1837,9 +1837,9 @@ function boot() {
     }
     // 3인칭 백뷰
     const fwd = P.swim ? 0.45 : 0;
-    const wantTarget = tmpV2.set(P.x + Math.sin(P.face) * fwd, P.y + (P.swim ? 0.55 : 1.5), P.z + Math.cos(P.face) * fwd);
+    const wantTarget = tmpV2.set(P.x + Math.sin(P.face) * fwd, P.y + (P.swim ? 0.45 : 1.5), P.z + Math.cos(P.face) * fwd);
     camTarget.lerp(wantTarget, 1 - Math.exp(-14 * dt));
-    const dist = P.swim ? 4.1 : camDist;
+    const dist = P.swim ? 4.6 : camDist;
     const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const want = tmpV.set(
       camTarget.x + Math.sin(yaw) * dist * cp,
@@ -2013,7 +2013,7 @@ function boot() {
     sp.renderOrder = 30;
     return sp;
   }
-  const mudBubble = makeBubbleSprite(['🐷 앗! 진흙탕에 빠졌어요!', '누군가 밧줄을 던져줘야 나올 수 있어요!'], 3.6, 1.8);
+  const mudBubble = makeBubbleSprite(['🐷 앗! 진흙탕에 빠졌어요!', '누군가 밧줄을 던져줘야 나올 수 있어요!'], 3.1, 1.55);
   mudBubble.visible = false;
   scene.add(mudBubble);
 
@@ -2074,7 +2074,7 @@ function boot() {
     if (P.swim) return;
     P.swim = true; P.stuck = null; P.riding = null;
     P.vy = 0; P.grounded = true; P.tilt = 0;
-    P.y = POOL.water - 0.12;
+    P.y = POOL.water + 0.14;
     P.lockUntil = performance.now() + 260;
     splashWater(P.x, P.z, 18);
     ripple(P.x, P.z, 0xbfefff);
@@ -2101,7 +2101,7 @@ function boot() {
       return;
     }
     if (!insidePool(P.x, P.z)) { exitSwim(); return; }
-    P.y = POOL.water - 0.12 + Math.sin(performance.now() / 640) * 0.025;
+    P.y = POOL.water + 0.14 + Math.sin(performance.now() / 640) * 0.025;
     P.grounded = true; P.vy = 0; P.riding = null;
     const m = 0.42;
     P.x = Math.min(POOL.x1 - m, Math.max(POOL.x0 + m, P.x));
@@ -2268,7 +2268,7 @@ function boot() {
   function prepareLane(lane) {
     const lx = POOL.laneX[Math.max(0, Math.min(3, lane || 0))];
     P.swim = true; P.stuck = null; P.riding = null;
-    P.x = lx; P.z = POOL.startZ; P.y = POOL.water - 0.12;
+    P.x = lx; P.z = POOL.startZ; P.y = POOL.water + 0.14;
     P.vy = 0; P.grounded = true; P.face = 0;
     P.stroke = RACE.stroke || P.stroke;
     P.tilt = (P.stroke === 'back' ? -1 : 1);
@@ -2796,6 +2796,8 @@ function boot() {
       ix += joy.x; iy -= joy.y;
     }
     let mag = Math.hypot(ix, iy);
+    if (window.__drive && !busy) { ix += window.__drive.x; iy += window.__drive.y; }
+    mag = Math.hypot(ix, iy);
     if (mag > 1) { ix /= mag; iy /= mag; mag = 1; }
     const fx = -Math.sin(yaw), fz = -Math.cos(yaw);
     const rx = Math.cos(yaw), rz = -Math.sin(yaw);
@@ -3053,6 +3055,7 @@ function boot() {
       return { x: P.x, z: P.z };
     },
     isStuck: () => !!P.stuck,
+    drive(x, y) { window.__drive = { x: x || 0, y: y || 0 }; return window.__drive; },
     rescue(by) { doRescue(by || null); },
     rescueSelf() { doRescue(null); },
     stuckMap: () => FB.stuckMap,
