@@ -503,7 +503,6 @@
       'letter-spacing:-.02em;cursor:pointer;line-height:1.3;-webkit-tap-highlight-color:transparent;transition:transform .08s,background .15s}',
       '#wt-guard .g-btn:active{transform:scale(.985)}',
       '#wt-guard .g-btn .g-note{display:block;margin-top:3px;font-size:11.5px;font-weight:700;color:#8E7BA8}',
-      '#wt-guard .g-btn[data-arm="1"]{background:#FFF3E0;border-color:rgba(230,140,0,.42);color:#8A4B00}',
       '#wt-guard .g-btn.g-ok{background:#E9F8EF;border-color:rgba(40,150,90,.32);color:#12673C}',
       '#wt-guard .g-btn.g-both{background:linear-gradient(180deg,#FFF7DC,#FFE9AE);border-color:rgba(200,150,0,.34);text-align:center;font-weight:900}',
       '#wt-guard .g-tip{margin-top:11px;font-size:11px;font-weight:700;color:#9A8CAF;text-align:center;line-height:1.4}'
@@ -622,25 +621,7 @@
       if (t === el) { closePanel(); return; }
       var btn = (t.closest && t.closest('.g-btn')) || null;
       if (!btn) return;
-      var k = btn.getAttribute('data-k');
-      if (btn.getAttribute('data-arm') === '1') {
-        btn.setAttribute('data-arm', '0');
-        var html = btn.getAttribute('data-t0');
-        if (html != null) btn.innerHTML = html;
-        doReset(k, btn);
-      } else {
-        btn.setAttribute('data-t0', btn.innerHTML);
-        btn.setAttribute('data-arm', '1');
-        btn.innerHTML = '한 번 더 누르면 리셋해요 ✓' +
-          '<span class="g-note">' + (k === 'both' ? '윤진·형원 둘 다' : (KIDS[k] ? KIDS[k].name : '아이') + ' 새 20분') + '</span>';
-        setTimeout(function () {
-          if (btn.getAttribute('data-arm') === '1') {
-            btn.setAttribute('data-arm', '0');
-            var h2 = btn.getAttribute('data-t0');
-            if (h2 != null) btn.innerHTML = h2;
-          }
-        }, 4000);
-      }
+      doReset(btn.getAttribute('data-k'), btn);
     });
     paintNotes();
   }
