@@ -19,19 +19,30 @@
     ?who= → 이 기기에서 마지막에 고른 아이(lim_active_kid) → 없으면 윤진
     (게임 안에서 캐릭터를 바꾸면 1초 안에 그 아이 기준으로 바뀝니다)
 
+   엄마·아빠 폰에서 원격 리셋 (2026-11-23 추가)
+    · 엄마·아빠로 놀고 있으면 화면 아래에 '⏳ 아이 시간' 단추가 떠요.
+    · 누르면 [🦊 윤진 리셋] [🐣 형원 리셋] [✨ 둘 다 리셋] 창이 열려요.
+    · 누르면 family-lim-7660/worldTimerReset/{yunjin|hyungwon} = {ts, by}
+      에 시각을 남기고, 아이 폰이 그걸 실시간으로 받아
+      잠금을 풀고 새 20분을 열어 줘요 (1~2초).
+    · 앱 모음(apps.html)에는 ?wtguard=1 로 붙여서 시간은 안 세고
+      이 단추만 띄워요.
+
    테스트
     ?timertest=1            테스트용 저장칸(wt1:test:)을 써서 진짜 기록은 안 건드려요
+                            (원격 리셋도 worldTimerReset_test 로만 써요)
     &wtlimit=8&wtcd=10      20분/30분 대신 8초/10초로 빠르게
     &wtleft=5               남은 시간을 5초로 맞춰 놓고 시작
     &wtwho=hyungwon         그 아이로 고정
     &wtreset=1              시작할 때 기록 지우기
-    window.__WT            콘솔에서 set / grant / lockNow / reset / state
+    window.__WT            콘솔에서 set / grant / lockNow / reset / state /
+                            panel / applyReset
    ============================================================ */
 (function () {
   'use strict';
   if (window.__WT && window.__WT.version) return;   /* 두 번 불러도 한 번만 */
 
-  var VERSION = '1.0';
+  var VERSION = '1.1';
   var LIMIT_DEFAULT = 20 * 60;      /* 20분 놀이 */
   var COOLDOWN_DEFAULT = 30 * 60;   /* 30분 쉬기 */
   var ADULT_SPAN = 3 * 60 * 60 * 1000;  /* 보호자가 열어 준 '제한 없음'은 3시간까지만 */
@@ -52,6 +63,7 @@
   }
 
   var TEST = (qp('timertest') === '1') || (qp('wttest') === '1');
+  var GUARD = (qp('wtguard') === '1');   /* 시간은 안 세고 보호자 리셋 단추만 */
   var NS = TEST ? 'wt1:test:' : 'wt1:';
   var LIMIT = Math.round(qnum('wtlimit', LIMIT_DEFAULT));
   var COOLDOWN = Math.round(qnum('wtcd', COOLDOWN_DEFAULT));
@@ -99,10 +111,10 @@
       };
     } catch (e) { return null; }
   }
-  function writeState(k, s) {
+  function writeState(k, s, force) {
     try {
       var u = s.u, lock = s.lock || 0;
-      var prev = readState(k);
+      var prev = force ? null : readState(k);
       /* 두 탭이 같은 아이 기록을 같이 보고 있어도, 더 많이 쓴 쪽/더 늦게 잠긴 쪽을 남겨요 */
       if (prev && prev.c === s.c) {
         if (prev.u > u) u = prev.u;
@@ -336,15 +348,22 @@
     messagingSenderId: '186869020161',
     appId: '1:186869020161:web:e3edcca0d1d2675d89f200'
   };
+  function fbDb() {
+    var fb = window.firebase;
+    if (!fb || !fb.database) return null;
+    try {
+      var app = (fb.apps && fb.apps.length) ? fb.app() : fb.initializeApp(FB_CFG);
+      return fb.database(app);
+    } catch (e) { return null; }
+  }
   function fbPin(onDone) {
     var done = false;
     function finish(v) { if (!done) { done = true; onDone(v); } }
-    var fb = window.firebase;
-    if (!fb || !fb.database) { finish(undefined); return; }
+    var db = fbDb();
+    if (!db) { finish(undefined); return; }
     var ref = null;
     try {
-      var app = (fb.apps && fb.apps.length) ? fb.app() : fb.initializeApp(FB_CFG);
-      ref = fb.database(app).ref('family-lim-7660/settings/pin');
+      ref = db.ref('family-lim-7660/settings/pin');
     } catch (e) { finish(undefined); return; }
     var timer = setTimeout(function () { finish(undefined); }, 4000);
     try {
@@ -360,6 +379,271 @@
     try { var v = localStorage.getItem(NS + 'pin'); return v ? String(v) : null; } catch (e) { return null; }
   }
   function savePin(v) { try { localStorage.setItem(NS + 'pin', String(v)); } catch (e) { } }
+
+  /* ============================================================
+     엄마·아빠용 — 아이 폰 놀이 시간 원격 리셋
+     ============================================================ */
+  var RESET_PATH = TEST ? 'family-lim-7660/worldTimerReset_test' : 'family-lim-7660/worldTimerReset';
+
+  /* Firebase 가 아직 없으면(앱 모음 페이지) 그때만 내려받아 써요 */
+  var fbWait = [], fbBusy = false;
+  function loadJs(src, done) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onload = function () { done(true); };
+    s.onerror = function () { done(false); };
+    (document.head || document.documentElement).appendChild(s);
+  }
+  function withDb(cb) {
+    var db = fbDb();
+    if (db) { cb(db); return; }
+    fbWait.push(cb);
+    if (fbBusy) return;
+    fbBusy = true;
+    var fired = false;
+    function done(db2) {
+      if (fired) return;
+      fired = true;
+      fbBusy = false;
+      var ws = fbWait; fbWait = [];
+      for (var i = 0; i < ws.length; i++) { try { ws[i](db2); } catch (e) { } }
+    }
+    var base = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    loadJs(base + 'firebase-app-compat.js', function (ok) {
+      if (!ok) { done(null); return; }
+      loadJs(base + 'firebase-database-compat.js', function (ok2) { done(ok2 ? fbDb() : null); });
+    });
+    setTimeout(function () { done(null); }, 9000);   /* 느린 인터넷에서 창이 멈추지 않게 */
+  }
+
+  /* ---- 아이 폰 쪽: 엄마가 리셋한 시각을 받아 잠금을 풀어요 ---- */
+  var rRef = null, rWho = null, rTry = 0, rTimer = 0;
+  function watchReset() {
+    if (GUARD) return;
+    var k = isKid(who) ? who : null;
+    if (k === rWho && (rRef || rTimer)) return;   /* 이미 붙었거나 붙는 중 */
+    if (rTimer) { clearTimeout(rTimer); rTimer = 0; }
+    if (rRef) { try { rRef.off(); } catch (e) { } rRef = null; }
+    rWho = k;
+    rTry = 0;
+    if (k) attachReset(k);
+  }
+  function attachReset(k) {
+    withDb(function (db) {
+      if (rWho !== k) return;
+      if (!db) {
+        /* 인터넷·Firebase가 아직이면 조금 있다 다시 (자치 6번) */
+        if (rTry < 6) { rTry++; rTimer = setTimeout(function () { rTimer = 0; attachReset(k); }, 4000); }
+        return;
+      }
+      if (rRef) return;
+      try {
+        var ref = db.ref(RESET_PATH + '/' + k);
+        rRef = ref;
+        ref.on('value', function (snap) {
+          var v = snap && snap.val();
+          if (!v || typeof v.ts !== 'number') return;
+          applyRemoteReset(v.ts, v.by);
+        });
+      } catch (e) { }
+    });
+  }
+  function applyRemoteReset(ts, by) {
+    if (!isKid(who)) return false;
+    var k = who;
+    var akey = NS + 'applied:' + k;
+    var applied = 0;
+    try { applied = Number(localStorage.getItem(akey) || 0) || 0; } catch (e) { }
+    if (!(ts > applied)) return false;          /* 이미 반영한 리셋 */
+    if (!st) st = loadFor(k);
+    var locked = !!(st && st.lock);
+    if (!locked && st && ts <= (st.c || 0)) {
+      /* 엄마가 리셋한 뒤에 이미 새 20분을 시작했으면 또 풀지 않아요 */
+      try { localStorage.setItem(akey, String(ts)); } catch (e) { }
+      return false;
+    }
+    st = freshState();
+    writeState(k, st, true);   /* 두 탭 값 합치기(merge) 없이 그대로 새로 열어요 */
+    try { localStorage.setItem(akey, String(ts)); } catch (e) { }
+    hideLock();
+    lastTs = Date.now();
+    lastShownSec = -1;
+    toast('🛡️ ' + (by === 'dad' ? '아빠' : '엄마') + '가 놀이 시간을 리셋해 주셨어요! (' + fmt(LIMIT) + ')');
+    return true;
+  }
+
+  /* ---- 엄마·아빠 폰 쪽: '⏳ 아이 시간' 단추 + 리셋 창 ---- */
+  var momPill = null, guardEl = null;
+
+  function guardStyle() {
+    if (document.getElementById('wt-gstyle')) return;
+    var stc = document.createElement('style');
+    stc.id = 'wt-gstyle';
+    stc.textContent = [
+      '#wt-mom{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);',
+      'z-index:2147483000;display:none;align-items:center;gap:5px;padding:7px 13px 8px;border:0;border-radius:999px;',
+      'background:linear-gradient(180deg,#8E68C9,#6D43A8);color:#fff;cursor:pointer;',
+      'font:800 12.5px/1 -apple-system,BlinkMacSystemFont,"Pretendard Variable","Segoe UI",system-ui,sans-serif;',
+      'letter-spacing:-.02em;box-shadow:0 4px 14px rgba(70,30,120,.35);-webkit-tap-highlight-color:transparent;',
+      'white-space:nowrap}',
+      '#wt-mom:active{transform:translateX(-50%) scale(.96)}',
+      '#wt-guard{position:fixed;inset:0;z-index:2147483002;display:flex;align-items:center;justify-content:center;padding:18px;',
+      'background:rgba(35,12,62,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);overflow:auto;',
+      'font-family:-apple-system,BlinkMacSystemFont,"Pretendard Variable","Segoe UI",system-ui,sans-serif}',
+      '#wt-guard *{box-sizing:border-box;margin:0;padding:0}',
+      '#wt-guard .g-card{width:100%;max-width:356px;background:#fff;border-radius:24px;padding:18px 16px 14px;',
+      'box-shadow:0 20px 50px rgba(20,0,40,.35)}',
+      '#wt-guard .g-top{display:flex;align-items:center;justify-content:space-between;gap:8px}',
+      '#wt-guard .g-t1{font-size:15.5px;font-weight:900;letter-spacing:-.03em;color:#4A2378}',
+      '#wt-guard .g-x{border:0;background:#F1EDF7;color:#6B4E93;width:30px;height:30px;border-radius:50%;font-size:13px;font-weight:900;cursor:pointer;line-height:1}',
+      '#wt-guard .g-sub{margin-top:6px;font-size:12.5px;line-height:1.45;font-weight:700;color:#6E6184}',
+      '#wt-guard .g-btn{display:block;width:100%;margin-top:9px;padding:12px 14px 13px;border:1px solid rgba(120,60,160,.18);',
+      'border-radius:16px;background:#FAF7FF;color:#3F1F63;text-align:left;font-family:inherit;font-size:14px;font-weight:800;',
+      'letter-spacing:-.02em;cursor:pointer;line-height:1.3;-webkit-tap-highlight-color:transparent;transition:transform .08s,background .15s}',
+      '#wt-guard .g-btn:active{transform:scale(.985)}',
+      '#wt-guard .g-btn .g-note{display:block;margin-top:3px;font-size:11.5px;font-weight:700;color:#8E7BA8}',
+      '#wt-guard .g-btn[data-arm="1"]{background:#FFF3E0;border-color:rgba(230,140,0,.42);color:#8A4B00}',
+      '#wt-guard .g-btn.g-ok{background:#E9F8EF;border-color:rgba(40,150,90,.32);color:#12673C}',
+      '#wt-guard .g-btn.g-both{background:linear-gradient(180deg,#FFF7DC,#FFE9AE);border-color:rgba(200,150,0,.34);text-align:center;font-weight:900}',
+      '#wt-guard .g-tip{margin-top:11px;font-size:11px;font-weight:700;color:#9A8CAF;text-align:center;line-height:1.4}'
+    ].join('');
+    (document.head || document.documentElement).appendChild(stc);
+  }
+
+  function refreshMomPill() {
+    var want = isAdult(who) && !adultMode;
+    if (!want) { if (momPill) momPill.style.display = 'none'; return; }
+    if (!document.body) return;
+    guardStyle();
+    if (!momPill || !momPill.parentNode) {
+      momPill = document.createElement('button');
+      momPill.type = 'button';
+      momPill.id = 'wt-mom';
+      momPill.setAttribute('aria-label', '아이 놀이 시간 관리');
+      momPill.textContent = '⏳ 아이 시간';
+      momPill.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openPanel();
+      });
+      document.body.appendChild(momPill);
+    }
+    momPill.style.display = 'inline-flex';
+  }
+
+  function closePanel() {
+    if (guardEl && guardEl.parentNode) guardEl.parentNode.removeChild(guardEl);
+    guardEl = null;
+  }
+
+  function fmtAgo(ts) {
+    var d = Math.max(0, Date.now() - ts);
+    var m = Math.floor(d / 60000);
+    if (m < 1) return '방금';
+    if (m < 60) return m + '분 전';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + '시간 전';
+    return Math.floor(h / 24) + '일 전';
+  }
+
+  function paintNotes() {
+    withDb(function (db) {
+      if (!db || !guardEl) return;
+      try {
+        db.ref(RESET_PATH).once('value').then(function (snap) {
+          if (!guardEl) return;
+          var v = (snap && snap.val()) || {};
+          for (var i = 0; i < 2; i++) {
+            var k = i ? 'hyungwon' : 'yunjin';
+            var note = document.getElementById('g-note-' + k);
+            if (!note) continue;
+            var o = v[k];
+            note.textContent = (o && o.ts)
+              ? '마지막 리셋: ' + fmtAgo(o.ts) + (o.by === 'dad' ? ' · 아빠' : ' · 엄마')
+              : '아직 리셋한 적 없어요';
+          }
+        }).catch(function () { });
+      } catch (e) { }
+    });
+  }
+
+  function doReset(k, btn) {
+    var by = (who === 'dad') ? 'dad' : 'mom';
+    withDb(function (db) {
+      if (!db) { toast('⚠️ 인터넷이 안 돼서 리셋을 못 보냈어요'); return; }
+      var ts = Date.now();
+      var o = { ts: ts, by: by };
+      var p;
+      try {
+        p = (k === 'both')
+          ? db.ref(RESET_PATH).update({ yunjin: o, hyungwon: o })
+          : db.ref(RESET_PATH + '/' + k).set(o);
+      } catch (e) { toast('⚠️ 리셋을 보내지 못했어요'); return; }
+      var nm = (k === 'both') ? '윤진·형원' : (KIDS[k] ? KIDS[k].name : '아이');
+      function ok() {
+        toast('⏳ ' + nm + ' 시간을 새로 열었어요! (' + fmt(LIMIT) + ')');
+        if (btn) {
+          btn.classList.add('g-ok');
+          setTimeout(function () { if (btn && btn.parentNode) btn.classList.remove('g-ok'); }, 5000);
+        }
+        setTimeout(paintNotes, 900);
+      }
+      function no() { toast('⚠️ 리셋을 보내지 못했어요 · 다시 한 번 눌러 주세요'); }
+      if (p && p.then) p.then(ok).catch(no); else ok();
+    });
+  }
+
+  function openPanel() {
+    if (!document.body) return;
+    guardStyle();
+    closePanel();
+    var el = document.createElement('div');
+    el.id = 'wt-guard';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', '아이 놀이 시간 관리');
+    el.innerHTML =
+      '<div class="g-card">' +
+        '<div class="g-top"><div class="g-t1">⏳ 아이 놀이 시간</div>' +
+        '<button type="button" class="g-x" id="g-x" aria-label="닫기">✕</button></div>' +
+        '<div class="g-sub">아이 폰이 잠겨 있으면 여기서 <b>20분을 새로</b> 열어 줄 수 있어요.</div>' +
+        '<button type="button" class="g-btn" data-k="yunjin">🦊 <b>윤진</b> 시간 리셋<span class="g-note" id="g-note-yunjin">불러오는 중…</span></button>' +
+        '<button type="button" class="g-btn" data-k="hyungwon">🐣 <b>형원</b> 시간 리셋<span class="g-note" id="g-note-hyungwon">불러오는 중…</span></button>' +
+        '<button type="button" class="g-btn g-both" data-k="both">✨ 둘 다 리셋</button>' +
+        '<div class="g-tip">누르면 아이 폰이 1~2초 안에 풀려요 · 엄마·아빠만</div>' +
+      '</div>';
+    document.body.appendChild(el);
+    guardEl = el;
+
+    el.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t) return;
+      if (t.id === 'g-x') { closePanel(); return; }
+      if (t === el) { closePanel(); return; }
+      var btn = (t.closest && t.closest('.g-btn')) || null;
+      if (!btn) return;
+      var k = btn.getAttribute('data-k');
+      if (btn.getAttribute('data-arm') === '1') {
+        btn.setAttribute('data-arm', '0');
+        var html = btn.getAttribute('data-t0');
+        if (html != null) btn.innerHTML = html;
+        doReset(k, btn);
+      } else {
+        btn.setAttribute('data-t0', btn.innerHTML);
+        btn.setAttribute('data-arm', '1');
+        btn.innerHTML = '한 번 더 누르면 리셋해요 ✓' +
+          '<span class="g-note">' + (k === 'both' ? '윤진·형원 둘 다' : (KIDS[k] ? KIDS[k].name : '아이') + ' 새 20분') + '</span>';
+        setTimeout(function () {
+          if (btn.getAttribute('data-arm') === '1') {
+            btn.setAttribute('data-arm', '0');
+            var h2 = btn.getAttribute('data-t0');
+            if (h2 != null) btn.innerHTML = h2;
+          }
+        }, 4000);
+      }
+    });
+    paintNotes();
+  }
 
   function askGuardian(title, onOk) {
     var el = card(
@@ -538,6 +822,8 @@
       lastTs = now;
       lastShownSec = -1;
       if (lockEl && lockEl.parentNode && isKid(who) && st && st.lock) renderLock();
+      watchReset();
+      refreshMomPill();
     }
     if (adultMode && adultMode.until < now) { adultMode = null; writeAdult(null); }
 
@@ -545,6 +831,7 @@
     if (isAdult(who) || adultMode) {
       if (lockEl && lockEl.parentNode) hideLock();
       if (adultMode) refreshAdultChip(); else hideBadge();
+      refreshMomPill();
       return;
     }
     if (!isKid(who)) { hideBadge(); return; }
@@ -600,6 +887,12 @@
       var u = whoFromUrl();
       if (u) { try { localStorage.setItem('lim_active_kid', u); } catch (e) { } }
     }
+    /* 앱 모음 페이지(wtguard=1): 시간은 안 세고 엄마·아빠 리셋 단추만 */
+    if (GUARD) {
+      who = detectWho();
+      refreshMomPill();
+      return;
+    }
     adultMode = readAdult();
     who = detectWho();
     st = isKid(who) ? loadFor(who) : null;
@@ -609,6 +902,7 @@
     }
     lastTs = Date.now();
     tick();
+    watchReset();
     setInterval(tick, 1000);
     /* 기록을 확실히 남기기 */
     window.addEventListener('pagehide', saveNow);
@@ -654,6 +948,10 @@
     lockNow: function () { lockNow(); return this.state(); },
     reset: function () { resetState(); return this.state(); },
     endAdult: function () { endAdult(); return this.state(); },
+    panel: function () { openPanel(); return true; },
+    closePanel: function () { closePanel(); return true; },
+    resetKid: function (k) { doReset(k || 'both'); return true; },
+    applyReset: function (ts, by) { applyRemoteReset(ts || Date.now(), by || 'mom'); return this.state(); },
     cfg: function (o) {
       if (o && typeof o.limit === 'number') LIMIT = o.limit;
       if (o && typeof o.cooldown === 'number') COOLDOWN = o.cooldown;
