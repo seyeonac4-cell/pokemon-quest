@@ -12,6 +12,11 @@
 <meta name="apple-mobile-web-app-title" content="인계 노트">
 <meta name="application-name" content="인계 노트">
 <title>🩺 인계 정리 노트 · 5병동</title>
+<script>
+window.__errs = [];
+addEventListener('error', function(e){ try{ __errs.push(String(e.message || (e.error && e.error.message) || e.type)); }catch(_){} });
+addEventListener('unhandledrejection', function(e){ try{ __errs.push('rejection: ' + String(e.reason)); }catch(_){} });
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A9%BA%3C/text%3E%3C/svg%3E">
 <style>
 :root{
@@ -337,8 +342,7 @@ var KW = {
   lab:['lab','랩','wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb',
        'na','k','cl','ca','p','mg','bst','glucose','전해질','수치','혈액검사','소변검사','urine','cbc','abga',
        'lactate','젖산','amylase','lipase','troponin','트로포닌','bnp','pt','aptt','inr','d-dimer','피브린',
-       '백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','빈혈','anemia','감소','저하','상승','증가',
-       '올라','떨어','정상범위','결과'],
+       '백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','빈혈','anemia','정상범위','결과'],
   meds:['안티','항생제','세파','세파졸린','cefazolin','세프트리악손','ceftriaxone','세포탁심','cefotetan',
         '반코','vanco','반코마이신','아미카신','amicacin','타조신','메로펜','meropenem','이미페넴','이미페넴',
         '타이레놀','트리다','진통제','해열제','항진균','항바이러스','iv','아이브이','수액','링거','하트만',
@@ -382,12 +386,11 @@ function stripBullet(s){
 
 function roomOf(line){
   var s = String(line), m;
-  m = /(\d{2,4})\s*[-–]\s*(\d{1,2})\s*호?/.exec(s);
-  if (m && m.index <= 8) return {value:m[1] + '-' + m[2], index:m.index};
+  // 502-1호 처럼 호가 붙은 경우, 또는 줄 맨 앞의 502-1
+  m = /(?:^|[\s(\[·•])(\d{2,4})\s*[-–]\s*(\d{1,2})(\s*호)?/.exec(s);
+  if (m && (m[3] || m.index <= 1)) return {value:m[1] + '-' + m[2], index:m.index};
   m = /(\d{2,4})\s*호/.exec(s);
   if (m) return {value:m[1], index:m.index};
-  m = /(?:^|\s)(\d{2,4})\s*[-–]\s*(\d{1,2})(?=\s|$|[^\d])/.exec(s);
-  if (m && m.index <= 6) return {value:m[1] + '-' + m[2], index:m.index};
   return null;
 }
 
@@ -456,10 +459,15 @@ function hasAny(text, list){
   return false;
 }
 
-var LAB_CHANGE_RE = /결과|수치|올라|떨어|낮|높|감소|증가|상승|저하|빈혈/;
+var LAB_CHANGE_RE = /결과|수치|올라|떨어|낮|높|감소|증가|상승|저하|빈혈|정상범위/;
+var LAB_NUM = ['wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb',
+  'na','k','cl','ca','p','mg','bst','glucose','lactate','amylase','lipase','troponin','트로포닌','bnp',
+  'pt','aptt','inr','백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','전해질'];
+var FEVER_RE = /(?:3[5-9]|4[0-2])(?:\.\d)?\s*(?:도|℃)|체온|발열|고열|미열|오한|식은땀|떨림/;
 
 function primaryTag(text){
-  if (hasAny(text, KW.lab) && LAB_CHANGE_RE.test(text)) return 'lab';
+  if (FEVER_RE.test(text)) return 'vs';
+  if (hasAny(text, LAB_NUM) && LAB_CHANGE_RE.test(text)) return 'lab';
   if (hasAny(text, KW.plan)) return 'plan';
   if (hasAny(text, KW.dx)) return 'dx';
   if (hasAny(text, KW.lab)) return 'lab';
@@ -493,7 +501,7 @@ function preSplit(lines){
   var out = [];
   for (var i = 0; i < lines.length; i++){
     var line = lines[i];
-    var re = /(\d{2,4}\s*[-–]\s*\d{1,2}\s*호?|\d{3}\s*호)/g, m, cuts = [], guard = 0;
+    var re = /(\d{2,4}\s*[-–]\s*\d{1,2}\s*호|\d{3}\s*호)/g, m, cuts = [], guard = 0;
     while ((m = re.exec(line)) !== null && guard++ < 40){
       if (m.index >= 8 && line.slice(0, m.index).trim().length >= 6) cuts.push(m.index);
     }
@@ -1220,7 +1228,7 @@ var EXAMPLE =
 '- 랩 WBC 12.4 CRP 8.2로 아침에 올라감, Hb 9.2\n' +
 '- 안티 22시 세파졸린 IV 2g, 06시 한 번 더\n' +
 '- 폴리 유지 중 소변량 시간당 40, 헤모박 80cc\n' +
-'- V/S 130/80-88-36.6 SpO2 96% RA, 18시 38.2까지 올라 해열제 먹고 지금 37.3\n' +
+'- V/S 130/80-88-36.6 SpO2 96% RA, 18시 38.2도까지 올라 해열제 먹고 지금 37.3도\n' +
 '- 낙상 주의, 화장실 갈 때 부르시라고 함\n' +
 '- 엔피오 자정부터, 내일 06시 채혈 CBC / B/C\n' +
 '502-1호 박철수 M/64\n' +
