@@ -262,6 +262,9 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 #twHud b{font-size:14px}
 #twHud .sep{opacity:.35;margin:0 3px}
 
+.gxX{width:26px;height:26px;border-radius:50%;background:#eef2fb;color:#7d89a8;font-size:13px;font-weight:900;display:inline-grid;place-items:center;pointer-events:auto;border:1px solid #dfe6f4;line-height:1}
+#mgTop{pointer-events:auto}
+
 #jumpBtn.hammer{background:radial-gradient(circle at 42% 32%,#ffd0a8,#ff9f43 60%,#ef7a12);color:#5a2a00}
 
 #gxSheet{position:absolute;inset:0;z-index:9;display:none;align-items:flex-end;justify-content:center;
@@ -351,11 +354,11 @@ body.gx-ride #joy,body.gx-ride #jumpBtn,body.gx-ride #tools{display:none!importa
   </div>
 
   <!-- 🎮 미니게임 (청기백기 · 두더지 · 블록 타워) -->
-  <div id="mgTop" aria-live="polite"></div>
-  <div id="twHud" aria-live="polite"></div>
+  <div id="mgTop" class="mhead" aria-live="polite"></div>
+  <div id="twHud" class="mhead" aria-live="polite"></div>
 
   <div id="fxPanel" role="dialog" aria-label="청기백기 놀이">
-    <div class="fxTop"><span id="fxRound">1 / 10</span><span id="fxCombo"></span><span id="fxScore">0점</span></div>
+    <div class="fxTop"><span id="fxRound">1 / 10</span><span id="fxCombo"></span><span id="fxScore">0점</span><button type="button" id="fxQuit" class="gxX" aria-label="청기백기 그만하기">✕</button></div>
     <div id="fxCmd" class="fxCmd">준비…</div>
     <div class="fxBar"><i id="fxBar"></i></div>
     <div class="fxGrid">
@@ -3748,7 +3751,7 @@ function boot() {
     const sig = MG.score + '|' + sec + '|' + MG.best;
     if (sig === MG.sig) return;
     MG.sig = sig;
-    el.innerHTML = '🔨 <b>' + MG.score + '</b><span class="sep">·</span>⏱ <b>' + sec + '초</b><span class="sep">·</span>🏆 <b>' + MG.best + '</b>';
+    el.innerHTML = '🔨 <b>' + MG.score + '</b><span class="sep">·</span>⏱ <b>' + sec + '초</b><span class="sep">·</span>🏆 <b>' + MG.best + '</b><button type="button" class="gxX" data-gxquit="mole" aria-label="두더지 그만하기">✕</button>';
   }
   function gxStartMole() {
     gxSheetClose();
@@ -4099,6 +4102,13 @@ function boot() {
       gxSetWeather(next, false);
       toast(next === 'rain' ? '🌧️ 비를 내려요!' : (next === 'snow' ? '❄️ 눈을 내려요!' : '☀️ 맑게 했어요!'), 1600);
       gxTone(next === 'rain' ? 320 : (next === 'snow' ? 880 : 1180), 0.12, 'sine', 0.12, next === 'rain' ? 240 : 1320);
+    });
+    const fq = $('#fxQuit');
+    if (fq) fq.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); gxFlagEnd(); });
+    const mt = $('#mgTop');
+    if (mt) mt.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-gxquit]');
+      if (b) { e.preventDefault(); e.stopPropagation(); gxMoleEnd(); }
     });
     const fp = $('#fxPanel');
     if (fp) fp.addEventListener('click', (e) => {
