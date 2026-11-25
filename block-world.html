@@ -4710,17 +4710,28 @@ function drawBallTile(ctx, t) {
   g.addColorStop(0.42, base);
   g.addColorStop(1, shade(base, -0.32));
   ctx.fillStyle = g; ctx.fill();
-  /* 무지개 줄무늬 */
+  /* 무지개 줄무늬 — 공 가운데에서 뻗어 나가는 비치볼 조각 */
   ctx.save();
   ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832); ctx.clip();
-  var stripe = ['#ff9ecb', '#ffd36a', '#9ef2a8', '#8fd8ff', '#c3a8ff'];
+  var stripe = ['#ff8fbf', '#ffcf5c', '#8fe6a2', '#7fc9ff', '#b39cff'];
+  var spin = Math.sin(G.t * 0.7 + t.x * 0.9) * 0.16;
   for (var i = 0; i < 5; i++) {
+    var ang = -1.9 + i * 0.72 + spin;
     ctx.beginPath();
-    ctx.arc(-r * 1.15 + i * r * 0.55 + Math.sin(G.t * 0.9 + t.x) * 3, cy + 2, r * 0.92, 0, 6.2832);
+    ctx.moveTo(0, cy);
+    ctx.arc(0, cy, r * 1.5, ang, ang + 0.5);
+    ctx.closePath();
     ctx.fillStyle = stripe[i];
-    ctx.globalAlpha = ap * 0.6;
+    ctx.globalAlpha = ap * 0.85;
     ctx.fill();
   }
+  /* 위쪽을 밝게 — 구슬처럼 둥근 느낌 */
+  var sh = ctx.createLinearGradient(0, cy - ry, 0, cy + ry);
+  sh.addColorStop(0, 'rgba(255,255,255,.55)');
+  sh.addColorStop(0.45, 'rgba(255,255,255,.05)');
+  sh.addColorStop(1, 'rgba(40,20,60,.22)');
+  ctx.globalAlpha = ap;
+  ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832); ctx.fillStyle = sh; ctx.fill();
   ctx.restore();
   ctx.globalAlpha = ap;
   ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832);
