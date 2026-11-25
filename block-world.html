@@ -4118,10 +4118,16 @@ function buildMap() {
   spots.push({ x: 295.0, y: -52.2, z: Z12, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
   coin(295, -55, 0.55); coin(297.5, -52, 0.55); coin(298.5, -56.2, 0.55, true);
 
-  /* ② 무지개 다리 (1칸 틈 세 번) */
-  rect(300, -56, 301, -52, 0.6, 'rainbow', { step: 0.45 });
-  rect(303, -56, 304, -52, 0.6, 'rainbow', { step: 0.45 });
-  rect(306, -56, 307, -52, 0.6, 'rainbow', { step: 0.45 });
+  /* ② 무지개 다리 (1칸 틈 세 번) — 구간마다 다른 무지개 색 */
+  var RBOW = ['#ff9aa8', '#ffc773', '#ffe27a', '#a6efa0', '#93dcff', '#c9b6ff'];
+  var S12SEG = [[300, 301], [303, 304], [306, 307]];
+  for (var s12seg = 0; s12seg < S12SEG.length; s12seg++) {
+    for (var s12sx = S12SEG[s12seg][0]; s12sx <= S12SEG[s12seg][1]; s12sx++) {
+      for (var s12sy = -56; s12sy <= -52; s12sy++) {
+        add(s12sx, s12sy, 0.6, 'rainbow', { step: 0.45, tint: RBOW[(s12seg * 2 + ((s12sy + 56) % 2)) % RBOW.length] });
+      }
+    }
+  }
   props.push({ k: 'houseSign', x: 300.2, y: -57.4, z: 0.6, who: null, label: '무지개 다리는 폴짝폴짝', emoji: '🌈' });
   coin(300.5, -54, 1.15); coin(303.5, -53, 1.15, true); coin(306.5, -55, 1.15);
 
@@ -4150,7 +4156,11 @@ function buildMap() {
   coin(328.5, -48, 2.35); coin(330.5, -50, 2.35, true);
 
   /* ⑥ 무지개 아치 — 12탄 완주 */
-  rect(334, -49, 340, -44, 2.8, 'rainbow');
+  for (var s12ax = 334; s12ax <= 340; s12ax++) {
+    for (var s12ay = -49; s12ay <= -44; s12ay++) {
+      add(s12ax, s12ay, 2.8, 'rainbow', { tint: RBOW[(s12ax + s12ay + 6) % RBOW.length] });
+    }
+  }
   for (var s12g = 334; s12g <= 340; s12g++) { railTile(s12g, -50, 2.8, { tint: '#dfe9ff' }); railTile(s12g, -43, 2.8, { tint: '#dfe9ff' }); }
   for (var s12h = -49; s12h <= -44; s12h++) railTile(341, s12h, 2.8, { tint: '#dfe9ff' });
   props.push({ k: 'towerIcon', x: 337.0, y: -42.6, z: 2.8, emoji: '🌈', size: 58 });
@@ -4696,9 +4706,9 @@ function drawBallTile(ctx, t) {
   /* 공 몸통 */
   ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832);
   var g = ctx.createRadialGradient(-r * 0.35, cy - ry * 0.4, 2, 0, cy, r * 1.15);
-  g.addColorStop(0, '#ffffff');
-  g.addColorStop(0.45, base);
-  g.addColorStop(1, shade(base, -0.3));
+  g.addColorStop(0, shade(base, 0.5));
+  g.addColorStop(0.42, base);
+  g.addColorStop(1, shade(base, -0.32));
   ctx.fillStyle = g; ctx.fill();
   /* 무지개 줄무늬 */
   ctx.save();
@@ -4708,7 +4718,7 @@ function drawBallTile(ctx, t) {
     ctx.beginPath();
     ctx.arc(-r * 1.15 + i * r * 0.55 + Math.sin(G.t * 0.9 + t.x) * 3, cy + 2, r * 0.92, 0, 6.2832);
     ctx.fillStyle = stripe[i];
-    ctx.globalAlpha = ap * 0.42;
+    ctx.globalAlpha = ap * 0.6;
     ctx.fill();
   }
   ctx.restore();
