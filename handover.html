@@ -997,6 +997,10 @@ function reparse(){
     }
   });
   state.raw = txt;
+  // 정리되면 입력창은 접어서 카드가 바로 보이게
+  state.inputOpen = false;
+  $('#ipBody').classList.add('hidden');
+  $('#ipToggle').textContent = '열기 ▼';
   save(); render();
   toast(added + '명 카드로 정리했어요' + (merged ? ' · 기존 ' + merged + '명은 내용 합침' : ''));
 }
