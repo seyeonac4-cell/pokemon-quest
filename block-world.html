@@ -780,6 +780,11 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 .stage-strip button.s6{background:linear-gradient(160deg,#fff1f9,#ffe3f3);border-color:#ffc4e4;color:#a8306f}
 .stage-strip button.s7{background:linear-gradient(160deg,#eef0ff,#e0e4ff);border-color:#c3c8f6;color:#3c3f8f}
 .stage-strip button.s8{background:linear-gradient(160deg,#fffbe6,#ffefc2);border-color:#ffd76a;color:#8a5a00}
+.stage-strip button.s9{background:linear-gradient(160deg,#fff0f9,#ffe1f2);border-color:#ffb5df;color:#a8266b}
+.stage-strip button.s10{background:linear-gradient(160deg,#fff2e6,#ffe3ca);border-color:#f8b877;color:#8f4207}
+.stage-strip button.s11{background:linear-gradient(160deg,#e9fcff,#d5f3ff);border-color:#96e0f7;color:#0b657f}
+.stage-strip button.s12{background:linear-gradient(160deg,#f4f0ff,#e9e2ff);border-color:#c8b8fa;color:#54389f}
+.stage-strip button.s13{background:linear-gradient(160deg,#fffce6,#fff0b0);border-color:#ffd233;color:#835500}
 .world-row.orchestra8{background:linear-gradient(135deg,#fff9e8,#fff3fb 55%,#eef2ff);border-color:#ffd76a}
 .world-row.orchestra8 .go{color:#8a5a00;background:#fff0c2}
 .mae-crown{font-size:64px;text-align:center;line-height:1.1;animation:eggwob 1.8s ease-in-out infinite}
@@ -790,6 +795,21 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
 .world-row.sweet6 .go{color:#a8306f;background:#ffe1f1}
 .world-row.space7{background:linear-gradient(135deg,#eef0ff,#e6e9ff 55%,#f4f5ff);border-color:#c3c8f6}
 .world-row.space7 .go{color:#3c3f8f;background:#e2e5ff}
+.world-row.candy9{background:linear-gradient(135deg,#fff2fa,#ffe6f4 55%,#fff9fd);border-color:#ffb8e2}
+.world-row.candy9 .go{color:#a8266b;background:#ffe0f2}
+.world-row.dino10{background:linear-gradient(135deg,#fff4e9,#ffe7d0 55%,#fffaf2);border-color:#f7bb82}
+.world-row.dino10 .go{color:#8f4207;background:#ffe6c8}
+.world-row.mermaid11{background:linear-gradient(135deg,#eafcff,#dcf6ff 55%,#f6feff);border-color:#9fe4f9}
+.world-row.mermaid11 .go{color:#0b657f;background:#d8f4ff}
+.world-row.rainbow12{background:linear-gradient(135deg,#f6f1ff,#ecf7ff 45%,#fff3fb);border-color:#cbbcf9}
+.world-row.rainbow12 .go{color:#54389f;background:#eae2ff}
+.world-row.golden13{background:linear-gradient(135deg,#fffbdd,#fff4b8 50%,#fff9e6);border-color:#ffd233}
+.world-row.golden13 .go{color:#835500;background:#ffeeb0}
+.fin-crown{font-size:70px;text-align:center;line-height:1.05;animation:eggwob 1.6s ease-in-out infinite}
+.fin-stars{text-align:center;font-size:18px;letter-spacing:4px;margin:2px 0 6px;opacity:.95}
+.fin-zipline{text-align:center;font-size:13.5px;color:#7a5a2b;margin:0 0 6px;letter-spacing:-.01em}
+#finaleOverlay .modal-card{background:linear-gradient(170deg,#fffdf2,#fff5d6 55%,#ffeeb8)}
+#finaleOverlay h2{color:#8a5c00}
 .gal-crown{font-size:66px;text-align:center;line-height:1.1;animation:eggwob 1.7s ease-in-out infinite}
 .gal-stars{text-align:center;font-size:17px;letter-spacing:4px;margin:2px 0 6px;opacity:.9}
 
@@ -1002,7 +1022,7 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
       <button class="x" data-close="worldPanel" type="button" aria-label="닫기">✕</button>
     </div>
     <div class="sheet-body">
-      <div class="stage-strip" id="stageStrip" role="group" aria-label="1~8탄 바로 가기">
+      <div class="stage-strip" id="stageStrip" role="group" aria-label="1~13탄 바로 가기">
         <button type="button" data-jump1="1"><b>1</b><span>마을</span></button>
         <button type="button" data-jump2="1"><b>2</b><span>함정</span></button>
         <button type="button" data-jump3="1"><b>3</b><span>무지개</span></button>
@@ -1011,11 +1031,16 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         <button type="button" data-jump6="1" class="s6"><b>6</b><span>디저트</span></button>
         <button type="button" data-jump7="1" class="s7"><b>7</b><span>우주</span></button>
         <button type="button" data-jump8="1" class="s8"><b>8</b><span>연주</span></button>
+        <button type="button" data-jump9="1" class="s9"><b>9</b><span>사탕</span></button>
+        <button type="button" data-jump10="1" class="s10"><b>10</b><span>공룡</span></button>
+        <button type="button" data-jump11="1" class="s11"><b>11</b><span>인어</span></button>
+        <button type="button" data-jump12="1" class="s12"><b>12</b><span>구름</span></button>
+        <button type="button" data-jump13="1" class="s13"><b>13</b><span>황금</span></button>
       </div>
       <div class="world-list">
         <div class="world-row here">
           <span class="big-ic">🧱</span>
-          <span class="wt"><b>블록 월드</b><small>지금 여기 · 마을 · 점프맵 · 2~8탄</small></span>
+          <span class="wt"><b>블록 월드</b><small>지금 여기 · 마을 · 점프맵 · 2~13탄</small></span>
           <span class="go">지금 여기</span>
         </div>
         <button class="world-row park" type="button" data-park="1">
@@ -1073,8 +1098,33 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
           <span class="wt"><b>8탄 관현악 연주회</b><small>피아노 건반 다리 · 현 바운스 · 팀파니 · 마에스트로 단상</small></span>
           <span class="go">바로 가기 ›</span>
         </button>
+        <button class="world-row candy9" type="button" data-jump9="1">
+          <span class="big-ic">🍭</span>
+          <span class="wt"><b>9탄 마법 사탕성 타워</b><small>사탕 다리 · 푹푹 슬라임 웅덩이 · 통통 왁뿌볼 · 사탕 성문</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row dino10" type="button" data-jump10="1">
+          <span class="big-ic">🦕</span>
+          <span class="wt"><b>10탄 공룡 화산섬 타워</b><small>🪢 짚라인 슈웅~ · 용암 디딤돌 · 공룡 뼈 다리 · 화산 정상</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row mermaid11" type="button" data-jump11="1">
+          <span class="big-ic">🧜‍♀️</span>
+          <span class="wt"><b>11탄 깊은 바다 인어궁전</b><small>거품 왁뿌볼 · 조개 계단 · 소용돌이 · 인어궁전 성문</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row rainbow12" type="button" data-jump12="1">
+          <span class="big-ic">🌈</span>
+          <span class="wt"><b>12탄 구름 위 레인보우</b><small>무지개 다리 · 구름 징검다리 · 🪢 구름 짚라인 · 무지개 아치</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
+        <button class="world-row golden13" type="button" data-jump13="1">
+          <span class="big-ic">👑</span>
+          <span class="wt"><b>13탄 전설의 황금 우주왕국</b><small>무중력 둥실 점프 · 별빛 계단 · 슬라임 · 황금 왕좌 (그랜드 피날레!)</small></span>
+          <span class="go">바로 가기 ›</span>
+        </button>
       </div>
-      <p class="shop-note">코스는 <b>1탄 → 2탄 → 3탄 → 4탄 → ❄️ 5탄 → 🍬 6탄 → 🚀 7탄 → 🎻 8탄</b> 순서로 걸어서 이어져요! 4탄 꼭대기에서 눈 디딤돌 다리로 5탄에 내려서고, 5탄 얼음 성 → 6탄 사탕 다리 → 7탄 발사대 → 우주 정거장 → 금음표 다리로 8탄에 이어져요. 급할 땐 위 <b>1~8</b> 버튼이나 여기 <b>바로 가기</b>를 눌러요!</p>
+      <p class="shop-note">코스는 <b>1탄 → 2탄 → 3탄 → 4탄 → ❄️ 5탄 → 🍬 6탄 → 🚀 7탄 → 🎻 8탄 → 🍭 9탄 → 🦕 10탄 → 🧜‍♀️ 11탄 → 🌈 12탄 → 👑 13탄</b> 순서로 걸어서 이어져요! 8탄 지휘자 단상 너머 <b>🍭 사탕성 문</b>부터 13탄 그랜드 피날레까지 이어지고, 10탄·12탄에는 <b>🪢 짚라인</b>이 있어요! 4탄 꼭대기에서 눈 디딤돌 다리로 5탄에 내려서고, 5탄 얼음 성 → 6탄 사탕 다리 → 7탄 발사대 → 우주 정거장 → 금음표 다리로 8탄에 이어져요. 급할 땐 위 <b>1~8</b> 버튼이나 여기 <b>바로 가기</b>를 눌러요!</p>
     </div>
   </div>
 
@@ -1273,8 +1323,27 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         <div><span>모은 코인</span><b id="maeCoins">0</b></div>
         <div><span>받은 상</span><b>+60</b></div>
       </div>
-      <button class="btn primary" id="maeAgain" type="button">🔁 8탄 관현악 연주회 다시 도전</button>
+      <button class="btn primary" id="maeNext9" type="button">🍭 바로 9탄 마법 사탕성으로!</button>
+      <button class="btn blue mt8" id="maeAgain" type="button">🔁 8탄 관현악 연주회 다시 도전</button>
       <button class="btn ghost mt8" id="maeHome" type="button">🏠 마을로 돌아갈래</button>
+    </div>
+  </div>
+
+  <!-- ===================== 👑 13탄 그랜드 피날레 ===================== -->
+  <div class="modal" id="finaleOverlay">
+    <div class="modal-card">
+      <div class="fin-crown">👑</div>
+      <div class="fin-stars">⭐ ✨ 🌟 ✨ ⭐</div>
+      <h2 id="fin13Title">전설의 황금 우주왕국 완주! 👑</h2>
+      <p class="lead">🍭 사탕성 · 🦕 공룡 화산섬 · 🧜‍♀️ 인어궁전 · 🌈 레인보우를 모두 지나<br><b>황금 왕좌</b>에 올랐어요! 무중력 별빛이 둥실둥실, 폭죽이 펑펑 터졌어요 🎆<br>1탄부터 13탄까지 전설을 완성했어요!</p>
+      <div class="result-grid">
+        <div><span>걸린 시간</span><b id="fin13Time">0:00</b></div>
+        <div><span>최단 기록</span><b id="fin13Best">0:00</b></div>
+        <div><span>모은 코인</span><b id="fin13Coins">0</b></div>
+        <div><span>받은 상</span><b id="fin13Prize">+80</b></div>
+      </div>
+      <button class="btn primary" id="fin13Again" type="button">🔁 13탄 다시 도전</button>
+      <button class="btn blue mt8" id="fin13Village" type="button">🏠 마을로 돌아갈래</button>
     </div>
   </div>
 
@@ -1721,6 +1790,79 @@ var AU = (function () {
   function pop() { tone({ f: 620, to: 1000, d: 0.09, type: 'sine', g: 0.08 }); }
 
   /* ============================================================
+     💚 9~13탄 — 슬라임 ASMR · 왁뿌볼 · 짚라인
+     ------------------------------------------------------------
+     · slimeStep(n)  발이 푹푹 잠길 때 "뽀글~ 쭈욱~"
+       (축축한 저역 노이즈 + 물방울 톡톡 + 쫀득한 젤리 울림)
+     · slimePop(lv)  통! 하고 튀어 오를 때 (낮은 통 + 올라가는 젤리 + 쫀득 노이즈)
+     · slimeSink(lv) 푹~ 깊이 잠기는 소리 (아주 낮게 늘어지는 젤리)
+     · ballBoing(lv) 왁뿌볼 탱탱 (공이 튀는 보잉~)
+     · zipWhoosh()   짚라인 슈우웅~ (지나가는 바람 + 도르래 짤랑)
+     ============================================================ */
+  var slimeLast = 0;
+  function slimeStep(n) {
+    if (!ctx() || muted) return;
+    var c = AC, t0 = c.currentTime + 0.002;
+    if (t0 * 1000 - slimeLast < 105) return;      // 너무 촘촘하면 뭉개져요
+    slimeLast = t0 * 1000;
+    var k = (n || 0) % 4;
+    /* ① 축축한 바닥을 밀며 나는 '쭈욱' */
+    hit({ at: t0, bp: 760 - k * 90, q: 1.1, a: 0.012, hold: 0.03, d: 0.2, g: 0.34 });
+    hit({ at: t0 + 0.025, lp: 1150, lpQ: 0.7, a: 0.02, d: 0.16, g: 0.2 });
+    /* ② 뽀글 — 물방울이 톡톡 */
+    for (var b = 0; b < 2; b++) {
+      tone({ f: 190 + k * 26 + b * 90, to: 340 + b * 120, d: 0.07, type: 'sine', g: 0.05, delay: 0.04 + b * 0.05, a: 0.006 });
+    }
+    /* ③ 젤리가 쫀득하게 되돌아오는 낮은 울림 */
+    tone({ f: 132, to: 96, d: 0.18, type: 'triangle', g: 0.045, a: 0.01 });
+  }
+  function slimePop(lv) {
+    if (!ctx() || muted) return;
+    var c = AC, t0 = c.currentTime + 0.002;
+    var L = clamp(lv === undefined ? 1 : lv, 0.4, 1.5);
+    /* 통— 낮은 배를 두드리는 소리 */
+    tone({ f: 160, to: 58, d: 0.2, type: 'sine', g: 0.16 * L, a: 0.005 });
+    /* 젤리가 위로 늘어나며 올라가는 소리 */
+    tone({ f: 210, to: 640, d: 0.26, type: 'sine', g: 0.1 * L, a: 0.01 });
+    tone({ f: 320, to: 780, d: 0.22, type: 'triangle', g: 0.05 * L, a: 0.012, delay: 0.02 });
+    /* 쫀득한 표면 */
+    hit({ at: t0, bp: 1150, q: 0.8, a: 0.006, hold: 0.02, d: 0.18, g: 0.3 * L });
+    hit({ at: t0 + 0.05, lp: 700, lpQ: 1.2, a: 0.02, d: 0.14, g: 0.16 * L });
+  }
+  function slimeSink(lv) {
+    if (!ctx() || muted) return;
+    var c = AC, t0 = c.currentTime + 0.002;
+    var L = clamp(lv === undefined ? 1 : lv, 0.4, 1.4);
+    /* 푹— 아래로 가라앉는 미끈한 소리 */
+    hit({ at: t0, lp: 520, lpQ: 1.4, a: 0.04, hold: 0.06, d: 0.34, g: 0.3 * L });
+    tone({ f: 220, to: 74, d: 0.34, type: 'sine', g: 0.09 * L, a: 0.03 });
+    for (var b = 0; b < 3; b++) {
+      tone({ f: 260 + b * 70, to: 150, d: 0.1, type: 'sine', g: 0.035, delay: 0.12 + b * 0.09, a: 0.02 });
+    }
+  }
+  function ballBoing(lv) {
+    if (!ctx() || muted) return;
+    var c = AC, t0 = c.currentTime + 0.002;
+    var L = clamp(lv === undefined ? 1 : lv, 0.4, 1.4);
+    /* 탱— 하고 튀는 공 */
+    tone({ f: 330, to: 660, d: 0.09, type: 'sine', g: 0.12 * L, a: 0.004 });
+    tone({ f: 660, to: 300, d: 0.22, type: 'sine', g: 0.07 * L, a: 0.006, delay: 0.07 });
+    hit({ at: t0, bp: 1800, q: 1.4, a: 0.002, d: 0.06, g: 0.24 * L });
+  }
+  function zipWhoosh() {
+    if (!ctx() || muted) return;
+    var c = AC, t0 = c.currentTime + 0.002;
+    /* 도르래가 줄을 타고 내려가는 슈우웅 — 대역이 점점 낮아지는 바람 */
+    for (var i = 0; i < 7; i++) {
+      hit({ at: t0 + i * 0.11, bp: 1900 - i * 210, q: 0.7, a: 0.05, hold: 0.05, d: 0.18, g: 0.16 + 0.03 * i });
+    }
+    tone({ f: 900, to: 320, d: 0.85, type: 'sine', g: 0.035, a: 0.08 });
+    /* 줄이 짤랑 */
+    tone({ f: 1240, d: 0.12, type: 'triangle', g: 0.05, delay: 0.06 });
+    tone({ f: 1480, d: 0.1, type: 'triangle', g: 0.04, delay: 0.14 });
+  }
+
+  /* ============================================================
      🫧 4탄 — "사그락사그락" 귀여운 구슬 ASMR
      작은 비즈·유리구슬·워터볼이 서로 비벼지고 부딪히는 소리를
      짧은 고역 노이즈 알갱이 여러 개 + 작은 유리구슬 딸랑 + 뽀글 + 통
@@ -2062,6 +2204,7 @@ var AU = (function () {
     err: err, msg: msg, win: win, pop: pop, sagrak: sagrak, jellyPop: jellyPop, setMuted: setMuted, isMuted: isMuted, unlock: unlock, seeCreak: seeCreak, coasterClack: coasterClack, whoosh: whoosh, scream: scream, bell: bell,
     swingWhoosh: swingWhoosh, swingPush: swingPush,
     crunch: crunch, iceStep: iceStep, freeze: freeze, iceBreak: iceBreak, macPop: macPop,
+    slimeStep: slimeStep, slimePop: slimePop, slimeSink: slimeSink, ballBoing: ballBoing, zipWhoosh: zipWhoosh,
     piano: piano, pizz: pizz, timpani: timpani, metro: metro, fanfare8: fanfare8,
     isRunning: isRunning, watchUnlock: watchUnlock, nudge: nudge };
 })();
@@ -2300,7 +2443,14 @@ var TYPES = {
   pkey:   { top: '#ffffff', right: '#e6eef8', left: '#cfd9e8' },
   bkey:   { top: '#232a38', right: '#1a202b', left: '#12161f' },
   string: { top: '#e8bd88', right: '#c79356', left: '#a4733b' },
-  timpani:{ top: '#f0d6a8', right: '#c9932f', left: '#8a5f16' }
+  timpani:{ top: '#f0d6a8', right: '#c9932f', left: '#8a5f16' },
+  // 🍭🦕🧜‍♀️🌈👑 9~13탄 — 슬라임 · 왁뿌볼 · 바다 · 뼈 · 화산
+  slime:  { top: '#c4fbda', right: '#7fdfa6', left: '#54bd7e' },
+  slimePool:{ top: '#a8f6c6', right: '#72dc9c', left: '#4cb878' },
+  ball:   { top: '#ffdcf4', right: '#f0a4d8', left: '#cf7cb6' },
+  aqua:   { top: '#c2f0ff', right: '#8ed9f1', left: '#62b9d6' },
+  bone:   { top: '#f7efdc', right: '#ded1b4', left: '#c0b191' },
+  volcano:{ top: '#6e5c53', right: '#4e403a', left: '#372b27' }
 };
 
 /* 🎹 8탄 피아노 — 흰 건반 8개(도~도)와 검은 건반 5개 */
@@ -2329,7 +2479,13 @@ var ZONES = {
   6: { x0: 28, x1: 52.6, y0: -134, y1: -95, z0: 8.6, z1: 14.0 },
   7: { x0: 4, x1: 28.4, y0: -152, y1: -130, z0: 10.6, z1: 24.0 },
   /* 🎻 8탄 — 정거장 서쪽 황금 음표 다리부터 마에스트로 단상까지 (보통 중력) */
-  8: { x0: -60, x1: 4, y0: -162, y1: -130, z0: 13.0, z1: 22.5 }
+  8: { x0: -60, x1: 4, y0: -162, y1: -130, z0: 13.0, z1: 22.5 },
+  /* 🍭🦕🧜‍♀️🌈👑 9~13탄 — 각자 떨어진 새 구역 (13탄은 달처럼 무중력) */
+  9: { x0: 193, x1: 242, y0: -3, y1: 9, z0: -1, z1: 9 },
+  10: { x0: 192, x1: 225, y0: -68, y1: -47, z0: -1, z1: 9 },
+  11: { x0: 292, x1: 338, y0: 1, y1: 13, z0: -1, z1: 9 },
+  12: { x0: 292, x1: 343, y0: -60, y1: -42, z0: -1, z1: 9 },
+  13: { x0: 392, x1: 439, y0: 2, y1: 13, z0: -1, z1: 11 }
 };
 function zoneAt(x, y, z) {
   for (var k in ZONES) {
@@ -3680,6 +3836,379 @@ function buildMap() {
     flowers.push({ x: fx, y: fy, z: 0, c: pick(['#ff8fc2', '#ffd84a', '#ffffff', '#b28bff']) });
   }
 
+  /* ============================================================
+     🍭🦕🧜‍♀️🌈👑 14-1) 9~13탄 — 새 다섯 타워 (2026-11-26)
+     ------------------------------------------------------------
+     · 💚 슬라임 쿠션 — 밟으면 푹~ 잠기고, 점프하면 통! 하고 높이 튕겨요
+     · 🟢 슬라임 트램펄린 — 밟으면 자동으로 통통통~ (반투명 젤리)
+     · 🫧 슬라임 웅덩이 — 걸으면 발이 푹푹 잠기고 뽀글~ 소리
+     · 🌈 무지개 왁뿌볼 — 밟으면 탱탱 튀어 오르는 말랑 공 발판
+     · 🪢 짚라인 — 도르래에 매달려 줄을 타고 슈웅~ 건너가요 (10탄·12탄)
+     · 👑 13탄은 달처럼 무중력! 둥실둥실 높이 뛰고 천천히 내려와요
+     ============================================================ */
+  var zips = [];
+  /* 💚 슬라임 쿠션 — 푹~ 빠졌다가 점프하면 통! */
+  function slimePad(x, y, z, tint) {
+    var t = add(x, y, z, 'slime', { step: 0.46, tint: tint || '#8ef0b6' });
+    t.slime = 1; t.slimeCol = tint || '#8ef0b6'; t.slimeSink = 0;
+    return t;
+  }
+  /* 🟢 슬라임 트램펄린 — 자동으로 통통! (지면 판정에서 빠져서 항상 튕겨요) */
+  function slimeTramp(x, y, z, tint) {
+    var t = add(x, y, z, 'slime', { step: 0.46, tint: tint || '#9bf3be' });
+    t.slime = 1; t.tramp = 1; t.trampSq = 0; t.trampV = 0; t.trampPress = 0;
+    t.slimeCol = tint || '#9bf3be';
+    return t;
+  }
+  /* 🫧 푹푹 빠지는 슬라임 웅덩이 */
+  function slimePool(x0, y0, x1, y1, z, tint) {
+    for (var spx = x0; spx <= x1; spx++) {
+      for (var spy = y0; spy <= y1; spy++) {
+        var t = add(spx, spy, z, 'slimePool', { step: 0.55, tint: tint || '#a8f6c6' });
+        t.slimePool = 1; t.slimeCol = tint || '#a8f6c6';
+      }
+    }
+  }
+  /* 🌈 무지개 왁뿌볼 발판 — 통통 튀는 공 */
+  function ballPad(x, y, z, tint) {
+    var t = add(x, y, z, 'ball', { step: 0.5, tint: tint || '#ffd6f2' });
+    t.ballPad = 1; t.ballCol = tint || ''; t.ballSq = 0; t.ballSqv = 0;
+    return t;
+  }
+  /* 🪢 짚라인 — 출발 기둥에서 도착 기둥까지 줄이 이어져요 */
+  function zipLine(id, x0, y0, z0, x1, y1, z1, h0, h1) {
+    zips.push({
+      id: id, x0: x0, y0: y0, z0: z0, x1: x1, y1: y1, z1: z1,
+      h0: (h0 === undefined ? 2.7 : h0), h1: (h1 === undefined ? 1.7 : h1)
+    });
+  }
+
+  /* ============================================================
+     🍭 A) 9탄 — 마법 사탕성 타워
+     ============================================================ */
+  var Z9 = 0;
+  /* ① 시작 광장 — 사탕 마당 */
+  rect(196, 0, 202, 6, Z9, 'candy');
+  for (var s9ra = 196; s9ra <= 202; s9ra++) { railTile(s9ra, -1, Z9, { tint: '#ffc2e6' }); railTile(s9ra, 7, Z9, { tint: '#ffc2e6' }); }
+  for (var s9rb = 0; s9rb <= 6; s9rb++) railTile(195, s9rb, Z9, { tint: '#ffc2e6' });
+  props.push({ k: 'towerIcon', x: 199.0, y: 7.0, z: Z9, emoji: '🍭', size: 62, label: '마법 사탕성' });
+  props.push({ k: 'lollipop', x: 196.8, y: 5.6, z: Z9 + 1.0, s: 1.1 });
+  props.push({ k: 'lollipop', x: 201.6, y: 0.4, z: Z9 + 1.0, s: 0.95, tint: '#8fe0ff' });
+  cps.push({ x: 199.0, y: 3.0, z: Z9, on: false, s9: 1 });
+  spots.push({ x: 197.4, y: 5.2, z: Z9, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  coin(197.5, 1.5, 0.55); coin(199.5, 4.4, 0.55); coin(201.2, 2.4, 0.55, true);
+
+  /* ② 사탕 지팡이 다리 + 🫧 푹푹 슬라임 웅덩이 */
+  for (var s9bx = 203; s9bx <= 209; s9bx++) {
+    for (var s9by = 2; s9by <= 4; s9by++) {
+      if (s9bx >= 205 && s9bx <= 208) continue;
+      add(s9bx, s9by, 0.5, 'candy', { step: 0.55 });
+    }
+    railTile(s9bx, 1, 0.5, { tint: '#ffc2e6' }); railTile(s9bx, 5, 0.5, { tint: '#ffc2e6' });
+  }
+  slimePool(205, 2, 208, 4, 0.5, '#ffc2e6');
+  props.push({ k: 'houseSign', x: 203.6, y: 0.4, z: 0.5, who: null, label: '푹푹~ 슬라임 웅덩이', emoji: '🫧' });
+  coin(206.5, 3, 1.05); coin(207.5, 2.2, 1.05, true);
+
+  /* ③ 폴짝폴짝 쿠키 발판 */
+  rect(211, 2, 213, 4, 1.3, 'cookie');
+  rect(215, 1, 217, 3, 1.3, 'candy');
+  props.push({ k: 'houseSign', x: 211.0, y: 5.0, z: 1.3, who: null, label: '폴짝폴짝 쿠키 발판', emoji: '🍪' });
+  coin(212, 3, 1.85); coin(216, 2, 1.85, true);
+
+  /* ④ 💚 슬라임 쿠션 광장 — 푹~ 잠겼다가 통! */
+  for (var s9px = 219; s9px <= 224; s9px++) {
+    for (var s9py = 0; s9py <= 6; s9py++) {
+      if ((s9px === 220 && s9py === 2) || (s9px === 221 && s9py === 4) || (s9px === 223 && s9py === 3)) continue;
+      add(s9px, s9py, 2.3, 'candy', { step: 0.6 });
+    }
+    railTile(s9px, -1, 2.3, { tint: '#ffc2e6' }); railTile(s9px, 7, 2.3, { tint: '#ffc2e6' });
+  }
+  slimePad(220, 2, 2.3, '#8ef0b6');
+  slimePad(221, 4, 2.3, '#ffb8e2');
+  slimeTramp(223, 3, 2.3, '#b6c8ff');
+  props.push({ k: 'houseSign', x: 219.2, y: 6.4, z: 2.3, who: null, label: '푹~ 통! 슬라임을 밟고 점프!', emoji: '💚' });
+  cps.push({ x: 222.4, y: 5.4, z: 2.3, on: false, s9: 1 });
+  coin(219.6, 1.2, 2.85); coin(222.4, 2.4, 2.85, true);
+
+  /* ⑤ 🌈 무지개 왁뿌볼 통통 코스 */
+  rect(224, 4, 225, 6, 3.4, 'cloud');
+  ballPad(227, 4, 3.4, '#ffd6f2'); ballPad(227, 5, 3.4, '#ffd6f2');
+  ballPad(229, 5, 3.4, '#cfe6ff'); ballPad(229, 6, 3.4, '#cfe6ff');
+  ballPad(231, 4, 3.4, '#d8ffd0'); ballPad(231, 5, 3.4, '#d8ffd0');
+  props.push({ k: 'houseSign', x: 226.4, y: 6.6, z: 3.4, who: null, label: '왁뿌볼을 타고 통통!', emoji: '🌈' });
+  coin(228, 4.5, 4.4); coin(230, 6.2, 4.4); coin(232, 4.2, 4.4, true);
+
+  /* ⑥ 사탕 성문 — 9탄 완주 */
+  rect(234, 1, 240, 6, 4.2, 'candy');
+  for (var s9fx = 234; s9fx <= 240; s9fx++) { railTile(s9fx, 0, 4.2, { tint: '#ffd0e8' }); railTile(s9fx, 7, 4.2, { tint: '#ffd0e8' }); }
+  for (var s9fy = 1; s9fy <= 6; s9fy++) railTile(241, s9fy, 4.2, { tint: '#ffd0e8' });
+  props.push({ k: 'towerIcon', x: 237.0, y: 6.9, z: 4.2, emoji: '🍭', size: 58 });
+  props.push({ k: 'houseSign', x: 234.6, y: 0.2, z: 4.2, who: null, label: '사탕 성문 · 9탄 완주!', emoji: '🍬' });
+  var finish9 = { x: 237.0, y: 3.0, z: 4.2 };
+  cps.push({ x: 235.2, y: 5.2, z: 4.2, on: false, s9: 1 });
+  coin(236, 2, 4.75, true); coin(238, 4.4, 4.75); coin(239, 2.6, 4.75);
+  spots.push({ x: 235.0, y: 1.2, z: 4.2, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  portals.push({ id: 'tw10', x: 239.4, y: 5.6, z: 4.2, icon: '🦕', title: '10탄 공룡 화산섬', prompt: '🦕 바로 10탄 공룡 화산섬으로!', href: '#tw10', color: '#ffb066' });
+
+  /* ============================================================
+     🦕 B) 10탄 — 공룡 화산섬 타워 (🪢 짚라인!) 
+     ============================================================ */
+  var Z10 = 0;
+  /* ① 시작 섬 */
+  rect(194, -56, 199, -50, Z10, 'stone');
+  for (var s10a = 194; s10a <= 199; s10a++) { railTile(s10a, -57, Z10); railTile(s10a, -49, Z10); }
+  for (var s10b = -56; s10b <= -50; s10b++) railTile(193, s10b, Z10);
+  props.push({ k: 'towerIcon', x: 196.4, y: -57.4, z: Z10, emoji: '🦕', size: 64, label: '공룡 화산섬' });
+  props.push({ k: 'houseSign', x: 194.4, y: -48.4, z: Z10, who: null, label: '용암을 폴짝! 짚라인을 타요', emoji: '🌋' });
+  cps.push({ x: 196.0, y: -53.0, z: Z10, on: false, s10: 1 });
+  spots.push({ x: 195.0, y: -51.0, z: Z10, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  coin(195, -52, 0.55); coin(197.5, -55, 0.55); coin(199, -52.5, 0.55, true);
+
+  /* ② 🌋 용암 디딤돌 — 가운데 2×2 용암은 점프로 넘어요 */
+  for (var s10x = 200; s10x <= 205; s10x++) {
+    for (var s10y = -55; s10y <= -51; s10y++) {
+      if (s10x >= 202 && s10x <= 203 && s10y >= -53 && s10y <= -52) {
+        add(s10x, s10y, 0.5, 'lava', { haz: 1 });
+      } else add(s10x, s10y, 0.5, 'volcano', { step: 0.55 });
+    }
+  }
+  railTile(200, -56, 0.5); railTile(201, -56, 0.5); railTile(204, -56, 0.5); railTile(205, -56, 0.5);
+  railTile(200, -50, 0.5); railTile(201, -50, 0.5); railTile(204, -50, 0.5); railTile(205, -50, 0.5);
+  props.push({ k: 'houseSign', x: 200.2, y: -57.2, z: 0.5, who: null, label: '용암 조심! 점프로 건너요', emoji: '🔥' });
+  coin(201, -54, 1.05); coin(204, -52, 1.05, true);
+
+  /* ③ 🪢 짚라인 출발 발판 (숲사이 높은 바위) */
+  rect(206, -57, 209, -52, 1.2, 'wood');
+  railTile(206, -58, 1.2); railTile(207, -58, 1.2); railTile(208, -58, 1.2); railTile(209, -58, 1.2);
+  railTile(206, -51, 1.2); railTile(207, -51, 1.2); railTile(208, -51, 1.2); railTile(209, -51, 1.2);
+  /* 동쪽(x=210)은 짚라인 출발 통로로 비워 두어요 */
+  props.push({ k: 'houseSign', x: 206.2, y: -58.6, z: 1.2, who: null, label: '🪢 짚라인 타고 슈웅~!', emoji: '🪢' });
+  props.push({ k: 'towerIcon', x: 207.2, y: -51.2, z: 1.2, emoji: '🪢', size: 44 });
+  coin(207.5, -55, 1.75); coin(208.2, -53.2, 1.75, true);
+  /* 줄: 출발 (207.5,-54.5) → 착지 섬 (217.5,-59.5) */
+  zipLine('z10a', 207.5, -54.5, 1.2, 217.5, -59.5, 1.6, 2.9, 1.8);
+  spots.push({ x: 207.6, y: -54.6, z: 1.2, icon: '🪢', label: '짚라인 타고 슈웅~!', act: 'zip', zip: 'z10a' });
+
+  /* ④ 착지 섬 — 공룡 둥지 (💚 슬라임 쿠션 자리는 비워 둡니다) */
+  for (var s10cx = 216; s10cx <= 222; s10cx++) {
+    for (var s10cy = -62; s10cy <= -56; s10cy++) {
+      if ((s10cx === 218 && s10cy === -58) || (s10cx === 220 && s10cy === -61)) continue;
+      add(s10cx, s10cy, 1.6, 'volcano', { step: 0.6 });
+    }
+    railTile(s10cx, -63, 1.6); railTile(s10cx, -55, 1.6);
+  }
+  for (var s10cy2 = -62; s10cy2 <= -56; s10cy2++) railTile(223, s10cy2, 1.6);
+  slimePad(218, -58, 1.6, '#8ef0b6');
+  slimePad(220, -61, 1.6, '#ffc2e6');
+  props.push({ k: 'towerIcon', x: 219.0, y: -56.4, z: 1.6, emoji: '🥚', size: 48 });
+  props.push({ k: 'houseSign', x: 216.4, y: -63.6, z: 1.6, who: null, label: '공룡 둥지 · 짚라인 도착!', emoji: '🦖' });
+  cps.push({ x: 221.0, y: -60.0, z: 1.6, on: false, s10: 1 });
+  coin(217.5, -58, 2.15); coin(219.5, -61, 2.15); coin(221.5, -57.5, 2.15, true);
+
+  /* ⑤ 🦴 공룡 뼈 다리 (사라지는 뼈) */
+  for (var s10bx = 212; s10bx <= 215; s10bx++) {
+    for (var s10by = -62; s10by <= -60; s10by++) {
+      var s10bt = add(s10bx, s10by, 2.6, 'bone', { step: 0.5, crm: 1 });
+      s10bt.crmT = 1.0; s10bt.crmR = 2.4; s10bt.cstate = 'idle';
+    }
+  }
+  props.push({ k: 'houseSign', x: 215.4, y: -63.4, z: 2.6, who: null, label: '뼈 다리는 1초! 멈추지 마요', emoji: '🦴' });
+  coin(213.5, -60.6, 3.15); coin(214.5, -62, 3.15, true);
+  /* 뼈 다리 → 화산 정상 사이 징검다리 발판 (한 칸씩 올라가요) */
+  rect(211, -63, 211, -60, 3.2, 'stone', { step: 0.55 });
+
+  /* ⑥ 화산 정상 — 10탄 완주 */
+  rect(204, -65, 210, -59, 4.0, 'volcano');
+  for (var s10fx = 204; s10fx <= 210; s10fx++) { railTile(s10fx, -66, 4.0); railTile(s10fx, -58, 4.0); }
+  for (var s10fy = -65; s10fy <= -59; s10fy++) railTile(203, s10fy, 4.0);
+  props.push({ k: 'towerIcon', x: 207.0, y: -66.6, z: 4.0, emoji: '🌋', size: 62 });
+  props.push({ k: 'houseSign', x: 204.4, y: -67.0, z: 4.0, who: null, label: '화산 정상 · 10탄 완주!', emoji: '🦕' });
+  var finish10 = { x: 207.0, y: -62.0, z: 4.0 };
+  cps.push({ x: 205.0, y: -60.0, z: 4.0, on: false, s10: 1 });
+  coin(206, -64, 4.55, true); coin(208.5, -61, 4.55); coin(208, -64.5, 4.55);
+  spots.push({ x: 205.0, y: -64.4, z: 4.0, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  portals.push({ id: 'tw11', x: 209.4, y: -64.4, z: 4.0, icon: '🧜‍♀️', title: '11탄 인어궁전', prompt: '🧜‍♀️ 바로 11탄 깊은 바다 인어궁전으로!', href: '#tw11', color: '#7fd6ff' });
+
+  /* ============================================================
+     🧜‍♀️ C) 11탄 — 깊은 바다 인어궁전 타워
+     ============================================================ */
+  var Z11 = 0;
+  /* ① 바닷가 모래톱 */
+  rect(294, 3, 299, 9, Z11, 'aqua');
+  for (var s11a = 294; s11a <= 299; s11a++) { railTile(s11a, 2, Z11, { tint: '#bfe9ff' }); railTile(s11a, 10, Z11, { tint: '#bfe9ff' }); }
+  for (var s11b = 3; s11b <= 9; s11b++) railTile(293, s11b, Z11, { tint: '#bfe9ff' });
+  props.push({ k: 'towerIcon', x: 296.4, y: 10.4, z: Z11, emoji: '🧜‍♀️', size: 62, label: '깊은 바다 인어궁전' });
+  props.push({ k: 'houseSign', x: 297.2, y: 1.6, z: Z11, who: null, label: '거품 왁뿌볼을 타고 바다로!', emoji: '🫧' });
+  cps.push({ x: 296.5, y: 6.0, z: Z11, on: false, s11: 1 });
+  spots.push({ x: 295.0, y: 8.2, z: Z11, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  coin(295, 4, 0.55); coin(297, 8, 0.55); coin(298.5, 5.5, 0.55, true);
+
+  /* ② 🌈 거품 왁뿌볼 코스 (물 위 통통) */
+  ballPad(301, 4, 0.6, '#cfefff'); ballPad(301, 5, 0.6, '#cfefff');
+  ballPad(303, 6, 0.6, '#d8f7ff'); ballPad(303, 7, 0.6, '#d8f7ff');
+  ballPad(305, 5, 0.6, '#cfefff'); ballPad(305, 6, 0.6, '#cfefff');
+  ballPad(307, 3, 0.6, '#e6f9ff'); ballPad(307, 4, 0.6, '#e6f9ff');
+  props.push({ k: 'houseSign', x: 301.0, y: 8.0, z: 0.6, who: null, label: '거품 왁뿌볼! 통통 튀어요', emoji: '🫧' });
+  coin(302, 4.5, 1.6); coin(304.5, 7.2, 1.6, true); coin(306.5, 3.4, 1.6);
+
+  /* ③ 조개 계단 + 산호 발판 */
+  rect(309, 3, 311, 5, 1.2, 'candy');
+  rect(312, 2, 315, 6, 2.0, 'aqua');
+  for (var s11c = 312; s11c <= 315; s11c++) { railTile(s11c, 1, 2.0, { tint: '#bfe9ff' }); railTile(s11c, 7, 2.0, { tint: '#bfe9ff' }); }
+  props.push({ k: 'houseSign', x: 312.2, y: 0.4, z: 2.0, who: null, label: '조개 계단을 올라요', emoji: '🐚' });
+  cps.push({ x: 313.0, y: 4.5, z: 2.0, on: false, s11: 1 });
+  coin(310, 4, 1.75); coin(313, 5.5, 2.55, true); coin(314.5, 3, 2.55);
+
+  /* ④ 🌀 소용돌이 아레나 */
+  rect(317, 2, 321, 7, 2.8, 'aqua');
+  for (var s11d = 317; s11d <= 321; s11d++) { railTile(s11d, 1, 2.8, { tint: '#bfe9ff' }); railTile(s11d, 8, 2.8, { tint: '#bfe9ff' }); }
+  spins.push({ id: 's11sp0', x: 319, y: 4.5, z: 2.8, len: 2.1, speed: 1.2, a: 0, hitAt: 0, kind: 'star' });
+  props.push({ k: 'houseSign', x: 317.2, y: 8.4, z: 2.8, who: null, label: '소용돌이를 점프로 피해요', emoji: '🌀' });
+  coin(318, 3, 3.35); coin(320.5, 6, 3.35, true);
+
+  /* ⑤ 🫧 해초 슬라임 웅덩이 */
+  for (var s11e = 322; s11e <= 327; s11e++) {
+    for (var s11f = 3; s11f <= 6; s11f++) {
+      if (s11e >= 323 && s11e <= 326) continue;
+      add(s11e, s11f, 3.4, 'aqua', { step: 0.5 });
+    }
+    railTile(s11e, 2, 3.4, { tint: '#bfe9ff' }); railTile(s11e, 7, 3.4, { tint: '#bfe9ff' });
+  }
+  slimePool(323, 3, 326, 6, 3.4, '#8ef0c8');
+  props.push({ k: 'houseSign', x: 322.2, y: 7.4, z: 3.4, who: null, label: '해초 슬라임은 뽀글뽀글', emoji: '🌿' });
+  coin(324, 4.5, 3.95); coin(325.5, 5.5, 3.95, true);
+
+  /* ⑥ 인어궁전 성문 — 11탄 완주 */
+  rect(329, 2, 335, 7, 4.2, 'aqua');
+  for (var s11g = 329; s11g <= 335; s11g++) { railTile(s11g, 1, 4.2, { tint: '#bfe9ff' }); railTile(s11g, 8, 4.2, { tint: '#bfe9ff' }); }
+  for (var s11h = 2; s11h <= 7; s11h++) railTile(336, s11h, 4.2, { tint: '#bfe9ff' });
+  props.push({ k: 'towerIcon', x: 332.0, y: 8.6, z: 4.2, emoji: '🧜‍♀️', size: 60 });
+  props.push({ k: 'houseSign', x: 329.4, y: 0.2, z: 4.2, who: null, label: '인어궁전 성문 · 11탄 완주!', emoji: '🐚' });
+  var finish11 = { x: 332.0, y: 4.5, z: 4.2 };
+  cps.push({ x: 330.0, y: 6.0, z: 4.2, on: false, s11: 1 });
+  coin(331, 3, 4.75, true); coin(333.5, 6, 4.75); coin(334, 3.4, 4.75);
+  spots.push({ x: 330.2, y: 2.4, z: 4.2, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  portals.push({ id: 'tw12', x: 334.4, y: 6.6, z: 4.2, icon: '🌈', title: '12탄 구름 위 레인보우', prompt: '🌈 바로 12탄 구름 위 레인보우로!', href: '#tw12', color: '#c9b8ff' });
+
+  /* ============================================================
+     🌈 D) 12탄 — 구름 위 레인보우 타워 (🪢 구름 짚라인)
+     ============================================================ */
+  var Z12 = 0;
+  /* ① 구름 시작 발판 */
+  rect(294, -57, 299, -51, Z12, 'cloud');
+  for (var s12a = 294; s12a <= 299; s12a++) { railTile(s12a, -58, Z12, { tint: '#dfe9ff' }); railTile(s12a, -50, Z12, { tint: '#dfe9ff' }); }
+  for (var s12b = -57; s12b <= -51; s12b++) railTile(293, s12b, Z12, { tint: '#dfe9ff' });
+  props.push({ k: 'towerIcon', x: 296.4, y: -49.4, z: Z12, emoji: '🌈', size: 62, label: '구름 위 레인보우' });
+  props.push({ k: 'houseSign', x: 297.4, y: -58.6, z: Z12, who: null, label: '무지개 다리를 건너요', emoji: '🌈' });
+  cps.push({ x: 296.5, y: -54.0, z: Z12, on: false, s12: 1 });
+  spots.push({ x: 295.0, y: -52.2, z: Z12, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  coin(295, -55, 0.55); coin(297.5, -52, 0.55); coin(298.5, -56.2, 0.55, true);
+
+  /* ② 무지개 다리 (1칸 틈 세 번) */
+  rect(300, -56, 301, -52, 0.6, 'rainbow', { step: 0.45 });
+  rect(303, -56, 304, -52, 0.6, 'rainbow', { step: 0.45 });
+  rect(306, -56, 307, -52, 0.6, 'rainbow', { step: 0.45 });
+  props.push({ k: 'houseSign', x: 300.2, y: -57.4, z: 0.6, who: null, label: '무지개 다리는 폴짝폴짝', emoji: '🌈' });
+  coin(300.5, -54, 1.15); coin(303.5, -53, 1.15, true); coin(306.5, -55, 1.15);
+
+  /* ③ 🌈 무지개 왁뿌볼 코스 */
+  ballPad(309, -55, 1.5, '#ffd6f2'); ballPad(309, -54, 1.5, '#ffd6f2');
+  ballPad(311, -53, 1.5, '#cfe6ff'); ballPad(311, -52, 1.5, '#cfe6ff');
+  ballPad(313, -55, 1.5, '#d8ffd0'); ballPad(313, -54, 1.5, '#d8ffd0');
+  props.push({ k: 'houseSign', x: 309.0, y: -57.2, z: 1.5, who: null, label: '무지개 왁뿌볼 통통!', emoji: '🟣' });
+  coin(310, -54.5, 2.5); coin(312, -52.5, 2.5, true);
+
+  /* ④ 구름 쉼터 — 짚라인 출발 */
+  rect(316, -57, 320, -52, 2.6, 'cloud');
+  for (var s12c = 316; s12c <= 320; s12c++) { railTile(s12c, -58, 2.6, { tint: '#dfe9ff' }); railTile(s12c, -51, 2.6, { tint: '#dfe9ff' }); }
+  /* 동쪽(x=321)은 구름 짚라인 출발 통로로 비워 두어요 */
+  props.push({ k: 'towerIcon', x: 318.0, y: -51.2, z: 2.6, emoji: '☁️', size: 46 });
+  cps.push({ x: 318.0, y: -55.0, z: 2.6, on: false, s12: 1 });
+  coin(317, -54, 3.15); coin(319.5, -56, 3.15, true);
+  zipLine('z12a', 318.5, -54.5, 2.6, 329.5, -48.0, 1.8, 2.6, 1.7);
+  spots.push({ x: 318.6, y: -54.6, z: 2.6, icon: '🪢', label: '구름 짚라인 타고 슈웅~!', act: 'zip', zip: 'z12a' });
+
+  /* ⑤ 착지 구름 */
+  rect(327, -51, 332, -45, 1.8, 'cloud');
+  for (var s12e = 327; s12e <= 332; s12e++) { railTile(s12e, -52, 1.8, { tint: '#dfe9ff' }); railTile(s12e, -44, 1.8, { tint: '#dfe9ff' }); }
+  for (var s12f = -51; s12f <= -45; s12f++) railTile(326, s12f, 1.8, { tint: '#dfe9ff' });
+  props.push({ k: 'houseSign', x: 327.4, y: -52.4, z: 1.8, who: null, label: '구름 착륙! 무지개 아치로', emoji: '☁️' });
+  coin(328.5, -48, 2.35); coin(330.5, -50, 2.35, true);
+
+  /* ⑥ 무지개 아치 — 12탄 완주 */
+  rect(334, -49, 340, -44, 2.8, 'rainbow');
+  for (var s12g = 334; s12g <= 340; s12g++) { railTile(s12g, -50, 2.8, { tint: '#dfe9ff' }); railTile(s12g, -43, 2.8, { tint: '#dfe9ff' }); }
+  for (var s12h = -49; s12h <= -44; s12h++) railTile(341, s12h, 2.8, { tint: '#dfe9ff' });
+  props.push({ k: 'towerIcon', x: 337.0, y: -42.6, z: 2.8, emoji: '🌈', size: 58 });
+  props.push({ k: 'houseSign', x: 334.4, y: -50.6, z: 2.8, who: null, label: '무지개 아치 · 12탄 완주!', emoji: '✨' });
+  var finish12 = { x: 337.0, y: -46.5, z: 2.8 };
+  cps.push({ x: 335.4, y: -45.2, z: 2.8, on: false, s12: 1 });
+  coin(336, -47, 3.35, true); coin(338.5, -45, 3.35); coin(339, -48, 3.35);
+  spots.push({ x: 335.2, y: -48.6, z: 2.8, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  portals.push({ id: 'tw13', x: 339.4, y: -47.6, z: 2.8, icon: '👑', title: '13탄 황금 우주왕국', prompt: '👑 드디어 그랜드 피날레! 13탄 황금 우주왕국으로!', href: '#tw13', color: '#ffd233' });
+
+  /* ============================================================
+     👑 E) 13탄 — 전설의 황금 우주왕국 (무중력!)
+     ============================================================ */
+  var Z13 = 0;
+  /* ① 황금 성문 — 시작 */
+  rect(394, 4, 399, 10, Z13, 'gold');
+  for (var s13a = 394; s13a <= 399; s13a++) { railTile(s13a, 3, Z13, { tint: '#ffe9a0' }); railTile(s13a, 11, Z13, { tint: '#ffe9a0' }); }
+  for (var s13b = 4; s13b <= 10; s13b++) railTile(393, s13b, Z13, { tint: '#ffe9a0' });
+  props.push({ k: 'towerIcon', x: 396.4, y: 11.6, z: Z13, emoji: '👑', size: 66, label: '전설의 황금 우주왕국' });
+  props.push({ k: 'houseSign', x: 394.4, y: 2.2, z: Z13, who: null, label: '무중력! 둥실둥실 높이 뛰어요', emoji: '🌙' });
+  cps.push({ x: 396.5, y: 7.0, z: Z13, on: false, s13: 1 });
+  spots.push({ x: 395.0, y: 9.2, z: Z13, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  coin(395, 5.5, 0.55); coin(397.5, 9, 0.55); coin(398.5, 6.5, 0.55, true);
+
+  /* ② ⭐ 별빛 계단 (무중력이라 크게 뛰어요) */
+  rect(401, 5, 403, 7, 1.6, 'star', { step: 0.55 });
+  rect(405, 8, 407, 10, 3.2, 'star', { step: 0.55 });
+  rect(409, 5, 411, 7, 4.4, 'star', { step: 0.55 });
+  props.push({ k: 'houseSign', x: 401.0, y: 4.2, z: 1.6, who: null, label: '별빛을 둥실둥실', emoji: '⭐' });
+  coin(402, 6, 2.15); coin(406, 9, 3.75, true); coin(410, 6, 4.95);
+
+  /* ③ 💚 슬라임 별빛 정원 */
+  for (var s13c = 413; s13c <= 419; s13c++) {
+    for (var s13d = 4; s13d <= 10; s13d++) {
+      if ((s13c === 414 && s13d === 6) || (s13c === 416 && s13d === 9) || (s13c === 418 && s13d === 5)) continue;
+      add(s13c, s13d, 5.4, 'gold', { step: 0.6 });
+    }
+    railTile(s13c, 3, 5.4, { tint: '#ffe9a0' }); railTile(s13c, 11, 5.4, { tint: '#ffe9a0' });
+  }
+  slimePad(414, 6, 5.4, '#8ef0b6');
+  slimePad(416, 9, 5.4, '#ffb8e2');
+  slimeTramp(418, 5, 5.4, '#b6c8ff');
+  props.push({ k: 'houseSign', x: 413.2, y: 11.4, z: 5.4, who: null, label: '푹~ 통! 슬라임으로 별을 향해', emoji: '💚' });
+  cps.push({ x: 418.5, y: 9.5, z: 5.4, on: false, s13: 1 });
+  coin(414.5, 8, 5.95); coin(417, 6.5, 5.95, true);
+
+  /* ④ 🌈 황금 왁뿌볼 코스 */
+  rect(419, 4, 420, 6, 6.4, 'cloud');
+  ballPad(422, 5, 6.4, '#ffe3a0'); ballPad(422, 6, 6.4, '#ffe3a0');
+  ballPad(424, 7, 6.4, '#ffd6f2'); ballPad(424, 8, 6.4, '#ffd6f2');
+  ballPad(426, 6, 6.4, '#cfe6ff'); ballPad(426, 7, 6.4, '#cfe6ff');
+  props.push({ k: 'houseSign', x: 422.0, y: 9.6, z: 6.4, who: null, label: '왁뿌볼을 타고 왕좌로!', emoji: '🌈' });
+  coin(423, 6, 7.4); coin(425, 8, 7.4, true);
+
+  /* ⑤ 👑 황금 왕좌 — 그랜드 피날레 */
+  rect(429, 4, 436, 10, 7.4, 'gold');
+  for (var s13e = 429; s13e <= 436; s13e++) { railTile(s13e, 3, 7.4, { tint: '#ffe9a0' }); railTile(s13e, 11, 7.4, { tint: '#ffe9a0' }); }
+  for (var s13f = 4; s13f <= 10; s13f++) railTile(437, s13f, 7.4, { tint: '#ffe9a0' });
+  rect(431, 6, 434, 8, 7.9, 'star', { step: 0.35 });
+  props.push({ k: 'towerIcon', x: 432.5, y: 3.2, z: 7.4, emoji: '👑', size: 74, label: '전설의 황금 왕좌' });
+  props.push({ k: 'towerIcon', x: 429.4, y: 10.6, z: 7.4, emoji: '🌙', size: 46 });
+  props.push({ k: 'houseSign', x: 433.2, y: 11.6, z: 7.4, who: null, label: '황금 왕좌 · 그랜드 피날레!', emoji: '🏆' });
+  var finish13 = { x: 432.5, y: 7.0, z: 7.9 };
+  cps.push({ x: 430.0, y: 9.0, z: 7.4, on: false, s13: 1 });
+  coin(430.5, 5.5, 7.95, true); coin(433.5, 5.2, 7.95); coin(435, 9.2, 7.95);
+  spots.push({ x: 430.2, y: 4.4, z: 7.4, icon: '🏠', label: '마을로 돌아가기', act: 'village' });
+  portals.push({ id: 'tw1', x: 435.4, y: 9.6, z: 7.4, icon: '🧱', title: '1탄 마을', prompt: '🧱 처음 마을로 돌아갈까요?', href: '#tw1', color: '#7ede63' });
+
+  /* 🎻 8탄 단상 옆 — 🍭 9탄으로 이어지는 사탕 문 */
+  portals.push({ id: 'tw9', x: -46.4, y: -137.6, z: 17.1, icon: '🍭', title: '9탄 마법 사탕성', prompt: '🍭 바로 9탄 마법 사탕성으로!', href: '#tw9', color: '#ff9fd8' });
+
   var finish5 = { x: 60.2, y: -100.6, z: Z5 };
   var finish6 = { x: 33.0, y: -129.0, z: 11.0 };
 
@@ -3688,7 +4217,8 @@ function buildMap() {
     props: props, spots: spots, houses: houses, keyTiles: keyTiles,
     movers: movers, spins: spins, portals: portals, crmTiles: crmTiles, rollers: rollers, enemies: enemies, finish2: finish2,
     finish3: finish3, finish4: finish4, finish5: finish5, finish6: finish6, finish7: finish7,
-    finish8: finish8,
+    finish8: finish8, finish9: finish9, finish10: finish10, finish11: finish11, finish12: finish12, finish13: finish13,
+    zips: zips,
     pens: pens, meteorSpots: meteorSpots, zones: ZONES,
     jellyTiles: jellyTiles, hops3: T3.hops, hops4: J4.hops,
     park: { area: PARK, see: seesaw, coaster: coaster },
@@ -3715,6 +4245,13 @@ var G = {
   finish6: { x: 33, y: -129, z: 11.0 }, finished6: false, cp6Start: -1, at6: false,
   finish7: { x: 8, y: -141, z: 15.2 }, finished7: false, cp7Start: -1, at7: false,
   finish8: { x: -44, y: -141.5, z: 17.4 }, finished8: false, cp8Start: -1, at8: false,
+  /* 🍭🦕🧜‍♀️🌈👑 9~13탄 */
+  finish9: { x: 237, y: 3, z: 4.2 }, finished9: false, cp9Start: -1, at9: false,
+  finish10: { x: 207, y: -62, z: 4.0 }, finished10: false, cp10Start: -1, at10: false,
+  finish11: { x: 332, y: 4.5, z: 4.2 }, finished11: false, cp11Start: -1, at11: false,
+  finish12: { x: 337, y: -46.5, z: 2.8 }, finished12: false, cp12Start: -1, at12: false,
+  finish13: { x: 432.5, y: 7, z: 7.9 }, finished13: false, cp13Start: -1, at13: false,
+  zips: [], zipRide: null,
   pens: [], meteorSpots: [], meteors: [], frozen: null, zone: 0, freezes: 0,
   p: { x: -9, y: 2.5, z: 0, vz: 0, air: false, face: 1, walk: 0, move: false, ground: 0, land: 0 },
   ride: 'walk', pet: null, petXY: { x: -9, y: 3.2 }, spot: null,
@@ -3753,11 +4290,21 @@ function buildWorld() {
   G.finish6 = m.finish6 || G.finish6;
   G.finish7 = m.finish7 || G.finish7;
   G.finish8 = m.finish8 || G.finish8;
+  /* 🍭🦕🧜‍♀️🌈👑 9~13탄 */
+  G.finish9 = m.finish9 || G.finish9;
+  G.finish10 = m.finish10 || G.finish10;
+  G.finish11 = m.finish11 || G.finish11;
+  G.finish12 = m.finish12 || G.finish12;
+  G.finish13 = m.finish13 || G.finish13;
+  G.zips = m.zips || [];
   G.pens = m.pens || [];
   G.meteorSpots = m.meteorSpots || [];
   G.zones = m.zones || ZONES; G.meteors = []; G.frozen = null; G.freezes = 0;
   /* 🎹🎻🥁 8탄 — 소리가 나는 발판(피아노·현·팀파니) 모으기 */
   G.soundTiles = G.tiles.filter(function (t) { return t.note != null || t.str || t.timp; });
+  /* 💚🌈 9~13탄 — 슬라임 쿠션 · 왁뿌볼 발판 모아 두기 */
+  G.slimeTiles = G.tiles.filter(function (t) { return t.slime; });
+  G.ballTiles = G.tiles.filter(function (t) { return t.ballPad; });
   /* 🎡 놀이공원 — 시소 · 청룡열차 */
   G.park = m.park || null;
   G.see = G.park ? G.park.see : null;
@@ -3766,6 +4313,7 @@ function buildWorld() {
   // 코스별 첫 체크포인트 위치 (s2 / s3 / s4 표시로 찾아요)
   G.cp2Start = -1; G.cp3Start = -1; G.cp4Start = -1;
   G.cp5Start = -1; G.cp6Start = -1; G.cp7Start = -1; G.cp8Start = -1;
+  G.cp9Start = -1; G.cp10Start = -1; G.cp11Start = -1; G.cp12Start = -1; G.cp13Start = -1;
   for (var ci = 0; ci < G.cps.length; ci++) {
     if (G.cps[ci].s2 && G.cp2Start < 0) G.cp2Start = ci;
     if (G.cps[ci].s3 && G.cp3Start < 0) G.cp3Start = ci;
@@ -3774,6 +4322,11 @@ function buildWorld() {
     if (G.cps[ci].s6 && G.cp6Start < 0) G.cp6Start = ci;
     if (G.cps[ci].s7 && G.cp7Start < 0) G.cp7Start = ci;
     if (G.cps[ci].s8 && G.cp8Start < 0) G.cp8Start = ci;
+    if (G.cps[ci].s9 && G.cp9Start < 0) G.cp9Start = ci;
+    if (G.cps[ci].s10 && G.cp10Start < 0) G.cp10Start = ci;
+    if (G.cps[ci].s11 && G.cp11Start < 0) G.cp11Start = ci;
+    if (G.cps[ci].s12 && G.cp12Start < 0) G.cp12Start = ci;
+    if (G.cps[ci].s13 && G.cp13Start < 0) G.cp13Start = ci;
   }
   if (G.cp2Start < 0) G.cp2Start = 9;
   if (G.cp3Start < 0) G.cp3Start = G.cps.length - 1;
@@ -3782,6 +4335,11 @@ function buildWorld() {
   if (G.cp6Start < 0) G.cp6Start = G.cps.length - 1;
   if (G.cp7Start < 0) G.cp7Start = G.cps.length - 1;
   if (G.cp8Start < 0) G.cp8Start = G.cps.length - 1;
+  if (G.cp9Start < 0) G.cp9Start = G.cps.length - 1;
+  if (G.cp10Start < 0) G.cp10Start = G.cps.length - 1;
+  if (G.cp11Start < 0) G.cp11Start = G.cps.length - 1;
+  if (G.cp12Start < 0) G.cp12Start = G.cps.length - 1;
+  if (G.cp13Start < 0) G.cp13Start = G.cps.length - 1;
   /* 1탄 첫 체크포인트(처음에 켜져 있는 깃발)가 목록 어디에 있든 찾아 둡니다 */
   G.cp1Start = 0;
   for (var cf = 0; cf < G.cps.length; cf++) if (G.cps[cf].on) { G.cp1Start = cf; break; }
@@ -4005,8 +4563,143 @@ function drawJellyTile(ctx, t) {
   ctx.restore();
 }
 
+/* 💚 9~13탄 — 푹신푹신 반투명 슬라임 발판 (쿠션 · 트램펄린) */
+function drawSlimeTile(ctx, t) {
+  var ap = (t.appear === undefined) ? 1 : t.appear;
+  if (ap <= 0.01) return;
+  var press = clamp(t.tramp ? (t.trampPress || 0) : (t.slimePress || 0), 0, 1.3);
+  var col = t.slimeCol || '#8ef0b6';
+  var topZ = t.z + 0.02 - press * 0.16;
+  var p0 = proj(t.x + 0.06, t.y + 0.06, topZ), p1 = proj(t.x + 0.94, t.y + 0.06, topZ),
+    p2 = proj(t.x + 0.94, t.y + 0.94, topZ), p3 = proj(t.x + 0.06, t.y + 0.94, topZ);
+  var cx = (p0.x + p2.x) / 2, cy = (p0.y + p2.y) / 2;
+  var grow = press * 0.14;
+  var top = [p0, p1, p2, p3];
+  for (var i = 0; i < 4; i++) {
+    top[i] = { x: cx + (top[i].x - cx) * (1 + grow), y: cy + (top[i].y - cy) * (1 + grow) };
+  }
+  var H = 0.42 * BLOCK_H * (1 - press * 0.42);
+  var b1 = { x: p1.x, y: p1.y + H }, b2 = { x: p2.x, y: p2.y + H }, b3 = { x: p3.x, y: p3.y + H };
+  ctx.save();
+  ctx.globalAlpha = ap;
+  /* 바닥 그림자 */
+  ctx.beginPath();
+  ctx.ellipse(cx, p2.y + H * 0.9, 29 * (1 + grow), 10, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(40,120,80,.15)'; ctx.fill();
+  /* 옆면 — 반투명 젤리 몸통 */
+  ctx.globalAlpha = ap * 0.78;
+  poly(ctx, [p3, p2, b2, b3], shade(col, -0.24));
+  poly(ctx, [p1, p2, b2, b1], shade(col, -0.36));
+  ctx.globalAlpha = ap * 0.95;
+  /* 윗면 */
+  var g = ctx.createRadialGradient(cx - 10, cy - 6, 2, cx, cy, 46);
+  g.addColorStop(0, shade(col, 0.62));
+  g.addColorStop(0.5, col);
+  g.addColorStop(1, shade(col, -0.08));
+  poly(ctx, top, g);
+  poly(ctx, top, null, 'rgba(255,255,255,.72)', 2.2);
+  /* 젤리 광택 — 크고 작은 하이라이트 */
+  ctx.beginPath();
+  ctx.ellipse(cx - 9, cy - 4, 13, 5.2, -0.3, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + 12, cy + 5, 5, 2.6, 0.2, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.42)'; ctx.fill();
+  /* 눌린 만큼 퍼지는 링 */
+  if (press > 0.05) {
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 19 + press * 15, 7.5 + press * 5, 0, 0, 6.2832);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.5 * press).toFixed(3) + ')';
+    ctx.lineWidth = 2.4; ctx.stroke();
+  }
+  if (t.tramp) {
+    ctx.globalAlpha = ap * 0.95;
+    emo(ctx, '💚', cx, cy - 1, 12);
+  }
+  ctx.restore();
+}
+
+/* 🫧 9~13탄 — 푹푹 빠지는 슬라임 웅덩이 표면 */
+function drawSlimePoolTile(ctx, t) {
+  if (t.appear !== undefined && t.appear <= 0.01) return;
+  var col = t.slimeCol || '#a8f6c6';
+  var p0 = proj(t.x, t.y, t.z), p1 = proj(t.x + 1, t.y, t.z), p2 = proj(t.x + 1, t.y + 1, t.z), p3 = proj(t.x, t.y + 1, t.z);
+  var cx = (p0.x + p2.x) / 2, cy = (p0.y + p2.y) / 2;
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  poly(ctx, [p0, p1, p2, p3], shade(col, -0.05));
+  poly(ctx, [p0, p1, p2, p3], null, 'rgba(255,255,255,.5)', 1.6);
+  /* 출렁이는 표면 빛 */
+  var w = 0.5 + 0.5 * Math.sin(G.t * 2.4 + t.x * 1.3 + t.y * 0.8);
+  ctx.beginPath();
+  ctx.ellipse(cx + Math.sin(G.t * 1.7 + t.x) * 6, cy + Math.cos(G.t * 1.4 + t.y) * 3, 22, 9, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,' + (0.16 + w * 0.18).toFixed(3) + ')';
+  ctx.fill();
+  /* 뽀글뽀글 기포 */
+  for (var b = 0; b < 3; b++) {
+    var ph = (G.t * 0.4 + b * 0.37 + t.x * 0.23 + t.y * 0.11) % 1;
+    var bx = cx + Math.sin((G.t + b * 2.1) * 1.3 + t.x) * 21;
+    var by = cy + 6 - ph * 14;
+    ctx.beginPath();
+    ctx.arc(bx, by, 1.8 + ph * 2.6, 0, 6.2832);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.55 * (1 - ph)).toFixed(3) + ')';
+    ctx.lineWidth = 1.2; ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.ellipse(cx - 8, cy - 3, 11, 4.4, -0.25, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.32)'; ctx.fill();
+  ctx.restore();
+}
+
+/* 🌈 9~13탄 — 무지개 왁뿌볼(탱탱볼) 발판 */
+function drawBallTile(ctx, t) {
+  var ap = (t.appear === undefined) ? 1 : t.appear;
+  if (ap <= 0.01) return;
+  var sq = clamp(t.ballSq || 0, -0.4, 1.1), press = Math.max(0, sq);
+  var q = proj(t.x + 0.5, t.y + 0.5, t.z);
+  var r = 26 * (1 + press * 0.16);
+  var ry = r * (1 - press * 0.34);
+  var cy = -r * 0.6 + press * 9;
+  var base = t.ballCol || '#ffd6f2';
+  ctx.save();
+  ctx.globalAlpha = ap;
+  /* 그림자 */
+  ctx.beginPath(); ctx.ellipse(q.x, q.y + 4, r * 0.9, 9, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(120,60,140,.15)'; ctx.fill();
+  ctx.translate(q.x, q.y);
+  /* 공 몸통 */
+  ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832);
+  var g = ctx.createRadialGradient(-r * 0.35, cy - ry * 0.4, 2, 0, cy, r * 1.15);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.45, base);
+  g.addColorStop(1, shade(base, -0.3));
+  ctx.fillStyle = g; ctx.fill();
+  /* 무지개 줄무늬 */
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832); ctx.clip();
+  var stripe = ['#ff9ecb', '#ffd36a', '#9ef2a8', '#8fd8ff', '#c3a8ff'];
+  for (var i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.arc(-r * 1.15 + i * r * 0.55 + Math.sin(G.t * 0.9 + t.x) * 3, cy + 2, r * 0.92, 0, 6.2832);
+    ctx.fillStyle = stripe[i];
+    ctx.globalAlpha = ap * 0.42;
+    ctx.fill();
+  }
+  ctx.restore();
+  ctx.globalAlpha = ap;
+  ctx.beginPath(); ctx.ellipse(0, cy, r, ry, 0, 0, 6.2832);
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2.6; ctx.stroke();
+  /* 광택 */
+  ctx.beginPath(); ctx.ellipse(-r * 0.34, cy - ry * 0.4, r * 0.24, ry * 0.2, -0.4, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fill();
+  ctx.restore();
+}
+
 function drawTile(ctx, t) {
   if (t.type === 'rail') { drawRail(ctx, t); return; }
+  if (t.slime) { drawSlimeTile(ctx, t); return; }
+  if (t.slimePool) { drawSlimePoolTile(ctx, t); return; }
+  if (t.ballPad) { drawBallTile(ctx, t); return; }
   /* 🎻 8탄 — 피아노 건반 · 현 · 팀파니는 직접 그려요 */
   if (t.type === 'pkey') { drawPianoKey(ctx, t); return; }
   if (t.type === 'bkey') { drawBlackKey(ctx, t); return; }
@@ -6582,6 +7275,34 @@ function drawProp(ctx, p) {
       ctx.fillText(sign.emoji + ' ' + sign.label, sp.x, sp.y - 46);
       break;
     }
+    /* ===================== 🍭 9~13탄 — 큰 테마 표지 ===================== */
+    case 'towerIcon': {
+      var ti = proj(x + 0.5, y + 0.5, z + 0.5);
+      var bob = Math.sin(G.t * 1.6 + x * 0.3) * 5;
+      var sz = p.size || 54;
+      ctx.save();
+      ctx.translate(ti.x, ti.y + bob);
+      var gg = ctx.createRadialGradient(0, 0, 4, 0, 0, sz * 0.92);
+      gg.addColorStop(0, 'rgba(255,255,255,.5)');
+      gg.addColorStop(0.55, 'rgba(255,240,180,.24)');
+      gg.addColorStop(1, 'rgba(255,220,120,0)');
+      ctx.beginPath(); ctx.arc(0, 0, sz * 0.92, 0, 6.2832);
+      ctx.fillStyle = gg; ctx.fill();
+      emo(ctx, p.emoji || '✨', 0, 0, sz);
+      if (p.label) {
+        ctx.font = '13px Jua, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var tw = ctx.measureText(p.label).width + 18;
+        roundRect(ctx, -tw / 2, sz * 0.5 + 2, tw, 21, 9);
+        ctx.fillStyle = 'rgba(255,253,246,.95)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(255,201,60,.9)'; ctx.lineWidth = 1.6; ctx.stroke();
+        ctx.fillStyle = '#8a5a00';
+        ctx.fillText(p.label, 0, sz * 0.5 + 13);
+      }
+      ctx.restore();
+      break;
+    }
     /* ===================== ❄️ 5탄 얼음 왕국 ===================== */
     case 'igloo': {
       /* 🏠 눈 벽돌 이글루 — 돔 지붕 + 아치 입구 (입구는 화면 앞쪽이 트여 있어요) */
@@ -7747,6 +8468,17 @@ function spawnSpark(x, y, z, col, n) {
     });
   }
 }
+/* 💧 슬라임 방울 — 통! 튈 때 톡톡 튀는 투명 젤리 방울 */
+function spawnSlimeDrops(x, y, z, n) {
+  for (var i = 0; i < (n || 3); i++) {
+    G.parts.push({
+      k: 'blob', x: x + rnd(-0.22, 0.22), y: y + rnd(-0.22, 0.22), z: z + rnd(0, 0.15),
+      vx: rnd(-0.85, 0.85), vy: rnd(-0.85, 0.85), vz: rnd(0.7, 2.0),
+      life: rnd(0.35, 0.68), age: 0, r: rnd(2.4, 5.2),
+      c: pick(['#b8ffd0', '#8ef0b6', '#ffffff', '#ffe0f2', '#cfe6ff'])
+    });
+  }
+}
 /* 🎵 8탄 — 떠오르는 음표 파티클 */
 function spawnNote(x, y, z, ch) {
   G.parts.push({
@@ -7775,6 +8507,17 @@ function drawParts(ctx) {
     var a = 1 - p.age / p.life;
     ctx.globalAlpha = a;
     if (p.k === 'heart') emo(ctx, p.ch, s.x, s.y, 16);
+    else if (p.k === 'blob') {
+      /* 💧 반투명 젤리 방울 */
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, p.r, 0, 6.2832);
+      ctx.fillStyle = p.c || '#b8ffd0';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(s.x - p.r * 0.28, s.y - p.r * 0.32, p.r * 0.34, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,255,255,.85)';
+      ctx.fill();
+    }
     else if (p.k === 'spark') {
       ctx.fillStyle = p.c;
       star(ctx, s.x, s.y, 4, p.r * 1.9, p.r * 0.75);
@@ -7950,7 +8693,57 @@ function pressJelly(t, power) {
   AU.sagrak(p);
 }
 
-/* 🤸 트램펄린 — 밟으면 쏙 눌렸다가 퐁! (가족이 많이 올라올수록 더 깊이 눌려요) */
+/* 💚 슬라임 쿠션 — 푹~ 눌렸다가 스르르 돌아와요 (점프하면 통!) */
+function pressSlime(t, power) {
+  if (!t || !t.slime) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.slHitAt && now - t.slHitAt < 60) return;
+  t.slHitAt = now;
+  var pw = clamp(power === undefined ? 1 : power, 0.3, 1.5);
+  t.slimePress = Math.min(1.3, (t.slimePress || 0) + 0.8 * pw);
+  t.slimePressV = (t.slimePressV || 0) - 1.1 * pw;
+  spawnSlimeDrops(t.x + 0.5, t.y + 0.5, t.z + 0.12, 3 + Math.round(pw * 3));
+  if (!t.tramp) AU.slimePop(0.8 + pw * 0.25);
+  else AU.slimePop(0.9 + pw * 0.25);
+}
+
+/* 🌈 무지개 왁뿌볼 — 통통 튀는 말랑 공 발판 */
+function pressBall(t, power) {
+  if (!t || !t.ballPad) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  if (t.bHitAt && now - t.bHitAt < 60) return;
+  t.bHitAt = now;
+  var pw = clamp(power === undefined ? 1 : power, 0.3, 1.4);
+  t.ballSq = Math.min(1.1, (t.ballSq || 0) + 0.85 * pw);
+  t.ballSqv = (t.ballSqv || 0) - 1.0 * pw;
+  spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.12, '#ffffff', 3);
+}
+
+/* 💚 슬라임·왁뿌볼 — 눌렸던 발판이 스프링처럼 돌아와요 */
+function updateSlimes(dt) {
+  var i, t;
+  for (i = 0; i < (G.slimeTiles || []).length; i++) {
+    t = G.slimeTiles[i];
+    if (t.tramp) continue;
+    if (!t.slimePress && !t.slimePressV) continue;
+    t.slimePressV += (-120 * t.slimePress - 9 * t.slimePressV) * dt;
+    t.slimePress += t.slimePressV * dt;
+    if (t.slimePress > 1.3) { t.slimePress = 1.3; if (t.slimePressV > 0) t.slimePressV = 0; }
+    if (t.slimePress < -0.45) { t.slimePress = -0.45; if (t.slimePressV < 0) t.slimePressV = 0; }
+    if (Math.abs(t.slimePress) < 0.004 && Math.abs(t.slimePressV) < 0.02) { t.slimePress = 0; t.slimePressV = 0; }
+  }
+  for (i = 0; i < (G.ballTiles || []).length; i++) {
+    t = G.ballTiles[i];
+    if (!t.ballSq && !t.ballSqv) continue;
+    t.ballSqv += (-130 * t.ballSq - 9 * t.ballSqv) * dt;
+    t.ballSq += t.ballSqv * dt;
+    if (t.ballSq > 1.1) { t.ballSq = 1.1; if (t.ballSqv > 0) t.ballSqv = 0; }
+    if (t.ballSq < -0.4) { t.ballSq = -0.4; if (t.ballSqv < 0) t.ballSqv = 0; }
+    if (Math.abs(t.ballSq) < 0.004 && Math.abs(t.ballSqv) < 0.02) { t.ballSq = 0; t.ballSqv = 0; }
+  }
+}
+
+/* 🤸 트램펄린 — 밟으면 쏙 눌렸다가 퐁! (가족이 많이 올라올수록 더 더 깊이 눌려요) */
 function pressTramp(t, power) {
   if (!t || !t.tramp) return;
   var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
@@ -8367,7 +9160,7 @@ function updateFrozen(dt) {
     if (sup && sup.t.z > p.z - 0.62) { p.z = sup.t.z; p.groundZ = p.z; }
     else { p.air = true; p.vz = 0; p.airTime = 0; p.walkOff = true; }
   } else {
-    p.vz -= GRAV * (G.at7 ? 0.42 : 1) * dt;
+    p.vz -= GRAV * ((G.at7 || G.at13) ? 0.42 : 1) * dt;
     p.z += p.vz * dt;
     if (p.vz <= 0) {
       var land = supportTile(p.x, p.y, LAND_R, p.z + 0.12);
@@ -8524,6 +9317,11 @@ function updatePlayer(dt) {
   var zn = zoneAt(p.x, p.y, p.z);
   if (zn) G.zone = zn; else if (!p.air) G.zone = 0;
   G.at5 = G.zone === 5; G.at6 = G.zone === 6; G.at7 = G.zone === 7; G.at8 = G.zone === 8;
+  /* 🍭🦕🧜‍♀️🌈👑 9~13탄 — 13탄은 무중력 구역! */
+  G.at9 = G.zone === 9; G.at10 = G.zone === 10; G.at11 = G.zone === 11;
+  G.at12 = G.zone === 12; G.at13 = G.zone === 13;
+  /* 🪢 짚라인을 타고 내려가는 동안 */
+  if (G.zipRide && updateZipRide(dt)) return;
   /* 🪑 놀이공원 시소에 앉아 있는 동안 */
   if (G.seeSeat && updateSeesawRide(dt)) return;
   /* 🌿 그네를 타고 흔들리는 동안 */
@@ -8548,10 +9346,12 @@ function updatePlayer(dt) {
     wx /= wl; wy /= wl;
     if (wx > 0.22) p.face = 1; else if (wx < -0.22) p.face = -1;
     var sp = spec.speed * (inp.len > 0.92 ? 1 : Math.max(0.45, inp.len));
+    /* 🫧 슬라임 웅덩이 속에서는 발이 푹푹 빠져 느리게 걸어요 */
+    if (p.slimeOn) sp *= 0.58;
     tvx = wx * sp; tvy = wy * sp;
   }
   /* 🧊 미끄러운 젤리·얼음 위에서는 가속·정지가 느려서 쭉 밀려가요 */
-  var accel = p.air ? 20 : (p.ice ? 3.2 : (p.slip ? 7.5 : 42));
+  var accel = p.air ? 20 : (p.slimeOn ? 13 : (p.ice ? 3.2 : (p.slip ? 7.5 : 42)));
   p.vx = approach(p.vx || 0, tvx, accel * dt);
   p.vy = approach(p.vy || 0, tvy, accel * dt);
 
@@ -8606,8 +9406,8 @@ function updatePlayer(dt) {
   } else {
     p.coyote = Math.max(0, (p.coyote || 0) - dt);
     p.airTime = (p.airTime || 0) + dt;
-    /* 🚀 7탄 달 저중력 — 중력이 0.42배라 둥실둥실 천천히 떨어져요 */
-    p.vz -= GRAV * (G.at7 ? 0.42 : 1) * dt;
+    /* 🚀 7탄·👑 13탄 달 저중력 — 중력이 0.42배라 둥실둥실 천천히 떨어져요 */
+    p.vz -= GRAV * ((G.at7 || G.at13) ? 0.42 : 1) * dt;
     var prevZ = p.z;
     p.z += p.vz * dt;
     // 착지: 발판을 살짝 벗어나도 끌어다 붙여 착지시켜요
@@ -8616,7 +9416,7 @@ function updatePlayer(dt) {
          단, 발판 밖으로 「걸어서」 막 나간 직후(0.16초)에는 도움을 거의
          주지 않아요 — 그래야 걸어 나가면 진짜로 아래로 떨어져요. */
       var landR = LAND_R;
-      if (G.at3 || G.at4) landR = 0.75;
+      if (G.at3 || G.at4 || G.at9 || G.at10 || G.at11 || G.at12 || G.at13) landR = 0.75;
       if (p.walkOff && (p.airTime || 0) < 0.16) landR = 0.1;
       var land = supportTile(p.x, p.y, landR, prevZ);
       if (land && p.z <= land.t.z + 0.02) { doLand(land); standsOn = G.p.air ? null : land.t; }
@@ -8629,8 +9429,8 @@ function updatePlayer(dt) {
           pressTramp(tr, 0.9 + n2 * 0.15);
           p.vz = 10.2 + n2 * 0.3;
           p.squash = 0;
-          AU.pop();
-          spawnSpark(tr.x + 0.5, tr.y + 0.5, tr.z + 0.2, '#8ee7ff', 5);
+          if (tr.slime) { AU.slimePop(1.15); spawnSlimeDrops(tr.x + 0.5, tr.y + 0.5, tr.z + 0.15, 6); }
+          else { AU.pop(); spawnSpark(tr.x + 0.5, tr.y + 0.5, tr.z + 0.2, '#8ee7ff', 5); }
         }
       }
     }
@@ -8687,6 +9487,11 @@ function updatePlayer(dt) {
   } else {
     p.standTile = standsOn || null;
   }
+  /* 🫧 슬라임 웅덩이 — 발이 푹푹 잠기고 몸이 천천히 느려져요 */
+  var onSlimePool = !!(standsOn && standsOn.slimePool);
+  p.slimeOn = onSlimePool;
+  if (onSlimePool) p.sink = Math.min(0.36, (p.sink || 0) + dt * 2.4);
+  else p.sink = Math.max(0, (p.sink || 0) - dt * 3.6);
   if (standsOn) {
     if (standsOn.crm && standsOn.cstate !== 'shake' && standsOn.cstate !== 'gone') {
       standsOn.cstate = 'shake';
@@ -8700,20 +9505,25 @@ function updatePlayer(dt) {
 
   /* 🏰 타워 점프맵(그리고 ❄️🍬🚀 5·6·7탄): 발판에서 떨어져 아래로 내려가면
      방금 지나온 층 체크포인트 깃발에서 즉시 부활! */
-  var fallLim = G.at7 ? 1.95 : 1.2;
-  if ((G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.at8) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - fallLim) {
+  var fallLim = (G.at7 || G.at13) ? 1.95 : 1.2;
+  if ((G.at3 || G.at4 || G.at5 || G.at6 || G.at7 || G.at8 || G.at9 || G.at10 || G.at11 || G.at12 || G.at13) && p.air && typeof p.groundZ === 'number' && p.z < p.groundZ - fallLim) {
     fallOut(); return;
   }
 
-  /* ❄️ 눈밭 뽀드득 · 얼음 지잉 발소리 */
+  /* ❄️ 눈밭 뽀드득 · 얼음 지잉 · 🫧 슬라임 뽀글 발소리 */
   if (standsOn && !p.air && moving) {
     var iceOn = isIceTile(standsOn), snowOn = standsOn.type === 'snow';
-    if (iceOn || snowOn) {
+    var slimeOn = !!(standsOn.slimePool || (standsOn.slime && !standsOn.tramp));
+    if (iceOn || snowOn || slimeOn) {
       p.stepT = (p.stepT || 0) - dt;
       if (p.stepT <= 0) {
-        p.stepT = iceOn ? 0.3 : 0.26;
+        p.stepT = iceOn ? 0.3 : (slimeOn ? 0.34 : 0.26);
         p.stepN = (p.stepN || 0) + 1;
-        if (iceOn) AU.iceStep(); else AU.crunch(p.stepN);
+        if (iceOn) AU.iceStep();
+        else if (slimeOn) {
+          AU.slimeStep(p.stepN);
+          if (standsOn.slimePool) spawnSlimeDrops(p.x, p.y, p.z + 0.06, 2);
+        } else AU.crunch(p.stepN);
       }
     } else p.stepT = 0;
   } else p.stepT = 0;
@@ -8845,6 +9655,28 @@ function updatePlayer(dt) {
     }
   }
 
+  /* 🍭🦕🧜‍♀️🌈👑 9~13탄 — 각 타워 꼭대기에서 완주! */
+  if (!G.finished9) {
+    var fc9 = G.finish9;
+    if (Math.abs(fc9.z - p.z) < 0.9 && Math.abs(p.x - fc9.x) < 2.8 && Math.abs(p.y - fc9.y) < 2.4) finishStage9();
+  }
+  if (!G.finished10) {
+    var fc10 = G.finish10;
+    if (Math.abs(fc10.z - p.z) < 0.9 && Math.abs(p.x - fc10.x) < 2.8 && Math.abs(p.y - fc10.y) < 2.4) finishStage10();
+  }
+  if (!G.finished11) {
+    var fc11 = G.finish11;
+    if (Math.abs(fc11.z - p.z) < 0.9 && Math.abs(p.x - fc11.x) < 2.8 && Math.abs(p.y - fc11.y) < 2.4) finishStage11();
+  }
+  if (!G.finished12) {
+    var fc12 = G.finish12;
+    if (Math.abs(fc12.z - p.z) < 0.9 && Math.abs(p.x - fc12.x) < 2.8 && Math.abs(p.y - fc12.y) < 2.4) finishStage12();
+  }
+  if (!G.finished13) {
+    var fc13 = G.finish13;
+    if (!p.air && Math.abs(fc13.z - p.z) < 0.45 && Math.abs(p.x - fc13.x) < 2.4 && Math.abs(p.y - fc13.y) < 1.9) finishStage13();
+  }
+
   // 🚪 포털 문 — 문 앞에 서면 「이동」 버튼이 떠요
   G.portal = null;
   var pbest = 1.6;
@@ -8906,8 +9738,8 @@ function doLand(cand) {
     /* 🤸 트램펄린 — 착지하면 보잉— 자동으로 통통! */
     pressTramp(t, 1.0);
     p.vz = 10.5; p.air = true; p.squash = 0;
-    AU.pop();
-    spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.2, '#8ee7ff', 5);
+    if (t.slime) { AU.slimePop(1.2); spawnSlimeDrops(t.x + 0.5, t.y + 0.5, t.z + 0.15, 7); }
+    else { AU.pop(); spawnSpark(t.x + 0.5, t.y + 0.5, t.z + 0.2, '#8ee7ff', 5); }
     return;
   }
   if (t.type === 'bounce') {
@@ -8920,6 +9752,20 @@ function doLand(cand) {
     p.vz = 12.1; p.air = true; p.squash = 0;
     AU.macPop(1.2);
     spawnHearts(p.x, p.y, 3);
+  }
+  /* 💚 슬라임 쿠션 — 푹~ 잠기고 뽀글! (점프하면 통! 크게 튕겨요) */
+  if (t.slime && !t.tramp) {
+    pressSlime(t, 1.15);
+    t.slimeSink = 1;
+    spawnSlimeDrops(t.x + 0.5, t.y + 0.5, t.z + 0.1, 5);
+    AU.slimeSink(0.9);
+  }
+  /* 🌈 무지개 왁뿌볼 — 밟으면 탱탱! 통통 튀어 올라요 */
+  if (t.ballPad) {
+    pressBall(t, 1.1);
+    p.vz = 9.2; p.air = true; p.squash = 0;
+    AU.ballBoing(1.1);
+    spawnSlimeDrops(t.x + 0.5, t.y + 0.5, t.z + 0.1, 4);
   }
 }
 
@@ -9055,15 +9901,24 @@ function doJump() {
       return;
     }
   }
-  /* 🚀 7탄 달 저중력 — 같은 힘으로도 더 높이 떠올라요 */
-  p.vz = (RIDE[G.ride] || RIDE.walk).jump * (G.at7 ? 1.12 : 1);
+  /* 🚀 7탄·👑 13탄 달 저중력 — 같은 힘으로도 더 높이 떠올라요 */
+  p.vz = (RIDE[G.ride] || RIDE.walk).jump * ((G.at7 || G.at13) ? 1.12 : 1);
   /* 🤸 트램펄린 위 점프는 슈퍼 점프! 퐁! 스프링 소리 + 별 반짝이 */
   if (p.standTile && p.standTile.tramp && !p.air) {
     p.vz = 11.6;
     pressTramp(p.standTile, 1.25);
-    AU.pop(); AU.whoosh();
-    spawnSpark(p.standTile.x + 0.5, p.standTile.y + 0.5, p.standTile.z + 0.25, '#ffe27a', 9);
+    if (p.standTile.slime) { AU.slimePop(1.35); spawnSlimeDrops(p.standTile.x + 0.5, p.standTile.y + 0.5, p.standTile.z + 0.2, 10); }
+    else {
+      AU.pop(); AU.whoosh();
+      spawnSpark(p.standTile.x + 0.5, p.standTile.y + 0.5, p.standTile.z + 0.25, '#ffe27a', 9);
+    }
     spawnHearts(p.x, p.y, 3);
+  }
+  /* 💚 슬라임 쿠션에서 점프 — 푹~ 잠겼다가 통! 하고 크게 튀어 올라요 */
+  if (p.standTile && p.standTile.slime && !p.standTile.tramp) {
+    p.vz = 10.9;
+    pressSlime(p.standTile, 1.3);
+    spawnSlimeDrops(p.x, p.y, p.z + 0.1, 8);
   }
   p.air = true;
   p.airTime = 0;
@@ -9097,6 +9952,66 @@ function updateRideUI() {
   var r = RIDE[G.ride] || RIDE.walk;
   $('#rideIco').textContent = r.emoji;
   $('#rideTxt').textContent = r.name;
+}
+
+/* ============================================================
+   🪢 10·12탄 — 짚라인! 출발 발판에서 도르래에 매달려 슈웅~ 건너가요
+   ============================================================ */
+function zipById(id) {
+  for (var i = 0; i < (G.zips || []).length; i++) if (G.zips[i].id === id) return G.zips[i];
+  return null;
+}
+/* 줄 위의 위치 (t 0~1) — 가운데가 축 처지게 */
+function zipPoint(z, t) {
+  return {
+    x: lerp(z.x0, z.x1, t),
+    y: lerp(z.y0, z.y1, t),
+    z: lerp(z.z0 + z.h0, z.z1 + z.h1, t) - 0.4 * Math.sin(Math.PI * t)
+  };
+}
+function startZipRide(zip) {
+  if (!zip || G.zipRide) return;
+  var p = G.p;
+  var dist = Math.hypot(zip.x1 - zip.x0, zip.y1 - zip.y0);
+  G.zipRide = { zip: zip, t: 0, dur: clamp(dist / 9.5, 0.75, 3.2), sparkT: 0 };
+  p.x = zip.x0; p.y = zip.y0; p.z = zip.z0 + zip.h0 - 1.05;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.squash = 0; p.walk = 0;
+  p.walkOff = false; p.groundZ = zip.z0; p.move = true;
+  G.spot = null;
+  AU.zipWhoosh();
+  spawnSpark(p.x, p.y, p.z + 0.5, '#ffe27a', 6);
+  toast('🪢 짚라인 출발! 슈우웅~!', 1600);
+}
+function updateZipRide(dt) {
+  var r = G.zipRide;
+  if (!r) return false;
+  var z = r.zip, p = G.p;
+  r.t += dt / r.dur;
+  var t = Math.min(1, r.t);
+  var pt = zipPoint(z, t);
+  p.x = pt.x; p.y = pt.y; p.z = pt.z - 1.05;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = false; p.move = true;
+  p.face = (z.x1 >= z.x0) ? 1 : -1;
+  p.walk += dt * 1.4;
+  if (r.sparkT < t) {
+    r.sparkT = t + 0.07;
+    spawnSpark(p.x, p.y, p.z + 0.55, '#fff3a0', 2);
+  }
+  if (t >= 1) endZipRide();
+  return true;
+}
+function endZipRide() {
+  var r = G.zipRide;
+  if (!r) return;
+  var z = r.zip;
+  G.zipRide = null;
+  var p = G.p;
+  p.x = z.x1; p.y = z.y1; p.z = z.z1 + 0.42;
+  p.vx = 0; p.vy = 0; p.vz = 0; p.air = true;
+  p.airTime = 0; p.walkOff = false; p.groundZ = z.z1;
+  AU.land();
+  spawnDust(p.x, p.y, z.z1, 6);
+  toast('🪢 슈우웅~ 짚라인 도착!', 1800);
 }
 
 function updateActionPrompt() {
@@ -9142,6 +10057,11 @@ function goWorld(href) {
   if (href === '#tw6') { gotoStage6(); return; }
   if (href === '#tw7') { gotoStage7(); return; }
   if (href === '#tw8') { gotoStage8(); return; }
+  if (href === '#tw9') { gotoStage9(); return; }
+  if (href === '#tw10') { gotoStage10(); return; }
+  if (href === '#tw11') { gotoStage11(); return; }
+  if (href === '#tw12') { gotoStage12(); return; }
+  if (href === '#tw13') { gotoStage13(); return; }
   try { location.href = worldHref(href); } catch (e) {}
 }
 
@@ -9223,14 +10143,27 @@ function gotoStage4(silent) {
 }
 
 /* 5·6·7탄 — 각 탄 시작 깃발로 (앞선 탄 완주 팝업이 다시 뜨지 않게) */
+/* 5~13탄 — 각 탄 시작 깃발로 (앞선 탄 완주 팝업이 다시 뜨지 않게) */
+var STAGE_CP_FALLBACK = {
+  5: { x: 99.2, y: -100.2, z: 8.6 },
+  6: { x: 49.4, y: -99.4, z: 9.2 },
+  7: { x: 26.4, y: -134, z: 11.2 },
+  8: { x: 2.6, y: -143, z: 15.2 },
+  9: { x: 199.0, y: 3.0, z: 0 },
+  10: { x: 196.0, y: -53.0, z: 0 },
+  11: { x: 296.5, y: 6.0, z: 0 },
+  12: { x: 296.5, y: -54.0, z: 0 },
+  13: { x: 396.5, y: 7.0, z: 0 }
+};
 function gotoStageN(n, silent) {
-  var cpIdx = n === 5 ? G.cp5Start : (n === 6 ? G.cp6Start : (n === 7 ? G.cp7Start : G.cp8Start));
+  var cpIdx = G['cp' + n + 'Start'];
+  if (typeof cpIdx !== 'number') cpIdx = -1;
   resetTraps2();
   if (cpIdx >= 0) {
     G.cpIdx = cpIdx;
     for (var i = 0; i < G.cps.length; i++) G.cps[i].on = (i === cpIdx);
   }
-  var cp = G.cps[cpIdx] || (n === 5 ? { x: 99.2, y: -100.2, z: 8.6 } : (n === 6 ? { x: 49.4, y: -99.4, z: 9.2 } : (n === 7 ? { x: 26.4, y: -134, z: 11.2 } : { x: 2.6, y: -143, z: 15.2 })));
+  var cp = G.cps[cpIdx] || STAGE_CP_FALLBACK[n] || STAGE_CP_FALLBACK[5];
   var p = G.p;
   p.x = cp.x; p.y = cp.y; p.z = cp.z;
   p.vx = 0; p.vy = 0; p.vz = 0; p.air = false;
@@ -9241,15 +10174,17 @@ function gotoStageN(n, silent) {
   snapCamera(cp.x, cp.y, cp.z);
   G.finished = true; G.finished2 = true; G.finished3 = true;
   G.finished4 = (n >= 5);
-  if (n <= 5) G.finished5 = false;
-  if (n <= 6) G.finished6 = false;
-  if (n <= 7) G.finished7 = false;
-  if (n <= 8) G.finished8 = false;
+  /* 지나온 탄은 완주 처리, 이번 탄은 다시 도전 */
+  for (var stn = 5; stn <= 13; stn++) G['finished' + stn] = (stn < n);
+  if (n > 8) G.finished8 = true;
   G.at3 = false; G.at4 = false;
   G.zone = n;
   G.at5 = n === 5; G.at6 = n === 6; G.at7 = n === 7; G.at8 = n === 8;
+  G.at9 = n === 9; G.at10 = n === 10; G.at11 = n === 11; G.at12 = n === 12; G.at13 = n === 13;
+  G.zipRide = null; G.p.slimeOn = false; G.p.sink = 0;
   if (n === 7) G.st7At = Date.now();
-  if (n === 8) { G.st8At = Date.now(); G.finished7 = true; }
+  if (n === 8) G.st8At = Date.now();
+  if (n >= 9) G['st' + n + 'At'] = Date.now();
   G.frozen = null; G.meteors = []; G.meteorT = 0;
   G.paused = false;
   closeAllSheets();
@@ -9260,17 +10195,29 @@ function gotoStageN(n, silent) {
   if (n === 6 && !silent) { AU.chime(); toast('🍬 6탄 달콤 디저트 하늘섬! 마카롱을 밟으면 퐁!', 2800); }
   if (n === 7 && !silent) { AU.chime(); toast('🚀 7탄 우주 별빛 대모험! 달 중력이라 둥실둥실~', 2800); }
   if (n === 8 && !silent) { AU.chime(); AU.pizz(523.25, 0.9); toast('🎻 8탄 관현악 연주회! 피아노 건반을 밟아 봐!', 2900); }
+  if (n === 9 && !silent) { AU.chime(); AU.slimePop(1); toast('🍭 9탄 마법 사탕성! 슬라임은 푹~ 빠지고 점프하면 통!', 3000); }
+  if (n === 10 && !silent) { AU.chime(); toast('🦕 10탄 공룡 화산섬! 발판에서 「🪢 짚라인」을 타 봐!', 3200); }
+  if (n === 11 && !silent) { AU.chime(); toast('🧜‍♀️ 11탄 인어궁전! 거품 왁뿌볼을 타고 바다를 건너요!', 3000); }
+  if (n === 12 && !silent) { AU.chime(); toast('🌈 12탄 구름 위 레인보우! 구름 사이로 짚라인 슈웅~!', 3000); }
+  if (n === 13 && !silent) { AU.chime(); toast('👑 13탄 황금 우주왕국! 무중력이라 둥실둥실~ 그랜드 피날레!', 3200); }
 }
 function gotoStage5(silent) { gotoStageN(5, silent); }
 function gotoStage6(silent) { gotoStageN(6, silent); }
 function gotoStage7(silent) { gotoStageN(7, silent); }
 function gotoStage8(silent) { gotoStageN(8, silent); }
+function gotoStage9(silent) { gotoStageN(9, silent); }
+function gotoStage10(silent) { gotoStageN(10, silent); }
+function gotoStage11(silent) { gotoStageN(11, silent); }
+function gotoStage12(silent) { gotoStageN(12, silent); }
+function gotoStage13(silent) { gotoStageN(13, silent); }
 
 /* 🏘️ 마을로 돌아가기 */
 function gotoVillage() {
   G.at3 = false;
   G.at4 = false;
-  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false; G.zone = 0;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false;
+  G.at9 = false; G.at10 = false; G.at11 = false; G.at12 = false; G.at13 = false; G.zone = 0;
+  G.zipRide = null; G.p.slimeOn = false; G.p.sink = 0;
   G.frozen = null; G.meteors = [];
   updateGravBadge();
   G.p.x = G.spawn.x; G.p.y = G.spawn.y; G.p.z = 0;
@@ -9307,6 +10254,7 @@ function doAction() {
   else if (s.act === 'ride') { G.ride = 'scooter'; updateRideUI(); if (SAVE) { SAVE.ride = 'scooter'; persist(); } AU.pop(); toast('🛴 킥보드 탔어요!'); }
   else if (s.act === 'car') { G.ride = 'car'; updateRideUI(); if (SAVE) { SAVE.ride = 'car'; persist(); } AU.pop(); toast('🚗 자동차 탔어요!'); }
   if (s.act === 'village') { gotoVillage(); }
+  else if (s.act === 'zip') { startZipRide(zipById(s.zip)); }
   else if (s.act === 'seeL') { mountSeesaw('L'); }
   else if (s.act === 'seeR') { mountSeesaw('R'); }
   else if (s.act === 'coaster') { boardCoaster(); }
@@ -9438,6 +10386,14 @@ function drawWorld() {
   if (G.finish4 && Math.abs(G.finish4.x - G.p.x) < 16 && Math.abs(G.finish4.y - G.p.y) < 16) {
     items.push({ d: G.finish4.x + G.finish4.y + 0.01, k: 16, o: null });
   }
+  /* 🪢 짚라인 줄 — 아이템 정렬에 넣어 깊이 순서대로 그려요 */
+  for (i = 0; i < (G.zips || []).length; i++) {
+    var zp = G.zips[i];
+    var zox = Math.min(zp.x0, zp.x1), zoy = Math.min(zp.y0, zp.y1);
+    var zfx = Math.max(zp.x0, zp.x1), zfy = Math.max(zp.y0, zp.y1);
+    if (zfx < minX - 4 || zox > maxX + 4 || zfy < minY - 4 || zoy > maxY + 4) continue;
+    items.push({ d: zox + zoy + 0.055, k: 25, o: zp });
+  }
 
   /* 🎡 원더랜드 — 시소 · 청룡열차 레일 · 열차 · 그네 */
   if (G.see) items.push({ d: G.see.x + G.see.y + 0.055, k: 20, o: G.see });
@@ -9509,6 +10465,7 @@ function drawWorld() {
       case 21: drawTrackSeg(ctx, it.o); break;
       case 22: drawCoasterTrain(ctx); break;
       case 23: drawSwing(ctx); break;
+      case 25: drawZipLine(ctx, it.o); break;
     }
   }
 
@@ -9543,6 +10500,12 @@ function drawMe(ctx) {
   /* 🫧 말랑 구슬을 밟으면 발판과 함께 살짝 퐁 하고 내려앉아요 */
   if (p.standTile && p.standTile.jelly && p.standTile.sq > 0) {
     base.y += Math.min(0.22, p.standTile.sq) * 0.14 * BLOCK_H;
+  }
+  /* 🫧 슬라임 웅덩이 — 발이 푹푹 잠기게 */
+  if (p.sink > 0.01) base.y += p.sink * BLOCK_H * 0.62;
+  /* 💚 슬라임 쿠션 — 눌린 만큼 발이 쑥 */
+  if (p.standTile && p.standTile.slime && !p.standTile.tramp && (p.standTile.slimePress || 0) > 0) {
+    base.y += Math.min(0.3, p.standTile.slimePress) * 0.16 * BLOCK_H;
   }
   var look = SAVE ? SAVE.look : LOOK_DEFAULT;
   var bubble = null;
@@ -10187,6 +11150,83 @@ function resetStage8() {
   toast('🔁 8탄 관현악 연주회 다시 도전! 화이팅!');
 }
 
+/* ---------- 🍭🦕🧜‍♀️🌈 9~12탄 완주 (코인 + 다음 탄 안내) ---------- */
+var STAGE_FIN = {
+  9: { emoji: '🍭', prize: 40, msg: '🍭 9탄 마법 사탕성 완주! +40 코인! 이제 🦕 10탄 공룡 화산섬으로!' },
+  10: { emoji: '🦕', prize: 40, msg: '🦕 10탄 공룡 화산섬 완주! 짚라인 최고! +40 코인! 이제 🧜‍♀️ 11탄 인어궁전으로!' },
+  11: { emoji: '🧜‍♀️', prize: 45, msg: '🧜‍♀️ 11탄 인어궁전 완주! +45 코인! 이제 🌈 12탄 구름 위 레인보우로!' },
+  12: { emoji: '🌈', prize: 50, msg: '🌈 12탄 구름 위 레인보우 완주! +50 코인! 마지막 👑 13탄 황금 우주왕국으로!' }
+};
+function finishStageLite(n) {
+  var key = 'finished' + n;
+  if (G[key]) return;
+  var info = STAGE_FIN[n] || { emoji: '🏆', prize: 40, msg: n + '탄 완주!' };
+  G[key] = true;
+  AU.win(); AU.chime();
+  spawnConfetti(120);
+  addCoins(info.prize, true);
+  if (SAVE) { SAVE['st' + n] = SAVE['st' + n] || {}; SAVE['st' + n].done = (SAVE['st' + n].done || 0) + 1; persist(); }
+  G.fx = { emoji: info.emoji, ts: Date.now() };
+  toast(info.msg, 3600);
+  updateHint();
+}
+function finishStage9() { finishStageLite(9); }
+function finishStage10() { finishStageLite(10); }
+function finishStage11() { finishStageLite(11); }
+function finishStage12() { finishStageLite(12); }
+
+/* ---------- 👑 13탄 — 그랜드 피날레 ---------- */
+function finishStage13() {
+  if (G.finished13) return;
+  G.finished13 = true;
+  G.paused = true;
+  var time = Date.now() - (G.st13At || G.startAt);
+  AU.win();
+  AU.fanfare8();
+  spawnConfetti(260);
+  var bursts = 0;
+  var fw = setInterval(function () {
+    spawnConfetti(100);
+    AU.chime();
+    if (++bursts >= 4) clearInterval(fw);
+  }, 620);
+  addCoins(80, true);
+  if (SAVE) {
+    SAVE.st13 = SAVE.st13 || {};
+    SAVE.st13.best = SAVE.st13.best ? Math.min(SAVE.st13.best, time) : time;
+    SAVE.st13.done = (SAVE.st13.done || 0) + 1;
+    persist();
+  }
+  var el;
+  if ((el = $('#fin13Time'))) el.textContent = fmtTime(time);
+  if ((el = $('#fin13Coins'))) el.textContent = G.coinsGot;
+  if ((el = $('#fin13Best'))) el.textContent = fmtTime((SAVE && SAVE.st13) ? SAVE.st13.best : time);
+  if ((el = $('#fin13Title'))) el.textContent = ME.name + ' 황금 왕좌 등극! 👑';
+  $('#maestroOverlay').classList.remove('open');
+  $('#galaxyOverlay').classList.remove('open');
+  var fo = $('#finaleOverlay');
+  if (fo) fo.classList.add('open');
+  updateHint();
+}
+function resetStage13() {
+  G.finished13 = false;
+  resetTraps2();
+  $('#finaleOverlay').classList.remove('open');
+  G.paused = false;
+  gotoStageN(13, true);
+  toast('🔁 13탄 황금 우주왕국 다시 도전! 화이팅!');
+}
+function resetStageLite(n, msg) {
+  G['finished' + n] = false;
+  resetTraps2();
+  gotoStageN(n, true);
+  toast(msg || ('🔁 ' + n + '탄 다시 도전! 화이팅!'));
+}
+function resetStage9() { resetStageLite(9, '🔁 9탄 마법 사탕성 다시 도전! 화이팅!'); }
+function resetStage10() { resetStageLite(10, '🔁 10탄 공룡 화산섬 다시 도전! 화이팅!'); }
+function resetStage11() { resetStageLite(11, '🔁 11탄 인어궁전 다시 도전! 화이팅!'); }
+function resetStage12() { resetStageLite(12, '🔁 12탄 구름 위 레인보우 다시 도전! 화이팅!'); }
+
 function resetRun() {
   G.finished = false;
   G.finished2 = false;
@@ -10196,9 +11236,12 @@ function resetRun() {
   G.finished6 = false;
   G.finished7 = false;
   G.finished8 = false;
+  G.finished9 = false; G.finished10 = false; G.finished11 = false; G.finished12 = false; G.finished13 = false;
   G.at3 = false;
   G.at4 = false;
-  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false; G.zone = 0;
+  G.at5 = false; G.at6 = false; G.at7 = false; G.at8 = false;
+  G.at9 = false; G.at10 = false; G.at11 = false; G.at12 = false; G.at13 = false; G.zone = 0;
+  G.zipRide = null;
   G.frozen = null; G.meteors = [];
   resetTraps2();
   G.coinsGot = 0; G.gatesSolved = 0;
@@ -10258,6 +11301,41 @@ function updateHint() {
     else if (p.x < -14) txt = '🎻 현을 밟으면 띠잉~ 하고 높이 튕겨요!';
     else txt = '🎹 피아노 건반을 밟으면 도레미파솔라시도!';
   }
+  else if (G.at13) {
+    if (G.finished13) txt = '👑 황금 왕좌 등극! 전설을 완성했어요! 정말 대단해!';
+    else if (p.x > 427) txt = '👑 황금 왕좌가 코앞! 왁뿌볼을 타고 올라가요';
+    else if (p.x > 418) txt = '🌈 황금 왁뿌볼을 타고 둥실둥실~!';
+    else if (p.x > 412) txt = '💚 슬라임은 푹~ 빠지고 점프하면 통! 별을 향해!';
+    else txt = '🌙 13탄 무중력! 별빛 계단을 둥실둥실 높이 뛰어요';
+  }
+  else if (G.at12) {
+    if (G.finished12) txt = '🌈 12탄 완주! 이제 👑 13탄 황금 우주왕국이에요';
+    else if (p.x > 325) txt = '🌈 무지개 아치가 코앞! 구름을 밟고 가요';
+    else if (p.x > 315) txt = '🪢 구름 쉼터에서 짚라인을 타고 슈웅~!';
+    else if (p.x > 307) txt = '🌈 무지개 왁뿌볼을 타고 통통!';
+    else txt = '☁️ 12탄 구름 위! 무지개 다리를 폴짝폴짝';
+  }
+  else if (G.at11) {
+    if (G.finished11) txt = '🧜‍♀️ 11탄 완주! 이제 🌈 12탄 구름 위 레인보우로!';
+    else if (p.x > 327) txt = '🐚 인어궁전 성문이 코앞!';
+    else if (p.x > 321) txt = '🌿 해초 슬라임은 뽀글뽀글 푹~';
+    else if (p.x > 316) txt = '🌀 소용돌이를 점프로 피해요';
+    else txt = '🫧 거품 왁뿌볼을 타고 통통 바다를 건너요';
+  }
+  else if (G.at10) {
+    if (G.finished10) txt = '🦕 10탄 완주! 이제 🧜‍♀️ 11탄 인어궁전으로!';
+    else if (p.x < 210 && p.z > 0.9) txt = '🪢 「짚라인 타고 슈웅~!」 버튼을 눌러요!';
+    else if (p.x > 215) txt = '🦴 뼈 다리는 금방 사라져요! 멈추지 마요';
+    else if (p.x > 205) txt = '🌋 용암은 밟으면 안 돼요! 점프로 건너요';
+    else txt = '🦕 10탄 공룡 화산섬! 짚라인을 찾아요';
+  }
+  else if (G.at9) {
+    if (G.finished9) txt = '🍭 9탄 완주! 이제 🦕 10탄 공룡 화산섬으로!';
+    else if (p.x > 233) txt = '🍬 사탕 성문이 코앞! 마지막 점프!';
+    else if (p.x > 225) txt = '🌈 무지개 왁뿌볼을 타고 통통!';
+    else if (p.x > 218) txt = '💚 슬라임은 푹~ 빠졌다가 점프하면 통!';
+    else txt = '🍭 9탄 마법 사탕성! 슬라임 웅덩이는 푹푹~';
+  }
   else if (G.at6) {
     if (G.finished6) txt = '🍬 6탄 완주! 🚀 7탄 발사대가 앞에 있어요';
     else if (p.y < -125) txt = '🎂 케이크 꼭대기! 🍭 회전 사탕 조심';
@@ -10315,7 +11393,7 @@ function updateHint() {
 function updateGravBadge() {
   var el = $('#gravBadge');
   if (!el) return;
-  var on = !!G.at7;
+  var on = !!(G.at7 || G.at13);
   if (on === el.classList.contains('on')) return;
   el.classList.toggle('on', on);
 }
@@ -11564,6 +12642,46 @@ function updateSwingRide(dt) {
   return true;
 }
 /* 그네 그리기 — 기둥 · 밧줄 · 파스텔 좌석 + 타고 있는 나 */
+/* 🪢 짚라인 — 나무 기둥 두 개 + 축 늘어진 줄 + 노란 도르래 */
+function drawZipLine(ctx, z) {
+  var a0 = proj(z.x0, z.y0, z.z0);
+  var a1 = proj(z.x0, z.y0, z.z0 + z.h0);
+  var b0 = proj(z.x1, z.y1, z.z1);
+  var b1 = proj(z.x1, z.y1, z.z1 + z.h1);
+  ctx.save();
+  ctx.lineCap = 'round';
+  /* 기둥 */
+  ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.moveTo(a0.x - 1.6, a0.y); ctx.lineTo(a1.x - 1.6, a1.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(b0.x - 1.6, b0.y); ctx.lineTo(b1.x - 1.6, b1.y); ctx.stroke();
+  /* 기둥 꼭대기 마개 */
+  ctx.fillStyle = '#c98a4a';
+  ctx.beginPath(); ctx.arc(a1.x, a1.y, 4.6, 0, 6.2832); ctx.fill();
+  ctx.beginPath(); ctx.arc(b1.x, b1.y, 4.6, 0, 6.2832); ctx.fill();
+  /* 줄 — 가운데가 축 늘어진 곡선 */
+  var m = proj((z.x0 + z.x1) / 2, (z.y0 + z.y1) / 2, (z.z0 + z.h0 + z.z1 + z.h1) / 2 - 0.8);
+  ctx.strokeStyle = 'rgba(96,72,48,.95)'; ctx.lineWidth = 3.2;
+  ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.quadraticCurveTo(m.x, m.y, b1.x, b1.y); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(a1.x, a1.y - 1.6); ctx.quadraticCurveTo(m.x, m.y - 1.6, b1.x, b1.y - 1.6); ctx.stroke();
+  /* 도르래 — 타고 내려가는 중이면 줄 위를 따라가요 */
+  if (G.zipRide && G.zipRide.zip === z) {
+    var pt = zipPoint(z, Math.min(1, G.zipRide.t));
+    var sp = proj(pt.x, pt.y, pt.z);
+    ctx.fillStyle = '#ffd24a';
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, 6, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = '#b8860b'; ctx.lineWidth = 1.8; ctx.stroke();
+    ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(sp.x, sp.y + 9); ctx.stroke();
+    ctx.fillStyle = '#7a5230';
+    ctx.beginPath(); ctx.arc(sp.x, sp.y + 10, 2.4, 0, 6.2832); ctx.fill();
+  }
+  ctx.restore();
+}
+
 function drawSwing(ctx) {
   var s = G.swing || { a: 0 };
   var a = s.a || 0;
@@ -12382,6 +13500,17 @@ function bindUI() {
     gotoStage8();
   });
   if ($('#maeAgain')) $('#maeAgain').addEventListener('click', function () { resetStage8(); });
+  if ($('#maeNext9')) $('#maeNext9').addEventListener('click', function () {
+    $('#maestroOverlay').classList.remove('open');
+    G.paused = false;
+    gotoStage9();
+  });
+  if ($('#fin13Again')) $('#fin13Again').addEventListener('click', function () { resetStage13(); });
+  if ($('#fin13Village')) $('#fin13Village').addEventListener('click', function () {
+    $('#finaleOverlay').classList.remove('open');
+    G.paused = false;
+    gotoVillage();
+  });
   if ($('#maeHome')) $('#maeHome').addEventListener('click', function () {
     $('#maestroOverlay').classList.remove('open');
     G.paused = false;
@@ -12521,6 +13650,16 @@ function bindUI() {
     if (jmp7) { closeAllSheets(); gotoStage7(); return; }
     var jmp8 = e.target.closest('[data-jump8]');
     if (jmp8) { closeAllSheets(); gotoStage8(); return; }
+    var jmp9 = e.target.closest('[data-jump9]');
+    if (jmp9) { closeAllSheets(); gotoStage9(); return; }
+    var jmp10 = e.target.closest('[data-jump10]');
+    if (jmp10) { closeAllSheets(); gotoStage10(); return; }
+    var jmp11 = e.target.closest('[data-jump11]');
+    if (jmp11) { closeAllSheets(); gotoStage11(); return; }
+    var jmp12 = e.target.closest('[data-jump12]');
+    if (jmp12) { closeAllSheets(); gotoStage12(); return; }
+    var jmp13 = e.target.closest('[data-jump13]');
+    if (jmp13) { closeAllSheets(); gotoStage13(); return; }
     var jmp1 = e.target.closest('[data-jump1]');
     if (jmp1) { closeAllSheets(); resetRun(); return; }
     var prk = e.target.closest('[data-park]');
@@ -12730,6 +13869,7 @@ function loop(ts) {
     updateTraps(dt);
     updateJelly(dt);
     updateTramps(dt);
+    updateSlimes(dt);
     updateMacs(dt);
     updateSpins(dt);
     updateRollers(dt);
