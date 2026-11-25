@@ -868,6 +868,12 @@ function dateLabel(){
   return (d.getMonth() + 1) + '/' + d.getDate() + '(' + w + ')';
 }
 
+function timeInText(text, time){
+  if (!time) return false;
+  var h = parseInt(time.slice(0, 2), 10);
+  return String(text).indexOf(time) !== -1 || String(text).indexOf(h + '시') !== -1 || String(text).indexOf(pad2(h) + '시') !== -1;
+}
+
 function nightCopyText(){
   var L = [];
   L.push('🩺 인계 정리 노트 · ' + dateLabel() + ' 나이트');
@@ -890,7 +896,7 @@ function nightCopyText(){
     var dayT = p.todos.filter(function(t){ return t.toDay; });
     if (nightT.length){
       L.push(' ✅ 나이트 할 일');
-      nightT.forEach(function(t){ L.push('  ' + (t.done ? '☑' : '☐') + ' ' + (t.time ? t.time + ' ' : '') + t.text); });
+      nightT.forEach(function(t){ L.push('  ' + (t.done ? '☑' : '☐') + ' ' + (t.time && !timeInText(t.text, t.time) ? t.time + ' ' : '') + t.text); });
     }
     if (dayT.length){
       L.push(' ☀️ 데이 인계');
@@ -1083,12 +1089,9 @@ document.addEventListener('click', function(e){
     var todo = p.todos.filter(function(x){ return x.id === tid; })[0];
     if (!todo) return;
     todo.done = !todo.done;
-    var li = t.closest('li');
-    if (li) li.classList.toggle('done', todo.done);
-    save();
+    save(); render();
     var cn = $('[data-todo-count]', card);
     if (cn) cn.textContent = p.todos.filter(function(x){ return x.done; }).length + '/' + p.todos.length;
-    renderSummary();
     return;
   }
   if (act === 'tshift' && p){
