@@ -338,7 +338,7 @@ li.daytodo .ttime{color:#b9770a;background:var(--amber-soft)}
 /* ══════════════════════════ 파싱 엔진 ══════════════════════════ */
 //<<PARSE-START>>
 var KW = {
-  dx:['dx','진단','진단명','병명','수술명','pod','pod#','수술후','수술 후','수술중','질환','암','cancer',
+  dx:['dx','d/x','진단','진단명','병명','수술명','pod','pod#','수술후','수술 후','수술중','질환','암','cancer',
       '종양','폐렴','결핵','기흉','복수','간경화','cirrhosis','신부전','aki','ckd','당뇨','dm','고혈압','htn',
       'cva','뇌경색','뇌출혈','뇌종양','ich','sah','개두','craniotomy','clipping','coiling','심근경색','ami',
       '협심증','심부전','chf','판막','cabg','copd','천식','폐암','위암','대장암','간암','담낭','담석','췌장염',
@@ -348,15 +348,20 @@ var KW = {
       '혈종','hematoma','농양','abscess','봉와직염','cellulitis','패혈증','sepsis','쇼크','shock','부정맥',
       'af','심방세동','폐색','협착','폐기종','기관지','흡인','aspiration','탈장','hernia','치질','痔','누공','fistula',
       /* ── 정형외과(OS) 진단·수술 ── */
-      'orif','crif','tkr','tkra','thr','thra','fx','fracture','골절','척추','디스크','협착증','관절경','arthroscopy',
-      '인공관절','유합술','fusion','핀','pin','와이어','wire','고관절','슬관절','견관절','대퇴','경골','비골',
-      '요골','척골','발목','손목','감압술','척추고정','나사','금속판','반월상','십자인대','회전근','석고'],
+      'orif','crif','tkra','thra','fx','협착증','관절경','arthroscopy','유합술','fusion','핀','pin','와이어','wire',
+      '고관절','슬관절','견관절','대퇴','경골','비골','요골','척골','발목','손목','감압술','척추고정','나사','금속판',
+      '반월상','십자인대','회전근','회전근개','고정술','탈구','dislocation','압박골절','병적골절','골수염',
+      'osteomyelitis','절단단','변연절제','봉합','suture','수지','족지','중족','설상','종골','거골','척추체',
+      '경추','요추','흉추','전자부','경부골절','관절염','퇴행성','연부조직','감염'],
   lab:['lab','랩','wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb',
        'na','k','cl','ca','p','mg','bst','glucose','전해질','수치','혈액검사','소변검사','urine','cbc','abga',
        'lactate','젖산','amylase','lipase','troponin','트로포닌','bnp','pt','aptt','inr','d-dimer','피브린',
-       '백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','빈혈','anemia','정상범위','결과'],
+       '백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','빈혈','anemia','정상범위','결과',
+       /* ── 병동 다빈도 검사 ── */
+       'hba1c','albumin','ot/pt','rft','hcv','wound culture','culture','배양검사','배양','rbc','seg','lymph',
+       'hscrp','il-6','프로칼시토닌','urinalysis','현미경','화학검사','전해질검사','간기능','신기능','수혈준비'],
   meds:['안티','항생제','세파','세파졸린','cefazolin','세프트리악손','ceftriaxone','세포탁심','cefotetan',
-        '반코','vanco','반코마이신','아미카신','amicacin','타조신','메로펜','meropenem','이미페넴','이미페넴',
+        '반코','vanco','반코마이신','아미카신','amicacin','타조신','메로펜','meropenem','이미페넴',
         '타이레놀','트리다','진통제','해열제','항진균','항바이러스','iv','아이브이','수액','링거','하트만',
         '생리식염수','포도당','d5','d10','ns','tpn','티피엔','헤파린','와파린','노르핀','모르핀','펜타닐',
         '페치딘','데메롤','토라신','라식스','푸로세미드','알닥톤','노르에피','levophed','레보펜','도파민',
@@ -364,7 +369,12 @@ var KW = {
         '조란','발륨','아티반','수면제','만탈','스테로이드','솔루','솔루코텔','메틸론','프레드','프레드니솔론',
         'kcl','칼륨','마그네슘','알부민','비타민','피알엔','prn','투약','주사','점적','gtt','수혈','transfusion',
         '슬라이딩','인슐린','란투스','노보','리퀴드','mix','믹스','항암','타겟','면역','이뮤노','바이알','앰플',
-        '연고','바르','점안','흡입','아토피','알레르기약','지사제','완하제'],
+        '연고','바르','점안','흡입','아토피','알레르기약','지사제','완하제',
+        /* ── 정형외과·병동 다빈도 약제 ── */
+        '크린세이프','cleansafe','박타신','bactasin','후라시닐','furasynil','뉴로카바','헤파멜즈','칼리메이트',
+        '알레네','투제오','toujeo','애피드라','apidra','리피토','lipitor','우루사','고덱스','godex','트라마돌',
+        'tramadol','pca','위장약','변비약','당뇨약','당뇨 경구약','경구약','먹는약','알약','정제','캡슐','시럽',
+        '흡입제','소염제','근이완제','골다공증약','칼슘제','철분제','비스테로이드'],
   device:['foley','폴리','폴리백','유치도뇨','도뇨','소변줄','urine bag','l-tube','ltube','l튜브','엘튜브',
           '레빈','levin','비위관','위관','ng tube','ngt','c-line','cline','씨라인','중심정맥','picc','피크',
           'a-line','aline','에이라인','동맥라인','동맥관','헤모박','hemovac','heamovac','배액관','배액','drain',
@@ -373,34 +383,83 @@ var KW = {
           '기관절개','trach','tracheostomy','카테터','catheter','포트','port','에코','드레싱','dressing','상처',
           'vac','압박','보조기','벨트','튜브','라인','석션','suction','모니터','monitor','산소포화측정기','체온계',
           /* ── 정형외과(OS) 디바이스 ── */
-          '바라박','barovac','헤모박','hemovac','스플린트','splint','캐스트','cast','트랙션','traction','견인',
-          'cpm','dvt','ipc','스타킹','압박스타킹','tlso','워커','walker','목발','crutch','collar','경추보조기',
-          '냉동치료','cryo','드레인','핀삽입부','수술부위'],
+          '바라박','barovac','스플린트','splint','캐스트','cast','트랙션','traction','견인','cpm','dvt','ipc',
+          '스타킹','압박스타킹','tlso','워커','walker','목발','crutch','collar','경추보조기','냉동치료','cryo',
+          '드레인','핀삽입부','수술부위','기저귀','매트리스','발판','보행기','cpap','bipap','유치','줄'],
   plan:['npo','엔피오','금식','채혈','내일','자정부터','0시부터','24시부터','12시부터','수술 예정','op 예정',
-        '검사 예정','채혈 예정','ct','mri','초음파','내시경','x-ray','엑스레이','엑스레이','투석 예정','퇴원',
+        '검사 예정','채혈 예정','ct','mri','초음파','내시경','x-ray','엑스레이','투석 예정','퇴원',
         '전동','전실','입원','라운딩','회진','보류','hold','예약','스케줄','오피예정','수술방','수술실','회복실',
-        '이동검사','검사실','조영검사','조영','침습','시술 예정','중재 예정','재검'],
+        '이동검사','검사실','조영검사','조영','침습','시술 예정','중재 예정','재검',
+        /* ── 예정·행정 ── */
+        '예정','외출','서류','cd','티칭','협진','원장님','산재','보고','재활','물리치료','ot/pt','훈련','교육',
+        '이송','준비','퇴원교육','계단','보행훈련','동의서','보험','상담','처방'],
   vs:['v/s','바이탈','혈압','bp','맥박','hr','체온','bt','고열','발열','미열','열이','열감','spo2','산소포화',
       '통증','nrs','낙상','의식','gcs','부종','체중','소변량','호흡','rr','저혈압','고혈압','빈맥','서맥',
-      '오한','식은땀','어지럼','기운','컨디션','상태','drowsy','기면','섬망','delirium','설사','구토','오심',
-      '변비','발진','욕창','창백','청색','부정맥','혈당','통증호소','건조','갈증','식욕','불면','불안','초조',
-      '졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통','체위','안절부절',
+      '오한','식은땀','어지럼','어지러','기운','컨디션','상태','drowsy','기면','섬망','delirium','설사','구토',
+      '오심','변비','발진','욕창','창백','청색','부정맥','혈당','통증호소','건조','갈증','식욕','불면','불안',
+      '초조','졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통',
+      '체위','안절부절',
       /* ── 정형외과(OS) 관찰 ── */
       'cms','순환','감각','저림','발등맥박','도플러','pulse','swelling','아이스백','ice bag','icebag','냉찜질',
-      '거상','elevation','abr','절대안정','체위변경','통나무','보행','디딤','체중부하','wb','nwb','삼출','발적'],
+      '거상','elevation','abr','절대안정','체위변경','통나무','보행','디딤','체중부하','wb','nwb','삼출','발적',
+      /* ── 특이사항·소통 ── */
+      '컴플레인','불만','민원','항의','요구','보호자 요청','면회','간병','냄새','이물감','불편'],
   todo:['확인','예정','줘야','드려야','투여','체크','check','시행','준비','측정','돌려야','받아야','보고',
         '연락','콜','call','라운딩','회진','세팅','교체','달아','걸어','제거','삽입','픽스','촬영','이동',
         '퇴원','전동','전실','입원','먹여','드시','식이','빼야','바꿔','맞춰','잡아','알려',
-        '공유','시작','중단','hold','off','끄고','잠가','열어','비우','갈아','재검','반납','정리','소독','확인해']
+        '공유','시작','중단','hold','off','끄고','잠가','열어','비우','갈아','재검','반납','정리','소독','확인해',
+        '내일','챙기','티칭','원장님','재확인','교육','훈련','문의','전화','알림','점검','조정','결정','사정']
 };
 var STOP_NAME = {'환자':1,'병동':1,'인계':1,'오늘':1,'내일':1,'다음':1,'남자':1,'여자':1,'중환자':1,
-  '수술':1,'검사':1,'상태':1,'메모':1,'병실':1,'호실':1,'나이트':1,'데이':1,'이브닝':1,'새벽':1,'아침':1};
+  '수술':1,'검사':1,'상태':1,'메모':1,'병실':1,'호실':1,'나이트':1,'데이':1,'이브닝':1,'새벽':1,'아침':1,
+  '환자분':1,'환자님':1,'보호자':1,'간병인':1,'선생님':1,'담당':1,'병원':1,'입원':1,'퇴원':1,'전동':1};
+/* 한 줄짜리 본문 단어 — 이름으로 오인하면 안 되는 것들 */
+var COMMON_WORD = {'식사':1,'식사량':1,'금식':1,'수면':1,'기상':1,'취침':1,'화장실':1,'배뇨':1,'배변':1,'소변':1,
+  '대변':1,'가래':1,'기침':1,'구토':1,'오심':1,'통증':1,'발열':1,'체온':1,'혈압':1,'맥박':1,'호흡':1,'산소':1,
+  '수액':1,'투약':1,'주사':1,'검사':1,'촬영':1,'이동':1,'퇴원':1,'입원':1,'전동':1,'전실':1,'외출':1,'면회':1,
+  '라운딩':1,'회진':1,'인계':1,'메모':1,'특이':1,'사항':1,'없음':1,'있음':1,'정상':1,'이상':1,'호전':1,'악화':1,
+  '유지':1,'중단':1,'시작':1,'확인':1,'체크':1,'준비':1,'완료':1,'시행':1,'적용':1,'제거':1,'교체':1,'소독':1,
+  '드레싱':1,'거상':1,'냉찜질':1,'보조기':1,'워커':1,'목발':1,'휠체어':1,'침상':1,'난간':1,'낙상':1,'욕창':1,
+  '발적':1,'부종':1,'저림':1,'감각':1,'순환':1,'도플러':1,'체위':1,'안정':1,'보행':1,'디딤':1,'운동':1,'재활':1,
+  '훈련':1,'교육':1,'설명':1,'동의':1,'서류':1,'보험':1,'산재':1,'마취':1,'회복':1,'병실':1,'호실':1,'침대':1,
+  '창문':1,'커튼':1,'조명':1,'물':1,'음식':1,'죽':1,'밥':1,'반찬':1,'간식':1,'우유':1,'주스':1,'커피':1,
+  '금연':1,'흡연':1,'목욕':1,'샤워':1,'머리':1,'얼굴':1,'가슴':1,'배':1,'등':1,'다리':1,'팔':1,'어깨':1,'발':1,
+  '왼쪽':1,'오른쪽':1,'양쪽':1,'상태':1,'경과':1,'관찰':1,'기록':1,'보고':1,'연락':1,'콜':1,'알람':1,'소리':1,
+  '기분':1,'불안':1,'수면제':1,'진통제':1,'해열제':1,'수혈':1,'채혈':1,'배양':1,'결과':1,'영상':1,'사진':1,
+  '보호자':1,'간병':1,'환자':1,'병동':1,'나이트':1,'데이':1,'이브닝':1,'새벽':1,'아침':1,'점심':1,'저녁':1,
+  '밤':1,'낮':1,'오전':1,'오후':1,'자정':1,'정오':1,'오늘':1,'내일':1,'모레':1,'어제':1,'주말':1,'휴일':1,
+  '월요일':1,'화요일':1,'수요일':1,'목요일':1,'금요일':1,'토요일':1,'일요일':1,'이번':1,'다음':1,'지난':1,
+  '완전':1,'부분':1,'소량':1,'다량':1,'중등도':1,'경미':1,'심함':1,'심한':1,'가벼운':1,'전체':1,'한번':1,
+  '때':1,'중':1,'후':1,'전':1,'정도':1,'여부':1,'가능':1,'불가':1,'필요':1,'예정':1,'계획':1,'보류':1,
+  '일단':1,'우선':1,'추후':1,'재개':1,'지속':1,'반복':1,'증상':1,'징후':1,'소견':1,'판단':1,'조치':1,
+  '약':1,'알약':1,'연고':1,'파스':1,'주말당직':1,'당직':1,'근무':1,'교대':1,'인수':1,'인수인계':1,'메모지':1,
+  '소변량':1,'식사량':1,'배액량':1,'투여량':1,'잔뇨':1,'체중':1,'걸음':1,'호흡수':1,'맥박수':1,'혈당':1,
+  '시간':1,'정도':1,'이상':1,'이하':1,'이후':1,'이전':1,'동안':1,'전체':1,'부분':1,'평균':1,'총량':1}
 
+/* ══ 유틸 ══ */
 function pad2(n){ n = String(n); return n.length < 2 ? '0' + n : n; }
 
 function stripBullet(s){
   return String(s).replace(/^[\s\u2022\u00b7\u25aa\u25e6\u203b\u2713\u25a1\u2610\u2611\*#]+/,'')
-                  .replace(/^[-–—]\s+/,'').replace(/^\d{1,2}[).]\s+/,'').trim();
+                  .replace(/^[-–—]\s*/,'').replace(/^\d{1,2}[).]\s+/,'').trim();
+}
+
+var CLIN_WORD = {'폴리':1,'헤모박':1,'바라박':1,'안티':1,'수액':1,'드레싱':1,'스플린트':1,'캐스트':1,
+  '트랙션':1,'보조기':1,'워커':1,'목발':1,'씨라인':1,'에이라인':1,'튜브':1,'산소':1,'거상':1,'냉찜질':1,
+  '아이스백':1,'드레인':1,'배액':1,'폴리백':1,'카테터':1,'피크':1,'오더':1,'처방':1,'수술':1,'마취':1,
+  '회복':1,'중환자':1,'라인':1,'링거':1,'죽':1,'밥':1};
+
+function isNameLike(w){
+  if (!w) return false;
+  if (w.length < 2 || w.length > 4) return false;
+  if (STOP_NAME[w] || COMMON_WORD[w] || CLIN_WORD[w]) return false;
+  return true;
+}
+
+function nameAfterBareRoom(s){
+  var m = /^(\d{3,4})(?:\s*[-–]\s*(\d{1,2}))?\s*호?\s+([가-힣]{2,4})/.exec(String(s));
+  if (!m) return null;
+  return {room:m[2] ? m[1] + '-' + m[2] : m[1], name:m[3]};
 }
 
 function roomOf(line){
@@ -410,37 +469,77 @@ function roomOf(line){
   if (m && (m[3] || m.index <= 1)) return {value:m[1] + '-' + m[2], index:m.index};
   m = /(\d{2,4})\s*호/.exec(s);
   if (m) return {value:m[1], index:m.index};
+  // 「508 김민수 님」처럼 호 없이 병실 번호 + 이름만 있는 줄
+  m = /^(\d{3,4})(?:\s*[-–]\s*(\d{1,2}))?\s+(?=[가-힣]{2,4})/.exec(s);
+  if (m){
+    var num = parseInt(m[1], 10);
+    if (num >= 1900 && num <= 2100) return null;   // 2026 같은 연도는 병실이 아님
+    return {value:m[2] ? m[1] + '-' + m[2] : m[1], index:0};
+  }
   return null;
 }
 
-function isHeader(line){
+/* 다음 줄이 임상 내용으로 이어지는지 (이름만 있는 줄 판단용) */
+function looksClinical(s){
+  var t = stripBullet(s);
+  if (!t) return false;
+  if (/^[(\[]/.test(t)) return true;
+  if (/^[-–—•·*]/.test(String(s).trim())) return true;
+  if (/^\d{1,2}\s*(?:시|:|시경)/.test(t)) return true;
+  return /^(?:dx|d\/x|진단|진단명|병명|수술명|랩|lab|검사|혈액검사|채혈|안티|항생제|투약|수액|수술|op|npo|금식|보조기|헤모박|폴리|foley|드레싱|배액|산소|v\/s|vital|바이탈|pod|ct|mri|x-ray|엑스레이|통증|부종|낙상|외출|퇴원|전동|라운딩|회진|cms|rom|pca|cpm|스플린트|캐스트|트랙션|c-line|a-line|picc|l-tube|l튜브|부목|깁스|재활|물리치료|훈련|교육|면회|보호자|간병|서류|산재|컴플레인|반코|세파|트라마돌|인슐린|수혈|배양|culture|crp|wbc|hb|hgb|plt|bst|k|cr|na|albumin|rft)(?=\s|$|[:：,.([]|\d)/i.test(t);
+}
+
+function isHeader(line, ctx){
+  ctx = ctx || {};
   var s = stripBullet(line);
-  if (!s) return false;
+  if (!s || s.length > 70) return false;
   var r = roomOf(s);
-  var longLine = s.length > 44 || (s.length > 24 && /(다|요|죠|음|함)\.\s*$/.test(s));
-  if (r && r.index <= 8 && !longLine) return true;
-  if (r && s.length <= 26 && !longLine) return true;
-  if (s.length <= 22 && /^[가-힣]{2,4}\s*(님|환자|환자분|씨|환자님)\s*$/.test(s)) return true;
-  if (s.length <= 26 && /^[가-힣]{2,4}\s*[\(\[]\s*\d{1,3}\s*[\/,FM]/.test(s)) return true;
+  var longLine = s.length > 44 || (s.length > 24 && /(다|요|죠|음|함)\.?\s*$/.test(s));
+
+  if (r){
+    var nr = nameAfterBareRoom(s);
+    var nameOk = !!(nr && isNameLike(nr.name));
+    // 호실만 있는 줄(1201호 · 1201호 78세 F)인지
+    var roomOnly = /^\d{2,4}(?:\s*[-–]\s*\d{1,2})?\s*호?\s*(?:환자분|환자님|환자|씨|님)?\s*(?:\d{1,3}\s*(?:세|살))?\s*[FMfm]?$/.test(s);
+    if (!nameOk && !roomOnly && !(s.length <= 22 && /님|환자|씨/.test(s))) return false;
+    // 「501호 김하늘 78세 F Dx … 폴리 유지」처럼 한 줄에 헤더+내용이 붙은 경우
+    if (r.index === 0 && nameOk && !/(다|요|죠|음|함)\.?\s*$/.test(s)) return true;
+    if (roomOnly) return true;
+    if (r.index <= 8 && !longLine) return true;
+    if (s.length <= 26 && !longLine) return true;
+  }
+  /* 호실 없이 이름만 한 줄 (앞뒤 빈 줄 + 다음 줄이 임상 내용) */
+  if (/^[가-힣]{2,4}$/.test(s) && isNameLike(s)){
+    var next = ctx.next ? stripBullet(ctx.next) : '';
+    if (next && looksClinical(next)) return true;
+    if (ctx.prevBlank && !next) return true;
+    return false;
+  }
+  /* 이름 + 님/환자/씨 */
+  if (s.length <= 22 && /^[가-힣]{2,4}\s*(?:님|환자|환자분|씨|환자님)$/.test(s) && isNameLike(s.split(/\s/)[0])) return true;
+  /* 이름 + (나이/성별) */
+  if (s.length <= 26 && /^[가-힣]{2,4}\s*[\(\[]\s*\d{1,3}\s*[\/,FMfm]/.test(s)) return true;
   return false;
 }
 
 function nameOf(header, roomVal){
-  var t = ' ' + String(header) + ' ', m;
-  if (roomVal) t = t.split(roomVal).join(' ');
-  m = /([가-힣]{2,4})\s*(?:환자분|환자님|환자|님|씨)/.exec(t);
-  if (m && !STOP_NAME[m[1]]) return m[1];
-  m = /([가-힣]{2,4})\s*[\(\[]?\s*\d{1,3}\s*(?:세|살|\/\s*[FM])/.exec(t);
-  if (m && !STOP_NAME[m[1]]) return m[1];
-  m = /([가-힣]{2,4})\s*[\(\[]\s*[0-9]/.exec(t);
-  if (m && !STOP_NAME[m[1]]) return m[1];
+  var t = ' ' + String(header) + ' ';
+  if (roomVal){
+    t = t.split(roomVal).join(' ');
+    t = t.split(String(roomVal).split('-')[0]).join(' ');
+  }
+  t = t.replace(/\d+\s*[-–]\s*\d+/g, ' ').replace(/\d+/g, ' ');
   var toks = t.match(/[가-힣]{2,4}/g) || [];
   for (var i = 0; i < toks.length; i++){
-    if (!STOP_NAME[toks[i]]) return toks[i];
+    if (isNameLike(toks[i])) return toks[i];
   }
+  /* 한 글자 이름(드물게) 대비 */
+  var m = /(?:^|\s)([가-힣])\s*(?:님|환자|씨)(?:\s|$)/.exec(String(header));
+  if (m && !STOP_NAME[m[1]]) return m[1];
   return '';
 }
 
+/* ══ 시간 ══ */
 function clockOf(text){
   var t = String(text).replace(/\s+/g, ' '), m;
   m = /(\d{1,2})\s*:\s*(\d{2})/.exec(t);
@@ -463,14 +562,18 @@ function clockRank(t){
   return h < 12 ? h + 24 : h;
 }
 
-// 짧은 영문 약어는 단어 경계로, 한글은 부분일치로 찾는다
+/* ══ 키워드 매칭 ══ */
+var KW_RE_CACHE = {};
 function hasKw(text, w){
   var t = String(text).toLowerCase();
   w = String(w).toLowerCase();
-  if (/^[a-z0-9.\-\/]+$/.test(w) && w.length <= 4 && /[a-z]/.test(w)){
-    var safe = w.replace(/[.\-\/]/g, function(c){ return '\\' + c; });
-    // POD2 · DVT# 처럼 숫자·기호가 바로 붙어도 잡는다 (뒤에 영문자가 붙으면 다른 단어)
-    return new RegExp('(^|[^a-z0-9])' + safe + '(?![a-z])').test(t);
+  if (/^[a-z0-9.\-]+$/.test(w) && w.length <= 4 && /[a-z]/.test(w)){
+    var re = KW_RE_CACHE[w];
+    if (!re){
+      var safe = w.replace(/[.\-]/g, function(c){ return '\\' + c; });
+      re = KW_RE_CACHE[w] = new RegExp('(^|[^a-z0-9])' + safe + '(?![a-z])');
+    }
+    return re.test(t);
   }
   return t.indexOf(w) !== -1;
 }
@@ -479,33 +582,67 @@ function hasAny(text, list){
   return false;
 }
 
-var LAB_CHANGE_RE = /결과|수치|올라|떨어|낮|높|감소|증가|상승|저하|빈혈|정상범위/;
-var LAB_NUM = ['wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb',
-  'na','k','cl','ca','p','mg','bst','glucose','lactate','amylase','lipase','troponin','트로포닌','bnp',
-  'pt','aptt','inr','백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','전해질'];
+/* ══ 분류 ══ */
+var DX_LABEL_RE  = /^(?:dx|d\/x|진단명?|병명|수술명)\s*[:：]?/i;
+var LAB_LABEL_RE = /^(?:랩|lab|검사결과|혈액검사|채혈)\s*[:：]?/i;
+var PLAN_HEAD_RE = /^(?:내일|모레|자정|0시|24시|12시|금식|npo|엔피오|보류|hold|퇴원|전동|전실|라운딩|회진|예약|스케줄|수술실|수술방|이송|외출|티칭|협진|원장님|산재|서류|cd)/i;
+var LAB_NUM = ['wbc','hct','hgb','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb','albumin',
+  'hba1c','rft','bst','glucose','lactate','amylase','lipase','troponin','트로포닌','bnp','pt','aptt','inr',
+  'd-dimer','cbc','abga','rbc','seg','hscrp','na','k','cl','ca','mg','p','ot/pt','hcv','culture',
+  'wound culture','배양검사','배양','혈액검사','소변검사','화학검사','백혈구','혈색소','혈소판','크레아티닌',
+  '요소질소','간수치','전해질'];
+var LAB_MARK_RE = /정상|호전|악화|스탑|중단|확인|검출|양성|음성|소견|재검|추적|결과|수치|올라|올랐|떨어|낮아|낮음|높아|높음|감소|증가|상승|저하|빈혈|범위|체크|나왔|나옴|내려|줄었|늘었|예정|이상|연장|검출|잡힘|뜸/;
 var FEVER_RE = /(?:3[5-9]|4[0-2])(?:\.\d)?\s*(?:도|℃)|체온|발열|고열|미열|오한|식은땀|떨림/;
 
 var DEV_STRONG = ['폴리','foley','헤모박','hemovac','heamovac','바라박','barovac','스플린트','splint','캐스트','cast',
   '트랙션','traction','견인','cpm','dvt','ipc','tlso','보조기','pca','스타킹',
-  '제이피','j-p','jp','드레싱','dressing','배액','drain',
+  '제이피','j-p','jp','드레싱','dressing','배액','drain','기저귀','매트리스',
   'c-line','씨라인','picc','피크','a-line','에이라인','l-tube','엘튜브','비위관','산소','o2','nasal','네뷸','nebul',
-  '튜브','catheter','카테터','포트','port','흉관','기관절개','trach','인공호흡기','벤틸','vent','석션','suction'];
+  '튜브','catheter','카테터','포트','port','흉관','기관절개','trach','인공호흡기','벤틸','vent','석션','suction',
+  '아이스백','ice bag','icebag','냉찜질','거상','발판','핀','pin','핀삽입부','핀 삽입부','석고'];
+
+/* 약물 맥락이 뚜렷하면 디바이스보다 약제로 먼저 보낸다 */
+var MED_CTX_RE = /투여|복용|먹임|먹고|먹음|드심|드셨|처방|주입|점적|iv\b|정맥|경구|알약|투약|슬라이딩|스케일/i;
 
 function primaryTag(text){
-  if (FEVER_RE.test(text)) return 'vs';
-  if (/v\/s|바이탈/i.test(text)) return 'vs';
-  if (hasAny(text, LAB_NUM) && (LAB_CHANGE_RE.test(text) || /랩|lab|혈액검사/i.test(text))) return 'lab';
-  if (hasAny(text, KW.plan)) return 'plan';
-  if (hasAny(text, DEV_STRONG)) return 'device';
-  if (hasAny(text, KW.dx)) return 'dx';
-  if (hasAny(text, KW.lab)) return 'lab';
-  if (hasAny(text, KW.meds)) return 'meds';
-  if (hasAny(text, KW.vs)) return 'vs';
-  if (hasAny(text, KW.device)) return 'device';
+  var t = stripBullet(text);
+  if (!t) return 'etc';
+
+  /* ① 줄 앞 라벨은 최우선 — 「Dx …」는 헤모박·스플린트가 함께 있어도 진단 */
+  if (DX_LABEL_RE.test(t)) return 'dx';
+  if (LAB_LABEL_RE.test(t)) return 'lab';
+
+  /* ② 발열·바이탈 */
+  if (FEVER_RE.test(t)) return 'vs';
+  if (/(?:^|[\s(])v\/s|바이탈|vital\s*sign/i.test(t)) return 'vs';
+
+  /* ③ 예정·계획이 줄 앞에 오면 계획으로 (내일 혈액검사 예정 같은 줄) */
+  if (PLAN_HEAD_RE.test(t)) return 'plan';
+
+  /* ④ 랩 수치 + 변화/확인 표현 */
+  if (hasAny(t, LAB_NUM) && (LAB_MARK_RE.test(t) || /랩|lab/i.test(t))) return 'lab';
+
+  /* ⑤ 약물 복용·투여 맥락이면 약제 우선 */
+  if (MED_CTX_RE.test(t) && hasAny(t, KW.meds)) return 'meds';
+
+  /* ⑥ 예정·계획(수술·검사·금식·퇴원·행정) */
+  if (hasAny(t, KW.plan)) return 'plan';
+
+  /* ⑦ 디바이스 */
+  if (hasAny(t, DEV_STRONG)) return 'device';
+
+  /* ⑧ 진단·수술명 */
+  if (hasAny(t, KW.dx)) return 'dx';
+
+  if (hasAny(t, KW.lab)) return 'lab';
+  if (hasAny(t, KW.meds)) return 'meds';
+  if (hasAny(t, KW.vs)) return 'vs';
+  if (hasAny(t, KW.device)) return 'device';
   return 'etc';
 }
 
-var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독|적용|거상|냉찜질/;
+/* ══ 할 일 ══ */
+var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독|적용|거상|냉찜질|챙기|교육|훈련/;
 var PAST_RE = /먹고|먹음|했|줬|였|났|왔|졌|보임|있었|나왔|올랐|줄어|줄었|늘어|늘었|적용 중|유지 중/;
 
 function isTodoClause(text){
@@ -530,12 +667,13 @@ function splitClauses(line){
   return out;
 }
 
-// 한 줄에 여러 환자가 이어 붙은 경우 방번호 앞에서 끊는다
+/* 한 줄에 여러 환자가 이어 붙은 경우 방번호 앞에서 끊는다 */
 function preSplit(lines){
   var out = [];
   for (var i = 0; i < lines.length; i++){
     var line = lines[i];
-    var re = /(\d{2,4}\s*[-–]\s*\d{1,2}\s*호|\d{3}\s*호)/g, m, cuts = [], guard = 0;
+    if (!line){ out.push(''); continue; }
+    var re = /(\d{3,4}\s*[-–]\s*\d{1,2}\s*호|\d{2,4}\s*호|\d{3,4}\s+(?=[가-힣]{2,4}\s*(?:님|환자분|환자|씨)))/g, m, cuts = [], guard = 0;
     while ((m = re.exec(line)) !== null && guard++ < 40){
       if (m.index >= 8 && line.slice(0, m.index).trim().length >= 6) cuts.push(m.index);
     }
@@ -550,11 +688,12 @@ function preSplit(lines){
 function prepLines(raw){
   var t = String(raw || '').replace(/\r\n?/g, '\n');
   t = t.replace(/다음\s*(?:환자분|환자|분|사람|차트)/g, '\n');
-  t = t.replace(/\n{2,}/g, '\n');
-  var lines = t.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l; });
+  t = t.replace(/\n{3,}/g, '\n\n');
+  var lines = t.split('\n').map(function(l){ return l.trim(); });
   return preSplit(lines);
 }
 
+/* ══ 환자 카드 만들기 ══ */
 function emptyPatient(header){
   return {
     id:'p' + Math.random().toString(36).slice(2, 9),
@@ -568,7 +707,10 @@ function applyHeader(p, header, roomVal){
   p.room = roomVal || '';
   p.name = nameOf(header, roomVal);
   var rest = String(header);
-  if (roomVal) rest = rest.split(roomVal).join(' ');
+  if (roomVal){
+    rest = rest.split(roomVal).join(' ');
+    rest = rest.split(String(roomVal).split('-')[0]).join(' ');
+  }
   if (p.name) rest = rest.split(p.name).join(' ');
   rest = rest.replace(/호|님|환자분|환자|씨|다음/g, ' ')
              .replace(/[\(\[]\s*[\)\]]/g, ' ')
@@ -614,12 +756,17 @@ function buildPatient(block){
   var r = block.header ? roomOf(stripBullet(block.header)) : null;
   var rest = block.header ? applyHeader(p, block.header, r ? r.value : '') : '';
   var clauses = [];
-  if (rest && rest.replace(/[\s\d세살FM\/]/g, '').length > 3) clauses = clauses.concat(splitClauses(rest));
+  var headClauses = [];
+  if (rest && rest.replace(/[\s\d세살FM\/]/g, '').length > 3) headClauses = splitClauses(rest);
   for (var i = 0; i < block.body.length; i++){
     clauses = clauses.concat(splitClauses(block.body[i]));
   }
-  for (var c = 0; c < clauses.length; c++){
-    var cl = clauses[c];
+  for (var c = 0; c < headClauses.length; c++){
+    if (headClauses[c] && headClauses[c].length >= 2) addItem(p, primaryTag(headClauses[c]), headClauses[c], seen);
+    if (headClauses[c] && headClauses[c].length > 12 && isTodoClause(headClauses[c])) addTodo(p, headClauses[c], seen);
+  }
+  for (var c2 = 0; c2 < clauses.length; c2++){
+    var cl = clauses[c2];
     if (!cl || cl.length < 2) continue;
     addItem(p, primaryTag(cl), cl, seen);
     if (isTodoClause(cl)) addTodo(p, cl, seen);
@@ -630,15 +777,21 @@ function buildPatient(block){
 
 function parseHandover(raw){
   var lines = prepLines(raw);
-  var blocks = [], cur = null;
+  var blocks = [], cur = null, prevBlank = true, prevLine = '';
   for (var i = 0; i < lines.length; i++){
-    if (isHeader(lines[i])){
-      cur = {header:lines[i], body:[]};
+    var line = lines[i];
+    if (!line){ prevBlank = true; continue; }
+    var next = '';
+    for (var j = i + 1; j < lines.length; j++){ if (lines[j]){ next = lines[j]; break; } }
+    if (isHeader(line, {prevBlank:prevBlank, prev:prevLine, next:next})){
+      cur = {header:line, body:[]};
       blocks.push(cur);
     } else {
       if (!cur){ cur = {header:'', body:[]}; blocks.push(cur); }
-      cur.body.push(lines[i]);
+      cur.body.push(line);
     }
+    prevBlank = false;
+    prevLine = line;
   }
   var out = [];
   for (var b = 0; b < blocks.length; b++){
