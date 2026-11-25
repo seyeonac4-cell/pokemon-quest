@@ -4596,43 +4596,51 @@ function drawSlimeTile(ctx, t) {
   for (var i = 0; i < 4; i++) {
     top[i] = { x: cx + (top[i].x - cx) * (1 + grow), y: cy + (top[i].y - cy) * (1 + grow) };
   }
-  var H = 0.42 * BLOCK_H * (1 - press * 0.42);
-  var b1 = { x: p1.x, y: p1.y + H }, b2 = { x: p2.x, y: p2.y + H }, b3 = { x: p3.x, y: p3.y + H };
+  /* 💚 둥글둥글 돔 모양 젤리 — 옆에서 봐도 말랑한 슬라임으로 보여요 */
+  var rx = 34 * (1 + grow), ry = 16 * (1 + grow * 0.6);
+  var domeH = 17 * (1 - press * 0.55) + 2;
   ctx.save();
   ctx.globalAlpha = ap;
   /* 바닥 그림자 */
   ctx.beginPath();
-  ctx.ellipse(cx, p2.y + H * 0.9, 29 * (1 + grow), 10, 0, 0, 6.2832);
-  ctx.fillStyle = 'rgba(40,120,80,.15)'; ctx.fill();
-  /* 옆면 — 반투명 젤리 몸통 */
-  ctx.globalAlpha = ap * 0.78;
-  poly(ctx, [p3, p2, b2, b3], shade(col, -0.24));
-  poly(ctx, [p1, p2, b2, b1], shade(col, -0.36));
+  ctx.ellipse(cx, cy + 6, rx * 0.92, ry * 0.72, 0, 0, 6.2832);
+  ctx.fillStyle = 'rgba(40,120,80,.16)'; ctx.fill();
+  /* 몸통 — 반투명 젤리 */
+  ctx.globalAlpha = ap * 0.86;
+  roundRect(ctx, cx - rx, cy - domeH, rx * 2, domeH + ry * 0.75, rx * 0.62);
+  var side = ctx.createLinearGradient(0, cy - domeH, 0, cy + ry * 0.7);
+  side.addColorStop(0, shade(col, 0.18));
+  side.addColorStop(1, shade(col, -0.3));
+  ctx.fillStyle = side; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.6; ctx.stroke();
+  /* 윗면 — 반투명 파스텔 */
   ctx.globalAlpha = ap * 0.95;
-  /* 윗면 */
-  var g = ctx.createRadialGradient(cx - 10, cy - 6, 2, cx, cy, 46);
-  g.addColorStop(0, shade(col, 0.62));
-  g.addColorStop(0.5, col);
-  g.addColorStop(1, shade(col, -0.08));
-  poly(ctx, top, g);
-  poly(ctx, top, null, 'rgba(255,255,255,.72)', 2.2);
-  /* 젤리 광택 — 크고 작은 하이라이트 */
+  var g = ctx.createRadialGradient(cx - rx * 0.3, cy - domeH - ry * 0.3, 2, cx, cy - domeH, rx * 1.05);
+  g.addColorStop(0, shade(col, 0.66));
+  g.addColorStop(0.45, shade(col, 0.22));
+  g.addColorStop(0.85, col);
+  g.addColorStop(1, shade(col, -0.06));
   ctx.beginPath();
-  ctx.ellipse(cx - 9, cy - 4, 13, 5.2, -0.3, 0, 6.2832);
-  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fill();
+  ctx.ellipse(cx, cy - domeH, rx, ry, 0, 0, 6.2832);
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.78)'; ctx.lineWidth = 2.2; ctx.stroke();
+  /* 젤리 광택 */
   ctx.beginPath();
-  ctx.ellipse(cx + 12, cy + 5, 5, 2.6, 0.2, 0, 6.2832);
-  ctx.fillStyle = 'rgba(255,255,255,.42)'; ctx.fill();
+  ctx.ellipse(cx - rx * 0.28, cy - domeH - ry * 0.28, rx * 0.4, ry * 0.34, -0.3, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.62)'; ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + rx * 0.36, cy - domeH + ry * 0.3, rx * 0.13, ry * 0.2, 0.2, 0, 6.2832);
+  ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.fill();
   /* 눌린 만큼 퍼지는 링 */
   if (press > 0.05) {
     ctx.beginPath();
-    ctx.ellipse(cx, cy, 19 + press * 15, 7.5 + press * 5, 0, 0, 6.2832);
-    ctx.strokeStyle = 'rgba(255,255,255,' + (0.5 * press).toFixed(3) + ')';
-    ctx.lineWidth = 2.4; ctx.stroke();
+    ctx.ellipse(cx, cy - domeH * 0.4, rx * (0.7 + press * 0.35), ry * (0.6 + press * 0.3), 0, 0, 6.2832);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.55 * press).toFixed(3) + ')';
+    ctx.lineWidth = 2.6; ctx.stroke();
   }
   if (t.tramp) {
     ctx.globalAlpha = ap * 0.95;
-    emo(ctx, '💚', cx, cy - 1, 12);
+    emo(ctx, '💚', cx, cy - domeH - 1, 13);
   }
   ctx.restore();
 }
@@ -10549,7 +10557,7 @@ function drawMe(ctx) {
     if (rr) roleEmoji = rr.emoji;
   }
   drawAvatar(ctx, base.x, base.y - lift * BLOCK_H, look, {
-    z: p.z, walk: p.walk, moving: p.move, air: p.air, face: p.face,
+    z: p.z, walk: p.walk, moving: p.move, air: (p.air || !!G.zipRide), face: p.face,
     name: ME.name, me: true, bubble: bubble, prop: SAVE ? SAVE.prop : '',
     shadowY: shadowY, height: Math.max(0, p.z - gz), squash: p.squash,
     hair: ME.hair || '#6b4a2f', style: ME.style || '', scale: ME.scale || 1,
@@ -12693,9 +12701,12 @@ function drawZipLine(ctx, z) {
     ctx.beginPath(); ctx.arc(sp.x, sp.y, 6, 0, 6.2832); ctx.fill();
     ctx.strokeStyle = '#b8860b'; ctx.lineWidth = 1.8; ctx.stroke();
     ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 3.4;
-    ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(sp.x, sp.y + 9); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sp.x, sp.y); ctx.lineTo(sp.x, sp.y + 24); ctx.stroke();
+    /* 가로 손잡이 — 캐릭터가 이걸 잡고 매달려요 */
+    ctx.beginPath(); ctx.moveTo(sp.x - 10, sp.y + 25); ctx.lineTo(sp.x + 10, sp.y + 25); ctx.stroke();
     ctx.fillStyle = '#7a5230';
-    ctx.beginPath(); ctx.arc(sp.x, sp.y + 10, 2.4, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(sp.x - 10, sp.y + 25, 2.2, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(sp.x + 10, sp.y + 25, 2.2, 0, 6.2832); ctx.fill();
   }
   ctx.restore();
 }
