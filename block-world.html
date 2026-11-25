@@ -1425,6 +1425,14 @@ body.churro-hi #churroBar{bottom:calc(252px + var(--safe-b))}
         🏆 맨 끝 <b>마에스트로 지휘자 단상</b>에 올라서면 관현악 <b>팡파르(도미솔도)</b>와 폭죽이 터지고 <b>공용 코인 +60</b>을 받아요!</p>
       </div>
       <div class="help-sec">
+        <h3>🍭 9~13탄 — 다섯 개의 새 타워</h3>
+        <p>8탄 단상 너머 <b>🍭 사탕성 문</b>부터 이어져요. (🌍 월드 이동에서 <b>9~13</b> 버튼으로 바로 가도 돼요!)<br>
+        💚 <b>슬라임</b>: 반투명 말랑 발판을 밟으면 <b>푹~</b> 발이 잠기고, <b>점프</b>하면 <b>통!</b> 하고 크게 튀어 올라요. <b>슬라임 웅덩이</b>는 걸으면 발이 푹푹 빠져 느려지고 <b>뽀글~ 쭈욱~</b> 소리가 나요.<br>
+        🌈 <b>무지개 왁뿌볼</b>: 밟으면 <b>탱탱!</b> 튀어 오르는 공 발판이에요. 공에서 공으로 통통 건너요.<br>
+        🪢 <b>짚라인</b>: 10탄·12탄에 있어요. 발판 위에서 <b>「짚라인 타고 슈웅~!」</b> 버튼을 누르면 도르래에 매달려 줄을 타고 건너가요.<br>
+        🍭 9탄 사탕성 · 🦕 10탄 공룡 화산섬(용암·뼈 다리) · 🧜‍♀️ 11탄 인어궁전(소용돌이) · 🌈 12탄 구름 레인보우 · 👑 13탄 황금 우주왕국은 <b>무중력</b>이라 별빛을 밟고 둥실둥실! 맨 끝 <b>황금 왕좌</b>에서 그랜드 피날레 폭죽이 터져요 🎆</p>
+      </div>
+      <div class="help-sec">
         <h3>🎒 아빠한테 업혀가기</h3>
         <p>아빠가 <b>같은 시간에 접속</b>해 있으면, 윤진·형원이 <b>아빠 캐릭터 가까이</b> 다가갔을 때 <b>「🎒 아빠한테 업히기」</b> 버튼이 떠요.<br>
         누르면 아빠 등에 쏙 업혀서, 아빠가 걸을 때도 점프할 때도 함께 따라가요! <b>「⬇️ 내려오기」</b> 버튼이나 <b>점프</b>를 누르면 언제든 내려와요.</p>
@@ -13997,7 +14005,10 @@ try {
           ice: !!p.ice, iceSpeed: +(Math.hypot(p.vx || 0, p.vy || 0)).toFixed(2), freezes: G.freezes || 0,
           fin: !!G.finished, fin2: !!G.finished2, fin3: !!G.finished3, fin4: !!G.finished4,
           fin5: !!G.finished5, fin6: !!G.finished6, fin7: !!G.finished7, fin8: !!G.finished8,
+          fin9: !!G.finished9, fin10: !!G.finished10, fin11: !!G.finished11, fin12: !!G.finished12, fin13: !!G.finished13,
           at8: !!G.at8,
+          at9: !!G.at9, at10: !!G.at10, at11: !!G.at11, at12: !!G.at12, at13: !!G.at13,
+          zip: G.zipRide ? G.zipRide.zip.id : '', sink: +(p.sink || 0).toFixed(2), slimeOn: !!p.slimeOn, g: +(G.at7 || G.at13 ? 0.42 : 1).toFixed(2),
           coins: SAVE ? SAVE.coins : null, hurt: p.hurtAt || 0, slip: !!p.slip,
           piggy: G.piggy || '', prompt: G.piggyPrompt ? G.piggyPrompt.act : '',
           ridePrompt: G.ridePrompt ? G.ridePrompt.act : '',
@@ -14036,7 +14047,41 @@ try {
       st6: function () { gotoStage6(); },
       st7: function () { gotoStage7(); },
       st8: function () { gotoStage8(); },
+      st9: function () { gotoStage9(); },
+      st10: function () { gotoStage10(); },
+      st11: function () { gotoStage11(); },
+      st12: function () { gotoStage12(); },
+      st13: function () { gotoStage13(); },
       reset8: function () { resetStage8(); },
+      reset9: function () { resetStage9(); },
+      reset10: function () { resetStage10(); },
+      reset11: function () { resetStage11(); },
+      reset12: function () { resetStage12(); },
+      reset13: function () { resetStage13(); },
+      /* 🪢 짚라인 확인 */
+      ziplines: function () {
+        return (G.zips || []).map(function (z) {
+          return { id: z.id, x0: z.x0, y0: z.y0, z0: z.z0, x1: z.x1, y1: z.y1, z1: z.z1, h0: z.h0, h1: z.h1 };
+        });
+      },
+      zipGo: function (id) {
+        var z = zipById(id || (G.zips[0] && G.zips[0].id));
+        if (!z) return null;
+        startZipRide(z);
+        return { id: z.id, riding: !!G.zipRide };
+      },
+      zipState: function () {
+        return G.zipRide ? { id: G.zipRide.zip.id, t: +G.zipRide.t.toFixed(3), z: +G.p.z.toFixed(3) } : null;
+      },
+      /* 💚 슬라임 · 🌈 왁뿌볼 확인 */
+      slimes: function () {
+        return (G.slimeTiles || []).map(function (t) { return { x: t.x, y: t.y, z: t.z, tramp: !!t.tramp, press: +(t.slimePress || t.trampPress || 0).toFixed(2) }; });
+      },
+      balls: function () {
+        return (G.ballTiles || []).map(function (t) { return { x: t.x, y: t.y, z: t.z, sq: +(t.ballSq || 0).toFixed(2) }; });
+      },
+      sink: function () { return { on: !!G.p.slimeOn, sink: +(G.p.sink || 0).toFixed(3) }; },
+      fin13Open: function () { var el = $('#finaleOverlay'); return el ? el.classList.contains('open') : false; },
       /* 🎹🎻🥁 8탄 소리 발판 확인 */
       piano: function () {
         return G.tiles.filter(function (t) { return t.type === 'pkey' || t.type === 'bkey'; })
