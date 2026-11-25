@@ -4049,7 +4049,9 @@ function boot() {
       const out = [];
       for (let i = 0; i < SLIDES.length; i++) {
         const sl = SLIDES[i];
-        if (Math.hypot(P.x - sl.start.x, P.z - sl.start.z) < 2.8 && Math.abs(P.y - sl.topY) < 1.5) {
+        const nearTop = Math.hypot(P.x - sl.start.x, P.z - sl.start.z) < 2.8 && Math.abs(P.y - sl.topY) < 1.5;
+        const nearBase = Math.hypot(P.x - sl.cx, P.z - sl.cz) < 6.5;
+        if (nearTop || nearBase) {
           out.push({ a: 'slide:' + sl.id, cls: 'blue', label: sl.emoji + ' ' + sl.name + ' 타고 내려가기' });
         }
       }
@@ -4180,19 +4182,19 @@ function boot() {
     addBox(g, 1.7, H, 1.7, 0, H / 2, 0, colA);
     for (let y = 1.2; y < H; y += 1.8) addBox(g, 1.78, 0.08, 1.78, 0, y, 0, '#ffffff', { cast: false });
     solidRect(cx, cz, 1.8, 1.8, H + 0.1);
-    // 나선 계단
-    const rise = 0.58;
-    const n = Math.ceil((H - 0.5) / rise);
+    // 나선 계단 (점프 없이 걸어서만 올라갈 수 있게 단차 0.42m·발판 넓게!)
+    const rise = 0.42;
+    const n = Math.ceil(H / rise);
     for (let i = 0; i < n; i++) {
-      const top = 0.45 + rise * (i + 1);
-      const a = (i * 33) * Math.PI / 180;
-      const rr = 1.62;
+      const top = Math.min(H, rise * (i + 1));
+      const a = (i * 25) * Math.PI / 180;
+      const rr = 1.72;
       const x = Math.cos(a) * rr, z = Math.sin(a) * rr;
-      addBox(g, 1.06, 0.16, 1.5, x, top - 0.08, z, i % 2 ? colA : colB, { rotY: -a });
-      addBox(g, 1.1, 0.05, 1.54, x, top + 0.01, z, '#ffffff', { rotY: -a, cast: false });
-      solidRect(cx + x, cz + z, 1.32, 1.32, top, top - 0.5);
-      if (i % 3 === 0) {
-        addBox(g, 0.07, 0.9, 0.07, x + Math.cos(a) * 0.45, top + 0.45, z + Math.sin(a) * 0.45, '#ffffff', { cast: false });
+      addBox(g, 1.4, 0.16, 1.8, x, top - 0.08, z, i % 2 ? colA : colB, { rotY: -a });
+      addBox(g, 1.44, 0.05, 1.84, x, top + 0.01, z, '#ffffff', { rotY: -a, cast: false });
+      solidRect(cx + x, cz + z, 1.65, 1.65, top, top - 0.45);
+      if (i % 4 === 0) {
+        addBox(g, 0.07, 0.9, 0.07, x + Math.cos(a) * 0.62, top + 0.45, z + Math.sin(a) * 0.62, '#ffffff', { cast: false });
       }
     }
     // 꼭대기 나무판
