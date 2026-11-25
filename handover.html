@@ -1173,7 +1173,13 @@ function reparse(){
   var added = 0, merged = 0;
   parsed.forEach(function(np){
     var same = state.patients.filter(function(p){
-      return (np.room && p.room === np.room) || (np.name && p.name === np.name && p.name.length > 1);
+      if (np.name && p.name){
+        return p.name === np.name && (!np.room || !p.room || p.room === np.room);
+      }
+      if (!np.name && !p.name && np.room && p.room){
+        return p.room === np.room;
+      }
+      return false;
     })[0];
     if (same){
       ['dx','lab','meds','device','plan','vs','etc'].forEach(function(k){ mergeItemArrays(same.items[k], np.items[k]); });
