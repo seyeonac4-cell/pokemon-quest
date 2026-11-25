@@ -976,21 +976,33 @@ var WARN_RE = /낙상|주의|격리|알레르기|억제|묶|자해|폭력|이탈
 
 function nt(s){ return String(s).replace(/\s+/g, ' ').trim().replace(/[.。]$/, ''); }
 
+function toMorningText(s){
+  return String(s)
+    .replace(/내일모레/g, '내일')
+    .replace(/내일\s*(아침|오전|오후|새벽)?/g, function(m, p1){ return '오늘' + (p1 ? ' ' + p1 : ''); })
+    .replace(/오늘\s*(밤|저녁|오후|늦게)/g, function(m, p1){ return '어제 ' + p1; });
+}
+
 function dayModel(p){
   var warn = [];
   ['vs','meds','device','plan','etc'].forEach(function(k){
     (p.items[k] || []).forEach(function(it){
-      if (WARN_RE.test(it.text) && warn.indexOf(it.text) === -1) warn.push(it.text);
+      var txt = toMorningText(it.text);
+      if (WARN_RE.test(it.text) && warn.indexOf(txt) === -1) warn.push(txt);
     });
   });
-  var dx = (p.items.dx || []).map(function(it){ return it.text; });
-  var vs = (p.items.vs || []).map(function(it){ return it.text; }).filter(function(t){ return !WARN_RE.test(t); });
-  var toDay = p.todos.filter(function(t){ return t.toDay; });
-  var leftNight = p.todos.filter(function(t){ return !t.toDay && !t.done; });
+  var dx = (p.items.dx || []).map(function(it){ return toMorningText(it.text); });
+  var vs = (p.items.vs || []).map(function(it){ return toMorningText(it.text); }).filter(function(t){ return !WARN_RE.test(t); });
+  var toDay = p.todos.filter(function(t){ return t.toDay; }).map(function(t){
+    return {id:t.id, text:toMorningText(t.text), done:t.done, time:t.time, toDay:t.toDay};
+  });
+  var leftNight = p.todos.filter(function(t){ return !t.toDay && !t.done; }).map(function(t){
+    return {id:t.id, text:toMorningText(t.text), done:t.done, time:t.time, toDay:t.toDay};
+  });
   // 같은 문장이 예정 항목과 할 일에 겹치면 한 번만 보여준다
   var toDaySet = {};
   toDay.forEach(function(t){ toDaySet[nt(t.text)] = 1; });
-  var plan = (p.items.plan || []).map(function(it){ return it.text; }).filter(function(t){ return !toDaySet[nt(t)]; });
+  var plan = (p.items.plan || []).map(function(it){ return toMorningText(it.text); }).filter(function(t){ return !toDaySet[nt(t)]; });
   var planSet = {};
   plan.forEach(function(t){ planSet[nt(t)] = 1; });
   leftNight = leftNight.filter(function(t){ return !planSet[nt(t.text)]; });
