@@ -801,11 +801,13 @@ function dayModel(p){
   var vs = (p.items.vs || []).map(function(it){ return it.text; }).filter(function(t){ return !WARN_RE.test(t); });
   var toDay = p.todos.filter(function(t){ return t.toDay; });
   var leftNight = p.todos.filter(function(t){ return !t.toDay && !t.done; });
-  // 할 일로 이미 나가는 문장은 예정 목록에서 빼서 ③에 한 번만 나오게 한다
-  var dupe = {};
-  toDay.forEach(function(t){ dupe[nt(t.text)] = 1; });
-  leftNight.forEach(function(t){ dupe[nt(t.text)] = 1; });
-  var plan = (p.items.plan || []).map(function(it){ return it.text; }).filter(function(t){ return !dupe[nt(t)]; });
+  // 같은 문장이 예정 항목과 할 일에 겹치면 한 번만 보여준다
+  var toDaySet = {};
+  toDay.forEach(function(t){ toDaySet[nt(t.text)] = 1; });
+  var plan = (p.items.plan || []).map(function(it){ return it.text; }).filter(function(t){ return !toDaySet[nt(t)]; });
+  var planSet = {};
+  plan.forEach(function(t){ planSet[nt(t)] = 1; });
+  leftNight = leftNight.filter(function(t){ return !planSet[nt(t.text)]; });
   return {dx:dx, vs:vs, warn:warn, plan:plan, notes:p.night, toDay:toDay, leftNight:leftNight};
 }
 
