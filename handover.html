@@ -368,10 +368,10 @@ var KW = {
       '통증','nrs','낙상','의식','gcs','부종','체중','소변량','호흡','rr','저혈압','고혈압','빈맥','서맥',
       '오한','식은땀','어지럼','기운','컨디션','상태','drowsy','기면','섬망','delirium','설사','구토','오심',
       '변비','발진','욕창','창백','청색','부정맥','혈당','통증호소','건조','갈증','식욕','불면','불안','초조',
-      '졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통'],
+      '졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통','체위','안절부절'],
   todo:['확인','예정','줘야','드려야','투여','체크','check','시행','준비','측정','돌려야','받아야','보고',
         '연락','콜','call','라운딩','회진','세팅','교체','달아','걸어','제거','삽입','픽스','촬영','이동',
-        '퇴원','전동','전실','입원','먹여','드시','식이','올려','내려','빼야','바꿔','맞춰','잡아','알려',
+        '퇴원','전동','전실','입원','먹여','드시','식이','빼야','바꿔','맞춰','잡아','알려',
         '공유','시작','중단','hold','off','끄고','잠가','열어','비우','갈아','재검','반납','정리','소독','확인해']
 };
 var STOP_NAME = {'환자':1,'병동':1,'인계':1,'오늘':1,'내일':1,'다음':1,'남자':1,'여자':1,'중환자':1,
@@ -381,7 +381,7 @@ function pad2(n){ n = String(n); return n.length < 2 ? '0' + n : n; }
 
 function stripBullet(s){
   return String(s).replace(/^[\s\u2022\u00b7\u25aa\u25e6\u203b\u2713\u25a1\u2610\u2611\*#]+/,'')
-                  .replace(/^[-–—]\s+(?=\D)/,'').replace(/^\d{1,2}[).]\s+/,'').trim();
+                  .replace(/^[-–—]\s+/,'').replace(/^\d{1,2}[).]\s+/,'').trim();
 }
 
 function roomOf(line){
@@ -465,22 +465,30 @@ var LAB_NUM = ['wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','
   'pt','aptt','inr','백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','전해질'];
 var FEVER_RE = /(?:3[5-9]|4[0-2])(?:\.\d)?\s*(?:도|℃)|체온|발열|고열|미열|오한|식은땀|떨림/;
 
+var DEV_STRONG = ['폴리','foley','헤모박','hemovac','heamovac','제이피','j-p','jp','드레싱','dressing','배액','drain',
+  'c-line','씨라인','picc','피크','a-line','에이라인','l-tube','엘튜브','비위관','산소','o2','nasal','네뷸','nebul',
+  '튜브','catheter','카테터','포트','port','흉관','기관절개','trach','인공호흡기','벤틸','vent','석션','suction'];
+
 function primaryTag(text){
   if (FEVER_RE.test(text)) return 'vs';
   if (hasAny(text, LAB_NUM) && LAB_CHANGE_RE.test(text)) return 'lab';
   if (hasAny(text, KW.plan)) return 'plan';
   if (hasAny(text, KW.dx)) return 'dx';
   if (hasAny(text, KW.lab)) return 'lab';
-  if (hasAny(text, KW.device)) return 'device';
+  if (hasAny(text, DEV_STRONG)) return 'device';
   if (hasAny(text, KW.meds)) return 'meds';
   if (hasAny(text, KW.vs)) return 'vs';
+  if (hasAny(text, KW.device)) return 'device';
   return 'etc';
 }
 
+var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독/;
+
 function isTodoClause(text){
   if (hasAny(text, KW.todo)) return true;
-  if (clockOf(text)) return true;
-  return false;
+  if (!clockOf(text)) return false;
+  if (hasAny(text, KW.meds) || hasAny(text, DEV_STRONG) || hasAny(text, KW.plan)) return true;
+  return CARE_RE.test(text);
 }
 
 function splitClauses(line){
