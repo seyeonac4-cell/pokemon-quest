@@ -1341,7 +1341,8 @@ function init(){
 init();
 
 // 테스트·디버그용 (읽기 전용)
-window.__handover = {parse:parseHandover, state:state, EXAMPLE:EXAMPLE, render:render};
+window.__handover = {parse:parseHandover, state:state, EXAMPLE:EXAMPLE, render:render,
+  text:{night:nightCopyText, day:dayCopyText}, dayModel:dayModel};
 })();
 </script>
 </body>
