@@ -1,0 +1,27 @@
+{
+  "id": "/pokemon-quest/handover.html",
+  "name": "인계 정리 노트",
+  "short_name": "인계노트",
+  "description": "5병동 간호 인계를 정리하는 노트 · 이 기기에만 저장",
+  "start_url": "./handover.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f7fa",
+  "theme_color": "#0f2c3f",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/icons/handover-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/handover-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
