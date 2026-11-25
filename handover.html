@@ -483,10 +483,12 @@ function primaryTag(text){
 }
 
 var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독/;
+var PAST_RE = /먹고|먹음|했|줬|였|났|왔|졌|보임|있었|나왔|올랐/;
 
 function isTodoClause(text){
   if (hasAny(text, KW.todo)) return true;
   if (!clockOf(text)) return false;
+  if (PAST_RE.test(text)) return false;
   if (hasAny(text, KW.meds) || hasAny(text, DEV_STRONG) || hasAny(text, KW.plan)) return true;
   return CARE_RE.test(text);
 }
@@ -743,7 +745,7 @@ function cardHTML(p, idx){
     '</section>' +
 
     '<section class="sec">' +
-      '<h3>✅ 할 일 <span class="n">' + tDone + '/' + tAll + '</span></h3>' +
+      '<h3>✅ 할 일 <span class="n" data-todo-count>' + tDone + '/' + tAll + '</span></h3>' +
       '<div class="tgroup">' +
         '<div class="gh">🌙 나이트 할 일 (' + nightT.filter(function(t){ return !t.done; }).length + ' 남음)</div>' +
         (nightT.length ? '<ul class="todos">' + nightT.map(todoLi).join('') + '</ul>' : '<div class="emptyline">없음</div>') +
@@ -786,6 +788,8 @@ function renderNight(){
 /* ══════════════════════════ 렌더: 데이 인계 ══════════════════════════ */
 var WARN_RE = /낙상|주의|격리|알레르기|억제|묶|자해|폭력|이탈|drowsy|섬망|delirium|고위험/i;
 
+function nt(s){ return String(s).replace(/\s+/g, ' ').trim().replace(/[.。]$/, ''); }
+
 function dayModel(p){
   var warn = [];
   ['vs','meds','device','plan','etc'].forEach(function(k){
@@ -795,9 +799,13 @@ function dayModel(p){
   });
   var dx = (p.items.dx || []).map(function(it){ return it.text; });
   var vs = (p.items.vs || []).map(function(it){ return it.text; }).filter(function(t){ return !WARN_RE.test(t); });
-  var plan = (p.items.plan || []).map(function(it){ return it.text; });
   var toDay = p.todos.filter(function(t){ return t.toDay; });
   var leftNight = p.todos.filter(function(t){ return !t.toDay && !t.done; });
+  // 할 일로 이미 나가는 문장은 예정 목록에서 빼서 ③에 한 번만 나오게 한다
+  var dupe = {};
+  toDay.forEach(function(t){ dupe[nt(t.text)] = 1; });
+  leftNight.forEach(function(t){ dupe[nt(t.text)] = 1; });
+  var plan = (p.items.plan || []).map(function(it){ return it.text; }).filter(function(t){ return !dupe[nt(t)]; });
   return {dx:dx, vs:vs, warn:warn, plan:plan, notes:p.night, toDay:toDay, leftNight:leftNight};
 }
 
@@ -1072,7 +1080,7 @@ document.addEventListener('click', function(e){
     var li = t.closest('li');
     if (li) li.classList.toggle('done', todo.done);
     save();
-    var cn = $('.sec h3 .n', card);
+    var cn = $('[data-todo-count]', card);
     if (cn) cn.textContent = p.todos.filter(function(x){ return x.done; }).length + '/' + p.todos.length;
     renderSummary();
     return;
