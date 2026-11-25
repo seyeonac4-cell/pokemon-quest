@@ -1934,6 +1934,31 @@ function boot() {
     }
     return null;
   }
+  // 벽·모서리에 살짝 끼었을 때 가장 가까운 바깥쪽으로 부드럽게 밀어내요
+  function pushOutColliders() {
+    for (let pass = 0; pass < 3; pass++) {
+      let moved = false;
+      for (let i = 0; i < colliders.length; i++) {
+        const c = colliders[i];
+        if (P.y + MAX_STEP >= c.top) continue;
+        if (P.y + 1.9 <= c.bottom) continue;
+        const dxL = P.x - (c.minX - RADIUS);
+        const dxR = (c.maxX + RADIUS) - P.x;
+        const dzT = P.z - (c.minZ - RADIUS);
+        const dzB = (c.maxZ + RADIUS) - P.z;
+        if (dxL > 0 && dxR > 0 && dzT > 0 && dzB > 0) {
+          const m = Math.min(dxL, dxR, dzT, dzB);
+          const eps = 0.015;
+          if (m === dxL) P.x = c.minX - RADIUS - eps;
+          else if (m === dxR) P.x = c.maxX + RADIUS + eps;
+          else if (m === dzT) P.z = c.minZ - RADIUS - eps;
+          else P.z = c.maxZ + RADIUS + eps;
+          moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+  }
   function supportTop(x, z, maxTop) {
     let t = 0;
     const m = RADIUS * 0.55;
@@ -4559,8 +4584,10 @@ function boot() {
       }
     } else if (!P.stuck) {
       // 좌우 · 앞뒤 따로 움직여 벽에 부딪혀도 미끄러져요
+      pushOutColliders();
       if (dx) { if (!blockedAt(P.x + dx, P.z)) P.x += dx; }
       if (dz) { if (!blockedAt(P.x, P.z + dz)) P.z += dz; }
+      pushOutColliders();
       // 밟고 올라가기
       if (P.grounded) {
         const sup = supportTop(P.x, P.z, P.y + MAX_STEP);
