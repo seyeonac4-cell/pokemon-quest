@@ -106,6 +106,10 @@ textarea#raw:focus{outline:none;border-color:var(--mint);background:#fff}
 #recInterim{color:#8a6a6a;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hint{margin:0;font-size:12px;color:var(--muted);line-height:1.45}
 
+/* 받아쓰기 주의 안내 */
+.rechint{margin:0;background:#fffaf0;border:1px solid #f3dcb4;border-radius:11px;padding:9px 11px;font-size:12.8px;line-height:1.55;color:#8a5a06;font-weight:700}
+.rechint b{color:#7a4b04}
+
 /* ── 요약 ── */
 .summary{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 11px}
 .summary span{background:#fff;border:1px solid var(--line);border-radius:11px;padding:7px 11px;font-size:13px;font-weight:700;color:var(--ink2)}
@@ -233,7 +237,7 @@ li.daytodo .ttime{color:#b9770a;background:var(--amber-soft)}
       <span class="logo">🩺</span>
       <div>
         <h1>인계 정리 노트</h1>
-        <p>이브닝 인계 → 나이트 경과 → 아침 데이 인계</p>
+        <p>정형외과(OS) 병동 · 이브닝 인계 → 나이트 경과 → 아침 데이 인계</p>
       </div>
     </div>
     <div class="lock">🔒 모든 인계 내용은 내 폰 안에서만 처리·저장됩니다 (외부 전송 없음)</div>
@@ -261,24 +265,25 @@ li.daytodo .ttime{color:#b9770a;background:var(--amber-soft)}
           <button class="btn ghost" id="btnPaste">📋 붙여넣기</button>
           <button class="btn ghost" id="btnExample">👀 예시로 보기</button>
         </div>
+        <p class="rechint">🎙️ <b>받아쓰기 주의</b> — <b>화면이 꺼지거나 폰을 닫으면 끊겨요.</b><br>주머니에 넣고 녹음할 땐 <b>삼성 녹음기 앱으로 녹음 → 텍스트 변환 복사</b>를 추천해요!</p>
         <div class="recbar hidden" id="recBar">
           <span class="dot"></span><span id="recState">듣는 중…</span><span id="recInterim"></span>
         </div>
         <textarea id="raw" placeholder="이브닝번에게 받은 인계를 그대로 넣으세요.
 
-예) 501호 김영희 78세 F
-- Dx 위암, POD3 위절제술
-- 랩 WBC 12.4 CRP 8.2
+예) 1201호 김분옥 78세 F
+- Dx 우측 무릎 골관절염, TKR POD 2일
 - 안티 22시 세파졸린 IV
-- 폴리 유지, 헤모박 80cc
-- 엔피오 자정부터, 내일 06시 채혈
+- 헤모박 02시 25cc, 폴리 유지
+- CMS 5/5 정상, 아이스백 적용 중
+- 엔피오 자정부터, 06시 채혈 CBC
 
-호실(501호, 502-1)이나 「다음 환자」로 환자를 나눕니다."></textarea>
+호실(1201호, 1203-1)이나 「다음 환자」로 환자를 나눕니다."></textarea>
         <div class="row2">
           <button class="btn primary" id="btnParse">✨ 환자별로 정리하기</button>
           <button class="btn ghost" id="btnClearRaw">🧹 입력 지우기</button>
         </div>
-        <p class="hint" id="srHint">🎙️ 받아쓰기는 Chrome에서 가장 잘 됩니다. 화면이 꺼지면 인식이 멈출 수 있어요.</p>
+        <p class="hint" id="srHint">🎙️ 받아쓰기는 Chrome에서 가장 잘 됩니다. 화면이 꺼지거나 폰을 닫으면 인식이 끊기니, 주머니에 넣고 녹음할 땐 삼성 녹음기 앱으로 녹음한 뒤 텍스트 변환을 복사해 붙여넣어 주세요.</p>
       </div>
     </section>
 
@@ -338,7 +343,11 @@ var KW = {
       '골절','fracture','척추','디스크','인공관절','절단','amputation','유방','갑상선','전립선','자궁','난소',
       '복강경','laparoscopy','개복','laparotomy','tace','색전','중재시술','궤양','ulcer','출혈','bleeding',
       '혈종','hematoma','농양','abscess','봉와직염','cellulitis','패혈증','sepsis','쇼크','shock','부정맥',
-      'af','심방세동','폐색','협착','폐기종','기관지','흡인','aspiration','탈장','hernia','치질','痔','누공','fistula'],
+      'af','심방세동','폐색','협착','폐기종','기관지','흡인','aspiration','탈장','hernia','치질','痔','누공','fistula',
+      /* ── 정형외과(OS) 진단·수술 ── */
+      'orif','crif','tkr','tkra','thr','thra','fx','fracture','골절','척추','디스크','협착증','관절경','arthroscopy',
+      '인공관절','유합술','fusion','핀','pin','와이어','wire','고관절','슬관절','견관절','대퇴','경골','비골',
+      '요골','척골','발목','손목','감압술','척추고정','나사','금속판','반월상','십자인대','회전근','석고'],
   lab:['lab','랩','wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','alt','alp','bili','alb',
        'na','k','cl','ca','p','mg','bst','glucose','전해질','수치','혈액검사','소변검사','urine','cbc','abga',
        'lactate','젖산','amylase','lipase','troponin','트로포닌','bnp','pt','aptt','inr','d-dimer','피브린',
@@ -359,7 +368,11 @@ var KW = {
           'j-p','jp','제이피','pcd','ptbd','ptgbd','t-tube','t튜브','chest tube','흉관','ct관','복막투석관',
           'o2','산소','nasal','비강','네뷸','nebul','흡입기','pca','인공호흡기','벤틸','vent','기관내관','ett',
           '기관절개','trach','tracheostomy','카테터','catheter','포트','port','에코','드레싱','dressing','상처',
-          'vac','압박','보조기','벨트','튜브','라인','석션','suction','모니터','monitor','산소포화측정기','체온계'],
+          'vac','압박','보조기','벨트','튜브','라인','석션','suction','모니터','monitor','산소포화측정기','체온계',
+          /* ── 정형외과(OS) 디바이스 ── */
+          '바라박','barovac','헤모박','hemovac','스플린트','splint','캐스트','cast','트랙션','traction','견인',
+          'cpm','dvt','ipc','스타킹','압박스타킹','tlso','워커','walker','목발','crutch','collar','경추보조기',
+          '냉동치료','cryo','드레인','핀삽입부','수술부위'],
   plan:['npo','엔피오','금식','채혈','내일','자정부터','0시부터','24시부터','12시부터','수술 예정','op 예정',
         '검사 예정','채혈 예정','ct','mri','초음파','내시경','x-ray','엑스레이','엑스레이','투석 예정','퇴원',
         '전동','전실','입원','라운딩','회진','보류','hold','예약','스케줄','오피예정','수술방','수술실','회복실',
@@ -368,7 +381,10 @@ var KW = {
       '통증','nrs','낙상','의식','gcs','부종','체중','소변량','호흡','rr','저혈압','고혈압','빈맥','서맥',
       '오한','식은땀','어지럼','기운','컨디션','상태','drowsy','기면','섬망','delirium','설사','구토','오심',
       '변비','발진','욕창','창백','청색','부정맥','혈당','통증호소','건조','갈증','식욕','불면','불안','초조',
-      '졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통','체위','안절부절'],
+      '졸림','무기력','홍조','발한','기침','가래','객담','숨참','호흡곤란','dyspnea','흉통','두통','복통','체위','안절부절',
+      /* ── 정형외과(OS) 관찰 ── */
+      'cms','순환','감각','저림','발등맥박','도플러','pulse','swelling','아이스백','ice bag','icebag','냉찜질',
+      '거상','elevation','abr','절대안정','체위변경','통나무','보행','디딤','체중부하','wb','nwb','삼출','발적'],
   todo:['확인','예정','줘야','드려야','투여','체크','check','시행','준비','측정','돌려야','받아야','보고',
         '연락','콜','call','라운딩','회진','세팅','교체','달아','걸어','제거','삽입','픽스','촬영','이동',
         '퇴원','전동','전실','입원','먹여','드시','식이','빼야','바꿔','맞춰','잡아','알려',
@@ -426,7 +442,7 @@ function clockOf(text){
   var t = String(text).replace(/\s+/g, ' '), m;
   m = /(\d{1,2})\s*:\s*(\d{2})/.exec(t);
   if (m && +m[1] <= 24) return pad2(+m[1] === 24 ? 0 : +m[1]) + ':' + m[2];
-  m = /(?:새벽|아침|오전|오후|저녁|밤|낮|점심|자정)?\s*(\d{1,2})\s*시/.exec(t);
+  m = /(?:새벽|아침|오전|오후|저녁|밤|낮|점심|자정)?\s*(\d{1,2})\s*시(?!간)/.exec(t);
   if (m && +m[1] <= 24) return pad2(+m[1] === 24 ? 0 : +m[1]) + ':00';
   m = /(자정|새벽|아침|오전|점심|오후|저녁|밤)/.exec(t);
   if (m){
@@ -450,7 +466,8 @@ function hasKw(text, w){
   w = String(w).toLowerCase();
   if (/^[a-z0-9.\-\/]+$/.test(w) && w.length <= 4 && /[a-z]/.test(w)){
     var safe = w.replace(/[.\-\/]/g, function(c){ return '\\' + c; });
-    return new RegExp('(^|[^a-z0-9])' + safe + '($|[^a-z0-9])').test(t);
+    // POD2 · DVT# 처럼 숫자·기호가 바로 붙어도 잡는다 (뒤에 영문자가 붙으면 다른 단어)
+    return new RegExp('(^|[^a-z0-9])' + safe + '(?![a-z])').test(t);
   }
   return t.indexOf(w) !== -1;
 }
@@ -465,32 +482,36 @@ var LAB_NUM = ['wbc','hb','hgb','hct','plt','crp','esr','pct','bun','cr','ast','
   'pt','aptt','inr','백혈구','혈색소','혈소판','크레아티닌','요소질소','간수치','전해질'];
 var FEVER_RE = /(?:3[5-9]|4[0-2])(?:\.\d)?\s*(?:도|℃)|체온|발열|고열|미열|오한|식은땀|떨림/;
 
-var DEV_STRONG = ['폴리','foley','헤모박','hemovac','heamovac','제이피','j-p','jp','드레싱','dressing','배액','drain',
+var DEV_STRONG = ['폴리','foley','헤모박','hemovac','heamovac','바라박','barovac','스플린트','splint','캐스트','cast',
+  '트랙션','traction','견인','cpm','dvt','ipc','tlso','보조기','pca','스타킹',
+  '제이피','j-p','jp','드레싱','dressing','배액','drain',
   'c-line','씨라인','picc','피크','a-line','에이라인','l-tube','엘튜브','비위관','산소','o2','nasal','네뷸','nebul',
   '튜브','catheter','카테터','포트','port','흉관','기관절개','trach','인공호흡기','벤틸','vent','석션','suction'];
 
 function primaryTag(text){
   if (FEVER_RE.test(text)) return 'vs';
-  if (hasAny(text, LAB_NUM) && LAB_CHANGE_RE.test(text)) return 'lab';
+  if (/v\/s|바이탈/i.test(text)) return 'vs';
+  if (hasAny(text, LAB_NUM) && (LAB_CHANGE_RE.test(text) || /랩|lab|혈액검사/i.test(text))) return 'lab';
   if (hasAny(text, KW.plan)) return 'plan';
+  if (hasAny(text, DEV_STRONG)) return 'device';
   if (hasAny(text, KW.dx)) return 'dx';
   if (hasAny(text, KW.lab)) return 'lab';
-  if (hasAny(text, DEV_STRONG)) return 'device';
   if (hasAny(text, KW.meds)) return 'meds';
   if (hasAny(text, KW.vs)) return 'vs';
   if (hasAny(text, KW.device)) return 'device';
   return 'etc';
 }
 
-var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독/;
-var PAST_RE = /먹고|먹음|했|줬|였|났|왔|졌|보임|있었|나왔|올랐/;
+var CARE_RE = /투여|주입|점적|체크|확인|측정|시작|중지|중단|유지|연결|제거|교체|처방|채혈|검사|촬영|이동|회진|라운딩|시행|준비|삽입|세팅|재검|관찰|기록|사정|드레싱|소독|적용|거상|냉찜질/;
+var PAST_RE = /먹고|먹음|했|줬|였|났|왔|졌|보임|있었|나왔|올랐|줄어|줄었|늘어|늘었|적용 중|유지 중/;
 
 function isTodoClause(text){
   if (hasAny(text, KW.todo)) return true;
   if (!clockOf(text)) return false;
   if (PAST_RE.test(text)) return false;
+  if (CARE_RE.test(text)) return true;
   if (hasAny(text, KW.meds) || hasAny(text, DEV_STRONG) || hasAny(text, KW.plan)) return true;
-  return CARE_RE.test(text);
+  return false;
 }
 
 function splitClauses(line){
@@ -569,7 +590,14 @@ function addTodo(p, text, seen){
   var k = 'todo:' + time + norm;
   if (seen[k]) return;
   seen[k] = 1;
-  var toDay = /내일|아침|오전|데이|라운딩|회진|퇴원|전동|입원|수술실|검사실/.test(norm) && !/밤|새벽|자정/.test(norm);
+  var toDay;
+  if (time){
+    var hh = parseInt(time.slice(0, 2), 10);
+    // 나이트 근무(21~07시) 밖인 07~19시 일은 데이 인계로, 「내일」이 붙으면 무조건 데이로
+    toDay = (hh >= 7 && hh < 20) || /내일/.test(norm);
+  } else {
+    toDay = /내일|아침|오전|데이|라운딩|회진|퇴원|전동|입원|수술실|검사실/.test(norm) && !/밤|새벽|자정/.test(norm);
+  }
   p.todos.push({id:'t' + Math.random().toString(36).slice(2, 8), text:norm, done:false, time:time, toDay:toDay});
 }
 
@@ -700,7 +728,7 @@ function todoLi(t){
     '<button class="xdel" data-act="tdel" data-id="' + t.id + '">×</button></li>';
 }
 
-var QUICK = ['V/S 안정','수액 교체','안티 투여','통증 호소','PRN 투여','채혈 완료','발열 있음','폴리 제거','특이사항 없음'];
+var QUICK = ['V/S 안정','통증 호소','CMS 정상','아이스백 적용','수액 교체','안티 투여','PRN 투여','채혈 완료','발열 있음','폴리 제거','특이사항 없음'];
 
 function cardHTML(p, idx){
   var tAll = p.todos.length;
@@ -1248,30 +1276,43 @@ function stopRec(){
 
 /* ══════════════════════════ 예시 ══════════════════════════ */
 var EXAMPLE =
-'501호 김영희 78세 F\n' +
-'- Dx 위암, POD 3일 위아전절제술 후\n' +
-'- 랩 WBC 12.4 CRP 8.2로 아침에 올라감, Hb 9.2\n' +
+'1201호 김분옥 78세 F\n' +
+'- Dx 우측 무릎 골관절염, TKR(인공슬관절 전치환술) POD 2일\n' +
+'- 랩 WBC 10.8 CRP 5.6 Hb 9.8, CRP 아침보다 조금 올라감\n' +
 '- 안티 22시 세파졸린 IV 2g, 06시 한 번 더\n' +
-'- 폴리 유지 중 소변량 시간당 40, 헤모박 80cc\n' +
-'- V/S 130/80-88-36.6 SpO2 96% RA, 18시 38.2도까지 올라 해열제 먹고 지금 37.3도\n' +
-'- 낙상 주의, 화장실 갈 때 부르시라고 함\n' +
-'- 엔피오 자정부터, 내일 06시 채혈 CBC / B/C\n' +
-'502-1호 박철수 M/64\n' +
-'- Dx 급성 충수염, 어제 밤 복강경 충수절제술 POD 1\n' +
-'- 랩 Hb 11.8 WBC 15.2 CRP 6.4\n' +
-'- 안티 02시 세포탁심 IV, PRN 진통제 남아 있음\n' +
-'- 제이피 배액 30cc, 폴리 오늘 밤까지 유지\n' +
-'- 통증 NRS 3점, PCA 연결 중\n' +
-'- 06시 V/S, 수술 부위 드레싱 삼출물 확인\n' +
-'다음 환자 503호 이정숙 82세 F\n' +
-'- Dx 흡인성 폐렴, 고혈압\n' +
-'- 랩 WBC 9.8 CRP 4.1 Na 133\n' +
-'- 안티 22시 세프트리악손 IV, 02시 한 번 더\n' +
-'- 산소 2L nasal, SpO2 92~94\n' +
-'- 기침 가래 많아 네뷸 22시, 02시 예정\n' +
+'- 헤모박 우측 무릎 02시 25cc로 줄어듦, 드레싱 삼출 소량\n' +
+'- 폴리 유지 중 소변량 시간당 35\n' +
+'- V/S 128/78-84-36.7 SpO2 97% RA, 14시 38.1도까지 올라 해열제 먹고 지금 37.2도\n' +
+'- CPM 오전·오후 30분씩 적용 중, 통증 NRS 4점 PCA 연결\n' +
+'- CMS 5/5 정상, 발등 맥박 잘 만져짐\n' +
+'- 아이스백 3시간마다 20분씩 적용, 수술 부위 부종 있음\n' +
+'- 낙상 주의, 워커로 화장실 갈 때 부르시라고 함\n' +
+'- 엔피오 자정부터, 06시 채혈 CBC\n' +
+'- 09시 라운딩 때 헤모박 제거 여부 확인\n' +
+'1203호 박정순 65세 F\n' +
+'- Dx 우측 원위요골 골절(Fx), 오늘 09시 ORIF 예정\n' +
+'- 랩 WBC 8.2 CRP 2.1 Hb 12.4, 출혈량 많지 않음\n' +
+'- 수술 전이라 폴리 유지, 왼팔 18G 라인 확보\n' +
+'- 스플린트 임시 고정 중, 손가락 CMS 확인\n' +
+'- 팔 부종 있어 거상 유지, 아이스백 적용 중\n' +
+'- V/S 142/86-88-36.8, 통증 NRS 5~6점 계속 호소\n' +
+'- 22시 PRN 진통제(트리다) 투여, NRS 6점\n' +
+'- 자정부터 금식(NPO), 물도 금지\n' +
+'- 06시 채혈 CBC / PT·aPTT, 08시 수술실 이송 준비\n' +
+'- 수술 후 쓸 PCA·헤모박 준비, 워커 미리 세팅\n' +
+'다음 환자 1207호 최말순 71세 F\n' +
+'- Dx 요추 4-5번 추간판 탈출증, 척추협착증, 어제 후방 감압술·유합술 POD 1일\n' +
+'- 랩 Hb 10.2 WBC 9.4 CRP 7.8, Hb 어제보다 조금 떨어짐\n' +
+'- 안티 22시 세파졸린 IV, 06시 한 번 더 / 22시 진통제 트리다 IV\n' +
+'- 척추 배액관 헤모박 60cc, TLSO 보조기 유지\n' +
+'- 폴리 유지 중 소변량 시간당 30\n' +
+'- V/S 118/72-76-36.5, 저녁에 통증 NRS 5점으로 심해짐\n' +
+'- 양다리 저림 예전보다 덜함, CMS 5/5\n' +
+'- 절대안정(ABR) 중이라 체위변경은 2시간마다 통나무 돌리듯이\n' +
 '- 낙상 고위험, 침상 난간 올려둠\n' +
-'- 내일 오전 흉부 CT 예정이라 자정부터 금식\n' +
-'- 새벽에 한 번 체위변경';
+'- 06시 채혈 CBC\n' +
+'- 09시 라운딩 때 배액관 제거 여부 확인\n' +
+'- 엔피오 자정부터';
 
 /* ══════════════════════════ 초기화 ══════════════════════════ */
 function bind(){
