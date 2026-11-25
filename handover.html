@@ -658,7 +658,9 @@ function splitClauses(line){
   var s = stripBullet(line);
   if (!s) return [];
   s = s.replace(/\s*\|\s*/g, ' / ');
+  s = s.replace(/\b(Lt|Rt|Dr|No|vs|approx)\.\s+/gi, '$1.\u0002');
   s = s.replace(/([.!?])\s+/g, '$1\u0001');
+  s = s.replace(/\u0002/g, ' ');
   var parts = s.split('\u0001'), out = [];
   for (var i = 0; i < parts.length; i++){
     var p = parts[i].trim().replace(/[.。]$/, '');
