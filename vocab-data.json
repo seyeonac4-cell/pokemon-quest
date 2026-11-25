@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23",
+  "updated": "2026-11-25",
   "sets": [
     {
       "id": "2026-11-17",
@@ -552,6 +552,159 @@
           "en": "in fact",
           "pos": "phr.",
           "ko": "사실은",
+          "forms": null
+        }
+      ]
+    },
+    {
+      "id": "2026-11-25",
+      "label": "11월 25일 · 24단어",
+      "date": "2026-11-25",
+      "unit": "DAY 10",
+      "title": "Vocabulary Test · DAY 10",
+      "words": [
+        {
+          "en": "return",
+          "pos": "v.",
+          "ko": "돌아가다, 돌려주다; *돌아감, 귀환",
+          "forms": "return – returned – returned"
+        },
+        {
+          "en": "press",
+          "pos": "v.",
+          "ko": "누르다; *언론, 신문",
+          "forms": "press – pressed – pressed"
+        },
+        {
+          "en": "focus",
+          "pos": "v.",
+          "ko": "집중하다, 집중시키다; *초점, 중점",
+          "forms": "focus – focused – focused"
+        },
+        {
+          "en": "dictionary",
+          "pos": "n.",
+          "ko": "사전",
+          "forms": null
+        },
+        {
+          "en": "allow",
+          "pos": "v.",
+          "ko": "허락하다, 허용하다",
+          "forms": "allow – allowed – allowed"
+        },
+        {
+          "en": "breathe",
+          "pos": "v.",
+          "ko": "숨 쉬다, 호흡하다",
+          "forms": "breathe – breathed – breathed"
+        },
+        {
+          "en": "trash",
+          "pos": "n.",
+          "ko": "쓰레기",
+          "forms": null
+        },
+        {
+          "en": "success",
+          "pos": "n.",
+          "ko": "성공, 성과",
+          "forms": null
+        },
+        {
+          "en": "rise",
+          "pos": "v.",
+          "ko": "오르다, 상승하다, 일어나다",
+          "forms": "rise – rose – risen"
+        },
+        {
+          "en": "topic",
+          "pos": "n.",
+          "ko": "주제, 화제",
+          "forms": null
+        },
+        {
+          "en": "scare",
+          "pos": "v.",
+          "ko": "겁주다, 겁나게 하다",
+          "forms": "scare – scared – scared"
+        },
+        {
+          "en": "step",
+          "pos": "n.",
+          "ko": "(발)걸음, 조치, 단계",
+          "forms": null
+        },
+        {
+          "en": "cooking",
+          "pos": "n.",
+          "ko": "요리(하기); *요리(용)의",
+          "forms": null
+        },
+        {
+          "en": "anger",
+          "pos": "n.",
+          "ko": "화, 분노",
+          "forms": null
+        },
+        {
+          "en": "own",
+          "pos": "adj.",
+          "ko": "자기 자신의; *소유하다",
+          "forms": "own – owned – owned"
+        },
+        {
+          "en": "praise",
+          "pos": "v.",
+          "ko": "칭찬하다; *칭찬, 찬양",
+          "forms": "praise – praised – praised"
+        },
+        {
+          "en": "continue",
+          "pos": "v.",
+          "ko": "계속되다, 계속하다",
+          "forms": "continue – continued – continued"
+        },
+        {
+          "en": "wooden",
+          "pos": "adj.",
+          "ko": "나무로 된, 목재의",
+          "forms": null
+        },
+        {
+          "en": "certain",
+          "pos": "adj.",
+          "ko": "확실한, 확신하는, 특정한",
+          "forms": null
+        },
+        {
+          "en": "less",
+          "pos": "adj.",
+          "ko": "더 적은, 덜한; *더 적게, 덜하게",
+          "forms": null
+        },
+        {
+          "en": "entire",
+          "pos": "adj.",
+          "ko": "전체의",
+          "forms": null
+        },
+        {
+          "en": "at least",
+          "pos": "phr.",
+          "ko": "적어도, 최소한",
+          "forms": null
+        },
+        {
+          "en": "no longer",
+          "pos": "phr.",
+          "ko": "더 이상 ~않다",
+          "forms": null
+        },
+        {
+          "en": "look up",
+          "pos": "phr.",
+          "ko": "찾아보다; *올려다보다",
           "forms": null
         }
       ]
