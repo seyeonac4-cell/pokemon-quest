@@ -1124,9 +1124,9 @@ function boot() {
     g.add(hi);
     // 눈꺼풀 테두리 (털빛)
     if (o.rim !== false) {
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(irisR * 1.02, irisR * 0.20, 8, 26),
-        new THREE.MeshStandardMaterial({ color: o.rimColor != null ? o.rimColor : 0x2a201a, roughness: 0.85, metalness: 0 }));
-      rim.position.z = iris.position.z * 0.93;
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(irisR * 1.03, irisR * 0.11, 8, 26),
+        new THREE.MeshStandardMaterial({ color: o.rimColor != null ? o.rimColor : 0x3a2a20, roughness: 0.85, metalness: 0 }));
+      rim.position.z = iris.position.z * 1.005;
       rim.scale.set(1, o.lidY || 1, 1);
       g.add(rim);
     }
