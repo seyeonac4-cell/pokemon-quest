@@ -568,7 +568,10 @@ function boot() {
         if (now > (c.idleUntil || 0)) {
           c.idleRole = pickIdle(c);
           c.idleUntil = now + rnd(2.4, 5.4);
-          if (Math.random() < 0.16) c.glanceUntil = now + rnd(1.0, 1.9);
+          const r2 = Math.random();
+          if (r2 < 0.16) c.glanceUntil = now + rnd(1.0, 1.9);        /* 힐끔 쳐다보기 */
+          else if (r2 < 0.28) c.shiverT = 0.4;                        /* 몸 부르르 */
+          else if (r2 < 0.36) c.hops = [{ at: now + 0.15, h: 0.26 }];  /* 깡총 */
         }
         role = c.idleRole || 'idle';
       }
@@ -1836,7 +1839,7 @@ function boot() {
       }
       if (snack.active && !c.ate) {
         const to = snack.pos;
-        const dx = to.x - g.position.x, dz = to.z - g.position.z;
+        const dx = to.x + (c.snackOX || 0) - g.position.x, dz = to.z + (c.snackOZ || 0) - g.position.z;
         const d = Math.hypot(dx, dz);
         if (d > 0.62) {
           const sp = (c.speed || 0.6) * 2.6 * dt;
@@ -2643,7 +2646,14 @@ function boot() {
       snack.mesh = mesh; snack.active = true; snack.pos.copy(land); snack.until = S.t + 7;
       snack.land = land.clone(); snack.throwT = 0; snack.base = base.clone();
       sfx.toss();
-      creatures.forEach(c => { c.ate = false; c.happy = 0; c.tgt = null; c.eatUntil = null; c.hopAfterEat = 0; c.hops = null; c.oneUntil = null; });
+      creatures.forEach((c, i) => {
+        c.ate = false; c.happy = 0; c.tgt = null; c.wait = 0;
+        c.eatUntil = null; c.hopAfterEat = 0; c.hops = null; c.oneUntil = null;
+        /* 다 같이 한 점에 뭉치지 않게 — 각자 조금씩 옆자리로 */
+        const a = (i / Math.max(1, creatures.length)) * 6.28 + rnd(-0.4, 0.4);
+        const rr = 0.35 + (c.rad || 0.5) * 0.55;
+        c.snackOX = Math.cos(a) * rr; c.snackOZ = Math.sin(a) * rr;
+      });
       toast('🍖 간식을 던졌어요! 다들 달려와요~');
     }
     function updateSnack(dt) {
@@ -3514,7 +3524,7 @@ function boot() {
     const el = $('#petBadge'); if (!el) return;
     el.classList.add('show');
     clearTimeout(petBadgeT);
-    petBadgeT = setTimeout(() => el.classList.remove('show'), 1100);
+    petBadgeT = setTimeout(() => el.classList.remove('show'), 1400);
   }
   function hidePetBadge(ms) {
     clearTimeout(petBadgeT);
