@@ -3538,7 +3538,8 @@ function boot() {
   function creatureAt(cx, cy) {
     const r = canvas.getBoundingClientRect();
     const px = (cx - r.left) / r.width, py = (cy - r.top) / r.height;
-    let best = null, bestScore = 1e9;
+    let best = null, bestDist = 1e9;
+    const tanHalf = Math.tan(camera.fov * Math.PI / 360);
     for (const c of S.active.creatures) {
       if (!c.group.visible) continue;
       const p = c.group.getWorldPosition(TMPV.set(0, 0, 0));
@@ -3548,10 +3549,9 @@ function boot() {
       if (p.z > 1) continue;
       const sx = p.x * 0.5 + 0.5, sy = -p.y * 0.5 + 0.5;
       const d = Math.hypot(sx - px, sy - py);
-      const appr = ((c.sizeH || 0.7) * 0.55) / Math.max(0.6, dist) / Math.tan(camera.fov * Math.PI / 360);
-      const lim = Math.min(0.34, appr * 1.25 + 0.04);
-      const score = d / Math.max(0.02, lim);
-      if (score < 1 && score < bestScore) { bestScore = score; best = c; }
+      /* 화면에 보이는 크기만큼 넉넉히 잡고, 여러 마리가 겹치면 가까운 쪽을 고른다 */
+      const rad = ((c.sizeH || 0.7) * 0.78) / Math.max(0.6, dist) / tanHalf;
+      if (d < rad + 0.045 && dist < bestDist) { best = c; bestDist = dist; }
     }
     return best;
   }
