@@ -466,6 +466,7 @@ function boot() {
       c.group.add(holder);
       c.glb = holder;
       c.glbSwim = !!tune.swim;
+      c.sizeH = (tune.size || 0.8) * (tune.by === 'len' ? 0.55 : 1);
       c.pickY = Math.max(c.pickY || 0, (tune.size || 1) * (c.glbSwim ? 0.22 : 0.42));
       if (!c.glbSwim) { c.speed = (c.speed || 0.5) * 0.68; c.range = (c.range || 0.8) * 0.85; }
       /* 시작 자세 — 동물마다 다르고, 시작 시점도 랜덤 (다 같이 같은 포즈 금지) */
@@ -3499,7 +3500,7 @@ function boot() {
       ray.setFromCamera({ x: nx, y: ny }, camera);
       dir = ray.ray.direction.clone();
     }
-    const c = pickByDir(dir);
+    const c = creatureAt(cx, cy) || pickByDir(dir);
     if (c) interact(c);
     else {
       if (!S.tapHintShown) { S.tapHintShown = true; toast('동물을 화면 가운데에 두고 콕 눌러봐요 👆'); }
@@ -3532,17 +3533,27 @@ function boot() {
     clearTimeout(petBadgeT);
     petBadgeT = setTimeout(() => { const el = $('#petBadge'); if (el) el.classList.remove('show'); }, ms || 0);
   }
+  /* 화면 좌표 → 동물. 화면에서 가까운(그리고 크게 보이는) 동물이 먼저 잡힌다 */
+  const TMPV = new THREE.Vector3();
   function creatureAt(cx, cy) {
-    let dir;
-    if (S.stereo) dir = camera.getWorldDirection(V3(0, 0, 0));
-    else {
-      const r = canvas.getBoundingClientRect();
-      const nx = ((cx - r.left) / r.width) * 2 - 1;
-      const ny = -((cy - r.top) / r.height) * 2 + 1;
-      ray.setFromCamera({ x: nx, y: ny }, camera);
-      dir = ray.ray.direction.clone();
+    const r = canvas.getBoundingClientRect();
+    const px = (cx - r.left) / r.width, py = (cy - r.top) / r.height;
+    let best = null, bestScore = 1e9;
+    for (const c of S.active.creatures) {
+      if (!c.group.visible) continue;
+      const p = c.group.getWorldPosition(TMPV.set(0, 0, 0));
+      p.y += (c.pickY || 0.35) * (AR.on ? AR.scale : 1);
+      const dist = camera.position.distanceTo(p);
+      p.project(camera);
+      if (p.z > 1) continue;
+      const sx = p.x * 0.5 + 0.5, sy = -p.y * 0.5 + 0.5;
+      const d = Math.hypot(sx - px, sy - py);
+      const appr = ((c.sizeH || 0.7) * 0.55) / Math.max(0.6, dist) / Math.tan(camera.fov * Math.PI / 360);
+      const lim = Math.min(0.34, appr * 1.25 + 0.04);
+      const score = d / Math.max(0.02, lim);
+      if (score < 1 && score < bestScore) { bestScore = score; best = c; }
     }
-    return pickByDir(dir);
+    return best;
   }
   function petStroke(c) {
     const now = performance.now();
