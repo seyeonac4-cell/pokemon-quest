@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GLB 검증</title>
+<style>html,body{margin:0;height:100%;background:#20262e;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/"}}
+</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const NAMES = ['puppy','dog','cat','kitten','capybara','llama','rabbit','dolphin','sea-turtle','clownfish','great-white-shark','jellyfish'];
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x20262e);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6a7a8a, 1.6));
+const d1 = new THREE.DirectionalLight(0xfff3e0, 2.2); d1.position.set(3,6,7); scene.add(d1);
+const d2 = new THREE.DirectionalLight(0xbfe4ff, 0.8); d2.position.set(-5,3,-6); scene.add(d2);
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.01, 200);
+camera.position.set(0, 1.2, 12);
+camera.lookAt(0, 0.6, 0);
+
+const coal = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.MeshStandardMaterial({color:0x2b333d, roughness:1}));
+coal.rotation.x = -Math.PI/2; scene.add(coal);
+const grid = new THREE.GridHelper(60, 60, 0x445064, 0x333c47); scene.add(grid);
+
+new GLTFLoader().load('./assets/models/' + NAMES[0] + '.glb'); // warm cache
+
+const loader = new GLTFLoader();
+const COLS = 6;
+let loaded = 0;
+NAMES.forEach((name, i) => {
+  const x = (i % COLS - (COLS-1)/2) * 2.2;
+  const z = Math.floor(i / COLS) * 2.6;
+  loader.load('./assets/models/' + name + '.glb', g => {
+    const root = g.scene;
+    const box = new THREE.Box3().setFromObject(root);
+    const size = box.getSize(new THREE.Vector3());
+    const c = box.getCenter(new THREE.Vector3());
+    root.position.set(-c.x, -box.min.y, -c.z);
+    const wrap = new THREE.Group();
+    wrap.add(root);
+    // normalize so biggest dimension is 1.6 m
+    const k = 1.6 / Math.max(size.x, size.y, size.z);
+    wrap.scale.setScalar(k);
+    wrap.position.set(x, 0, z);
+    scene.add(wrap);
+    // +Z marker (red pole in front), +X blue
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.5, 8), new THREE.MeshBasicMaterial({color:0xff3b30}));
+    pole.position.set(x, 0.25, z + 0.8); scene.add(pole);
+    const px = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.5, 8), new THREE.MeshBasicMaterial({color:0x3b7bff}));
+    px.position.set(x + 0.8, 0.25, z); scene.add(px);
+    loaded++;
+    console.log('loaded', name, JSON.stringify({size:size.toArray().map(v=>+v.toFixed(2)), k:+k.toFixed(3)}));
+    window.__status = loaded + '/' + NAMES.length;
+  }, undefined, err => { console.error('fail', name, err); });
+});
+
+const labelEls = [];
+NAMES.forEach((n,i)=>{
+  const d = document.createElement('div');
+  d.textContent = n;
+  d.style.cssText = 'position:fixed;color:#cfe;font:600 11px/1.2 monospace;pointer-events:none;transform:translate(-50%,0)';
+  document.body.appendChild(d); labelEls.push(d);
+});
+addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(()=>{
+  NAMES.forEach((n,i)=>{
+    const x = (i % COLS - (COLS-1)/2) * 2.2;
+    const z = Math.floor(i / COLS) * 2.6;
+    const v = new THREE.Vector3(x, 1.75, z).project(camera);
+    const el = labelEls[i];
+    el.style.left = ((v.x*0.5+0.5)*innerWidth) + 'px';
+    el.style.top = ((-v.y*0.5+0.5)*innerHeight) + 'px';
+  });
+  renderer.render(scene, camera);
+});
+</script>
+</body></html>
