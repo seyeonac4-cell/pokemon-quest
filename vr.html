@@ -87,6 +87,15 @@ body.ar #hint{display:none}
 #gazeName{font-size:11.5px;font-weight:800;color:#2c3a5c;background:rgba(255,255,255,.9);
   padding:2px 9px;border-radius:999px;opacity:0;transition:opacity .18s;white-space:nowrap}
 #gaze.lock #gazeName{opacity:1}
+
+/* ------- 💕 쓰다듬기 배지 ------- */
+#petBadge{position:absolute;left:50%;top:calc(140px + env(safe-area-inset-top,0px));
+  transform:translate(-50%,8px) scale(.94);padding:8px 16px;border-radius:999px;
+  background:linear-gradient(180deg,#ffe8f3,#ffc0dc);color:#8a2b5c;border:2px solid #fff;
+  font-size:13.5px;font-weight:900;letter-spacing:-.01em;white-space:nowrap;
+  box-shadow:0 6px 18px rgba(150,45,95,.28);opacity:0;pointer-events:none;
+  transition:opacity .18s, transform .18s}
+#petBadge.show{opacity:1;transform:translate(-50%,0) scale(1)}
 #reticleL,#reticleR{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;
   border:2px solid rgba(255,255,255,.62);display:none}
 #reticleL{left:25%;margin-left:-6px}
@@ -193,17 +202,18 @@ body.vr #reticleL,body.vr #reticleR{display:block}
     <button class="tab" data-scene="ocean">🐠 바닷속</button>
   </div>
 
-  <div id="hint">👆 손가락으로 드래그해 360° 둘러보기 · 동물을 콕 눌러봐</div>
+  <div id="hint">👆 빈 곳을 드래그하면 360° 둘러보기 · 동물을 콕 누르면 인사해요 · 문지르면 쓰다듬기 💕</div>
 
   <div id="gaze"><span class="dot"></span><span id="gazeName"></span></div>
+  <div id="petBadge">💕 쓰다듬는 중…</div>
   <div id="reticleL"></div>
   <div id="reticleR"></div>
 
   <div id="info">
     <div id="iemo">🐶</div>
     <div>
-      <div id="iname">아기 강아지</div>
-      <div id="idesc">복슬복슬 털이 매력인 아기 강아지</div>
+      <div id="iname">아기 비숑</div>
+      <div id="idesc">하얀 솜털이 매력인 아기 강아지</div>
     </div>
   </div>
 
@@ -303,8 +313,9 @@ function boot() {
   function shadowAll(g) { g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; } }); }
 
   /* ============================================================
-     📦 실사 GLB 모델 (assets/models/*.glb) — 절차적 모델 위에 얹기
-     Grab3D CC0 실사 스캔 모델 · 3~7만 삼각형 · 1K 텍스처로 경량화
+     📦 애니메이션 GLB 모델 (assets/models/*.glb)
+     뼈대(skeleton) + 애니메이션 클립 내장 · THREE.AnimationMixer 로 상태 전환
+     Quaternius · Gamideo · Vuena · Gobkit — 모두 CC0 (assets/models/CREDITS.md)
      (로드 실패하거나 CDN 이 막히면 기존 절차적 모델이 그대로 보입니다)
      ============================================================ */
   const GLB_FILE = {
@@ -312,21 +323,25 @@ function boot() {
     dolphin: 'dolphin', turtle: 'sea-turtle', nimo: 'clownfish', shark: 'great-white-shark', jelly: 'jellyfish'
   };
   const GLB_TUNE = {
-    // size: 목표 크기(m) — by:'h' 면 높이, by:'len' 이면 가장 긴 수평 길이
-    // yaw : 모델 코끝을 +Z(앞)로 맞추는 회전 · tint: 텍스처에 곱하는 색
-    pom:      { size: 0.62, by: 'h', yaw: 0.70, tint: 0 },
-    cheese:   { size: 0.70, by: 'h', yaw: 0.62, tint: 0xffb877 },
-    capybara: { size: 1.00, by: 'h', yaw: 0.35, tint: 0 },
-    alpaca:   { size: 1.85, by: 'h', yaw: 1.50, tint: 0 },
-    rabbit:   { size: 0.60, by: 'h', yaw: 1.45, tint: 0 },
-    dolphin:  { size: 3.00, by: 'len', yaw: 0.05, swim: 1 },
-    turtle:   { size: 1.80, by: 'len', yaw: Math.PI, swim: 1 },
-    nimo:     { size: 0.95, by: 'len', yaw: Math.PI, swim: 1 },
-    shark:    { size: 3.00, by: 'len', yaw: 0.05, swim: 1 },
-    jelly:    { size: 1.70, by: 'h', yaw: 0, swim: 1, pulse: 1 }
+    // size: 목표 크기(m) · by:'h' 면 높이, by:'len' 이면 가장 긴 수평 길이 · yaw: 모델 코끝 보정
+    pom:      { size: 0.62, by: 'h',   yaw: 0, white: 1 },
+    cheese:   { size: 0.68, by: 'h',   yaw: 0 },
+    capybara: { size: 0.96, by: 'h',   yaw: 0 },
+    alpaca:   { size: 1.62, by: 'h',   yaw: 0 },
+    rabbit:   { size: 0.52, by: 'h',   yaw: 0 },
+    dolphin:  { size: 2.60, by: 'len', yaw: 0, swim: 1 },
+    turtle:   { size: 1.50, by: 'len', yaw: 0, swim: 1 },
+    nimo:     { size: 0.82, by: 'len', yaw: 0, swim: 1 },
+    shark:    { size: 2.40, by: 'len', yaw: 0, swim: 1 },
+    jelly:    { size: 1.30, by: 'h',   yaw: 0, swim: 1 }
+  };
+  /* 처음 시작 자세 — 동물마다 다르게 (다 같이 같은 포즈로 서 있지 않도록) */
+  const GLB_START = {
+    pom: 'walk', cheese: 'sit', capybara: 'idle2', alpaca: 'walk', rabbit: 'idle',
+    dolphin: 'swim', turtle: 'idle', nimo: 'swim', shark: 'swim', jelly: 'idle'
   };
   const GLB_CACHE = {};
-  let GLTF_LOADER_P = null;
+  let GLTF_LOADER_P = null, SKU_P = null;
   function gltfLoader() {
     if (!GLTF_LOADER_P) {
       GLTF_LOADER_P = import('three/addons/loaders/GLTFLoader.js')
@@ -335,34 +350,78 @@ function boot() {
     }
     return GLTF_LOADER_P;
   }
-  function loadGLB(file) {
-    if (GLB_CACHE[file]) return Promise.resolve(GLB_CACHE[file]);
+  function skelUtils() {
+    if (!SKU_P) SKU_P = import('three/addons/utils/SkeletonUtils.js').catch(e => { SKU_P = null; throw e; });
+    return SKU_P;
+  }
+  function loadGLB(file, v) {
+    const cacheKey = file + '|' + v;
+    if (GLB_CACHE[cacheKey]) return Promise.resolve(GLB_CACHE[cacheKey]);
     return gltfLoader().then(loader => new Promise((res, rej) => {
-      loader.load('./assets/models/' + file + '.glb?v=1', g => { GLB_CACHE[file] = g; res(g); }, undefined, rej);
+      loader.load('./assets/models/' + file + '.glb?v=' + v, g => { GLB_CACHE[cacheKey] = g; res(g); }, undefined, rej);
     }));
   }
+
+  /* 클립 이름 → 역할. 모델마다 이름이 달라서 규칙으로 맞춘다.
+     역할: idle · idle2 · walk · run · jump · eat · sit · sleep · emote · swim */
+  function clipRole(raw) {
+    let n = String(raw || '').toLowerCase();
+    const bar = n.lastIndexOf('|'); if (bar >= 0) n = n.slice(bar + 1);
+    n = n.replace(/[\s\-]+/g, '_');
+    if (!n) return null;
+    if (n.indexOf('hitreact') >= 0) return null;
+    if (n.indexOf('out_of_water') >= 0) return null;
+    if (n.indexOf('attack') === 0) return null;
+    if (n === 'death' || n === 'dead' || n === 'hit') return null;
+    if (n.indexOf('jump') >= 0) return 'jump';                       // jump · jump_toidle · gallop_jump
+    if (n.indexOf('swimming_impulse') >= 0) return 'jump';
+    if (n.indexOf('swimming_fast') >= 0 || n === 'swim_fast') return 'run';
+    if (n.indexOf('gallop') === 0 || n === 'run') return 'run';
+    if (n === 'walk' || n === 'walking') return 'walk';
+    if (n.indexOf('swimidle') === 0) return 'idle';
+    if (n.indexOf('swimming_normal') >= 0 || n === 'swim') return 'swim';
+    if (n.indexOf('eat') === 0) return 'eat';
+    if (n.indexOf('sit') === 0) return 'sit';
+    if (n.indexOf('sleep') === 0) return 'sleep';
+    if (n.indexOf('idle_2') === 0 || n.indexOf('idle_alt') === 0 || n.indexOf('headlow') >= 0) return 'idle2';
+    if (n.indexOf('gesture') === 0 || n.indexOf('call') === 0 || n.indexOf('assist') === 0) return 'emote';
+    if (n.indexOf('idle') === 0) return 'idle';
+    return null;
+  }
+
+  /* 비숑처럼 하얀 털 — 밝은 재질만 크림/화이트로 (눈·코는 그대로) */
+  function whiteFur(mm) {
+    if (!mm || !mm.color) return;
+    const col = mm.color;
+    const lum = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+    if (lum < 0.14) return;
+    const t = clamp((lum - 0.14) / 0.6, 0, 1);
+    col.setRGB(0.78 + 0.21 * t, 0.76 + 0.22 * t, 0.72 + 0.25 * t);
+  }
+
   function glbify(c, key) { c.glbKey = key; }
-  function glbStart(c) {
+
+  function glbMount(c) {
     const key = c.glbKey;
     if (!key || c.glb || c.glbLoading) return;
     c.glbLoading = true;
-    const t = GLB_TUNE[key] || {};
+    const tune = GLB_TUNE[key] || {};
     const file = GLB_FILE[key] || key;
-    loadGLB(file).then(gltf => {
+    Promise.all([loadGLB(file, 3), skelUtils()]).then(([gltf, SU]) => {
       if (c.glb) return;
-      const root = gltf.scene.clone(true);
+      const root = SU.clone(gltf.scene);
       const holder = new THREE.Group();
       holder.add(root);
       const box = new THREE.Box3().setFromObject(root);
       const size = box.getSize(new THREE.Vector3());
       const ctr = box.getCenter(new THREE.Vector3());
-      const span = t.by === 'len' ? Math.max(size.x, size.z) : size.y;
-      const k = (t.size || 1) / Math.max(0.001, span);
+      const span = tune.by === 'len' ? Math.max(size.x, size.z) : size.y;
+      const k = (tune.size || 1) / Math.max(0.001, span);
       root.position.set(-ctr.x, -box.min.y, -ctr.z);
       holder.scale.setScalar(k);
-      holder.rotation.y = t.yaw || 0;
+      holder.rotation.y = tune.yaw || 0;
       holder.userData.k = k;
-      holder.userData.yaw = t.yaw || 0;
+      holder.userData.yaw = tune.yaw || 0;
       root.traverse(o => {
         if (!o.isMesh) return;
         o.castShadow = true; o.receiveShadow = false; o.frustumCulled = false;
@@ -371,48 +430,197 @@ function boot() {
         o.material = Array.isArray(o.material) ? cloned : cloned[0];
         cloned.forEach(mm => {
           if (!mm) return;
-          mm.envMapIntensity = 0.8;
-          if (t.tint) mm.color = new THREE.Color(t.tint);
-          if (key === 'jelly') { mm.transparent = true; mm.opacity = 0.95; mm.side = THREE.DoubleSide; }
+          mm.envMapIntensity = 0.55;
+          if (key === 'jelly') { mm.transparent = true; mm.opacity = 0.92; mm.side = THREE.DoubleSide; mm.depthWrite = false; }
+          if (tune.white) whiteFur(mm);
         });
       });
+      /* --- 애니메이션 준비 --- */
+      const mixer = new THREE.AnimationMixer(root);
+      const clips = {};
+      (gltf.animations || []).forEach(cl => {
+        const role = clipRole(cl.name);
+        if (!role || clips[role]) return;
+        const a = mixer.clipAction(cl);
+        a.enabled = true;
+        a.setEffectiveWeight(0);
+        clips[role] = a;
+      });
+      c.mixer = mixer; c.clips = clips;
+      c.animRate = rnd(0.86, 1.14);
+      c.glbPhase = Math.random() * 6.28;
+      c.role = null; c.act = null;
+      c.petHeat = 0; c.idleUntil = 0; c.glanceUntil = 0;
       c.group.children.slice().forEach(ch => { if (ch !== holder) ch.visible = false; });
       c.group.add(holder);
       c.glb = holder;
-      c.glbPhase = Math.random() * 6.28;
-      c.glbSwim = !!t.swim;
-      c.glbPulse = !!t.pulse;
-      c.pickY = Math.max(c.pickY || 0, (t.size || 1) * 0.42);
-      if (!c.glbSwim) { c.speed = (c.speed || 0.5) * 0.62; c.range = (c.range || 0.8) * 0.85; }
+      c.glbSwim = !!tune.swim;
+      c.pickY = Math.max(c.pickY || 0, (tune.size || 1) * (c.glbSwim ? 0.22 : 0.42));
+      if (!c.glbSwim) { c.speed = (c.speed || 0.5) * 0.68; c.range = (c.range || 0.8) * 0.85; }
+      /* 시작 자세 — 동물마다 다르고, 시작 시점도 랜덤 (다 같이 같은 포즈 금지) */
+      const start = GLB_START[key] || 'idle';
+      const first = clips[start] ? start : (clips.idle ? 'idle' : Object.keys(clips)[0]);
+      if (first) animSet(c, first, { fade: 0.01, rand: true });
+      if (start === 'walk' || start === 'run') { c.wait = 0; c.tgt = null; }
+      else { c.idleRole = first; c.idleUntil = S.t + rnd(4, 9); }
     }).catch(e => { try { console.warn('GLB 로드 실패 → 기존 모델 유지:', key, e && e.message); } catch (_) {} });
   }
-  /* 살아있는 느낌 — 숨쉬기 · 물놀이 흔들림 */
-  function glbTick(t) {
+
+  /* 상태 전환 (크로스페이드) */
+  function animSet(c, role, opt) {
+    opt = opt || {};
+    const a = c.clips && (c.clips[role] || (role !== 'idle' ? c.clips.idle : null));
+    if (!a) return false;
+    const prev = c.act;
+    if (a === prev && !opt.once) { if (opt.rate) a.setEffectiveTimeScale(opt.rate); return false; }
+    const fade = opt.fade != null ? opt.fade : 0.28;
+    a.reset();
+    a.setLoop(opt.once ? THREE.LoopOnce : THREE.LoopRepeat, opt.once ? 1 : Infinity);
+    a.clampWhenFinished = !!opt.once;
+    a.timeScale = (c.animRate || 1) * (opt.rate || 1);
+    const dur = (a.getClip() && a.getClip().duration) || 1;
+    a.time = opt.rand ? Math.random() * Math.max(0.01, dur - 0.05) : 0;
+    a.enabled = true;
+    a.setEffectiveWeight(1);
+    if (fade > 0) a.fadeIn(fade); else a.setEffectiveWeight(1);
+    a.play();
+    if (prev && prev !== a) { if (fade > 0) prev.fadeOut(fade); else prev.stop(); }
+    c.act = a; c.role = role;
+    if (opt.once) c.oneUntil = S.t + (dur / Math.max(0.4, a.timeScale)) * 0.9;
+    return true;
+  }
+
+  function pickIdle(c) {
+    const has = k => !!(c.clips && c.clips[k]);
+    const r = Math.random();
+    if (r < 0.36) return 'idle';
+    if (r < 0.64 && has('idle2')) return 'idle2';
+    if (r < 0.80 && has('sit')) return 'sit';
+    if (r < 0.90 && has('sleep')) return 'sleep';
+    return has('idle2') ? 'idle2' : 'idle';
+  }
+
+  /* 살아있는 느낌 — 상태별 클립 자동 전환 · 점프 물리 · 쓰다듬기 반응 */
+  function glbTick(t, dt) {
     const cs = S.active && S.active.creatures;
     if (!cs) return;
+    const now = S.t;
     for (let i = 0; i < cs.length; i++) {
       const c = cs[i];
-      if (!c.glb) { glbStart(c); continue; }
-      const g = c.glb;
-      const k = g.userData.k || 1, ph = c.glbPhase || 0;
-      if (c.glbSwim) {
-        const b = Math.sin(t * 1.9 + ph);
-        g.rotation.x = Math.sin(t * 1.25 + ph) * 0.06;
-        g.rotation.z = Math.sin(t * 1.7 + ph) * 0.10;
-        g.rotation.y = (g.userData.yaw || 0) + Math.sin(t * 2.1 + ph) * 0.055;
-        if (c.glbPulse) {
-          const p = 1 + Math.sin(t * 2.0 + ph) * 0.07;
-          g.scale.set(k * p, k / p, k * p);
-        } else {
-          g.scale.setScalar(k * (1 + b * 0.012));
+      if (!c.glb) { glbMount(c); continue; }
+      const g = c.glb, k = g.userData.k || 1, baseYaw = g.userData.yaw || 0;
+      const swim = !!c.glbSwim;
+
+      /* 쓰다듬기 지속 시간 */
+      if (c.petting && c.petStopAt && now > c.petStopAt) c.petting = false;
+      if (c.petHeat > 0) c.petHeat = Math.max(0, c.petHeat - dt * 0.55);
+
+      /* 점프 포물선 */
+      if (c.jumpT != null) {
+        c.jumpT += dt;
+        const u = c.jumpT / c.jumpDur;
+        if (u >= 1) {
+          c.jumpT = null;
+          c.squashT = 0.26;
+          if (!swim) c.group.position.y = 0;
+        } else if (!swim) {
+          c.group.position.y = c.jumpH * 4 * u * (1 - u);
         }
-      } else {
-        g.rotation.z = Math.sin(t * 1.55 + ph) * 0.018;
-        g.rotation.x = Math.sin(t * 1.1 + ph) * 0.012;
-        const b = Math.sin(t * 2.3 + ph) * 0.009;
-        g.scale.set(k, k * (1 + b), k);
       }
+      if (c.squashT > 0) c.squashT = Math.max(0, c.squashT - dt);
+      /* 예약된 점프(간식 먹고 기뻐서 두 번) */
+      if (c.hops && c.hops.length && now >= c.hops[0].at) startHop(c, c.hops.shift().h);
+      /* 먹기 끝 → 기뻐서 점프 두 번 */
+      if (c.eatUntil != null && now >= c.eatUntil) {
+        c.eatUntil = null;
+        if (!c.hopAfterEat) { c.hopAfterEat = 1; startHop(c, 0.42); c.hops = [{ at: now + 0.44, h: 0.30 }]; }
+      }
+      /* 원샷 클립 종료 */
+      if (c.oneUntil != null && now > c.oneUntil) c.oneUntil = null;
+
+      /* --- 어떤 동작을 재생할지 --- */
+      const spd = c.spd || 0;
+      let role = null;
+      if (c.oneUntil != null && now < c.oneUntil) {
+        role = null;                                   /* 점프·먹기 원샷 유지 */
+      } else if (c.eatUntil != null && now < c.eatUntil) {
+        role = 'eat';
+      } else if (c.petting) {
+        role = (c.clips.sit && now - (c.petStartAt || 0) > 0.6) ? 'sit' : (c.clips.emote ? 'emote' : (c.clips.idle2 ? 'idle2' : 'idle'));
+      } else if (swim) {
+        role = c.clips.swim ? 'swim' : 'idle';
+        if ((c.boost || 0) > 0 && c.clips.run) role = 'run';
+      } else if (spd > 0.60) {
+        role = c.clips.run ? 'run' : 'walk';
+      } else if (spd > 0.05) {
+        role = c.clips.walk ? 'walk' : (c.clips.swim || 'idle');
+      } else {
+        if (now > (c.idleUntil || 0)) {
+          c.idleRole = pickIdle(c);
+          c.idleUntil = now + rnd(2.4, 5.4);
+          if (Math.random() < 0.16) c.glanceUntil = now + rnd(1.0, 1.9);
+        }
+        role = c.idleRole || 'idle';
+      }
+      if (role) animSet(c, role, {});
+
+      /* --- 몸짓: 쓰다듬기 부비부비 · 힐끔 쳐다보기 · 부르르 --- */
+      let rz = swim ? 0 : Math.sin(t * 1.4 + c.glbPhase) * 0.012;
+      let ry = baseYaw;
+      const pet = c.petHeat || 0;
+      if (pet > 0.01) {
+        rz += Math.sin(t * 11 + c.glbPhase) * 0.13 * pet;
+        ry += Math.sin(t * 7.5 + c.glbPhase) * 0.26 * pet;
+      }
+      if (c.shiverT > 0) { c.shiverT = Math.max(0, c.shiverT - dt); rz += Math.sin(t * 42) * 0.05; }
+      if (c.glanceUntil && now < c.glanceUntil && !swim) {
+        const dx = camera.position.x - c.group.position.x, dz = camera.position.z - c.group.position.z;
+        c.group.rotation.y = lerpAngle(c.group.rotation.y, Math.atan2(dx, dz), 1 - Math.exp(-4.2 * dt));
+      }
+      /* 물속에서 휙 도는 반응 */
+      if (c.spin && c.spin.t < c.spin.dur) {
+        c.spin.t += dt;
+        const u = Math.min(1, c.spin.t / c.spin.dur);
+        ry += Math.PI * 2 * (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+      }
+      g.rotation.y = ry;
+      g.rotation.z = rz;
+      g.rotation.x = swim ? Math.sin(t * 1.6 + c.glbPhase) * 0.03 : 0;
+      /* 착지 스쿼시 */
+      const sq = c.squashT > 0 ? Math.sin((c.squashT / 0.26) * Math.PI) * 0.16 : 0;
+      g.scale.set(k * (1 + sq), k * (1 - sq * 0.92), k * (1 + sq));
+
+      if (c.mixer) c.mixer.update(dt);
     }
+  }
+
+  function startHop(c, h) {
+    if (c.glbSwim) { c.boost = 1.2; c.spin = { t: 0, dur: 0.6 }; return; }
+    c.jumpT = 0; c.jumpDur = 0.55; c.jumpH = h || 0.4;
+    if (c.glb && c.clips.jump) animSet(c, 'jump', { once: true, fade: 0.1 });
+  }
+
+  /* 콕 누르면 폴짝 — 점프 클립 + 포물선 + (물속은) 휙 회전 */
+  function animPoke(c) {
+    if (!c.glb) { if (!c.glbSwim) { c.jumpT = 0; c.jumpDur = 0.55; c.jumpH = 0.3; } return; }
+    if (c.glbSwim) {
+      c.boost = 1.8; c.spin = { t: 0, dur: 0.75 };
+      if (c.clips.jump) animSet(c, 'jump', { once: true, fade: 0.1 });
+      else if (c.clips.run) animSet(c, 'run', { rate: 1.5, fade: 0.12 });
+      return;
+    }
+    if (c.clips.jump) animSet(c, 'jump', { once: true, fade: 0.1 });
+    else if (c.clips.emote) animSet(c, 'emote', { once: true, fade: 0.12 });
+    else if (c.clips.idle2) animSet(c, 'idle2', { fade: 0.12 });
+    else c.oneUntil = S.t + 0.55;
+    c.jumpT = 0; c.jumpDur = 0.62; c.jumpH = Math.min(0.5, (c.pickY || 0.4) * 0.75 + 0.14);
+  }
+
+  /* 간식 냄새 맡고 달려가 먹기 */
+  function animEatStart(c) {
+    c.eatUntil = S.t + 1.7;
+    c.hopAfterEat = 0;
+    if (c.glb && c.clips.eat) animSet(c, 'eat', { once: true, fade: 0.18 });
   }
 
   /* ---------- 사운드 (Web Audio 합성) ---------- */
@@ -472,6 +680,11 @@ function boot() {
     bubble() { beep({ f: 260, f2: 900, dur: 0.13, type: 'sine', vol: 0.10 }); beep({ f: 380, f2: 1200, dur: 0.1, type: 'sine', vol: 0.07, delay: 0.09 }); },
     splash() { noise({ f: 1600, f2: 500, dur: 0.45, vol: 0.12, q: 0.6 }); },
     toss() { noise({ f: 700, f2: 1400, dur: 0.18, vol: 0.07, q: 1.4 }); },
+    pat() {
+      beep({ f: 780, f2: 1120, dur: 0.14, type: 'sine', vol: 0.055 });
+      beep({ f: 1040, f2: 1400, dur: 0.16, type: 'sine', vol: 0.045, delay: 0.10 });
+      noise({ f: 320, f2: 210, dur: 0.22, vol: 0.022, q: 1.6, delay: 0.04 });
+    },
     munch() { noise({ f: 320, f2: 160, dur: 0.10, vol: 0.10, q: 1.0 }); noise({ f: 280, f2: 140, dur: 0.09, vol: 0.08, q: 1.0, delay: 0.13 }); },
     tapUI() { beep({ f: 620, f2: 900, dur: 0.06, type: 'sine', vol: 0.05 }); }
   };
@@ -617,9 +830,13 @@ function boot() {
   function setFov(v) { S.fovT = clamp(v, 32, 82); }
 
   canvas.addEventListener('pointerdown', e => {
-    canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+    try { canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); } catch (_) {}
     P.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (P.pointers.size === 1) { P.lastX = e.clientX; P.lastY = e.clientY; P.moved = 0; P.downT = performance.now(); }
+    if (P.pointers.size === 1) {
+      P.lastX = e.clientX; P.lastY = e.clientY; P.moved = 0; P.downT = performance.now();
+      /* 동물을 짚었으면 → 쓰다듬기 모드 (카메라 회전 대신) */
+      try { const hit = creatureAt(e.clientX, e.clientY); if (hit) petBegin(hit, e.clientX, e.clientY); } catch (_) {}
+    }
     if (P.pointers.size === 2) {
       const [a, b] = [...P.pointers.values()];
       P.pinch = Math.hypot(a.x - b.x, a.y - b.y); P.multi = true;
@@ -631,6 +848,7 @@ function boot() {
     if (!P.pointers.has(e.pointerId)) return;
     P.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (P.pointers.size >= 2) {
+      petEnd();
       const [a, b] = [...P.pointers.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       if (P.pinch) setFov(S.fovT - (d - P.pinch) * 0.16);
@@ -640,6 +858,8 @@ function boot() {
     const dx = e.clientX - P.lastX, dy = e.clientY - P.lastY;
     P.lastX = e.clientX; P.lastY = e.clientY;
     P.moved += Math.abs(dx) + Math.abs(dy);
+    /* 동물 쓰다듬는 중 → 360° 카메라 회전 금지, 쓰다듬기만 */
+    if (PET.on) { petMove(e.clientX, e.clientY); return; }
     if (S.gyro) return;
     const k = 0.0042 * (S.fov / 62);
     S.yaw -= dx * k;
@@ -651,9 +871,13 @@ function boot() {
     P.pointers.delete(e.pointerId);
     const quick = performance.now() - P.downT < 420;
     if (P.pointers.size === 0) {
-      const wasTap = quick && P.moved < 18 && !P.multi;
+      const petted = PET.on && PET.dist > 14;
+      const petC = PET.c;
+      petEnd();
+      const wasTap = quick && P.moved < 18 && !P.multi && !petted;
       P.multi = false; P.pinch = 0;
-      if (wasTap) handleTap(e.clientX, e.clientY);
+      if (petted) { if (petC && S.t - (petC.petStartAt || 0) < 0.3) petStroke(petC); }
+      else if (wasTap) handleTap(e.clientX, e.clientY);
     }
     if (P.pointers.size === 1) { const p = [...P.pointers.values()][0]; P.lastX = p.x; P.lastY = p.y; P.moved = 99; }
   }
@@ -1594,6 +1818,12 @@ function boot() {
     function wander(c, dt) {
       const g = c.group;
       const px = g.position.x, pz = g.position.z;
+      /* 쓰다듬는 동안엔 제자리에서 기분 좋게 부비부비 */
+      if (c.petting) {
+        c.spd = 0; c.tgt = null;
+        if (!c.glb) g.position.y += (0 - g.position.y) * Math.min(1, dt * 8);
+        return;
+      }
       if (snack.active && !c.ate) {
         const to = snack.pos;
         const dx = to.x - g.position.x, dz = to.z - g.position.z;
@@ -1603,10 +1833,11 @@ function boot() {
           g.position.x += dx / d * Math.min(sp, d - 0.6);
           g.position.z += dz / d * Math.min(sp, d - 0.6);
           g.rotation.y = lerpAngle(g.rotation.y, Math.atan2(dx, dz), 1 - Math.exp(-8 * dt));
-          g.position.y = Math.abs(Math.sin(S.t * 13)) * (c.hop ? 0.16 : 0.04);
+          if (!c.glb) g.position.y = Math.abs(Math.sin(S.t * 13)) * (c.hop ? 0.16 : 0.04);
         } else {
           c.ate = true;
           sfx.munch();
+          animEatStart(c);
           for (let i = 0; i < 6; i++) hearts.spawn(V3(g.position.x, 0.7, g.position.z), { size: 0.26, spread: 1.2, vy: 1.3, life: 1.1 });
         }
         c.spd = 0.4;
@@ -1621,7 +1852,7 @@ function boot() {
           g.position.x += dx / d * sp; g.position.z += dz / d * sp;
         }
         g.rotation.y = lerpAngle(g.rotation.y, Math.atan2(dx, dz), 1 - Math.exp(-7 * dt));
-        g.position.y = Math.abs(Math.sin(S.t * 11)) * 0.13;
+        if (!c.glb) g.position.y = Math.abs(Math.sin(S.t * 11)) * 0.13;
         c.heartT = (c.heartT || 0) + dt;
         if (c.heartT > 0.16) {
           c.heartT = 0;
@@ -1644,7 +1875,7 @@ function boot() {
       g.position.x += dx / d * Math.min(sp, d);
       g.position.z += dz / d * Math.min(sp, d);
       g.rotation.y = lerpAngle(g.rotation.y, Math.atan2(dx, dz), 1 - Math.exp(-6 * dt));
-      g.position.y = Math.abs(Math.sin(S.t * (c.hop ? 8.5 : 6.5))) * (c.hop ? 0.12 : 0.018);
+      if (!c.glb) g.position.y = Math.abs(Math.sin(S.t * (c.hop ? 8.5 : 6.5))) * (c.hop ? 0.12 : 0.018);
       c.spd = Math.hypot(g.position.x - px, g.position.z - pz) / Math.max(dt, 0.0001);
     }
 
@@ -1784,7 +2015,7 @@ function boot() {
     }
 
     const pom = addCreature(Object.assign({
-      id: 'pom', emoji: '🐶', name: '아기 강아지', desc: '복슬복슬 삼색 털! 사람을 좋아하는 다정한 버니즈 아기',
+      id: 'pom', emoji: '🐶', name: '아기 비숑', desc: '눈을 가리는 하얀 솜털! 사람을 제일 좋아하는 아기 강아지',
       home: V3(-0.62, 0, -4.05), range: 0.8, speed: 0.58, pickY: 0.45, rad: 0.42, shadowOp: 0.26,
       sound: sfx.corgi
     }, makePom()));
@@ -2425,7 +2656,7 @@ function boot() {
     /* --- 업데이트 --- */
     function update(t, dt) {
       creatures.forEach(c => c.update(t, dt));
-      glbTick(t);
+      glbTick(t, dt);
       updateSnack(dt);
       hearts.update(dt);
       clouds.forEach((c, i) => { c.position.x += Math.sin(t * 0.05 + i) * dt * 0.5; c.rotation.y += dt * 0.01; });
@@ -3131,7 +3362,7 @@ function boot() {
     let bubbleClock = 0;
     function update(t, dt) {
       creatures.forEach(c => c.update(t, dt));
-      glbTick(t);
+      glbTick(t, dt);
       rays.forEach((r, i) => { r.material.opacity = 0.03 + Math.abs(Math.sin(t * 0.35 + i * 0.7)) * 0.04; });
       weeds.forEach(w => w.blades.forEach((b, i) => {
         b.m.rotation.z = Math.sin(t * 0.9 + b.ph + i) * 0.13;
@@ -3253,9 +3484,10 @@ function boot() {
     }
   }
   function interact(c) {
-    c.happy = 2.2;
+    c.happy = c.glb ? 1.1 : 2.2;
     if (c.sound) c.sound();
     showInfo(c);
+    animPoke(c);
     const p = c.group.getWorldPosition(new THREE.Vector3());
     p.y += ((c.pickY || 0.4) + 0.25) * (AR.on ? AR.scale : 1);
     if (S.key === 'pet') {
@@ -3263,6 +3495,67 @@ function boot() {
     } else {
       for (let i = 0; i < 20; i++) S.active.hearts.spawn(p, { size: rnd(0.08, 0.18), vy: rnd(1.1, 2.4), spread: 1.1, life: rnd(1.4, 2.4) });
     }
+  }
+
+  /* ---------- 💕 쓰다듬기 (동물 위에서 문지르기) ---------- */
+  const PET = { on: false, c: null, lastX: 0, lastY: 0, dist: 0, lastT: 0 };
+  let petBadgeT = 0;
+  function showPetBadge() {
+    const el = $('#petBadge'); if (!el) return;
+    el.classList.add('show');
+    clearTimeout(petBadgeT);
+    petBadgeT = setTimeout(() => el.classList.remove('show'), 1100);
+  }
+  function hidePetBadge(ms) {
+    clearTimeout(petBadgeT);
+    petBadgeT = setTimeout(() => { const el = $('#petBadge'); if (el) el.classList.remove('show'); }, ms || 0);
+  }
+  function creatureAt(cx, cy) {
+    let dir;
+    if (S.stereo) dir = camera.getWorldDirection(V3(0, 0, 0));
+    else {
+      const r = canvas.getBoundingClientRect();
+      const nx = ((cx - r.left) / r.width) * 2 - 1;
+      const ny = -((cy - r.top) / r.height) * 2 + 1;
+      ray.setFromCamera({ x: nx, y: ny }, camera);
+      dir = ray.ray.direction.clone();
+    }
+    return pickByDir(dir);
+  }
+  function petStroke(c) {
+    const now = performance.now();
+    if (c.petLastT && now - c.petLastT < 230) return;
+    c.petLastT = now;
+    c.petting = true;
+    c.petStartAt = S.t;
+    c.petStopAt = S.t + 0.62;
+    c.petHeat = Math.min(1.2, (c.petHeat || 0) + 0.5);
+    c.wait = Math.max(c.wait || 0, 0.5);
+    c.shiverT = 0.001;
+    sfx.pat();
+    showPetBadge();
+    const p = c.group.getWorldPosition(new THREE.Vector3());
+    p.y += ((c.pickY || 0.4) + 0.1) * (AR.on ? AR.scale : 1);
+    const n = S.key === 'pet' ? 3 : 4;
+    for (let i = 0; i < n; i++) {
+      S.active.hearts.spawn(p, { size: rnd(0.14, 0.26), vy: rnd(0.8, 1.6), spread: 0.7, life: rnd(0.9, 1.5) });
+    }
+  }
+  function petBegin(c, x, y) {
+    PET.on = true; PET.c = c; PET.lastX = x; PET.lastY = y; PET.dist = 0;
+    if (c.sound) { try { c.sound(); } catch (_) {} }
+  }
+  function petMove(x, y) {
+    const c = PET.c; if (!c) return;
+    const d = Math.hypot(x - PET.lastX, y - PET.lastY);
+    PET.lastX = x; PET.lastY = y; PET.dist += d;
+    if (PET.dist > 8) petStroke(c);
+  }
+  function petEnd() {
+    const c = PET.c;
+    if (c) { c.petStopAt = S.t + 0.35; }
+    PET.on = false; PET.c = null;
+    hidePetBadge(700);
   }
 
   $('#actBtn').addEventListener('click', () => {
@@ -3414,6 +3707,40 @@ function boot() {
     scene(k) { switchScene(k); },
     stereo(v) { setStereo(v); },
     tap(id) { const c = S.active.creatures.find(x => x.id === id); if (c) interact(c); return !!c; },
+    animState() {
+      return S.active.creatures.map(c => ({
+        id: c.id, glb: !!c.glb, role: c.role || null, t: c.act ? +c.act.time.toFixed(2) : null,
+        rate: c.animRate ? +c.animRate.toFixed(2) : null,
+        clips: c.clips ? Object.keys(c.clips) : [],
+        spd: +(c.spd || 0).toFixed(2), pet: !!c.petting, heat: +(c.petHeat || 0).toFixed(2),
+        pos: [+c.group.position.x.toFixed(2), +c.group.position.y.toFixed(2), +c.group.position.z.toFixed(2)],
+        yaw: +c.group.rotation.y.toFixed(2)
+      }));
+    },
+    screenOf(id) {
+      const c = S.active.creatures.find(x => x.id === id); if (!c) return null;
+      const p = c.group.getWorldPosition(new THREE.Vector3()); p.y += (c.pickY || 0.3);
+      p.project(camera);
+      return { x: Math.round((p.x * 0.5 + 0.5) * window.innerWidth), y: Math.round((-p.y * 0.5 + 0.5) * window.innerHeight), front: p.z < 1 };
+    },
+    stroke(id, n) {
+      const s = this.screenOf(id); if (!s) return null;
+      const yaw0 = S.yaw, pitch0 = S.pitch, steps = n || 9;
+      const ev = (type, x, y) => canvas.dispatchEvent(new PointerEvent(type, { pointerId: 91, clientX: x, clientY: y, bubbles: true, pointerType: 'mouse', isPrimary: true }));
+      ev('pointerdown', s.x, s.y);
+      for (let i = 1; i <= steps; i++) ev('pointermove', s.x + i * 6, s.y + (i % 2 ? 4 : -4));
+      ev('pointerup', s.x + steps * 6, s.y);
+      const c = S.active.creatures.find(x => x.id === id);
+      return { at: s, yaw0, yaw1: S.yaw, pitch0, pitch1: S.pitch, same: yaw0 === S.yaw && pitch0 === S.pitch, role: c && c.role, heat: c ? +(c.petHeat || 0).toFixed(2) : 0 };
+    },
+    dragBg(dx) {
+      const yaw0 = S.yaw, cx = Math.round(window.innerWidth / 2), cy = Math.round(window.innerHeight / 2);
+      const ev = (type, x, y) => canvas.dispatchEvent(new PointerEvent(type, { pointerId: 92, clientX: x, clientY: y, bubbles: true, pointerType: 'mouse', isPrimary: true }));
+      ev('pointerdown', cx, cy);
+      for (let i = 1; i <= 8; i++) ev('pointermove', cx + i * (dx || 10), cy);
+      ev('pointerup', cx + 8 * (dx || 10), cy);
+      return { yaw0, yaw1: S.yaw, moved: yaw0 !== S.yaw };
+    },
     pos(id) { const c = S.active.creatures.find(x => x.id === id); if (!c) return null; const p = c.group.position; return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) }; },
     act() { if (S.key === 'pet') S.scenes.pet.throwSnack(); else S.scenes.ocean.throwSnack(); },
     reset() { S.yaw = 0; S.pitch = 0; },
