@@ -340,11 +340,6 @@ function boot() {
     dolphin: 'swim', turtle: 'idle', nimo: 'swim', shark: 'swim', jelly: 'idle'
   };
   const GLB_CACHE = {};
-  try {
-    const _qp = new URLSearchParams(location.search);
-    if (_qp.get('dog') === 'husky') { GLB_FILE.pom = 'husky-test'; GLB_TUNE.pom.size = 0.74; }
-    if (_qp.get('dog') === 'corgi') { GLB_FILE.pom = 'corgi-test'; GLB_TUNE.pom.size = 0.58; GLB_TUNE.pom.white = 1; }
-  } catch (_) {}
   let GLTF_LOADER_P = null, SKU_P = null;
   function gltfLoader() {
     if (!GLTF_LOADER_P) {
@@ -527,6 +522,7 @@ function boot() {
 
       /* 쓰다듬기 지속 시간 */
       if (c.petting && c.petStopAt && now > c.petStopAt) c.petting = false;
+      if (c.boost > 0) c.boost = Math.max(0, c.boost - dt);
       if (c.petHeat > 0) c.petHeat = Math.max(0, c.petHeat - dt * 0.55);
 
       /* 점프 포물선 */
