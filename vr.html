@@ -324,10 +324,10 @@ function boot() {
   };
   const GLB_TUNE = {
     // size: 목표 크기(m) · by:'h' 면 높이, by:'len' 이면 가장 긴 수평 길이 · yaw: 모델 코끝 보정
-    pom:      { size: 0.62, by: 'h',   yaw: 0, white: 1 },
+    pom:      { size: 0.66, by: 'h',   yaw: 0, white: 1 },
     cheese:   { size: 0.68, by: 'h',   yaw: 0 },
     capybara: { size: 0.96, by: 'h',   yaw: 0 },
-    alpaca:   { size: 1.62, by: 'h',   yaw: 0 },
+    alpaca:   { size: 1.45, by: 'h',   yaw: 0, cream: 1 },
     rabbit:   { size: 0.52, by: 'h',   yaw: 0 },
     dolphin:  { size: 2.60, by: 'len', yaw: 0, swim: 1 },
     turtle:   { size: 1.50, by: 'len', yaw: 0, swim: 1 },
@@ -335,12 +335,15 @@ function boot() {
     shark:    { size: 2.40, by: 'len', yaw: 0, swim: 1 },
     jelly:    { size: 1.30, by: 'h',   yaw: 0, swim: 1 }
   };
-  /* 처음 시작 자세 — 동물마다 다르게 (다 같이 같은 포즈로 서 있지 않도록) */
-  const GLB_START = {
+  /* 처음 시작 자세 — 동물마다 다르게 (다 같이 같은 포즈로 서 있지 않도록) */  const GLB_START = {
     pom: 'walk', cheese: 'sit', capybara: 'idle2', alpaca: 'walk', rabbit: 'idle',
     dolphin: 'swim', turtle: 'idle', nimo: 'swim', shark: 'swim', jelly: 'idle'
   };
   const GLB_CACHE = {};
+  try {
+    const _qp = new URLSearchParams(location.search);
+    if (_qp.get('dog') === 'husky') { GLB_FILE.pom = 'husky-test'; GLB_TUNE.pom.size = 0.74; }
+  } catch (_) {}
   let GLTF_LOADER_P = null, SKU_P = null;
   function gltfLoader() {
     if (!GLTF_LOADER_P) {
@@ -398,6 +401,15 @@ function boot() {
     const t = clamp((lum - 0.14) / 0.6, 0, 1);
     col.setRGB(0.78 + 0.21 * t, 0.76 + 0.22 * t, 0.72 + 0.25 * t);
   }
+  /* 알파카 — 갈색 털을 크림색으로 (눈·코·발굽은 그대로) */
+  function creamFur(mm) {
+    if (!mm || !mm.color) return;
+    const col = mm.color;
+    const lum = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+    if (lum < 0.05) return;
+    const t = clamp((lum - 0.05) / 0.35, 0, 1);
+    col.setRGB(0.70 + 0.28 * t, 0.60 + 0.35 * t, 0.45 + 0.50 * t);
+  }
 
   function glbify(c, key) { c.glbKey = key; }
 
@@ -433,6 +445,7 @@ function boot() {
           mm.envMapIntensity = 0.55;
           if (key === 'jelly') { mm.transparent = true; mm.opacity = 0.92; mm.side = THREE.DoubleSide; mm.depthWrite = false; }
           if (tune.white) whiteFur(mm);
+          if (tune.cream) creamFur(mm);
         });
       });
       /* --- 애니메이션 준비 --- */
@@ -3536,9 +3549,9 @@ function boot() {
     showPetBadge();
     const p = c.group.getWorldPosition(new THREE.Vector3());
     p.y += ((c.pickY || 0.4) + 0.1) * (AR.on ? AR.scale : 1);
-    const n = S.key === 'pet' ? 3 : 4;
+    const n = S.key === 'pet' ? 4 : 5;
     for (let i = 0; i < n; i++) {
-      S.active.hearts.spawn(p, { size: rnd(0.14, 0.26), vy: rnd(0.8, 1.6), spread: 0.7, life: rnd(0.9, 1.5) });
+      S.active.hearts.spawn(p, { size: rnd(0.18, 0.32), vy: rnd(0.9, 1.8), spread: 0.75, life: rnd(1.0, 1.6) });
     }
   }
   function petBegin(c, x, y) {
@@ -3733,9 +3746,9 @@ function boot() {
       const c = S.active.creatures.find(x => x.id === id);
       return { at: s, yaw0, yaw1: S.yaw, pitch0, pitch1: S.pitch, same: yaw0 === S.yaw && pitch0 === S.pitch, role: c && c.role, heat: c ? +(c.petHeat || 0).toFixed(2) : 0 };
     },
-    dragBg(dx) {
-      const yaw0 = S.yaw, cx = Math.round(window.innerWidth / 2), cy = Math.round(window.innerHeight / 2);
-      const ev = (type, x, y) => canvas.dispatchEvent(new PointerEvent(type, { pointerId: 92, clientX: x, clientY: y, bubbles: true, pointerType: 'mouse', isPrimary: true }));
+    dragBg(dx, x, y) {
+      const yaw0 = S.yaw, cx = x != null ? x : Math.round(window.innerWidth / 2), cy = y != null ? y : 120;
+      const ev = (type, px, py) => canvas.dispatchEvent(new PointerEvent(type, { pointerId: 92, clientX: px, clientY: py, bubbles: true, pointerType: 'mouse', isPrimary: true }));
       ev('pointerdown', cx, cy);
       for (let i = 1; i <= 8; i++) ev('pointermove', cx + i * (dx || 10), cy);
       ev('pointerup', cx + 8 * (dx || 10), cy);
