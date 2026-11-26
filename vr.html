@@ -3764,6 +3764,10 @@ function boot() {
       });
       return out;
     },
+    solo(id) {
+      S.active.creatures.forEach(c => { c.group.visible = !id || c.id === id; });
+      return S.active.creatures.map(c => c.id + ':' + c.group.visible).join(' ');
+    },
     screenOf(id) {
       const c = S.active.creatures.find(x => x.id === id); if (!c) return null;
       const p = c.group.getWorldPosition(new THREE.Vector3()); p.y += (c.pickY || 0.3);
