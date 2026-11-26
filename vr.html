@@ -3737,6 +3737,31 @@ function boot() {
         yaw: +c.group.rotation.y.toFixed(2)
       }));
     },
+    bb(id) {
+      const c = S.active.creatures.find(x => x.id === id); if (!c || !c.glb) return null;
+      c.glb.updateWorldMatrix(true, true);
+      const out = { k: +c.glb.scale.x.toFixed(4) };
+      c.glb.traverse(o => {
+        if (out.mesh) return;
+        if (!o.isMesh) return;
+        let raw = null, world = null;
+        if (o.isSkinnedMesh && o.computeBoundingBox) { o.computeBoundingBox(); }
+        if (o.geometry) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); }
+        if (o.isSkinnedMesh && o.boundingBox) raw = o.boundingBox; else raw = o.geometry.boundingBox;
+        if (!raw) return;
+        const sz = raw.getSize(new THREE.Vector3());
+        world = raw.clone().applyMatrix4(o.matrixWorld);
+        const ws = world.getSize(new THREE.Vector3());
+        out.mesh = {
+          skinned: !!o.isSkinnedMesh,
+          raw: [sz.x, sz.y, sz.z].map(v => +v.toFixed(3)),
+          rawMinY: +raw.min.y.toFixed(3),
+          world: [ws.x, ws.y, ws.z].map(v => +v.toFixed(3)),
+          worldMinY: +world.min.y.toFixed(3)
+        };
+      });
+      return out;
+    },
     screenOf(id) {
       const c = S.active.creatures.find(x => x.id === id); if (!c) return null;
       const p = c.group.getWorldPosition(new THREE.Vector3()); p.y += (c.pickY || 0.3);
