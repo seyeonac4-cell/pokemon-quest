@@ -748,6 +748,11 @@ function boot() {
         }
         g.rotation.y = lerpAngle(g.rotation.y, Math.atan2(dx, dz), 1 - Math.exp(-7 * dt));
         g.position.y = Math.abs(Math.sin(S.t * 11)) * 0.24;
+        c.heartT = (c.heartT || 0) + dt;
+        if (c.heartT > 0.16) {
+          c.heartT = 0;
+          hearts.spawn(V3(g.position.x, g.position.y + (c.pickY || 0.5) + 0.18, g.position.z), { size: rnd(0.18, 0.3), vy: rnd(0.6, 1.2), spread: 0.8, life: rnd(0.8, 1.2) });
+        }
         return;
       }
       // 배회
