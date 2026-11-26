@@ -288,7 +288,7 @@ select.vfx{
   </div>
 
   <section class="card">
-    <div class="sec-head"><span class="num">1</span><h2>어떤 장면으로 놀까?</h2><span class="hint" id="pickHint">8편</span></div>
+    <div class="sec-head"><span class="num">1</span><h2>어떤 장면으로 놀까?</h2><span class="hint" id="pickHint">9편</span></div>
     <div class="filters" id="filters"></div>
     <div class="picker" id="picker"></div>
   </section>
@@ -379,13 +379,37 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const fmt = s => { s = Math.max(0, s || 0); const m = Math.floor(s / 60); const r = Math.round(s % 60); return m + ':' + String(r).padStart(2, '0'); };
 
 /* ============================================================
-   1. 장면 8편 (기초 3 + 도전·꿀잼 5)
+   1. 장면 9편 (기초 3 + 도전·꿀잼 6)
    ------------------------------------------------------------
    mood.e / mood.t : 연기 가이드 (이모지 + 한글 지시)
    mood.mv         : 캔버스 연출 (shake 흔들림 / flash 섬광 / zoom / spot 조명 / pulse / party)
    chars[].voice   : 그 역할의 기본 목소리 변조
    ============================================================ */
 const STORIES = [
+  {
+    id: 'space',
+    group: 'pro', isNew: true,
+    imgSrc: './assets/dubbing/space-pudding.webp',
+    title: 'The Last Pudding in Space',
+    koTitle: '우주 최후의 푸딩',
+    level: 3, levelText: 'Lv.3 시트콤',
+    tip: '중급 회화', genre: 'SF 우주 시트콤',
+    chars: {
+      cap: { name: 'Captain Luna', ko: '선장님',    emoji: '👩‍🚀', side: 'left',  ax: 0.180, ay: 0.545, voice: 'none',  pitch: 0.95 },
+      pio: { name: 'Pio',          ko: '우주 견습생', emoji: '🧑‍🚀', side: 'right', ax: 0.520, ay: 0.575, voice: 'cute',  pitch: 1.32 },
+      nom: { name: 'Nom',          ko: '외계인',     emoji: '👾', side: 'right', ax: 0.815, ay: 0.615, voice: 'radio', pitch: 0.55 }
+    },
+    lines: [
+      { who: 'cap', en: 'Crew, we have a problem. The last chocolate pudding is gone.', ko: '승무원 여러분, 문제가 생겼어요. 마지막 초코 푸딩이 사라졌어요.', mood: { e: '😨', t: '낮게, 진지하게', mv: 'spot' } },
+      { who: 'pio', en: 'Gone? But I locked the fridge myself, Captain!', ko: '사라졌다고요? 제가 직접 냉장고를 잠갔는데요, 선장님!', mood: { e: '😳', t: '당황해서', mv: 'shake' } },
+      { who: 'cap', en: 'Then why is there pudding on your chin, Pio?', ko: '그럼 턱에 묻은 푸딩은 뭐죠, 피오?', mood: { e: '😐', t: '차갑게 짚으며', mv: 'zoom' } },
+      { who: 'pio', en: "This? Uh... it's space mud! It's everywhere up here!", ko: '이거요? 어... 우주 진흙이에요! 여기선 어디에나 있어요!', mood: { e: '😅', t: '얼버무리며' } },
+      { who: 'nom', en: 'SPACE MUD. GOOD ONE, TINY HUMAN.', ko: '우주 진흙이라. 변명 잘하는데, 꼬마 인간.', mood: { e: '👾', t: '낮게 윙윙거리며', mv: 'flash' } },
+      { who: 'pio', en: 'Wait! There is a space blob in the airlock!', ko: '잠깐! 에어록에 우주 덩어리가 있어요!', mood: { e: '😱', t: '소리치며', mv: 'shake' } },
+      { who: 'cap', en: "Relax. That's Nom. He's been our stowaway for three weeks.", ko: '진정해요. 쟤는 놈이에요. 3주째 우리 배에 몰래 타고 있죠.', mood: { e: '😮‍💨', t: '체념하며' } },
+      { who: 'nom', en: 'Nobody noticed. Great crew. Five stars.', ko: '아무도 몰랐지. 훌륭한 승무원들이야. 별 다섯 개.', mood: { e: '👽', t: '뻔뻔하게', mv: 'party' } }
+    ]
+  },
   {
     id: 'printer',
     group: 'pro', isNew: true,
