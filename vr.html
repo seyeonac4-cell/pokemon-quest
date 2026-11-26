@@ -107,7 +107,7 @@ canvas#gl{position:fixed;left:0;top:0;width:100%;height:100%;display:block;touch
   border:2px solid #fff;box-shadow:var(--shadow);font-size:18px;display:grid;place-items:center;pointer-events:auto}
 #sndBtn:active{transform:scale(.93)}
 
-#toast{position:absolute;left:50%;transform:translate(-50%,6px);bottom:calc(180px + env(safe-area-inset-bottom,0px));
+#toast{position:absolute;left:50%;transform:translate(-50%,6px);bottom:calc(150px + env(safe-area-inset-bottom,0px));
   padding:8px 15px;border-radius:14px;background:rgba(30,40,66,.9);color:#fff;font-size:13px;font-weight:800;
   box-shadow:0 8px 22px rgba(10,20,40,.32);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;
   max-width:82vw;text-align:center;word-break:keep-all}
@@ -141,6 +141,7 @@ body.vr #reticleL,body.vr #reticleR{display:block}
   #info{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
   #actBtn{height:48px;font-size:15px;padding:0 20px}
   #bottom{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  #toast{bottom:calc(74px + env(safe-area-inset-bottom,0px));font-size:12px;padding:6px 12px}
 }
 </style>
 </head>
@@ -580,8 +581,8 @@ function boot() {
     // 돌길 (집 → 마당)
     for (let i = 0; i < 12; i++) {
       const k = i / 11;
-      const st = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.45, 0.07, 9), mat(0xd9d2c2));
-      st.position.set(-4.5 * (1 - k) + Math.sin(i * 0.9) * 0.22, 0.025, -14.4 * (1 - k) - 3.0);
+      const st = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.37, 0.07, 9), mat(0xd9d2c2));
+      st.position.set(-4.5 * (1 - k) + Math.sin(i * 0.9) * 0.22, 0.025, -14.4 * (1 - k) - 4.6);
       st.rotation.y = Math.random(); st.receiveShadow = true; sc.add(st);
     }
 
@@ -822,7 +823,7 @@ function boot() {
         const tt = sph(0.085, cream); tt.position.set(0, 0.27, -0.14); tailPivot.add(tt);
       } else {
         const t = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.34, 4, 8), mat(fur));
-        t.position.set(0, 0.26, -0.12); t.rotation.x = -0.8; tailPivot.add(t);
+        t.position.set(0, 0.14, -0.16); t.rotation.x = -1.15; tailPivot.add(t);
       }
       // 리트리버 목걸이
       if (!isC) {
@@ -1137,8 +1138,9 @@ function boot() {
     for (let i = 0; i < 5; i++) {
       const a = Math.random() * 6.28, r = 9 + Math.random() * 7;
       const fan = sph(1, i % 2 ? 0xff8fb1 : 0xb08bff, { emissive: i % 2 ? 0xff5d8f : 0x8a5cff, emissiveIntensity: 0.25 }, 0.78, 0.9, 0.1);
-      fan.position.set(Math.cos(a) * r, -2.0, Math.sin(a) * r);
-      fan.rotation.y = Math.random() * 3; sc.add(fan);
+      fan.position.set(Math.cos(a) * r, -2.3, Math.sin(a) * r);
+      fan.rotation.y = Math.random() * 3; fan.rotation.z = (Math.random() - .5) * 0.4;
+      fan.scale.multiplyScalar(1.0); fan.scale.z = 0.5; sc.add(fan);
     }
     // 바위
     for (let i = 0; i < 16; i++) {
@@ -1246,17 +1248,17 @@ function boot() {
     /* --- 바다거북 --- */
     function makeTurtle() {
       const g = new THREE.Group();
-      const shell = sph(1, 0x3f9e6f, {}, 0.62, 0.34, 0.72); g.add(shell);
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.66, 0.075, 6, 20), mat(0xd9c07a));
+      const shell = sph(1, 0x4aa877, {}, 0.62, 0.46, 0.72); g.add(shell);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.63, 0.05, 6, 20), mat(0x2f7d58));
       rim.rotation.x = Math.PI / 2; rim.scale.set(1, 1.12, 1); rim.position.y = 0.02; g.add(rim);
       // 등딱지 무늬
       for (let i = 0; i < 6; i++) {
         const a = i / 6 * 6.28;
         const pl = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.05, 6), mat(0x59bb84));
-        pl.position.set(Math.cos(a) * 0.28, 0.3, Math.sin(a) * 0.34);
+        pl.position.set(Math.cos(a) * 0.28, 0.4, Math.sin(a) * 0.34);
         pl.rotation.x = 0.2; g.add(pl);
       }
-      const head = sph(1, 0x7fc99b, {}, 0.19, 0.17, 0.26); head.position.set(0, 0.06, 0.72); g.add(head);
+      const head = sph(1, 0x7fc99b, {}, 0.22, 0.2, 0.3); head.position.set(0, 0.05, 0.74); g.add(head);
       [-1, 1].forEach(s => {
         const e = sph(0.04, 0x14251f); e.position.set(0.1 * s, 0.12, 0.88); g.add(e);
       });
@@ -1458,13 +1460,13 @@ function boot() {
       const dir = camera.getWorldDirection(V3(0, 0, 0));
       const p = V3(dir.x * 2.4, -1.4, dir.z * 2.4);
       if (p.length() < 0.1) p.set(0, -1.4, -2.4);
-      for (let i = 0; i < 46; i++) {
+      for (let i = 0; i < 60; i++) {
         const q = p.clone().add(V3(rnd(-0.5, 0.5), rnd(0, 0.4), rnd(-0.5, 0.5)));
-        bubbles.spawn(q, { size: rnd(0.16, 0.42), vy: rnd(1.6, 3.4), spread: 1.6, life: rnd(1.4, 2.6) });
+        bubbles.spawn(q, { size: rnd(0.08, 0.2), vy: rnd(1.6, 3.4), spread: 1.6, life: rnd(1.4, 2.4) });
       }
       for (let i = 0; i < 10; i++) {
         const q = V3(rnd(-4, 4), -2.6, rnd(-9, -2));
-        bubbles.spawn(q, { size: rnd(0.3, 0.6), vy: rnd(1.2, 2.2), spread: 0.6, life: rnd(2, 3.4) });
+        bubbles.spawn(q, { size: rnd(0.12, 0.26), vy: rnd(1.2, 2.2), spread: 0.6, life: rnd(2, 3.2) });
       }
       sfx.splash(); sfx.bubble();
       toast('🫧 뽀글뽀글~ 물방울이 올라가요!');
@@ -1491,7 +1493,7 @@ function boot() {
         bubbleClock = 0;
         const a = Math.random() * 6.28, r = rnd(2.5, 13);
         bubbles.spawn(V3(Math.cos(a) * r, rnd(-3, -1.2), Math.sin(a) * r), {
-          size: rnd(0.1, 0.26), vy: rnd(0.7, 1.5), spread: 0.25, life: rnd(2.5, 4.2)
+          size: rnd(0.07, 0.18), vy: rnd(0.7, 1.5), spread: 0.25, life: rnd(2.5, 4.2)
         });
       }
     }
@@ -1596,7 +1598,7 @@ function boot() {
     if (S.key === 'pet') {
       for (let i = 0; i < 16; i++) S.active.hearts.spawn(p, { size: rnd(0.22, 0.38), vy: rnd(0.7, 1.5), spread: 1.4, life: rnd(0.9, 1.5) });
     } else {
-      for (let i = 0; i < 18; i++) S.active.hearts.spawn(p, { size: rnd(0.14, 0.3), vy: rnd(1.1, 2.4), spread: 1.1, life: rnd(1.4, 2.6) });
+      for (let i = 0; i < 20; i++) S.active.hearts.spawn(p, { size: rnd(0.08, 0.18), vy: rnd(1.1, 2.4), spread: 1.1, life: rnd(1.4, 2.4) });
     }
   }
 
@@ -1744,6 +1746,7 @@ function boot() {
     scene(k) { switchScene(k); },
     stereo(v) { setStereo(v); },
     tap(id) { const c = S.active.creatures.find(x => x.id === id); if (c) interact(c); return !!c; },
+    pos(id) { const c = S.active.creatures.find(x => x.id === id); if (!c) return null; const p = c.group.position; return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) }; },
     act() { if (S.key === 'pet') S.scenes.pet.throwSnack(); else S.scenes.ocean.throwSnack(); },
     reset() { S.yaw = 0; S.pitch = 0; }
   };
