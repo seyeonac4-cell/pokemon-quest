@@ -343,6 +343,7 @@ function boot() {
   try {
     const _qp = new URLSearchParams(location.search);
     if (_qp.get('dog') === 'husky') { GLB_FILE.pom = 'husky-test'; GLB_TUNE.pom.size = 0.74; }
+    if (_qp.get('dog') === 'corgi') { GLB_FILE.pom = 'corgi-test'; GLB_TUNE.pom.size = 0.58; GLB_TUNE.pom.white = 1; }
   } catch (_) {}
   let GLTF_LOADER_P = null, SKU_P = null;
   function gltfLoader() {
