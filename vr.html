@@ -35,6 +35,13 @@ button{font-family:inherit;color:inherit;border:0;background:none;padding:0;curs
 a{text-decoration:none;color:inherit}
 canvas#gl{position:fixed;left:0;top:0;width:100%;height:100%;display:block;touch-action:none;z-index:0;background:#0a2030}
 
+/* ------- 📷 AR 카메라 레이어 ------- */
+#cam{position:fixed;left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none;background:#000}
+body.ar #cam{display:block}
+body.ar canvas#gl{background:transparent;z-index:1}
+body.ar{background:#000}
+body.ar #hint{display:none}
+
 /* ------- HUD ------- */
 #hud{position:fixed;inset:0;z-index:5;pointer-events:none}
 .topbar{position:absolute;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));
@@ -49,6 +56,9 @@ canvas#gl{position:fixed;left:0;top:0;width:100%;height:100%;display:block;touch
 .tb.title{pointer-events:none;background:rgba(255,255,255,.9);font-size:13.5px;letter-spacing:-.02em;color:#3b4a6b;max-width:34vw;overflow:hidden;text-overflow:ellipsis}
 .tb span.lbl{font-size:12.5px;font-weight:800}
 .tb.on{background:linear-gradient(180deg,#fff5c9,#ffd75e);color:#6b4800;border-color:#fff3bd}
+.tb.ar{background:linear-gradient(180deg,#ffe0f0,#ffa8d2);color:#7d2050;border-color:#fff}
+.tb.ar.on{background:linear-gradient(180deg,#ff86bd,#ff4f96);color:#fff;border-color:#ffe3f1}
+.tb .ae2{font-size:15px;line-height:1}
 
 .tabs{position:absolute;left:50%;transform:translateX(-50%);top:calc(54px + env(safe-area-inset-top,0px));
   display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(255,255,255,.55);
@@ -113,6 +123,17 @@ canvas#gl{position:fixed;left:0;top:0;width:100%;height:100%;display:block;touch
   max-width:82vw;text-align:center;word-break:keep-all}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ------- 📷 AR 모드 버튼 줄 ------- */
+#arBar{position:absolute;left:50%;transform:translateX(-50%);top:calc(100px + env(safe-area-inset-top,0px));
+  display:none;gap:7px;pointer-events:auto}
+body.ar #arBar{display:flex}
+#arBar button{display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 14px;border-radius:999px;
+  background:rgba(255,255,255,.94);border:2px solid #fff;box-shadow:var(--shadow);
+  font-size:13.5px;font-weight:900;color:#3d4a68;white-space:nowrap;transition:transform .1s}
+#arBar button:active{transform:scale(.94)}
+#arBar b{font-weight:900;color:#c2457e}
+body.ar #gaze .dot{background:rgba(255,255,255,.95)}
+
 /* ------- VR 모드 ------- */
 #vrExit{position:absolute;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));
   display:none;pointer-events:auto}
@@ -145,17 +166,21 @@ body.vr #reticleL,body.vr #reticleR{display:block}
   #actBtn{height:48px;font-size:15px;padding:0 20px}
   #bottom{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   #toast{bottom:calc(74px + env(safe-area-inset-bottom,0px));font-size:12px;padding:6px 12px}
+  #arBar{top:calc(84px + env(safe-area-inset-top,0px))}
+  #arBar button{height:32px;font-size:12.5px;padding:0 11px}
 }
 </style>
 </head>
 <body class="pet">
 <canvas id="gl"></canvas>
+<video id="cam" autoplay playsinline muted webkit-playsinline></video>
 
 <div id="hud">
   <div class="topbar">
     <a class="tb back" href="./apps.html" aria-label="앱 모음으로">◀</a>
     <button class="tb title" id="titleBtn">🥽 VR 체험관</button>
     <div class="grow"></div>
+    <button class="tb ar" id="arBtn" aria-label="AR 카메라 모드"><span class="ae2">📷</span><span class="lbl">AR</span></button>
     <button class="tb" id="gyroBtn" aria-label="폰 기울여 보기">🧭<span class="lbl">폰</span></button>
     <button class="tb" id="vrBtn" aria-label="VR 안경 모드">🥽<span class="lbl">VR</span></button>
   </div>
@@ -186,6 +211,11 @@ body.vr #reticleL,body.vr #reticleR{display:block}
     </div>
     <button id="actBtn"><span class="ae">🍖</span><span id="actTxt">간식 던지기</span></button>
     <button id="sndBtn" aria-label="소리 켜기/끄기">🔊</button>
+  </div>
+
+  <div id="arBar">
+    <button id="shotBtn" aria-label="AR 사진 찍기"><span>📸</span>찰칵</button>
+    <button id="sizeBtn" aria-label="동물 크기 조절"><span>📏</span>크기 <b id="sizeTxt">1×</b></button>
   </div>
 
   <div id="vrExit"><button id="vrExitBtn">⨯ VR 종료</button></div>
@@ -239,6 +269,7 @@ function boot() {
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   const TEXC = {};
+  const FX = new Set();   // 📷 AR 모드에서도 카메라 위에 남겨 둘 파티클·효과(하트/물방울/간식) 오브젝트
   function tex(key, w, h, draw) {
     if (TEXC[key]) return TEXC[key];
     const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -303,6 +334,7 @@ function boot() {
     rabbit() { beep({ f: 900, f2: 1500, dur: 0.08, type: 'sine', vol: 0.10 }); beep({ f: 1100, f2: 1700, dur: 0.07, type: 'sine', vol: 0.08, delay: 0.10 }); },
     chick() { beep({ f: 1700, f2: 2400, dur: 0.06, type: 'sine', vol: 0.10 }); beep({ f: 1900, f2: 2500, dur: 0.05, type: 'sine', vol: 0.09, delay: 0.09 }); beep({ f: 1600, f2: 2200, dur: 0.06, type: 'sine', vol: 0.08, delay: 0.17 }); },
     hamster() { beep({ f: 1200, f2: 1600, dur: 0.05, type: 'square', vol: 0.06 }); beep({ f: 1300, f2: 1700, dur: 0.05, type: 'square', vol: 0.05, delay: 0.08 }); },
+    alpaca() { beep({ f: 300, f2: 250, dur: 0.26, type: 'sine', vol: 0.11 }); beep({ f: 340, f2: 430, dur: 0.18, type: 'sine', vol: 0.08, delay: 0.24 }); noise({ f: 760, f2: 520, dur: 0.12, vol: 0.035, delay: 0.1, q: 2.2 }); },
     dolphin() { beep({ f: 1300, f2: 2300, dur: 0.22, type: 'sine', vol: 0.10 }); beep({ f: 2100, f2: 1500, dur: 0.18, type: 'sine', vol: 0.08, delay: 0.24 }); },
     turtle() { beep({ f: 300, f2: 210, dur: 0.34, type: 'triangle', vol: 0.10 }); noise({ f: 500, dur: 0.3, vol: 0.05 }); },
     nimo() { beep({ f: 760, f2: 1150, dur: 0.10, type: 'sine', vol: 0.10 }); beep({ f: 900, f2: 1300, dur: 0.09, type: 'sine', vol: 0.08, delay: 0.12 }); },
@@ -378,6 +410,11 @@ function boot() {
     g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(.35, 'rgba(255,200,255,.45)'); g.addColorStop(1, 'rgba(255,160,240,0)');
     x.fillStyle = g; x.beginPath(); x.arc(32, 32, 32, 0, 7); x.fill();
   });
+  const shadowT = tex('softshadow', 64, 64, (x, w, h) => {
+    const g = x.createRadialGradient(32, 32, 2, 32, 32, 31);
+    g.addColorStop(0, 'rgba(255,255,255,.85)'); g.addColorStop(.45, 'rgba(255,255,255,.45)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.clearRect(0, 0, w, h); x.fillStyle = g; x.beginPath(); x.arc(32, 32, 31, 0, 7); x.fill();
+  });
 
   class Puffs {
     constructor(scene, texture, o) {
@@ -389,6 +426,7 @@ function boot() {
         const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, opacity: 0, color: o.color || 0xffffff }));
         sp.visible = false; sp.scale.set(0.3, 0.3, 1); scene.add(sp);
         sp.userData = { life: 0, max: 1 };
+        FX.add(sp);
         this.pool.push(sp);
       }
     }
@@ -431,9 +469,10 @@ function boot() {
      3. 상태 · 렌더러 · 카메라
      ============================================================ */
   const canvas = $('#gl');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(window.innerWidth, window.innerHeight, false);
+  renderer.setClearColor(0x0a2030, 1);
   if ('outputColorSpace' in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -546,6 +585,193 @@ function boot() {
     // 현재 바라보던 방향을 드래그 각도로 되돌려 놓기
     const e = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
     S.yaw = e.y; S.pitch = clamp(e.x, -1.35, 1.35);
+  }
+
+  /* ============================================================
+     3.5 📷 AR 카메라 모드 — 현실 카메라 화면 위에 3D 동물 띄우기
+     ============================================================ */
+  const AR = { on: false, stream: null, video: null, scale: 1, sizeIdx: 1, err: '' };
+  const AR_SIZES = [0.7, 1, 1.5, 2.1];
+  const AR_FOV = 78;   // AR 은 폰 카메라처럼 조금 넓게
+  const AR_CAM = {
+    pet: { pos: V3(0, 1.45, -1.0), pitch: -0.12 },
+    ocean: { pos: V3(0, 0.9, 0), pitch: 0.02 }
+  };
+
+  async function startCam() {
+    if (AR.stream && AR.stream.active) return true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { AR.err = 'no-api'; return false; }
+    try {
+      const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+      const v = $('#cam');
+      AR.stream = st; AR.video = v;
+      v.srcObject = st;
+      try { v.muted = true; await v.play(); } catch (_) {}
+      AR.err = '';
+      return true;
+    } catch (e) {
+      AR.err = String((e && e.name) || e);
+      AR.stream = null; AR.video = null;
+      return false;
+    }
+  }
+  function stopCam() {
+    if (AR.stream) { try { AR.stream.getTracks().forEach(t => t.stop()); } catch (_) {} }
+    AR.stream = null;
+    const v = AR.video || $('#cam');
+    if (v) { try { v.pause(); } catch (_) {} v.srcObject = null; }
+    AR.video = null;
+  }
+
+  /* 배경 지형·하늘·모래판은 숨기고 동물·파티클·빛만 남긴다 */
+  function arHideScenery(wrap, on) {
+    if (!wrap) return;
+    const sc = wrap.scene || wrap;
+    if (!sc || !sc.userData) return;
+    if (on) {
+      if (!sc.userData.arSaved) sc.userData.arSaved = { fog: sc.fog, bg: sc.background };
+      sc.fog = null; sc.background = null;
+    } else if (sc.userData.arSaved) {
+      sc.fog = sc.userData.arSaved.fog;
+      sc.background = sc.userData.arSaved.bg;
+      sc.userData.arSaved = null;
+    }
+    sc.children.forEach(ch => {
+      if (ch.isLight || ch.userData.creature || ch.userData.keep || FX.has(ch)) return;
+      ch.visible = !on;
+    });
+  }
+
+  /* 바닥에 닿는 부드러운 그림자 (AR 에서만) */
+  function arShadows(on) {
+    const pet = S.scenes.pet;
+    if (!pet) return;
+    pet.creatures.forEach(c => {
+      if (!c.arShadow) {
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: shadowT, transparent: true, opacity: 0.42, depthWrite: false, color: 0x1a2436 }));
+        FX.add(sp);
+        c.arShadow = sp; pet.scene.add(sp);
+      }
+      c.arShadow.visible = !!on;
+    });
+  }
+
+  function applyArScale() {
+    const k = AR.on ? AR.scale : 1;
+    [S.scenes.pet, S.scenes.ocean].forEach(s => { if (s) s.creatures.forEach(c => c.group.scale.setScalar(k)); });
+  }
+
+  /* AR 에 들어가면 동물들이 있는 쪽을 바라보게 */
+  function arFaceCrowd() {
+    const cs = S.active.creatures; if (!cs || !cs.length) return;
+    let cx = 0, cz = 0;
+    cs.forEach(c => { const p = c.group.getWorldPosition(new THREE.Vector3()); cx += p.x; cz += p.z; });
+    cx /= cs.length; cz /= cs.length;
+    const dx = cx - camera.position.x, dz = cz - camera.position.z;
+    if (Math.hypot(dx, dz) > 0.2) S.yaw = Math.atan2(-dx, -dz);
+  }
+  /* 씬 전환 직후에는 생물 위치가 아직 안 갱신되어 있을 수 있으니 한 번 돌리고 본다 */
+  function arSnapFace() {
+    try { S.active.update(S.t, 0.0001); } catch (_) {}
+    arFaceCrowd();
+  }
+
+  function arCycleSize() {
+    AR.sizeIdx = (AR.sizeIdx + 1) % AR_SIZES.length;
+    AR.scale = AR_SIZES[AR.sizeIdx];
+    applyArScale();
+    const el = $('#sizeTxt'); if (el) el.textContent = AR.scale + '×';
+    toast('📏 동물 크기 ' + AR.scale + '배');
+    return AR.scale;
+  }
+
+  function arTick() {
+    const pet = S.scenes.pet;
+    if (!pet) return;
+    pet.creatures.forEach(c => {
+      const sh = c.arShadow;
+      if (!sh || !sh.visible) return;
+      sh.position.set(c.group.position.x, 0.035, c.group.position.z);
+      const s = (c.rad || 0.9) * 1.55 * AR.scale;
+      sh.scale.set(s, s * 0.55, 1);
+    });
+  }
+
+  /* 📸 찰칵 — 카메라 화면 + 3D 동물을 한 장으로 합성해 저장 */
+  function snapAr() {
+    if (!AR.on) return false;
+    render(false);
+    const w = canvas.width, h = canvas.height;
+    const out = document.createElement('canvas'); out.width = w; out.height = h;
+    const g2 = out.getContext('2d');
+    g2.fillStyle = '#0a2030'; g2.fillRect(0, 0, w, h);
+    const v = AR.video;
+    if (v && v.videoWidth) {
+      const s = Math.max(w / v.videoWidth, h / v.videoHeight);
+      const dw = v.videoWidth * s, dh = v.videoHeight * s;
+      try { g2.drawImage(v, (w - dw) / 2, (h - dh) / 2, dw, dh); } catch (_) {}
+    }
+    try { g2.drawImage(canvas, 0, 0, w, h); } catch (_) {}
+    sfx.tapUI();
+    try {
+      out.toBlob(b => {
+        if (!b) return;
+        const a = document.createElement('a');
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        a.download = 'AR-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds()) + '.png';
+        a.href = URL.createObjectURL(b);
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      }, 'image/png');
+    } catch (_) {}
+    toast('📸 찰칵! 사진을 저장했어요');
+    return true;
+  }
+
+  async function setArMode(on) {
+    on = !!on;
+    if (on === AR.on) return AR.on;
+    if (on) {
+      if (S.stereo) setStereo(false);
+      const ok = await startCam();
+      if (!ok) {
+        stopCam();
+        toast('카메라 권한을 허용하면 현실 화면 위에 동물이 나타나요!');
+        return false;
+      }
+      AR.on = true;
+      document.body.classList.add('ar');
+      $('#arBtn').classList.add('on');
+      renderer.setClearColor(0x000000, 0);
+      arHideScenery(S.scenes.pet, true);
+      arHideScenery(S.scenes.ocean, true);
+      arShadows(true);
+      const cf = AR_CAM[S.key] || AR_CAM.pet;
+      camera.position.copy(cf.pos);
+      S.yaw = 0; S.pitch = cf.pitch; S.fov = S.fovT = AR_FOV;
+      arSnapFace();
+      applyArScale();
+      sfx.tapUI();
+      toast('📷 카메라 위에 동물이 나타나요! 손가락으로 돌려 보세요');
+      return true;
+    }
+    AR.on = false;
+    document.body.classList.remove('ar');
+    $('#arBtn').classList.remove('on');
+    renderer.setClearColor(0x0a2030, 1);
+    arHideScenery(S.scenes.pet, false);
+    arHideScenery(S.scenes.ocean, false);
+    arShadows(false);
+    AR.scale = 1; AR.sizeIdx = 1;
+    const st = $('#sizeTxt'); if (st) st.textContent = '1×';
+    applyArScale();
+    stopCam();
+    if (sceneCamera[S.key]) camera.position.copy(sceneCamera[S.key]);
+    S.yaw = 0; S.pitch = S.key === 'pet' ? -0.05 : 0.02; S.fov = S.fovT = 70;
+    sfx.tapUI();
+    toast('🥽 360° VR 모드로 돌아왔어요');
+    return false;
   }
 
   /* ============================================================
@@ -1015,6 +1241,91 @@ function boot() {
       ham.head.rotation.z = Math.sin(t * 5) * 0.14;
     };
 
+    /* --- 🦙 알파카 --- */
+    function makeAlpaca() {
+      const g = new THREE.Group();
+      const wool = 0xfdf6e8, wool2 = 0xffffff, shade = 0xf2e6d0, skin = 0xf0cdb0, dark = 0x3a3230;
+      const bodyY = 0.62;
+      const body = new THREE.Group(); body.position.y = bodyY; g.add(body);
+      const core = sph(1, wool, {}, 0.31, 0.29, 0.44); body.add(core);
+      // 몸통 복슬 — 작은 털뭉치를 표면에 붙여 퍼석한 실루엣
+      const puffs = [
+        [0, .25, .06, .115], [.16, .2, -.1, .10], [-.16, .2, -.1, .10],
+        [.27, .04, .12, .10], [-.27, .04, .12, .10], [.24, .04, -.2, .10], [-.24, .04, -.2, .10],
+        [0, .2, -.34, .11], [0, -.16, .34, .11], [.14, -.2, .16, .09], [-.14, -.2, .16, .09]
+      ];
+      puffs.forEach((p, i) => {
+        const f = sph(p[3], i % 3 === 0 ? wool2 : wool);
+        f.position.set(p[0], p[1], p[2]); f.scale.set(1, .92, 1); body.add(f);
+      });
+      // 다리 (걸음걸이용 다리 축)
+      const legs = [];
+      const legH = 0.46;
+      [[0.15, 0.23], [-0.15, 0.23], [0.15, -0.23], [-0.15, -0.23]].forEach(p => {
+        const hip = new THREE.Group(); hip.position.set(p[0], bodyY - 0.08, p[1]); g.add(hip);
+        const leg = cyl(0.052, 0.045, legH, shade, 8); leg.position.y = -legH / 2; hip.add(leg);
+        const fluff = sph(0.082, wool); fluff.position.y = -0.08; fluff.scale.set(1, 1.15, 1); hip.add(fluff);
+        const hoof = cyl(0.048, 0.055, 0.07, 0x9c8471, 8); hoof.position.y = -legH + 0.02; hip.add(hoof);
+        legs.push(hip);
+      });
+      // 긴 목
+      const neck = new THREE.Group(); neck.position.set(0, bodyY + 0.13, 0.26); neck.rotation.x = -0.12; g.add(neck);
+      const neckCyl = cyl(0.085, 0.125, 0.58, wool, 12); neckCyl.position.y = 0.28; neck.add(neckCyl);
+      [[.05, .13, .06, .058], [-.05, .27, .055, .052], [.04, .4, .05, .046], [0, .02, .1, .095]].forEach((p, i) => {
+        const f = sph(p[3], i === 3 ? wool2 : wool);
+        f.position.set(p[0], p[1], p[2]); f.scale.set(1.2, 1, .6); neck.add(f);
+      });
+      // 머리
+      const head = new THREE.Group(); head.position.set(0, 0.62, 0.03); neck.add(head);
+      const hs = sph(0.19, wool); hs.scale.set(1, .98, .96); head.add(hs);
+      [[0, .15, -.02, .10], [.09, .13, 0, .078], [-.09, .13, 0, .078], [.12, -.03, .06, .07], [-.12, -.03, .06, .07]].forEach((p, i) => {
+        const f = sph(p[3], i % 2 ? wool2 : wool); f.position.set(p[0], p[1], p[2]); head.add(f);
+      });
+      const mz = sph(1, skin, {}, 0.092, 0.072, 0.10); mz.position.set(0, -0.06, 0.14); head.add(mz);
+      const nose = sph(1, 0x7c6055, {}, 0.036, 0.024, 0.024); nose.position.set(0, -0.032, 0.225); head.add(nose);
+      const mouth = box(0.032, 0.01, 0.016, 0xb08e80); mouth.position.set(0, -0.1, 0.21); head.add(mouth);
+      [-1, 1].forEach(s => {
+        const e = sph(0.031, dark); e.position.set(0.073 * s, 0.022, 0.152); head.add(e);
+        const gl = sph(0.011, 0xffffff); gl.position.set(0.082 * s, 0.033, 0.172); head.add(gl);
+        // 알파카 시그니처 — 길쭉한 귀
+        const ear = new THREE.Mesh(new THREE.CapsuleGeometry(0.034, 0.15, 4, 8), mat(wool));
+        ear.position.set(0.105 * s, 0.235, -0.03); ear.rotation.z = -0.34 * s; ear.rotation.x = -0.12; ear.scale.set(1, 1, 0.55); head.add(ear);
+        const inr = new THREE.Mesh(new THREE.CapsuleGeometry(0.019, 0.1, 4, 7), mat(0xffcfd8));
+        inr.position.set(0.118 * s, 0.24, -0.015); inr.rotation.z = -0.34 * s; inr.scale.set(1, 1, 0.45); head.add(inr);
+      });
+      // 복슬 꼬리
+      const tail = new THREE.Group(); tail.position.set(0, bodyY + 0.04, -0.4); g.add(tail);
+      const tb = sph(0.105, wool2); tb.scale.set(1, 1, .9); tail.add(tb);
+      const tb2 = sph(0.075, wool); tb2.position.set(0.02, 0.06, -0.03); tail.add(tb2);
+      return { g, head, neck, tail, legs, body, bodyY };
+    }
+    const alpaca = addCreature({
+      id: 'alpaca', emoji: '🦙', name: '알파카', desc: '복슬복슬 목이 긴 귀염둥이',
+      home: V3(1.9, 0, -9.0), range: 1.2, speed: 0.6, pickY: 0.95, rad: 1.15,
+      sound: sfx.alpaca, ...makeAlpaca()
+    });
+    alpaca.update = (t, dt) => {
+      const before = alpaca._pb || (alpaca._pb = alpaca.g.position.clone());
+      wander(alpaca, dt);
+      const dx = alpaca.g.position.x - before.x, dz = alpaca.g.position.z - before.z;
+      const spd = Math.hypot(dx, dz) / Math.max(dt, 0.0001);
+      before.copy(alpaca.g.position);
+      const run = spd > 0.05;
+      alpaca.ph = (alpaca.ph || 0) + dt * (run ? 9.5 : 2.2);
+      const amp = run ? 0.5 : 0.04;
+      alpaca.legs.forEach((hip, i) => {
+        const off = (i === 1 || i === 2) ? Math.PI : 0;
+        hip.rotation.x = Math.sin(alpaca.ph + off) * amp;
+      });
+      alpaca.body.position.y = alpaca.bodyY + (run ? Math.abs(Math.sin(alpaca.ph)) * 0.035 : 0);
+      alpaca.tail.rotation.y = Math.sin(t * (alpaca.happy > 0 ? 13 : 4.5)) * 0.45;
+      alpaca.tail.rotation.z = Math.sin(t * 2.3) * 0.08;
+      alpaca.neck.rotation.x = Math.sin(t * 1.15) * 0.05 + (run ? Math.sin(alpaca.ph) * 0.04 : 0);
+      alpaca.neck.rotation.z = Math.sin(t * 0.9 + 1) * 0.03;
+      alpaca.head.rotation.x = Math.sin(t * 1.35) * 0.08 + (alpaca.happy > 0 ? -0.16 : 0);
+      alpaca.head.rotation.y = Math.sin(t * 0.75) * 0.18;
+    };
+
     /* --- 간식 --- */
     const snack = { active: false, pos: new THREE.Vector3(), mesh: null, until: 0 };
     function makeBone() {
@@ -1034,14 +1345,16 @@ function boot() {
       const dir = camera.getWorldDirection(V3(0, 0, 0)); dir.y = 0;
       if (dir.lengthSq() < 0.001) dir.set(0, 0, -1);
       dir.normalize();
-      const land = V3(dir.x * rnd(5.2, 7.2), 0.13, dir.z * rnd(5.2, 7.2));
-      if (land.length() > 13.5) land.multiplyScalar(13.5 / land.length());
-      if (snack.mesh) sc.remove(snack.mesh);
-      const mesh = makeBone(); sc.add(mesh);
-      mesh.position.set(dir.x * 1.6, 1.5, dir.z * 1.6);
+      const base = AR.on ? V3(camera.position.x, 0, camera.position.z) : V3(0, 0, 0);
+      const rr = AR.on ? rnd(1.9, 3.1) : rnd(5.2, 7.2);
+      const land = V3(base.x + dir.x * rr, 0.13, base.z + dir.z * rr);
+      if (!AR.on && land.length() > 13.5) land.multiplyScalar(13.5 / land.length());
+      if (snack.mesh) { sc.remove(snack.mesh); FX.delete(snack.mesh); }
+      const mesh = makeBone(); sc.add(mesh); FX.add(mesh);
+      mesh.position.set(base.x + dir.x * 1.6, 1.5, base.z + dir.z * 1.6);
       mesh.rotation.set(0.4, Math.random() * 3, 0.2);
       snack.mesh = mesh; snack.active = true; snack.pos.copy(land); snack.until = S.t + 7;
-      snack.land = land.clone(); snack.throwT = 0;
+      snack.land = land.clone(); snack.throwT = 0; snack.base = base.clone();
       sfx.toss();
       creatures.forEach(c => { c.ate = false; c.happy = 0; c.tgt = null; });
       toast('🍖 간식을 던졌어요! 다들 달려와요~');
@@ -1051,14 +1364,15 @@ function boot() {
       snack.throwT += dt;
       const k = Math.min(1, snack.throwT / 0.85);
       if (snack.mesh) {
-        const from = V3(snack.land.x * 0.24, 1.5, snack.land.z * 0.24);
+        const b = snack.base || V3(0, 0, 0);
+        const from = V3(b.x, 1.5, b.z);
         snack.mesh.position.lerpVectors(from, snack.land, k);
         snack.mesh.position.y = 1.5 * (1 - k) + snack.land.y + Math.sin(k * Math.PI) * 1.5;
         snack.mesh.rotation.x += dt * 7; snack.mesh.rotation.z += dt * 5;
       }
       if (S.t > snack.until) {
         snack.active = false;
-        if (snack.mesh) { sc.remove(snack.mesh); snack.mesh = null; }
+        if (snack.mesh) { sc.remove(snack.mesh); FX.delete(snack.mesh); snack.mesh = null; }
       }
     }
 
@@ -1080,7 +1394,7 @@ function boot() {
       sunGlow.material.opacity = 0.6 + Math.sin(t * 0.9) * 0.08;
     }
 
-    return { scene: sc, update, creatures, hearts, throwSnack, cameraPos: V3(0, 1.5, 0), reset: () => { snack.active = false; if (snack.mesh) { sc.remove(snack.mesh); snack.mesh = null; } } };
+    return { scene: sc, update, creatures, hearts, throwSnack, cameraPos: V3(0, 1.5, 0), reset: () => { snack.active = false; if (snack.mesh) { sc.remove(snack.mesh); FX.delete(snack.mesh); snack.mesh = null; } } };
   }
 
   /* ============================================================
@@ -1466,14 +1780,16 @@ function boot() {
     /* --- 물방울 --- */
     function burstBubbles() {
       const dir = camera.getWorldDirection(V3(0, 0, 0));
-      const p = V3(dir.x * 2.4, -1.4, dir.z * 2.4);
-      if (p.length() < 0.1) p.set(0, -1.4, -2.4);
+      const p = AR.on
+        ? camera.position.clone().add(V3(dir.x * 2.0, -0.5, dir.z * 2.0))
+        : V3(dir.x * 2.4, -1.4, dir.z * 2.4);
+      if (!AR.on && p.length() < 0.1) p.set(0, -1.4, -2.4);
       for (let i = 0; i < 60; i++) {
         const q = p.clone().add(V3(rnd(-0.5, 0.5), rnd(0, 0.4), rnd(-0.5, 0.5)));
         bubbles.spawn(q, { size: rnd(0.08, 0.2), vy: rnd(1.6, 3.4), spread: 1.6, life: rnd(1.4, 2.4) });
       }
       for (let i = 0; i < 10; i++) {
-        const q = V3(rnd(-4, 4), -2.6, rnd(-9, -2));
+        const q = V3(p.x + rnd(-2, 2), p.y - 0.6, p.z + rnd(-2, 2));
         bubbles.spawn(q, { size: rnd(0.12, 0.26), vy: rnd(1.2, 2.2), spread: 0.6, life: rnd(2, 3.2) });
       }
       sfx.splash(); sfx.bubble();
@@ -1547,6 +1863,13 @@ function boot() {
       if (!silent) toast('🐠 바닷속으로 들어왔어요!');
     }
     S.gaze = null;
+    if (AR.on) {
+      const cf = AR_CAM[k] || AR_CAM.pet;
+      camera.position.copy(cf.pos);
+      S.yaw = 0; S.pitch = cf.pitch; S.fov = S.fovT = AR_FOV;
+      applyArScale();
+      arSnapFace();
+    }
   }
 
   document.querySelectorAll('.tab').forEach(b => {
@@ -1572,7 +1895,7 @@ function boot() {
     const cam = camera.position;
     let best = null, bestA = 0.34;
     for (const c of S.active.creatures) {
-      const p = c.group.position.clone(); p.y += (c.pickY || 0.3);
+      const p = c.group.getWorldPosition(new THREE.Vector3()); p.y += (c.pickY || 0.3) * (AR.on ? AR.scale : 1);
       const v = p.sub(cam); const d = v.length();
       if (d > 30 || d < 0.4) continue;
       const a = v.normalize().angleTo(dir);
@@ -1601,8 +1924,8 @@ function boot() {
     c.happy = 2.2;
     if (c.sound) c.sound();
     showInfo(c);
-    const p = c.group.position.clone();
-    p.y += (c.pickY || 0.4) + 0.25;
+    const p = c.group.getWorldPosition(new THREE.Vector3());
+    p.y += ((c.pickY || 0.4) + 0.25) * (AR.on ? AR.scale : 1);
     if (S.key === 'pet') {
       for (let i = 0; i < 16; i++) S.active.hearts.spawn(p, { size: rnd(0.22, 0.38), vy: rnd(0.7, 1.5), spread: 1.4, life: rnd(0.9, 1.5) });
     } else {
@@ -1626,6 +1949,7 @@ function boot() {
   /* ---------- VR 안경 모드 ---------- */
   function setStereo(on) {
     S.stereo = !!on;
+    if (S.stereo && AR.on) setArMode(false);
     document.body.classList.toggle('vr', S.stereo);
     $('#vrBtn').classList.toggle('on', S.stereo);
     if (S.stereo) {
@@ -1643,6 +1967,9 @@ function boot() {
   $('#vrBtn').addEventListener('click', () => { sfx.tapUI(); setStereo(!S.stereo); });
   $('#vrExitBtn').addEventListener('click', () => { sfx.tapUI(); setStereo(false); });
   $('#gyroBtn').addEventListener('click', () => { sfx.tapUI(); if (S.gyro) { gyroOff(); toast('이제 손가락으로 둘러보세요 👆'); } else gyroOn(); });
+  $('#arBtn').addEventListener('click', () => { ac(); setArMode(!AR.on); });
+  $('#shotBtn').addEventListener('click', () => { ac(); snapAr(); });
+  $('#sizeBtn').addEventListener('click', () => { ac(); if (AR.on) arCycleSize(); });
 
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement && S.stereo) setStereo(false);
@@ -1722,6 +2049,7 @@ function boot() {
     const dt = Math.min(0.05, Math.max(0, (now - S.last) / 1000));
     S.last = now; S.t += dt;
     applyView(dt);
+    if (AR.on) { try { arTick(); } catch (e) {} }
     try { S.active.update(S.t, dt); } catch (e) { if (!S._updErr) { S._updErr = 1; console.error(e); } }
     render(S.stereo);
     if (!S.stereo) updateGaze(dt);
@@ -1756,7 +2084,31 @@ function boot() {
     tap(id) { const c = S.active.creatures.find(x => x.id === id); if (c) interact(c); return !!c; },
     pos(id) { const c = S.active.creatures.find(x => x.id === id); if (!c) return null; const p = c.group.position; return { x: +p.x.toFixed(2), y: +p.y.toFixed(2), z: +p.z.toFixed(2) }; },
     act() { if (S.key === 'pet') S.scenes.pet.throwSnack(); else S.scenes.ocean.throwSnack(); },
-    reset() { S.yaw = 0; S.pitch = 0; }
+    reset() { S.yaw = 0; S.pitch = 0; },
+    spot(id, dist, ang) {
+      const c = S.active.creatures.find(x => x.id === id); if (!c) return null;
+      const p = c.group.position, d = dist || 2.4, a = ang == null ? 0 : ang;
+      camera.position.set(p.x + Math.sin(a) * d + 0.35, 1.18, p.z + Math.cos(a) * d);
+      S.yaw = Math.atan2(-(p.x - camera.position.x), -(p.z - camera.position.z));
+      S.pitch = -0.2; S.fov = S.fovT = 52;
+      return { x: +camera.position.x.toFixed(2), z: +camera.position.z.toFixed(2), face: +c.group.rotation.y.toFixed(2) };
+    },
+    async ar(v) { await setArMode(!!v); return AR.on; },
+    arSize(d) { if (!AR.on) return AR.scale; arCycleSize(); if (d) arCycleSize(); return AR.scale; },
+    snap() { return snapAr(); },
+    arState() { return { on: AR.on, cam: !!(AR.stream && AR.stream.active), err: AR.err, clearAlpha: renderer.getClearAlpha(), fog: !!S.active.scene.fog, bg: S.active.scene.background ? 'set' : 'none', scale: AR.scale, camPose: { x: +camera.position.x.toFixed(2), y: +camera.position.y.toFixed(2), z: +camera.position.z.toFixed(2), pitch: +S.pitch.toFixed(2) } }; },
+    dbg() {
+      const out = {};
+      S.active.scene.children.forEach(ch => {
+        const k = ch.userData.creature ? 'creature:' + ch.userData.creature.id
+          : ch.isLight ? 'light'
+            : FX.has(ch) ? 'fx'
+              : (ch.type || 'obj');
+        if (!(k in out)) out[k] = { total: 0, visible: 0 };
+        out[k].total++; if (ch.visible) out[k].visible++;
+      });
+      return out;
+    }
   };
 }
 </script>
