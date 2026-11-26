@@ -2606,7 +2606,7 @@ function boot() {
 
     const rabbit = addCreature(Object.assign({
       id: 'rabbit', emoji: '🐰', name: '아기토끼', desc: '큰 눈에 짧은 귀, 아직 세상이 궁금한 솜털 아기',
-      home: V3(-0.22, 0, -5.7), range: 0.8, speed: 0.46, pickY: 0.42, rad: 0.35, hop: true,
+      home: V3(-2.45, 0, -4.95), range: 0.95, speed: 0.46, pickY: 0.42, rad: 0.35, hop: true,
       sound: sfx.rabbit
     }, makeRabbit()));
     rabbit.update = (t, dt) => {
@@ -3524,7 +3524,7 @@ function boot() {
     const el = $('#petBadge'); if (!el) return;
     el.classList.add('show');
     clearTimeout(petBadgeT);
-    petBadgeT = setTimeout(() => el.classList.remove('show'), 1400);
+    petBadgeT = setTimeout(() => el.classList.remove('show'), 2200);
   }
   function hidePetBadge(ms) {
     clearTimeout(petBadgeT);
