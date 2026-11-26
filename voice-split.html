@@ -12,7 +12,10 @@
 <meta name="apple-mobile-web-app-title" content="음성 분리">
 <meta name="application-name" content="음성 분리">
 <title>🎙️ 음성 분리 · 잡음 제거</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e2a47'/%3E%3Crect x='24' y='11' width='16' height='27' rx='8' fill='%230fb493'/%3E%3Cpath d='M17 31a15 15 0 0 0 30 0' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M32 46v7M25 53h14' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/voice-split/voice-icon-192.png?v=1">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/voice-split/voice-icon-512.png?v=1">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/voice-split/voice-icon-180.png?v=1">
+<link rel="manifest" href="./manifest-voice-split.json">
 <script>
 window.__errs = [];
 addEventListener('error', function(e){ try{ __errs.push(String(e.message || (e.error && e.error.message) || e.type)); }catch(_){} });
@@ -243,7 +246,7 @@ header.top{
     <div class="done hidden" id="doneBox"></div>
     <div class="err hidden" id="errBox"></div>
 
-    <p class="hint">m4a · mp3 · wav · ogg · aac · webm 지원 · 10분 이하 파일을 권해요. 파일은 서버로 올라가지 않고 전부 이 기기 안에서 계산돼요.</p>
+    <p class="hint">m4a · mp3 · wav · ogg · aac · webm 지원 · <b>20~30분 인계 녹음도 OK</b> (파일이 길면 몇 초 더 걸릴 수 있어요). 파일은 서버로 올라가지 않고 전부 이 기기 안에서 계산돼요.</p>
     <p class="note" id="sampleNote">샘플은 <b>2명이 주고받는 대화</b>에 병동 소리(웅웅거리는 기계음·삐 소리)를 섞어 만든 테스트 음성이에요. 파일이 없어도 잡음 제거와 화자 분리를 바로 체험할 수 있어요.</p>
   </section>
 
@@ -309,7 +312,11 @@ header.top{
 
 /* ══════════════════ 기본 도구 ══════════════════ */
 var $ = function(s){ return document.querySelector(s); };
-var SR = 22050;
+/* 내부 처리 샘플레이트 — 말소리는 16kHz면 충분하고(대역 필터가 4.2kHz까지만 남긴다)
+   20~30분 인계 녹음도 메모리·처리 시간을 아껴 돌릴 수 있다. */
+var SR = 16000;
+/* 구간 특징 분석 프레임 상한 — 긴 녹음에서는 줄여서 20~30분도 몇 초 안에 끝낸다 (0 = 제한 없음) */
+var FEAT_MAXFR = 0;
 var SPK = {
   A:{id:'A', name:'화자 A', color:'#7c5cf0', soft:'#f3efff', line:'#d8ccff'},
   B:{id:'B', name:'화자 B', color:'#0fb493', soft:'#e7f8f3', line:'#b9e9db'},
@@ -407,21 +414,25 @@ function clearErr(){ $('#errBox').classList.add('hidden'); $('#errBox').innerHTM
 function showDone(html){ var d = $('#doneBox'); d.innerHTML = html; d.classList.remove('hidden'); }
 
 /* ══════════════════ 디코딩 ══════════════════ */
-function getAC(){
+function getAC(sr){
   var AC = window.AudioContext || window.webkitAudioContext;
   if(!AC) throw new Error('이 브라우저는 음성 처리를 지원하지 않아요. Chrome 앱으로 열어 주세요.');
-  if(!St.actx) St.actx = new AC();
+  if(!St.actx){
+    /* 처음부터 16kHz로 열면 디코딩된 원본 버퍼도 16kHz로 받아 메모리가 크게 줄어든다 */
+    if(sr){ try{ St.actx = new AC({ sampleRate: sr }); }catch(_){ St.actx = null; } }
+    if(!St.actx) St.actx = new AC();
+  }
   if(St.actx.state === 'suspended') St.actx.resume().catch(function(){});
   return St.actx;
 }
 function decodeAudio(ab){
-  var ctx = getAC();
+  var ctx = getAC(SR);
   return new Promise(function(res, rej){
     var p = ctx.decodeAudioData(ab);
     if(p && p.then) p.then(res, rej);
   });
 }
-/* 채널 합치기 + 22050으로 간단 리샘플 */
+/* 채널 합치기 + SR(16kHz)로 간단 리샘플 */
 function toMono(buf, sr){
   var ch = buf.numberOfChannels, n = Math.max(1, Math.round(buf.duration*sr));
   var out = new Float32Array(n);
@@ -438,8 +449,9 @@ function toMono(buf, sr){
 }
 
 /* ══════════════════ 스펙트럼 노이즈 게이트 ══════════════════ */
-async function spectralGate(x, onProg, onLabel){
-  var N = 1024, HALF = N>>1, HOP = 256, RB = 6, BLK = 32;
+async function spectralGate(x, onProg, onLabel, longMode){
+  /* 긴 녹음(longMode)에서는 32ms 창·16ms 간걸음으로 FFT 크기를 반으로 줄여 20~30분도 빨리 끝낸다 */
+  var N = longMode ? 512 : 1024, HALF = N>>1, HOP = N>>1, RB = 6, BLK = 32;
   var fft = makeFFT(N);
   var win = new Float32Array(N);
   for(var i=0;i<N;i++) win[i] = 0.5 - 0.5*Math.cos(2*Math.PI*i/N);
@@ -530,7 +542,7 @@ async function spectralGate(x, onProg, onLabel){
 }
 
 /* ══════════════════ 묵음 게이트 (다이내믹 익스팬더) ══════════════════ */
-function envelopeGate(x, sr){
+function envelopeGate(x, sr, inPlace){
   var fr = Math.max(32, Math.round(sr*0.01));
   var n = Math.floor(x.length/fr);
   if(n < 4) return x;
@@ -552,7 +564,8 @@ function envelopeGate(x, sr){
     g += (target - g)*rate;
     gain[f] = g;
   }
-  var out = new Float32Array(x.length);
+  /* inPlace=true면 새 배열을 만들지 않고 원래 배열에 덮어써서 긴 녹음에서 메모리를 아낀다 */
+  var out = inPlace ? x : new Float32Array(x.length);
   for(f=0; f<n; f++){
     var g0 = f>0 ? gain[f-1] : gain[0], g1 = gain[f];
     var o2 = f*fr;
@@ -635,7 +648,16 @@ function segFeatures(x, dx, sr, seg, fft5){
   for(var i=0;i<len;i++){ var v = dx[ds+i] || 0; cum[i+1] = cum[i] + v*v; }
   var lmin = Math.max(12, Math.round(dsr/340)), lmax = Math.min(len-20, Math.round(dsr/65));
   var f0s = [];
-  for(var t=0; t+fr < len; t += hop){
+  /* 분석 위치 — 긴 녹음(FEAT_MAXFR)에서는 구간당 몇 군데만 봐서 20~30분도 금방 끝낸다 */
+  var tps = [], tt;
+  for(tt=0; tt+fr < len; tt += hop) tps.push(tt);
+  if(FEAT_MAXFR && tps.length > FEAT_MAXFR){
+    var pick = [], pstep = tps.length/FEAT_MAXFR;
+    for(var pi2=0; pi2<FEAT_MAXFR; pi2++) pick.push(tps[Math.floor(pi2*pstep)]);
+    tps = pick;
+  }
+  for(var ti=0; ti<tps.length; ti++){
+    var t = tps[ti];
     var e0 = cum[t+fr] - cum[t];
     if(e0 < 1e-7) continue;
     var bestR = 0, bestLag = 0;
@@ -663,7 +685,15 @@ function segFeatures(x, dx, sr, seg, fft5){
   for(i=0;i<N;i++) win[i] = 0.5 - 0.5*Math.cos(2*Math.PI*i/N);
   var cens = [];
   var step = Math.max(N, Math.round(sr*0.03));
-  for(var p=s0; p+N < s1; p+=step){
+  var cps = [], pp;
+  for(pp=s0; pp+N < s1; pp+=step) cps.push(pp);
+  if(FEAT_MAXFR && cps.length > 12){
+    var cstep = cps.length/12, cpick = [];
+    for(var cj=0; cj<12; cj++) cpick.push(cps[Math.floor(cj*cstep)]);
+    cps = cpick;
+  }
+  for(var ci2=0; ci2<cps.length; ci2++){
+    var p = cps[ci2];
     for(i=0;i<N;i++){ re[i] = x[p+i]*win[i]; im[i] = 0; }
     fft5(re, im, false);
     var num2 = 0, den = 0;
@@ -817,6 +847,46 @@ function InvalidateUrls(){
   });
 }
 
+/* ══════════════════ 목소리 대역 필터 (긴 녹음은 60초씩 나눠 처리) ══════════════════ */
+function voiceFilterChain(ctx){
+  var hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 120; hp.Q.value = 0.72;
+  var pk1 = ctx.createBiquadFilter(); pk1.type = 'peaking'; pk1.frequency.value = 1800; pk1.Q.value = 0.95; pk1.gain.value = 5.2;
+  var pk2 = ctx.createBiquadFilter(); pk2.type = 'peaking'; pk2.frequency.value = 2750; pk2.Q.value = 1.1; pk2.gain.value = 3.2;
+  var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 4200; lp.Q.value = 0.72;
+  var cp = ctx.createDynamicsCompressor();
+  cp.threshold.value = -24; cp.knee.value = 18; cp.ratio.value = 3.2;
+  cp.attack.value = 0.005; cp.release.value = 0.25;
+  hp.connect(pk1); pk1.connect(pk2); pk2.connect(lp); lp.connect(cp);
+  return { input:hp, output:cp };
+}
+/* buf를 그 자리에서(덮어쓰기) 필터링한다 — 60초 블록으로 나눠 굴려서 20~30분 녹음에서도
+   같은 크기의 배열을 하나 더 만들지 않는다. */
+async function applyVoiceFilter(buf, sr, onProg){
+  var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if(!OAC) throw new Error('이 브라우저에서는 오디오 분석을 할 수 없어요. Chrome 앱으로 열어 주세요.');
+  var total = buf.length;
+  if(!total) return;
+  var CH = Math.min(total, Math.round(sr*60));
+  var blocks = Math.ceil(total/CH) || 1;
+  for(var b=0; b<blocks; b++){
+    var start = b*CH, len = Math.min(CH, total-start);
+    var off = new OAC(1, len, sr);
+    var ab = off.createBuffer(1, len, sr);
+    ab.getChannelData(0).set(buf.subarray(start, start+len));
+    var src = off.createBufferSource(); src.buffer = ab;
+    var chain = voiceFilterChain(off);
+    src.connect(chain.input); chain.output.connect(off.destination);
+    src.start();
+    var rendered = await off.startRendering();
+    buf.set(rendered.getChannelData(0), start);
+    try{ src.disconnect(); }catch(_){}
+    try{ src.buffer = null; }catch(_){}
+    ab = null; rendered = null; off = null;
+    if(onProg) onProg((b+1)/blocks);
+    await tick();
+  }
+}
+
 /* ══════════════════ 파이프라인 ══════════════════ */
 async function runPipeline(arrayBuffer, name, size){
   if(St.busy) return;
@@ -839,36 +909,30 @@ async function runPipeline(arrayBuffer, name, size){
     }
     var dur = decoded.duration;
     if(!isFinite(dur) || dur < 0.5) throw new Error('파일이 너무 짧아요. 1초 이상 녹음된 파일을 올려 주세요.');
-    if(dur > 600.5) throw new Error('10분이 넘는 파일은 한 번에 처리하기 어려워요. 필요한 부분만 잘라서 올려 주세요.');
+    if(dur > 1805) throw new Error('30분이 넘는 파일은 한 번에 처리하기 어려워요. 인계 단위로 나눠 올려 주세요.');
     var rate = decoded.sampleRate;
+    var longMode = dur >= 600;   /* 10분 이상 — 긴 녹음 모드 (16kHz·분석 프레임 축소·블록 처리) */
+    /* 16kHz로 열 수 없는 브라우저는 원본을 44.1kHz로 디코딩해 20분이 넘으면 메모리가 버겁다 */
+    if(dur > 1200 && rate > 16000) throw new Error('이 브라우저에서는 20분이 넘는 녹음을 처리하기 어려워요. Chrome 앱으로 열어 주세요.');
+    FEAT_MAXFR = longMode ? 8 : 0;
 
-    St.name = name; St.size = size || 0; St.dur = dur; St.nativeRate = rate;
+    St.name = name; St.size = size || 0; St.dur = dur; St.nativeRate = rate; St.longMode = longMode;
 
     setStatus('목소리 대역만 남기는 필터를 거는 중…', 12);
     var base = toMono(decoded, SR);
+    /* 디코딩된 원본 버퍼는 통째로 큰 메모리라 바로 놓아 준다 */
+    decoded = null;
     var N = base.length;
-    var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    if(!OAC) throw new Error('이 브라우저에서는 오디오 분석을 할 수 없어요. Chrome 앱으로 열어 주세요.');
-    var off = new OAC(1, N, SR);
-    var src = off.createBufferSource(); src.buffer = decoded;
-    var hp = off.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 120; hp.Q.value = 0.72;
-    var pk1 = off.createBiquadFilter(); pk1.type = 'peaking'; pk1.frequency.value = 1800; pk1.Q.value = 0.95; pk1.gain.value = 5.2;
-    var pk2 = off.createBiquadFilter(); pk2.type = 'peaking'; pk2.frequency.value = 2750; pk2.Q.value = 1.1; pk2.gain.value = 3.2;
-    var lp = off.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 4200; lp.Q.value = 0.72;
-    var cp = off.createDynamicsCompressor();
-    cp.threshold.value = -24; cp.knee.value = 18; cp.ratio.value = 3.2;
-    cp.attack.value = 0.005; cp.release.value = 0.25;
-    src.connect(hp); hp.connect(pk1); pk1.connect(pk2); pk2.connect(lp); lp.connect(cp); cp.connect(off.destination);
-    src.start();
-    await tick();
-    var rendered = await off.startRendering();
-    var filtered = rendered.getChannelData(0).slice(0, N);
+    await applyVoiceFilter(base, SR, function(p){
+      setStatus('목소리 대역만 남기는 필터를 거는 중… ' + Math.min(19, Math.round(12 + p*7)) + '%', 12 + p*7);
+    });
 
     setStatus('주파수별로 소음을 지우는 중…', 20);
-    var gated = await spectralGate(filtered, function(p){ setStatus('주파수별로 소음을 지우는 중… ' + Math.round(20 + p*52) + '%', 20 + p*52); });
+    var gated = await spectralGate(base, function(p){ setStatus('주파수별로 소음을 지우는 중… ' + Math.round(20 + p*52) + '%', 20 + p*52); }, null, longMode);
 
     setStatus('말소리만 남기고 숨을 고르는 중…', 76);
-    var g2 = envelopeGate(gated, SR);
+    var g2 = envelopeGate(gated, SR, true);
+    gated = null;
     /* 피크 정규화 */
     var peak = 0, i;
     for(i=0;i<g2.length;i++){ var av = Math.abs(g2[i]); if(av > peak) peak = av; }
@@ -889,14 +953,14 @@ async function runPipeline(arrayBuffer, name, size){
       var so = Float32Array.from(r).sort();
       return so[Math.floor(nn*0.18)] || 0.0004;
     }
-    var fIn = floorOf(filtered), fOut = floorOf(g2);
+    var fIn = floorOf(base), fOut = floorOf(g2);
     St.stats = {
       floorInDb: 20*Math.log(fIn+1e-9)/Math.LN10,
       floorOutDb: 20*Math.log(fOut+1e-9)/Math.LN10,
       reductionDb: 20*Math.log((fIn+1e-9)/(fOut+1e-9))/Math.LN10
     };
 
-    St.base = filtered;
+    St.base = base;
     St.clean = g2;
     St.urls = {};
 
@@ -916,7 +980,7 @@ async function runPipeline(arrayBuffer, name, size){
     var inE = 0, outE = 0, sN = 0;
     for(var si=0; si<segs.length; si++){
       var a0 = Math.max(0, Math.floor(segs[si].start*SR)), b0 = Math.min(N, Math.ceil(segs[si].end*SR));
-      for(var k2=a0;k2<b0;k2++){ inE += filtered[k2]*filtered[k2]; outE += g2[k2]*g2[k2]; sN++; }
+      for(var k2=a0;k2<b0;k2++){ inE += base[k2]*base[k2]; outE += g2[k2]*g2[k2]; sN++; }
     }
     if(sN){
       St.stats.speechDb = 10*Math.log((outE+1e-9)/(inE+1e-9))/Math.LN10;
@@ -1601,6 +1665,16 @@ window.__vs = {
   }
 };
 })();
+</script>
+<!-- 「📲 앱으로 설치」 한 번 누르기 버튼 (공통 스크립트) -->
+<script src="./pwa-install.js?v=1" defer></script>
+<!-- 홈 화면 '앱 설치'(크롬 배지 없는 WebAPK) 조건: 매니페스트 + 등록된 서비스 워커 -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function () {});
+    });
+  }
 </script>
 </body>
 </html>

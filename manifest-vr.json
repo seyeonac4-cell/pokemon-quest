@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/vr.html",
+  "name": "AR·VR 동물·바다생물 체험관",
+  "short_name": "VR 체험관",
+  "description": "3D로 만나는 애완동물 마을과 바닷속 — 360° 둘러보기, 폰 기울이기, 카드보드 양안 VR, AR 카메라로 현실에 동물 띄우기",
+  "start_url": "/pokemon-quest/vr.html",
+  "scope": "/pokemon-quest/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#8fd8ff",
+  "theme_color": "#8fd8ff",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/vr/vr-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/vr/vr-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/vr/vr-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
