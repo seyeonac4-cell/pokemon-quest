@@ -320,11 +320,11 @@ function boot() {
     capybara: { size: 1.10, by: 'h', yaw: 0.35, tint: 0 },
     alpaca:   { size: 1.85, by: 'h', yaw: 1.50, tint: 0 },
     rabbit:   { size: 0.60, by: 'h', yaw: 1.45, tint: 0 },
-    dolphin:  { size: 2.10, by: 'len', yaw: 0.05, swim: 1 },
-    turtle:   { size: 1.15, by: 'len', yaw: Math.PI, swim: 1 },
-    nimo:     { size: 0.55, by: 'len', yaw: Math.PI, swim: 1 },
-    shark:    { size: 2.20, by: 'len', yaw: 0.05, swim: 1 },
-    jelly:    { size: 1.00, by: 'h', yaw: 0, swim: 1, pulse: 1 }
+    dolphin:  { size: 3.00, by: 'len', yaw: 0.05, swim: 1 },
+    turtle:   { size: 1.80, by: 'len', yaw: Math.PI, swim: 1 },
+    nimo:     { size: 0.95, by: 'len', yaw: Math.PI, swim: 1 },
+    shark:    { size: 3.00, by: 'len', yaw: 0.05, swim: 1 },
+    jelly:    { size: 1.70, by: 'h', yaw: 0, swim: 1, pulse: 1 }
   };
   const GLB_CACHE = {};
   let GLTF_LOADER_P = null;
@@ -2691,7 +2691,7 @@ function boot() {
       sound: sfx.dolphin, rad: 1.9, pickY: 0.3, a: Math.PI * 0.15, cx: 0, cz: -7.0
     }, makeDolphin()));
     dolphin.update = (t, dt) => {
-      orbit(dolphin, { cx: 0.1, cz: -7.4, r: 1.7, cy: 1.35, speed: 0.30, vamp: 0.42, bank: 0.16 }, dt);
+      orbit(dolphin, { cx: 0.2, cz: -5.0, r: 1.6, cy: 1.75, speed: 0.30, vamp: 0.42, bank: 0.16 }, dt);
       dolphin.flukeG.rotation.x = Math.sin(t * 3.6) * 0.30;
       dolphin.g.rotation.x += Math.sin(t * 3.6 + 0.6) * 0.03;
       dolphin.flippers.forEach((f, i) => { f.rotation.z = (i ? -1 : 1) * (0.55 + Math.sin(t * 2.4) * 0.12); });
@@ -2824,7 +2824,7 @@ function boot() {
       sound: sfx.turtle, rad: 1.2, pickY: 0.1, a: 2.1, cx: -4.4, cz: -4.4
     }, makeTurtle()));
     turtle.update = (t, dt) => {
-      orbit(turtle, { cx: -1.9, cz: -6.2, r: 1.2, cy: 0.75, speed: 0.20, vamp: 0.26, bank: 0.07 }, dt);
+      orbit(turtle, { cx: -1.7, cz: -4.3, r: 1.0, cy: 0.95, speed: 0.20, vamp: 0.26, bank: 0.07 }, dt);
       turtle.flippers.forEach((f, i) => {
         const ph = t * 1.35 + (f.front ? 0 : Math.PI);
         f.m.rotation.z = f.s * (f.front ? 0.18 : 0.1) + f.s * Math.sin(ph) * (f.front ? 0.55 : 0.3);
@@ -2919,7 +2919,7 @@ function boot() {
       sound: sfx.nimo, rad: 0.55, pickY: 0, a: 0.5, cx: 2.3, cz: -3.4
     }, makeClown()));
     nimo.update = (t, dt) => {
-      orbit(nimo, { cx: 1.9, cz: -4.9, r: 0.85, cy: 0.4, speed: 0.8, vamp: 0.24, bank: 0.2, bob: 1.6 }, dt);
+      orbit(nimo, { cx: 1.55, cz: -3.5, r: 0.75, cy: 0.85, speed: 0.8, vamp: 0.24, bank: 0.2, bob: 1.6 }, dt);
       nimo.tail.rotation.y = Math.PI / 2 + Math.sin(t * 8) * 0.45;
       nimo.g.rotation.y += Math.sin(t * 8) * 0.06;
       nimo.pec.forEach((f, i) => { f.rotation.z = (i ? -0.4 : 0.4) + Math.sin(t * 7 + i) * 0.25; });
@@ -3018,7 +3018,7 @@ function boot() {
       sound: sfx.shark, rad: 1.3, pickY: 0.05, a: 3.3, cx: -1.2, cz: -9.0
     }, makeShark()));
     shark.update = (t, dt) => {
-      orbit(shark, { cx: 0.5, cz: -9.2, r: 1.9, cy: 0.25, speed: 0.28, vamp: 0.34, bank: 0.1 }, dt);
+      orbit(shark, { cx: 0.3, cz: -6.6, r: 1.5, cy: 0.75, speed: 0.28, vamp: 0.34, bank: 0.1 }, dt);
       shark.tailG.rotation.y = Math.sin(t * 3.0) * 0.42;
       shark.g.rotation.y += Math.sin(t * 3.0) * 0.04;
       shark.pec.forEach((f, i) => { f.rotation.z = (i ? -0.5 : 0.5); });
@@ -3095,7 +3095,7 @@ function boot() {
       sound: sfx.jelly, rad: 0.85, pickY: 0.1, a: 0.9, cx: 4.6, cz: -2.2
     }, makeJelly()));
     jelly.update = (t, dt) => {
-      orbit(jelly, { cx: 2.7, cz: -6.0, r: 0.55, cy: 1.55, speed: 0.22, vamp: 0.45, bank: 0.05, bob: 0.9 }, dt);
+      orbit(jelly, { cx: 2.5, cz: -4.4, r: 0.5, cy: 2.05, speed: 0.22, vamp: 0.45, bank: 0.05, bob: 0.9 }, dt);
       const pulse = 1 + Math.sin(t * 2.0) * 0.08;
       jelly.bell.scale.set(pulse, 1 / pulse * 1.02, pulse);
       jelly.tentacles.forEach((tt, i) => {
