@@ -328,7 +328,7 @@ function boot() {
     cheese:   { size: 0.68, by: 'h',   yaw: 0 },
     capybara: { size: 0.96, by: 'h',   yaw: 0 },
     alpaca:   { size: 1.15, by: 'h',   yaw: 0, cream: 1 },
-    rabbit:   { size: 0.52, by: 'h',   yaw: 0 },
+    rabbit:   { size: 0.52, by: 'h',   yaw: 0, kMul: 16, rawOrigin: 1 },
     dolphin:  { size: 2.60, by: 'len', yaw: 0, swim: 1 },
     turtle:   { size: 1.50, by: 'len', yaw: 0, swim: 1 },
     nimo:     { size: 0.82, by: 'len', yaw: 0, swim: 1 },
@@ -424,8 +424,10 @@ function boot() {
       const size = box.getSize(new THREE.Vector3());
       const ctr = box.getCenter(new THREE.Vector3());
       const span = tune.by === 'len' ? Math.max(size.x, size.z) : size.y;
-      const k = (tune.size || 1) / Math.max(0.001, span);
-      root.position.set(-ctr.x, -box.min.y, -ctr.z);
+      const k = (tune.size || 1) / Math.max(0.001, span) * (tune.kMul || 1);
+      /* 일부 모델은 노드 스케일이 이상해 바운딩박스가 엉뚱하다 → 원점 기준으로만 맞춘다 */
+      if (tune.rawOrigin) root.position.set(0, tune.yFix || 0, 0);
+      else root.position.set(-ctr.x, -box.min.y + (tune.yFix || 0), -ctr.z);
       holder.scale.setScalar(k);
       holder.rotation.y = tune.yaw || 0;
       holder.userData.k = k;
