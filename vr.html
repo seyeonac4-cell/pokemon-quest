@@ -315,9 +315,9 @@ function boot() {
   const GLB_TUNE = {
     // size: 목표 크기(m) — by:'h' 면 높이, by:'len' 이면 가장 긴 수평 길이
     // yaw : 모델 코끝을 +Z(앞)로 맞추는 회전 · tint: 텍스처에 곱하는 색
-    pom:      { size: 0.78, by: 'h', yaw: 0.70, tint: 0 },
+    pom:      { size: 0.62, by: 'h', yaw: 0.70, tint: 0 },
     cheese:   { size: 0.70, by: 'h', yaw: 0.62, tint: 0xffb877 },
-    capybara: { size: 1.10, by: 'h', yaw: 0.35, tint: 0 },
+    capybara: { size: 1.00, by: 'h', yaw: 0.35, tint: 0 },
     alpaca:   { size: 1.85, by: 'h', yaw: 1.50, tint: 0 },
     rabbit:   { size: 0.60, by: 'h', yaw: 1.45, tint: 0 },
     dolphin:  { size: 3.00, by: 'len', yaw: 0.05, swim: 1 },
@@ -1785,8 +1785,8 @@ function boot() {
     }
 
     const pom = addCreature(Object.assign({
-      id: 'pom', emoji: '🐶', name: '포메라니안', desc: '사자 갈기처럼 복슬복슬! 작은 몸에 큰 자신감',
-      home: V3(-0.62, 0, -3.45), range: 0.85, speed: 0.58, pickY: 0.45, rad: 0.42, shadowOp: 0.26,
+      id: 'pom', emoji: '🐶', name: '아기 강아지', desc: '복슬복슬 삼색 털! 사람을 좋아하는 다정한 버니즈 아기',
+      home: V3(-0.62, 0, -4.05), range: 0.8, speed: 0.58, pickY: 0.45, rad: 0.42, shadowOp: 0.26,
       sound: sfx.corgi
     }, makePom()));
     pom.update = (t, dt) => {
@@ -2083,7 +2083,7 @@ function boot() {
 
     const capybara = addCreature(Object.assign({
       id: 'capybara', emoji: '🦫', name: '카피바라', desc: '세상에서 제일 순한 대형 설치류. 느긋한 마당 지킴이',
-      home: V3(1.45, 0, -7.7), range: 0.8, speed: 0.34, pickY: 0.72, rad: 0.95, shadowOp: 0.3,
+      home: V3(1.45, 0, -8.1), range: 0.8, speed: 0.34, pickY: 0.72, rad: 0.95, shadowOp: 0.3,
       sound: sfx.hamster
     }, makeCapybara()));
     capybara.update = (t, dt) => {
