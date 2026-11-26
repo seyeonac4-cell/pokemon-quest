@@ -214,6 +214,7 @@ h1 em{font-style:normal;color:var(--mint)}
 .t-organize{background:#eeeaf7;color:#5b4b94}
 .t-buiknam{background:#e4edfd;color:#2450a8}
 .t-univclass{background:#e5dcff;color:#4a2ea8}
+.t-onemin{background:#e8f4e4;color:#3f7a24}
 .tag-date{background:#f1effe;color:#5b4b94;font-variant-numeric:tabular-nums}
 
 /* ---------------- 부읽남·유니브클래스 코너 머리말 ---------------- */
@@ -311,7 +312,7 @@ h1 em{font-style:normal;color:var(--mint)}
       <div class="h-quiet">🤫 층간소음 0dB</div>
     </div>
     <h1>세연님의<br><em>홈트 &amp; 살림</em></h1>
-    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁 · <b>🏠 부읽남TV</b> · <b>🎓 유니브클래스</b>까지 한 페이지에</div>
+    <div class="h-sub">노점핑 홈트 · 점핑보드 유산소 · 청소 노동요 · 정리 꿀팁 · <b>🏠 부읽남TV</b> · <b>🎓 유니브클래스</b> · <b>⏱️ 1분 미만</b>까지 한 페이지에</div>
 
     <div class="stats">
       <div class="stat"><div class="n" id="sWeek">0<small>회</small></div><div class="k">이번 주 운동</div></div>
@@ -388,6 +389,7 @@ const CATS = [
   {key:"all",      label:"전체"},
   {key:"buiknam",  label:"🏠 부읽남"},
   {key:"univclass",label:"🎓 유니브클래스"},
+  {key:"onemin",   label:"⏱️ 1분 미만"},
   {key:"cardio",   label:"🔥 전신 유산소"},
   {key:"jump",     label:"⚡ 점핑보드"},
   {key:"core",     label:"💪 복부·코어"},
@@ -398,8 +400,8 @@ const CATS = [
   {key:"organize", label:"📦 정리마켓"}
 ];
 const CAT_LABEL = Object.fromEntries(CATS.map(c=>[c.key,c.label]));
-const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦", buiknam:"🏠", univclass:"🎓"};
-const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기", buiknam:"영상 보기", univclass:"영상 보기"};
+const CAT_ICON = {jump:"⚡", clean:"🧹", organize:"📦", buiknam:"🏠", univclass:"🎓", onemin:"⏱️"};
+const CAT_ACTION = {clean:"플리 틀기", organize:"영상 보기", buiknam:"영상 보기", univclass:"영상 보기", onemin:"1분만 보기"};
 const KEY_DONE = "homet.done.v1";
 const KEY_FILTER = "homet.filter.v1";
 const KEY_TODO = "homet.todo.v1";
@@ -612,6 +614,7 @@ function renderList(){
 /* ---------- 부읽남 · 유니브클래스 코너 ---------- */
 let BUI = {};
 let UNIV = {};
+let ONE = {};
 function fmtDate(iso){
   const p = String(iso).split("-");
   return (p.length === 3) ? (Number(p[1]) + "/" + Number(p[2])) : String(iso);
@@ -627,6 +630,11 @@ const CORNER = {
     icon: "🎓", label: "유니브클래스 입시", fallback: "https://www.youtube.com/@%EC%9C%A0%EB%8B%88%EB%B8%8C%ED%81%B4%EB%9E%98%EC%8A%A4/videos",
     desc: "유니브클래스 최신 롱폼만 골라 담았어요. 수능·정시·수시 새 영상이 올라오면 여기에 담겨요.",
     meta: ()=>UNIV
+  },
+  onemin: {
+    icon: "⏱️", label: "1분 미만 — 오늘의 생활 꿀팁", fallback: "https://www.youtube.com/channel/UC2xkO7XCiStWfR3fKbzkbqw/videos",
+    desc: "생활·스마트폰·자동차 꿀팁을 1분 안팎으로 정리해 주는 채널이에요. 새 영상이 올라오면 여기에 담겨요.",
+    meta: ()=>ONE
   }
 };
 function cornerHead(cat){
@@ -712,6 +720,7 @@ async function boot(){
     VIDEOS = (data.videos || []).filter(v=>v && v.id);
     BUI = data.buiknam || {};
     UNIV = data.univclass || {};
+    ONE = data.onemin || {};
     if(data.updated){
       const p = String(data.updated).split("-");
       document.getElementById("footDate").textContent = "영상 목록 업데이트 · " + p[0] + ". " + Number(p[1]) + ". " + Number(p[2]);
