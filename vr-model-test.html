@@ -32,7 +32,7 @@ const coal = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.MeshStan
 coal.rotation.x = -Math.PI/2; scene.add(coal);
 const grid = new THREE.GridHelper(60, 60, 0x445064, 0x333c47); scene.add(grid);
 
-new GLTFLoader().load('./assets/models/' + NAMES[0] + '.glb'); // warm cache
+new GLTFLoader().load('./assets/models/' + NAMES[0] + '.glb?v=3'); // warm cache
 
 const loader = new GLTFLoader();
 const COLS = 6;
@@ -40,7 +40,7 @@ let loaded = 0;
 NAMES.forEach((name, i) => {
   const x = (i % COLS - (COLS-1)/2) * 2.2;
   const z = Math.floor(i / COLS) * 2.6;
-  loader.load('./assets/models/' + name + '.glb', g => {
+  loader.load('./assets/models/' + name + '.glb?v=3', g => {
     const root = g.scene;
     const box = new THREE.Box3().setFromObject(root);
     const size = box.getSize(new THREE.Vector3());
