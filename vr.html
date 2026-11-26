@@ -233,11 +233,20 @@ body.vr #reticleL,body.vr #reticleR{display:block}
   </div>
 </div>
 
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/"
+  }
+}
+</script>
 <script type="module">
 /* ============================================================
    0. Three.js 불러오기 (CDN 3중 fallback — world-3d.html 방식)
    ============================================================ */
 const CDNS = [
+  'three',
   'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.min.js',
   'https://unpkg.com/three@0.159.0/build/three.module.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.module.min.js'
@@ -292,6 +301,120 @@ function boot() {
   function cone(r, h, color, seg, opts) { return new THREE.Mesh(new THREE.ConeGeometry(r, h, seg || 8), mat(color, opts)); }
   function place(o, x, y, z) { o.position.set(x, y, z); return o; }
   function shadowAll(g) { g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; } }); }
+
+  /* ============================================================
+     📦 실사 GLB 모델 (assets/models/*.glb) — 절차적 모델 위에 얹기
+     Grab3D CC0 실사 스캔 모델 · 3~7만 삼각형 · 1K 텍스처로 경량화
+     (로드 실패하거나 CDN 이 막히면 기존 절차적 모델이 그대로 보입니다)
+     ============================================================ */
+  const GLB_FILE = {
+    pom: 'puppy', cheese: 'cat', capybara: 'capybara', alpaca: 'llama', rabbit: 'rabbit',
+    dog: 'dog', kitten: 'kitten',
+    dolphin: 'dolphin', turtle: 'sea-turtle', nimo: 'clownfish', shark: 'great-white-shark', jelly: 'jellyfish'
+  };
+  const GLB_TUNE = {
+    // size: 목표 크기(m) — by:'h' 면 높이, by:'len' 이면 가장 긴 수평 길이
+    // yaw : 모델 코끝을 +Z(앞)로 맞추는 회전 · tint: 텍스처에 곱하는 색
+    pom:      { size: 0.78, by: 'h', yaw: 0.70, tint: 0 },
+    cheese:   { size: 0.70, by: 'h', yaw: 0.62, tint: 0xffb877 },
+    capybara: { size: 1.10, by: 'h', yaw: 0.35, tint: 0 },
+    alpaca:   { size: 1.85, by: 'h', yaw: 1.50, tint: 0 },
+    rabbit:   { size: 0.60, by: 'h', yaw: 1.45, tint: 0 },
+    dolphin:  { size: 2.10, by: 'len', yaw: 0.05, swim: 1 },
+    turtle:   { size: 1.15, by: 'len', yaw: Math.PI, swim: 1 },
+    nimo:     { size: 0.55, by: 'len', yaw: Math.PI, swim: 1 },
+    shark:    { size: 2.20, by: 'len', yaw: 0.05, swim: 1 },
+    jelly:    { size: 1.00, by: 'h', yaw: 0, swim: 1, pulse: 1 }
+  };
+  const GLB_CACHE = {};
+  let GLTF_LOADER_P = null;
+  function gltfLoader() {
+    if (!GLTF_LOADER_P) {
+      GLTF_LOADER_P = import('three/addons/loaders/GLTFLoader.js')
+        .then(m => new m.GLTFLoader())
+        .catch(e => { GLTF_LOADER_P = null; throw e; });
+    }
+    return GLTF_LOADER_P;
+  }
+  function loadGLB(file) {
+    if (GLB_CACHE[file]) return Promise.resolve(GLB_CACHE[file]);
+    return gltfLoader().then(loader => new Promise((res, rej) => {
+      loader.load('./assets/models/' + file + '.glb?v=1', g => { GLB_CACHE[file] = g; res(g); }, undefined, rej);
+    }));
+  }
+  function glbify(c, key) { c.glbKey = key; }
+  function glbStart(c) {
+    const key = c.glbKey;
+    if (!key || c.glb || c.glbLoading) return;
+    c.glbLoading = true;
+    const t = GLB_TUNE[key] || {};
+    const file = GLB_FILE[key] || key;
+    loadGLB(file).then(gltf => {
+      if (c.glb) return;
+      const root = gltf.scene.clone(true);
+      const holder = new THREE.Group();
+      holder.add(root);
+      const box = new THREE.Box3().setFromObject(root);
+      const size = box.getSize(new THREE.Vector3());
+      const ctr = box.getCenter(new THREE.Vector3());
+      const span = t.by === 'len' ? Math.max(size.x, size.z) : size.y;
+      const k = (t.size || 1) / Math.max(0.001, span);
+      root.position.set(-ctr.x, -box.min.y, -ctr.z);
+      holder.scale.setScalar(k);
+      holder.rotation.y = t.yaw || 0;
+      holder.userData.k = k;
+      holder.userData.yaw = t.yaw || 0;
+      root.traverse(o => {
+        if (!o.isMesh) return;
+        o.castShadow = true; o.receiveShadow = false; o.frustumCulled = false;
+        const list = Array.isArray(o.material) ? o.material : [o.material];
+        const cloned = list.map(mm => mm ? mm.clone() : mm);
+        o.material = Array.isArray(o.material) ? cloned : cloned[0];
+        cloned.forEach(mm => {
+          if (!mm) return;
+          mm.envMapIntensity = 0.8;
+          if (t.tint) mm.color = new THREE.Color(t.tint);
+          if (key === 'jelly') { mm.transparent = true; mm.opacity = 0.95; mm.side = THREE.DoubleSide; }
+        });
+      });
+      c.group.children.slice().forEach(ch => { if (ch !== holder) ch.visible = false; });
+      c.group.add(holder);
+      c.glb = holder;
+      c.glbPhase = Math.random() * 6.28;
+      c.glbSwim = !!t.swim;
+      c.glbPulse = !!t.pulse;
+      c.pickY = Math.max(c.pickY || 0, (t.size || 1) * 0.42);
+      if (!c.glbSwim) { c.speed = (c.speed || 0.5) * 0.62; c.range = (c.range || 0.8) * 0.85; }
+    }).catch(e => { try { console.warn('GLB 로드 실패 → 기존 모델 유지:', key, e && e.message); } catch (_) {} });
+  }
+  /* 살아있는 느낌 — 숨쉬기 · 물놀이 흔들림 */
+  function glbTick(t) {
+    const cs = S.active && S.active.creatures;
+    if (!cs) return;
+    for (let i = 0; i < cs.length; i++) {
+      const c = cs[i];
+      if (!c.glb) { glbStart(c); continue; }
+      const g = c.glb;
+      const k = g.userData.k || 1, ph = c.glbPhase || 0;
+      if (c.glbSwim) {
+        const b = Math.sin(t * 1.9 + ph);
+        g.rotation.x = Math.sin(t * 1.25 + ph) * 0.06;
+        g.rotation.z = Math.sin(t * 1.7 + ph) * 0.10;
+        g.rotation.y = (g.userData.yaw || 0) + Math.sin(t * 2.1 + ph) * 0.055;
+        if (c.glbPulse) {
+          const p = 1 + Math.sin(t * 2.0 + ph) * 0.07;
+          g.scale.set(k * p, k / p, k * p);
+        } else {
+          g.scale.setScalar(k * (1 + b * 0.012));
+        }
+      } else {
+        g.rotation.z = Math.sin(t * 1.55 + ph) * 0.018;
+        g.rotation.x = Math.sin(t * 1.1 + ph) * 0.012;
+        const b = Math.sin(t * 2.3 + ph) * 0.009;
+        g.scale.set(k, k * (1 + b), k);
+      }
+    }
+  }
 
   /* ---------- 사운드 (Web Audio 합성) ---------- */
   let AC = null;
@@ -1425,6 +1548,7 @@ function boot() {
       sc.add(c.group); creatures.push(c);
       shadowAll(c.group);
       sc.add(contactShadow(c.rad, c.shadowOp != null ? c.shadowOp : 0.24));
+      if (GLB_FILE[c.id]) glbify(c, c.id);
       return c;
     }
 
@@ -2302,6 +2426,7 @@ function boot() {
     /* --- 업데이트 --- */
     function update(t, dt) {
       creatures.forEach(c => c.update(t, dt));
+      glbTick(t);
       updateSnack(dt);
       hearts.update(dt);
       clouds.forEach((c, i) => { c.position.x += Math.sin(t * 0.05 + i) * dt * 0.5; c.rotation.y += dt * 0.01; });
@@ -2447,6 +2572,7 @@ function boot() {
       if (!c.group && c.g) c.group = c.g;
       c.group.userData.creature = c;
       sc.add(c.group); creatures.push(c);
+      if (GLB_FILE[c.id]) glbify(c, c.id);
       return c;
     }
     function orbit(c, o, dt) {
@@ -3006,6 +3132,7 @@ function boot() {
     let bubbleClock = 0;
     function update(t, dt) {
       creatures.forEach(c => c.update(t, dt));
+      glbTick(t);
       rays.forEach((r, i) => { r.material.opacity = 0.03 + Math.abs(Math.sin(t * 0.35 + i * 0.7)) * 0.04; });
       weeds.forEach(w => w.blades.forEach((b, i) => {
         b.m.rotation.z = Math.sin(t * 0.9 + b.ph + i) * 0.13;
