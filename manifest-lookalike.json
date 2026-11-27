@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/lookalike.html",
+  "name": "내 닮은꼴 동물상 · 연예인 찾기",
+  "short_name": "닮은꼴 찾기",
+  "description": "내 사진 한 장으로 닮은 동물상 TOP 3와 닮은꼴 연예인을 찾아주는 재미 테스트 — 사진은 기기 안에서만 분석",
+  "start_url": "./lookalike.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8FC",
+  "theme_color": "#7C4DFF",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/lookalike/lookalike-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/lookalike/lookalike-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/lookalike/lookalike-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

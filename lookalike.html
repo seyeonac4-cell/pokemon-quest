@@ -1,0 +1,1707 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7C4DFF">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="내 사진 한 장으로 닮은 동물상 TOP 3와 닮은꼴 연예인을 찾아주는 재미 테스트 — 사진은 기기 안에서만 분석">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="닮은꼴 찾기">
+<meta name="application-name" content="닮은꼴 찾기">
+<title>🦊 내 닮은꼴 동물상 · 연예인 찾기</title>
+<script>
+window.__errs = [];
+addEventListener('error', function (e) { try { __errs.push(String(e.message || (e.error && e.error.message) || e.type) + ' @' + (e.filename || '') + ':' + (e.lineno || '')); } catch (_) {} });
+addEventListener('unhandledrejection', function (e) { try { __errs.push('rejection: ' + String(e.reason && e.reason.message || e.reason)); } catch (_) {} });
+</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/lookalike/lookalike-icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/lookalike/lookalike-icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/lookalike/lookalike-icon-180.png">
+<link rel="manifest" href="./manifest-lookalike.json">
+<style>
+:root{
+  --ink:#221B2E; --ink2:#5B5270; --muted:#8B839C;
+  --vio:#7C4DFF; --vio-d:#5B2AE0; --vio-s:#F1EBFF; --vio-l:#DCCFFF;
+  --coral:#FF5E6C; --coral-d:#F43F5E; --coral-s:#FFEDEF; --coral-l:#FFD3D8;
+  --pink:#FF7EB6; --mint:#21C7A8;
+  --line:#EEE9F6; --paper:#FFFFFF; --soft:#FBF8FF;
+  --shadow:0 12px 30px rgba(83,58,140,.10), 0 2px 6px rgba(83,58,140,.05);
+  --shadow-lg:0 22px 54px rgba(83,58,140,.16), 0 4px 12px rgba(83,58,140,.06);
+  --r:26px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); line-height:1.5; word-break:keep-all;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,
+    "Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+  min-height:100vh; padding:calc(14px + env(safe-area-inset-top)) 12px calc(46px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(720px 480px at 4% -8%, #FFE1EC 0%, rgba(255,225,236,0) 62%),
+    radial-gradient(760px 520px at 100% -2%, #E6DCFF 0%, rgba(230,220,255,0) 60%),
+    radial-gradient(620px 520px at 50% 108%, #FFE7DA 0%, rgba(255,231,218,0) 66%),
+    linear-gradient(180deg,#FFF8FC 0%,#F8F3FF 52%,#FFF6FB 100%);
+  background-attachment:fixed;
+}
+.wrap{max-width:600px;margin:0 auto}
+.card{background:var(--paper); border:1px solid #fff; border-radius:var(--r); box-shadow:var(--shadow); padding:18px 16px}
+
+/* ---------- 히어로 ---------- */
+.hero{text-align:center; padding:6px 6px 2px}
+.kicker{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800;
+  color:#8A3FA8; background:linear-gradient(135deg,#FBE9FF,#EDE4FF); border:1px solid #EBD6FB;
+  border-radius:999px; padding:6px 13px; letter-spacing:.01em}
+h1{margin:13px 0 9px; font-size:clamp(27px,7.6vw,35px); font-weight:900; letter-spacing:-.04em; line-height:1.22}
+h1 em{font-style:normal; background:linear-gradient(135deg,#7C4DFF,#FF5E6C); -webkit-background-clip:text; background-clip:text; color:transparent}
+.lead{margin:0 auto; max-width:29em; color:var(--ink2); font-size:14.5px; line-height:1.62}
+.lead b{color:var(--ink)}
+
+/* ---------- 단계 공통 ---------- */
+.sec{margin-top:13px}
+.sec-head{display:flex; align-items:center; gap:8px; margin:0 4px 10px}
+.sec-head h2{margin:0; font-size:16px; font-weight:900; letter-spacing:-.02em}
+.sec-head .step{font-size:11.5px; font-weight:900; color:#fff; background:linear-gradient(135deg,#8B5CF6,#FF5E6C);
+  border-radius:999px; padding:3px 9px}
+.sec-head .tail{margin-left:auto; font-size:11.5px; font-weight:800; color:var(--muted)}
+
+/* ---------- 성별 ---------- */
+.gender{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+.gbtn{position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; padding:13px 8px 12px;
+  border-radius:20px; border:2px solid var(--line); background:#FCFAFF; cursor:pointer; font-family:inherit;
+  transition:transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease}
+.gbtn .em{font-size:26px; line-height:1.1}
+.gbtn .tx{font-size:14px; font-weight:900; color:var(--ink2)}
+.gbtn .sb{font-size:10.5px; font-weight:800; color:#A79FB8}
+.gbtn:active{transform:scale(.98)}
+.gbtn.on{border-color:#C9B4FF; background:linear-gradient(160deg,#FFF6FF,#F0E9FF); box-shadow:0 8px 20px rgba(124,77,255,.14)}
+.gbtn.on .tx{color:var(--vio-d)}
+.gbtn.on .sb{color:#8A6FD8}
+.gbtn.on::after{content:"✓"; position:absolute; top:7px; right:9px; width:18px; height:18px; border-radius:50%;
+  background:linear-gradient(135deg,#8B5CF6,#FF5E6C); color:#fff; font-size:11px; font-weight:900;
+  display:flex; align-items:center; justify-content:center}
+
+/* ---------- 사진 ---------- */
+.drop{position:relative; width:100%; border-radius:24px; border:2px dashed #E3D6F7; background:
+  radial-gradient(300px 160px at 50% 0%, #FFF3FB, rgba(255,243,251,0)), #FCFAFF;
+  padding:22px 16px; cursor:pointer; font-family:inherit; color:inherit; display:block; text-align:center;
+  transition:transform .12s ease, border-color .15s ease}
+.drop:active{transform:scale(.995)}
+.drop .big{font-size:44px; line-height:1; filter:saturate(1.05)}
+.drop .t1{margin-top:9px; font-size:15.5px; font-weight:900; color:var(--ink)}
+.drop .t2{margin-top:3px; font-size:12px; font-weight:800; color:#A396BB}
+.drop.has{padding:0; border-style:solid; border-color:#E7DAF9; overflow:hidden; background:#F4EFFC}
+.drop.has .ph{display:block}
+.drop .ph{display:none; width:100%; height:min(52vh,330px); object-fit:cover; object-position:center 32%}
+.drop .empty{display:flex; flex-direction:column; align-items:center; gap:3px}
+.drop.has .empty{display:none}
+.drop .edit{position:absolute; right:10px; bottom:10px; z-index:2; font-size:11.5px; font-weight:900; color:#fff;
+  background:rgba(34,27,46,.62); backdrop-filter:blur(6px); border-radius:999px; padding:6px 12px; display:none}
+.drop.has .edit{display:block}
+.drop .okring{position:absolute; left:10px; top:10px; z-index:2; width:26px; height:26px; border-radius:50%;
+  background:#21C7A8; color:#fff; font-size:15px; font-weight:900; display:none; align-items:center; justify-content:center}
+.drop.has .okring{display:flex}
+#file{display:none}
+
+.samples{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:9px}
+.sbtn{display:flex; align-items:center; gap:9px; padding:8px; border-radius:18px; border:1px solid var(--line);
+  background:#fff; cursor:pointer; font-family:inherit; color:inherit; text-align:left; box-shadow:0 3px 10px rgba(83,58,140,.05)}
+.sbtn:active{background:#FBF6FF}
+.sbtn img{width:42px; height:42px; border-radius:50%; object-fit:cover; object-position:center 28%; flex:0 0 auto; border:2px solid #F3EAFF}
+.sbtn .st{min-width:0}
+.sbtn .n{display:block; font-size:12.5px; font-weight:900; color:var(--ink)}
+.sbtn .d{display:block; font-size:10.5px; font-weight:800; color:#A396BB; margin-top:1px}
+.sbtn.on{border-color:#C9B4FF; background:#F8F3FF}
+
+.privacy{margin:10px 3px 0; font-size:11.5px; color:#A396BB; display:flex; gap:6px; align-items:flex-start; line-height:1.45}
+
+.cta{margin-top:13px; width:100%; border:0; border-radius:20px; padding:17px; font-size:17px; font-weight:900; color:#fff;
+  font-family:inherit; cursor:pointer; letter-spacing:-.02em;
+  background:linear-gradient(135deg,#8B5CF6 0%,#A855F7 34%,#FF5E6C 100%);
+  box-shadow:0 14px 30px rgba(163,77,255,.30), inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .12s ease, filter .15s ease}
+.cta:active{transform:translateY(1px) scale(.996)}
+.cta[disabled]{background:#EDE8F5; color:#B4ABC4; box-shadow:none; cursor:not-allowed}
+.quota-row{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:9px; font-size:12px; font-weight:800; color:#8B839C}
+.quota-chip{background:var(--vio-s); border:1px solid #E4D8FF; border-radius:999px; padding:4px 11px; font-weight:900; color:#6B3BE0}
+
+/* ---------- 진행 ---------- */
+#loading{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  background:rgba(252,247,255,.94); backdrop-filter:blur(7px); padding:22px}
+.loader{width:100%; max-width:330px; text-align:center}
+.scan{width:152px; height:152px; margin:0 auto 16px; border-radius:50%; position:relative; overflow:hidden;
+  background:radial-gradient(circle at 50% 34%,#FFE6F2,#EADFFF 62%,#E3D6FF 100%);
+  box-shadow:0 18px 40px rgba(124,77,255,.24)}
+.scan::after{content:"🦊"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:62px}
+.scan .line{position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,#FF5E6C,transparent);
+  animation:scanline 1.25s ease-in-out infinite}
+@keyframes scanline{0%{top:12%}50%{top:84%}100%{top:12%}}
+.load-line{font-size:15.5px; font-weight:900; color:#3B2F4A; min-height:1.4em}
+.load-sub{margin-top:5px; font-size:12.5px; color:#9A90AC; font-weight:800}
+.bar{height:9px; border-radius:999px; background:#EDE6F7; margin-top:14px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; border-radius:999px;
+  background:linear-gradient(90deg,#C4A7FF,#8B5CF6,#FF5E6C); transition:width .3s ease}
+
+/* ---------- 결과 ---------- */
+#result{margin-top:16px; scroll-margin-top:10px}
+.rcard{padding:20px 16px 18px; background:radial-gradient(420px 220px at 50% -10%,#F8EEFF 0%,rgba(248,238,255,0) 70%),#fff}
+.winner{display:flex; flex-direction:column; align-items:center; text-align:center}
+.badge-top{font-size:11.5px; font-weight:900; letter-spacing:.02em; color:#fff;
+  background:linear-gradient(135deg,#8B5CF6,#FF5E6C); border-radius:999px; padding:4px 12px}
+.ring-wrap{position:relative; margin:14px 0 4px; width:170px; height:170px}
+.ring-wrap svg.ring{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg)}
+.ring-wrap .facebox{position:absolute; inset:15px; border-radius:50%; background:
+  radial-gradient(circle at 50% 30%,#FFF6FE,#F0E6FF 70%,#E7DBFF 100%); display:flex; align-items:center; justify-content:center;
+  box-shadow:inset 0 0 0 2px #fff,0 12px 28px rgba(124,77,255,.16); overflow:hidden}
+.ring-wrap .facebox svg{width:78%; height:78%}
+.ring-wrap .pctpill{position:absolute; bottom:-2px; left:50%; transform:translateX(-50%);
+  background:#fff; border-radius:999px; padding:4px 13px; font-size:14px; font-weight:900; color:var(--coral-d);
+  box-shadow:0 6px 16px rgba(83,58,140,.16)}
+.w-name{margin-top:14px; font-size:26px; font-weight:900; letter-spacing:-.04em}
+.w-name span{background:linear-gradient(135deg,#7C4DFF,#FF5E6C); -webkit-background-clip:text; background-clip:text; color:transparent}
+.w-desc{margin:6px 3px 0; font-size:13px; font-weight:800; color:#7C7090; line-height:1.6}
+.w-tags{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:11px}
+.w-tags i{font-style:normal; font-size:12px; font-weight:900; color:#7A45C9; background:#F4EDFF; border:1px solid #E7DBFF;
+  border-radius:999px; padding:5px 11px}
+
+.toplist{margin-top:16px; display:grid; gap:8px}
+.trow{display:flex; align-items:center; gap:10px; background:#FCFAFF; border:1px solid #F1EAFB;
+  border-radius:18px; padding:9px 12px}
+.trow.first{background:linear-gradient(135deg,#FFF4F7,#F6EEFF); border-color:#F0DCEC; box-shadow:0 6px 16px rgba(124,77,255,.08)}
+.trow .av{width:42px; height:42px; flex:0 0 auto; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 9px rgba(83,58,140,.10); overflow:hidden}
+.trow .av svg{width:86%; height:86%}
+.trow .mid{flex:1; min-width:0; display:block}
+.trow .nm{display:flex; align-items:baseline; gap:6px; line-height:1.25}
+.trow .nm b{font-size:14px; font-weight:900}
+.trow .nm .rank{font-size:10.5px; font-weight:900; color:#A396BB}
+.trow .pbar{display:block; height:9px; border-radius:999px; background:#EFE8F9; overflow:hidden; margin-top:6px}
+.trow .pbar i{display:block; height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#C0A2FF,#8B5CF6);
+  transition:width .8s cubic-bezier(.22,1,.36,1)}
+.trow.first .pbar i{background:linear-gradient(90deg,#FF9BB0,#FF5E6C)}
+.trow .pv{font-size:15px; font-weight:900; color:#6B3BE0; min-width:52px; text-align:right; font-variant-numeric:tabular-nums}
+.trow.first .pv{color:var(--coral-d)}
+
+.all8{margin-top:12px}
+.all8 .lb{font-size:11.5px; font-weight:900; color:#A396BB; margin:0 2px 7px}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip8{display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:900; color:#6E6383;
+  background:#FBF8FF; border:1px solid #F0EAFA; border-radius:999px; padding:4px 9px}
+.chip8 svg{width:17px; height:17px}
+.chip8 b{color:#8A79A6; font-weight:900}
+
+.celeb-card{margin-top:13px}
+.celeb{display:flex; align-items:center; gap:11px; padding:12px; border-radius:20px; border:1px solid #F1EAFB;
+  background:#FCFAFF; margin-bottom:8px}
+.celeb:last-child{margin-bottom:0}
+.celeb .av{width:52px; height:52px; flex:0 0 auto; border-radius:50%; color:#fff; font-size:19px; font-weight:900;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(124,77,255,.20)}
+.celeb .mid{flex:1; min-width:0; display:block}
+.celeb .nm{display:block; font-size:15px; font-weight:900; letter-spacing:-.02em}
+.celeb .nm span{font-size:11px; font-weight:800; color:#A396BB; margin-left:5px}
+.celeb .kw{display:flex; flex-wrap:wrap; gap:4px; margin-top:5px}
+.celeb .kw i{font-style:normal; font-size:11px; font-weight:800; color:#7A6A92; background:#F4EFFF; border-radius:999px; padding:3px 8px}
+.celeb .sync{text-align:right; flex:0 0 auto}
+.celeb .sync b{display:block; font-size:19px; font-weight:900; color:#6B3BE0; letter-spacing:-.03em}
+.celeb .sync span{display:block; font-size:10px; font-weight:900; color:#A396BB}
+
+.charm{display:flex; flex-wrap:wrap; gap:7px}
+.charm i{font-style:normal; font-size:12.5px; font-weight:900; color:#B23E70; background:linear-gradient(135deg,#FFF0F5,#FFE8F6);
+  border:1px solid #FFDAE9; border-radius:999px; padding:6px 12px}
+
+.verdict{margin:13px 0 0; padding:14px; border-radius:18px; background:linear-gradient(135deg,#FBF5FF,#FFF3F7);
+  border:1px dashed #EBD9F5; font-size:14px; font-weight:800; color:#5C4A6E; line-height:1.65; text-align:center}
+.verdict b{color:var(--coral-d)}
+.verdict b.v{color:var(--vio-d)}
+
+.acts{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:13px}
+.btn2{border:0; border-radius:18px; padding:15px 10px; font-family:inherit; font-size:14px; font-weight:900; cursor:pointer}
+.btn2.pri{color:#fff; background:linear-gradient(135deg,#8B5CF6,#FF5E6C); box-shadow:0 12px 26px rgba(163,77,255,.26)}
+.btn2.gho{color:#6E6383; background:#F6F1FE; border:1px solid #EADFFB}
+.btn2:active{transform:translateY(1px)}
+.share-note{margin-top:9px; font-size:11px; color:#B4ABC4; text-align:center; font-weight:700}
+
+/* ---------- 광고 모달 ---------- */
+#adModal{position:fixed; inset:0; z-index:70; display:flex; align-items:flex-end; justify-content:center;
+  background:rgba(30,20,45,.46); backdrop-filter:blur(3px); padding:0 0 env(safe-area-inset-bottom)}
+.sheet{width:100%; max-width:600px; background:#fff; border-radius:28px 28px 0 0; padding:22px 20px 26px;
+  animation:up .26s cubic-bezier(.22,1,.36,1)}
+@keyframes up{from{transform:translateY(24px); opacity:.5}to{transform:none; opacity:1}}
+.sheet .hd{text-align:center}
+.sheet .icn{font-size:40px; line-height:1}
+.sheet h3{margin:9px 0 6px; font-size:19px; font-weight:900; letter-spacing:-.03em}
+.sheet p{margin:0; font-size:13px; font-weight:800; color:#8B839C; line-height:1.6}
+.sheet .adbox{margin:15px 0 12px; border-radius:18px; background:#F7F3FF; border:1px dashed #E0D3F8;
+  padding:16px; text-align:center}
+.sheet .adbox .ttl{font-size:12px; font-weight:900; color:#8A79A6}
+.sheet .adbar{height:8px; border-radius:999px; background:#E7DFF5; overflow:hidden; margin-top:10px}
+.sheet .adbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#A78BFA,#FF5E6C); transition:width .9s linear}
+.sheet .tline{margin-top:8px; font-size:11.5px; font-weight:900; color:#A396BB}
+.sheet .row{display:grid; grid-template-columns:1fr 1.5fr; gap:9px; margin-top:6px}
+.sheet .mini{border:0; border-radius:16px; padding:14px; font-family:inherit; font-size:14px; font-weight:900; cursor:pointer}
+.sheet .mini.c{background:#F4F0FB; color:#7A6A92}
+.sheet .mini.g{background:linear-gradient(135deg,#8B5CF6,#FF5E6C); color:#fff; box-shadow:0 10px 22px rgba(163,77,255,.24)}
+.sheet .mini[disabled]{background:#EDE8F5; color:#B4ABC4; box-shadow:none; cursor:not-allowed}
+
+#toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,20px); z-index:90;
+  background:rgba(34,27,46,.92); color:#fff; font-size:13px; font-weight:800; padding:11px 18px; border-radius:999px;
+  opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; max-width:88vw; text-align:center}
+#toast.show{opacity:1; transform:translate(-50%,0)}
+
+.foot{margin:20px 4px 0; text-align:center; font-size:11px; font-weight:700; color:#B4ABC4; line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="kicker">✨ 재미로 보는 얼굴 테스트</span>
+    <h1>내 닮은꼴 <em>동물상</em><br>& <em>연예인</em> 찾기</h1>
+    <p class="lead">사진 한 장만 올리면 <b>닮은 동물상 TOP 3</b>랑 <b>닮은꼴 연예인</b>을 찾아드려요. 사진은 기기 안에서만 분석하고 어디에도 저장하지 않아요.</p>
+  </header>
+
+  <section class="sec card">
+    <div class="sec-head"><span class="step">1</span><h2>누구 버전으로 볼까요?</h2><span class="tail">연예인 매칭 기준</span></div>
+    <div class="gender" role="group" aria-label="성별 선택">
+      <button class="gbtn on" type="button" data-g="f" aria-pressed="true">
+        <span class="em">👩</span><span class="tx">여자 버전</span><span class="sb">배우 · 아이돌</span>
+      </button>
+      <button class="gbtn" type="button" data-g="m" aria-pressed="false">
+        <span class="em">👨</span><span class="tx">남자 버전</span><span class="sb">배우 · 아이돌</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="sec card">
+    <div class="sec-head"><span class="step">2</span><h2>내 사진 올리기</h2><span class="tail" id="quotaTail"></span></div>
+
+    <button class="drop" type="button" id="drop" aria-label="사진 올리기">
+      <span class="okring">✓</span>
+      <img class="ph" id="ph" alt="올린 사진 미리보기">
+      <span class="empty">
+        <span class="big">📷</span>
+        <span class="t1">사진을 골라주세요</span>
+        <span class="t2">정면 · 얼굴이 크게 나온 사진이 제일 잘 맞아요</span>
+      </span>
+      <span class="edit">사진 바꾸기</span>
+    </button>
+    <input type="file" id="file" accept="image/*">
+
+    <div class="samples">
+      <button class="sbtn" type="button" data-sample="a">
+        <img src="./assets/lookalike/sample-a-thumb.jpg" alt="샘플 얼굴 A">
+        <span class="st"><span class="n">샘플 A</span><span class="d">여자 · 테스트용</span></span>
+      </button>
+      <button class="sbtn" type="button" data-sample="b">
+        <img src="./assets/lookalike/sample-b-thumb.jpg" alt="샘플 얼굴 B">
+        <span class="st"><span class="n">샘플 B</span><span class="d">남자 · 테스트용</span></span>
+      </button>
+    </div>
+
+    <p class="privacy">🔒 <span>사진은 서버로 보내지 않고 이 브라우저 안에서만 분석해요. 결과도 저장 요청을 눌렀을 때만 기기에 저장돼요.</span></p>
+
+    <button class="cta" type="button" id="go" disabled>닮은꼴 찾기 ✨</button>
+    <div class="quota-row"><span class="quota-chip" id="quotaChip">오늘 무료 3회</span><span id="quotaNote">사진을 올리면 시작!</span></div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="card rcard">
+      <div class="winner">
+        <span class="badge-top">내 대표 동물상</span>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="53" fill="none" stroke="#F0E7FB" stroke-width="9"/>
+            <circle id="ringArc" cx="60" cy="60" r="53" fill="none" stroke="url(#ringGrad)" stroke-width="9"
+                    stroke-linecap="round" stroke-dasharray="333" stroke-dashoffset="333"/>
+            <defs>
+              <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#FF5E6C"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="facebox" id="facebox"></div>
+          <div class="pctpill" id="winPct">0%</div>
+        </div>
+        <div class="w-name" id="winName">동물상</div>
+        <p class="w-desc" id="winDesc"></p>
+        <div class="w-tags" id="winTags"></div>
+      </div>
+
+      <div class="toplist" id="topList"></div>
+
+      <div class="all8">
+        <p class="lb">8종 전체 보기</p>
+        <div class="chips" id="allChips"></div>
+      </div>
+
+      <div class="verdict" id="verdict"></div>
+    </div>
+
+    <div class="card celeb-card">
+      <div class="sec-head" style="margin:2px 2px 12px"><h2>닮은꼴 연예인</h2><span class="tail">얼굴형 · 눈매 · 분위기 기준</span></div>
+      <div id="celebList"></div>
+      <div class="sec-head" style="margin:15px 2px 9px"><h2>내 매력 포인트</h2></div>
+      <div class="charm" id="charmChips"></div>
+    </div>
+
+    <div class="acts">
+      <button class="btn2 pri" type="button" id="saveCard">📸 결과 카드 저장</button>
+      <button class="btn2 gho" type="button" id="againBtn">🔁 다른 사진으로</button>
+    </div>
+    <button class="btn2 gho" type="button" id="shareCard" hidden style="width:100%;margin-top:9px">💌 카드 공유하기</button>
+    <p class="share-note">결과는 재미로 보는 거예요 · 사진은 이 기기 밖으로 나가지 않아요</p>
+  </section>
+
+  <p class="foot">닮은꼴 연구소 · 얼굴은 브라우저 안에서만 분석해요<br>재미로 보는 테스트이고, 실제 얼굴과 100% 같지 않을 수 있어요 😊</p>
+</div>
+
+<div id="loading" hidden>
+  <div class="loader">
+    <div class="scan"><span class="line"></span></div>
+    <div class="load-line" id="loadLine">사진을 읽는 중…</div>
+    <div class="load-sub" id="loadSub">얼굴을 찾고 있어요</div>
+    <div class="bar"><i id="loadBar"></i></div>
+  </div>
+</div>
+
+<div id="adModal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="adTitle">
+    <div class="hd">
+      <div class="icn">🎬</div>
+      <h3 id="adTitle">오늘 무료 분석을 다 썼어요</h3>
+      <p>짧은 광고를 보면 <b>닮은꼴 분석 2회</b>가 바로 충전돼요.</p>
+    </div>
+    <div class="adbox">
+      <div class="ttl">광고 재생 중…</div>
+      <div class="adbar"><i id="adBar"></i></div>
+      <div class="tline" id="adTimer">5초 뒤 충전 버튼이 열려요</div>
+    </div>
+    <div class="row">
+      <button class="mini c" type="button" id="adCancel">다음에 할게요</button>
+      <button class="mini g" type="button" id="adClaim" disabled>+2회 충전하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+   *  0. 공통
+   * ========================================================= */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var N = 128;              // 얼굴 정규화 크기
+  var WORK_MAX = 340;       // 분석용 축소 크기
+  var FREE_TOTAL = 3;       // 하루 무료 횟수
+  var AD_BONUS = 2;         // 광고 1회당 충전
+  var QKEY = 'lookalikeQuotaV1';
+
+  function toast(msg) {
+    var el = $('#toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.classList.remove('show'); }, 2300);
+  }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function round(v) { return Math.round(v); }
+
+  /* =========================================================
+   *  1. 동물상 8종 데이터 + 캐릭터 SVG
+   * ========================================================= */
+  var ANIMALS = [
+    { id: 'dog', name: '강아지상', emoji: '🐶',
+      desc: '동글동글 내려간 눈매에 부드러운 볼살 — 옆에 있으면 마음이 편해지는 얼굴이에요.',
+      charms: ['부드러운 눈웃음', '친근한 볼살', '다정한 인상'] },
+    { id: 'cat', name: '고양이상', emoji: '🐱',
+      desc: '끝이 살짝 올라간 눈꼬리와 갸름한 턱선 — 도도한데 자꾸 보게 되는 매력이 있어요.',
+      charms: ['날렵한 눈꼬리', '시크한 분위기', '갸름한 턱선'] },
+    { id: 'rabbit', name: '토끼상', emoji: '🐰',
+      desc: '동그랗고 맑은 눈에 작은 입 — 순하고 귀여운 기운이 얼굴에서 그대로 나요.',
+      charms: ['맑은 눈망울', '작고 오뚝한 입', '순한 인상'] },
+    { id: 'fox', name: '여우상', emoji: '🦊',
+      desc: '날카롭게 뻗은 눈매에 V자 턱선 — 한 번 보면 잊히지 않는 치명적인 분위기예요.',
+      charms: ['치명적인 눈매', '샤프한 턱선', '묘한 분위기'] },
+    { id: 'deer', name: '사슴상', emoji: '🦌',
+      desc: '크고 맑은 눈에 긴 얼굴형 — 조용하고 우아한, 맑은 물 같은 분위기예요.',
+      charms: ['맑은 사슴눈', '우아한 선', '청초한 분위기'] },
+    { id: 'bear', name: '곰상', emoji: '🐻',
+      desc: '넓고 든든한 얼굴형에 포근한 눈 — 믿음이 가고 안기는 듯한 매력이 있어요.',
+      charms: ['든든한 얼굴형', '포근한 눈', '믿음 가는 인상'] },
+    { id: 'dino', name: '공룡상', emoji: '🦖',
+      desc: '길고 각진 얼굴에 또렷한 이목구비 — 카리스마가 흘러넘치는 강단 있는 얼굴이에요.',
+      charms: ['강한 이목구비', '각진 턱선', '카리스마'] },
+    { id: 'hamster', name: '햄스터상', emoji: '🐹',
+      desc: '동글동글 볼에 작은 눈·코 — 보고 있으면 미소가 번지는 귀여움이 폭발해요.',
+      charms: ['복슬복슬 볼', '작은 이목구비', '말랑한 매력'] }
+  ];
+  var ANIMAL_BY_ID = {};
+  ANIMALS.forEach(function (a) { ANIMAL_BY_ID[a.id] = a; });
+
+  // 얼굴 목표값: [elong, vline, full, eyeBig, eyeSlant, eyeRound, eyeSpace, mouthW, soft]
+  var IDEAL = {
+    dog:     [0.42, 0.30, 0.68, 0.58, 0.22, 0.70, 0.50, 0.62, 0.66],
+    cat:     [0.48, 0.82, 0.32, 0.46, 0.84, 0.26, 0.44, 0.40, 0.42],
+    rabbit:  [0.66, 0.52, 0.40, 0.86, 0.36, 0.82, 0.62, 0.30, 0.64],
+    fox:     [0.70, 0.95, 0.18, 0.40, 0.92, 0.18, 0.36, 0.38, 0.30],
+    deer:    [0.82, 0.58, 0.34, 0.82, 0.48, 0.74, 0.72, 0.42, 0.58],
+    bear:    [0.18, 0.12, 0.96, 0.26, 0.24, 0.52, 0.56, 0.68, 0.46],
+    dino:    [0.80, 0.44, 0.14, 0.22, 0.58, 0.30, 0.28, 0.78, 0.22],
+    hamster: [0.12, 0.26, 0.98, 0.55, 0.20, 0.78, 0.34, 0.26, 0.80]
+  };
+  var W8 = [1.45, 1.35, 1.15, 1.05, 1.30, 0.95, 0.60, 0.35, 0.30];
+
+  function svgAnimal(id) {
+    var S = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">';
+    if (id === 'dog') {
+      S += '<ellipse cx="20" cy="47" rx="12" ry="19" fill="#C08552" transform="rotate(-16 20 47)"/>' +
+           '<ellipse cx="80" cy="47" rx="12" ry="19" fill="#C08552" transform="rotate(16 80 47)"/>' +
+           '<circle cx="50" cy="55" r="28" fill="#E8B27C"/>' +
+           '<ellipse cx="50" cy="68" rx="18" ry="13" fill="#FFF3E4"/>' +
+           '<circle cx="40" cy="51" r="5.4" fill="#3A2A20"/><circle cx="38.4" cy="49.2" r="1.8" fill="#fff"/>' +
+           '<circle cx="60" cy="51" r="5.4" fill="#3A2A20"/><circle cx="58.4" cy="49.2" r="1.8" fill="#fff"/>' +
+           '<ellipse cx="50" cy="63" rx="6.2" ry="4.6" fill="#3A2A20"/>' +
+           '<path d="M50 68v4M50 72q-6 5-10 1M50 72q6 5 10 1" stroke="#3A2A20" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+           '<ellipse cx="50" cy="79" rx="4.6" ry="3.6" fill="#FF8FA3"/>';
+    } else if (id === 'cat') {
+      S += '<polygon points="23,48 26,14 52,32" fill="#C9B6D8"/><polygon points="77,48 74,14 48,32" fill="#C9B6D8"/>' +
+           '<polygon points="28,43 30,23 45,34" fill="#F7CFDD"/><polygon points="72,43 70,23 55,34" fill="#F7CFDD"/>' +
+           '<circle cx="50" cy="57" r="28" fill="#DACBE6"/>' +
+           '<ellipse cx="39" cy="54" rx="6.6" ry="4.6" fill="#F5D060"/><ellipse cx="39" cy="54" rx="1.7" ry="3.9" fill="#2B2430"/>' +
+           '<ellipse cx="61" cy="54" rx="6.6" ry="4.6" fill="#F5D060"/><ellipse cx="61" cy="54" rx="1.7" ry="3.9" fill="#2B2430"/>' +
+           '<path d="M50 63l4.6 0-2.3 4.2z" fill="#F08CA0"/>' +
+           '<path d="M50 67v3.4M50 70.4q-4.6 4.4-8.6 0.6M50 70.4q4.6 4.4 8.6 0.6" stroke="#5B4A66" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+           '<path d="M28 62h-9M28 68h-11M72 62h9M72 68h11" stroke="#B7A4C6" stroke-width="1.8" stroke-linecap="round"/>';
+    } else if (id === 'rabbit') {
+      S += '<ellipse cx="37" cy="33" rx="8.2" ry="23" fill="#F6F1FA" transform="rotate(-7 37 33)"/>' +
+           '<ellipse cx="37" cy="33" rx="4" ry="16" fill="#F8C6D8" transform="rotate(-7 37 33)"/>' +
+           '<ellipse cx="63" cy="33" rx="8.2" ry="23" fill="#F6F1FA" transform="rotate(7 63 33)"/>' +
+           '<ellipse cx="63" cy="33" rx="4" ry="16" fill="#F8C6D8" transform="rotate(7 63 33)"/>' +
+           '<circle cx="50" cy="59" r="27" fill="#FCF8FE" stroke="#EFE6F7" stroke-width="1.5"/>' +
+           '<circle cx="39" cy="55" r="5.6" fill="#4A3B52"/><circle cx="37.4" cy="53" r="2" fill="#fff"/>' +
+           '<circle cx="61" cy="55" r="5.6" fill="#4A3B52"/><circle cx="59.4" cy="53" r="2" fill="#fff"/>' +
+           '<circle cx="34" cy="65" r="4.2" fill="#FFD7E4" opacity=".85"/><circle cx="66" cy="65" r="4.2" fill="#FFD7E4" opacity=".85"/>' +
+           '<path d="M50 62l3.4 0-1.7 3.4z" fill="#F58BA6"/>' +
+           '<path d="M50 65.4v3M50 68.4q-3.6 3.4-6.4 0.4M50 68.4q3.6 3.4 6.4 0.4" stroke="#8E7C97" stroke-width="1.9" fill="none" stroke-linecap="round"/>';
+    } else if (id === 'fox') {
+      S += '<polygon points="16,54 21,11 49,31" fill="#F2913F"/><polygon points="84,54 79,11 51,31" fill="#F2913F"/>' +
+           '<polygon points="23,47 26,21 42,33" fill="#4A2E22"/><polygon points="77,47 74,21 58,33" fill="#4A2E22"/>' +
+           '<circle cx="50" cy="56" r="28" fill="#F79A4A"/>' +
+           '<path d="M50 47c-9 0-17 6-17 15 0 10 7 17 17 17s17-7 17-17c0-9-8-15-17-15z" fill="#FFF4E8"/>' +
+           '<path d="M33 51q6-5 12 0" stroke="#3A2A20" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+           '<path d="M55 51q6-5 12 0" stroke="#3A2A20" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+           '<ellipse cx="50" cy="66" rx="4.4" ry="3.4" fill="#3A2A20"/>' +
+           '<path d="M50 69.4v2.6M50 72q-4 3.4-7 0.4M50 72q4 3.4 7 0.4" stroke="#6B5244" stroke-width="1.9" fill="none" stroke-linecap="round"/>';
+    } else if (id === 'deer') {
+      S += '<path d="M35 27q-7-9 1-16M37 22q-10-3-12-10M65 27q7-9-1-16M63 22q10-3 12-10" stroke="#B07F52" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+           '<ellipse cx="19" cy="47" rx="9" ry="6" fill="#D9B48C" transform="rotate(-22 19 47)"/>' +
+           '<ellipse cx="81" cy="47" rx="9" ry="6" fill="#D9B48C" transform="rotate(22 81 47)"/>' +
+           '<ellipse cx="50" cy="58" rx="25" ry="28" fill="#E7C7A0"/>' +
+           '<ellipse cx="50" cy="74" rx="12" ry="9" fill="#FBF0E0"/>' +
+           '<circle cx="40" cy="54" r="5.6" fill="#3B2A20"/><circle cx="38.4" cy="52" r="1.9" fill="#fff"/>' +
+           '<circle cx="60" cy="54" r="5.6" fill="#3B2A20"/><circle cx="58.4" cy="52" r="1.9" fill="#fff"/>' +
+           '<ellipse cx="50" cy="70" rx="5" ry="3.8" fill="#4A3527"/>' +
+           '<path d="M50 73.8v2.4M50 76.2q-4 3-7 0.4M50 76.2q4 3 7 0.4" stroke="#6B5244" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+    } else if (id === 'bear') {
+      S += '<circle cx="25" cy="31" r="10" fill="#A87C55"/><circle cx="75" cy="31" r="10" fill="#A87C55"/>' +
+           '<circle cx="25" cy="31" r="5.2" fill="#E5C7AC"/><circle cx="75" cy="31" r="5.2" fill="#E5C7AC"/>' +
+           '<circle cx="50" cy="57" r="28" fill="#B98F6B"/>' +
+           '<ellipse cx="50" cy="69" rx="16" ry="12" fill="#F0DBC5"/>' +
+           '<circle cx="39" cy="53" r="3.8" fill="#3A2A20"/><circle cx="61" cy="53" r="3.8" fill="#3A2A20"/>' +
+           '<ellipse cx="50" cy="65" rx="6" ry="4.4" fill="#3A2A20"/>' +
+           '<path d="M50 69.4v3M50 72.4q-5 4-8.4 0.4M50 72.4q5 4 8.4 0.4" stroke="#3A2A20" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    } else if (id === 'dino') {
+      S += '<path d="M31 30l4-14 5 11 5-14 5 14 5-11 6 14z" fill="#4FB48A"/>' +
+           '<path d="M27 42c0-12 10-19 23-19s23 7 23 19v20c0 12-10 18-23 18s-23-6-23-18z" fill="#7FD1A8"/>' +
+           '<ellipse cx="50" cy="66" rx="18" ry="12" fill="#B6E8CE"/>' +
+           '<circle cx="41" cy="47" r="3.6" fill="#2C4A3D"/><circle cx="39.8" cy="45.8" r="1.2" fill="#fff"/>' +
+           '<circle cx="59" cy="47" r="3.6" fill="#2C4A3D"/><circle cx="57.8" cy="45.8" r="1.2" fill="#fff"/>' +
+           '<circle cx="43" cy="63" r="1.8" fill="#3C5C4E"/><circle cx="57" cy="63" r="1.8" fill="#3C5C4E"/>' +
+           '<path d="M38 71q12 8 24 0" stroke="#3C5C4E" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    } else {
+      S += '<circle cx="29" cy="33" r="8" fill="#E0B784"/><circle cx="71" cy="33" r="8" fill="#E0B784"/>' +
+           '<circle cx="29" cy="33" r="4" fill="#F8E2CA"/><circle cx="71" cy="33" r="4" fill="#F8E2CA"/>' +
+           '<circle cx="50" cy="56" r="27" fill="#EFCB9C"/>' +
+           '<circle cx="32" cy="65" r="11" fill="#F8E0C4"/><circle cx="68" cy="65" r="11" fill="#F8E0C4"/>' +
+           '<circle cx="40" cy="53" r="3.6" fill="#3A2A20"/><circle cx="60" cy="53" r="3.6" fill="#3A2A20"/>' +
+           '<circle cx="38.8" cy="51.8" r="1.2" fill="#fff"/><circle cx="58.8" cy="51.8" r="1.2" fill="#fff"/>' +
+           '<path d="M50 59l3.2 0-1.6 3z" fill="#E8798F"/>' +
+           '<path d="M50 62v3M50 65q-4 3.4-7 0.6M50 65q4 3.4 7 0.6" stroke="#7A5C42" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
+           '<rect x="46.6" y="68" width="3" height="5.4" rx="1.2" fill="#FFF9EE" stroke="#E4CBA8" stroke-width=".8"/>' +
+           '<rect x="50.4" y="68" width="3" height="5.4" rx="1.2" fill="#FFF9EE" stroke="#E4CBA8" stroke-width=".8"/>';
+    }
+    return S + '</svg>';
+  }
+
+  /* =========================================================
+   *  2. 닮은꼴 연예인 데이터
+   * ========================================================= */
+  // a: 동물상 친화도(합 1) · warm: 피부톤 따뜻함 선호(0~1) · soft: 부드러움 선호(0~1)
+  var STARS = [
+    { n: '한소희', r: '배우', g: 'f', a: { cat: .44, fox: .34, dino: .12, deer: .10 }, warm: .38, soft: .30, kw: ['샤프한 고양이 눈매', '시크한 분위기'] },
+    { n: '아이유', r: '가수·배우', g: 'f', a: { rabbit: .40, dog: .30, hamster: .18, deer: .12 }, warm: .62, soft: .82, kw: ['동글동글한 눈망울', '여리여리한 인상'] },
+    { n: '김태리', r: '배우', g: 'f', a: { fox: .36, deer: .26, cat: .26, dino: .12 }, warm: .50, soft: .44, kw: ['도톰한 입술', '강단 있는 눈빛'] },
+    { n: '수지', r: '가수·배우', g: 'f', a: { deer: .38, rabbit: .30, dog: .20, cat: .12 }, warm: .58, soft: .78, kw: ['맑은 사슴눈', '단정한 이목구비'] },
+    { n: '박보영', r: '배우', g: 'f', a: { hamster: .36, rabbit: .34, dog: .20, deer: .10 }, warm: .66, soft: .90, kw: ['복숭아 볼', '동화 속 소녀'] },
+    { n: '김유정', r: '배우', g: 'f', a: { dog: .34, rabbit: .28, hamster: .26, cat: .12 }, warm: .64, soft: .80, kw: ['웃음 띠는 입꼬리', '말랑한 볼살'] },
+    { n: '신세경', r: '배우', g: 'f', a: { deer: .40, cat: .24, fox: .22, rabbit: .14 }, warm: .52, soft: .60, kw: ['긴 목선과 오뚝한 코', '청순한 분위기'] },
+    { n: '전지현', r: '배우', g: 'f', a: { fox: .40, cat: .30, dino: .18, deer: .12 }, warm: .46, soft: .34, kw: ['시원시원한 이목구비', '넘사벽 카리스마'] },
+    { n: '송혜교', r: '배우', g: 'f', a: { deer: .38, dog: .26, cat: .20, rabbit: .16 }, warm: .58, soft: .66, kw: ['부드러운 눈웃음', '고전적인 미'] },
+    { n: '김지원', r: '배우', g: 'f', a: { cat: .34, deer: .30, fox: .22, rabbit: .14 }, warm: .50, soft: .58, kw: ['또렷한 눈매', '단아한 도시적 분위기'] },
+    { n: '고윤정', r: '배우', g: 'f', a: { cat: .40, fox: .36, deer: .14, dino: .10 }, warm: .40, soft: .26, kw: ['날렵한 턱선', '차가운 도시 미인'] },
+    { n: '장원영', r: '가수', g: 'f', a: { rabbit: .38, cat: .28, hamster: .20, deer: .14 }, warm: .60, soft: .72, kw: ['큰 눈과 갸름한 얼굴', '러블리한 분위기'] },
+    { n: '카리나', r: '가수', g: 'f', a: { cat: .46, fox: .30, dino: .14, deer: .10 }, warm: .42, soft: .24, kw: ['고양이상 끝판왕', '날카로운 눈꼬리'] },
+    { n: '제니', r: '가수', g: 'f', a: { cat: .40, dog: .24, fox: .24, hamster: .12 }, warm: .52, soft: .46, kw: ['치명적인 눈웃음', '시크한 분위기'] },
+    { n: '윈터', r: '가수', g: 'f', a: { cat: .38, rabbit: .30, fox: .20, deer: .12 }, warm: .48, soft: .40, kw: ['시원한 눈매', '무표정 카리스마'] },
+    { n: '안유진', r: '가수', g: 'f', a: { dog: .34, rabbit: .30, hamster: .22, deer: .14 }, warm: .62, soft: .76, kw: ['강아지 미소', '건강한 매력'] },
+    { n: '이영애', r: '배우', g: 'f', a: { deer: .50, cat: .20, fox: .18, bear: .12 }, warm: .54, soft: .66, kw: ['고고한 분위기', '우아한 선'] },
+    { n: '김고은', r: '배우', g: 'f', a: { hamster: .34, dog: .30, rabbit: .22, bear: .14 }, warm: .64, soft: .84, kw: ['동글동글한 얼굴', '생활감 있는 매력'] },
+    { n: '임윤아', r: '가수·배우', g: 'f', a: { deer: .38, rabbit: .28, dog: .20, cat: .14 }, warm: .58, soft: .72, kw: ['반듯한 이목구비', '단정한 센터 미모'] },
+    { n: '이성경', r: '배우', g: 'f', a: { cat: .34, deer: .30, fox: .24, dino: .12 }, warm: .50, soft: .50, kw: ['시크한 눈매', '모델 같은 비율'] },
+
+    { n: '차은우', r: '가수·배우', g: 'm', a: { deer: .40, rabbit: .28, cat: .20, fox: .12 }, warm: .56, soft: .62, kw: ['조각 같은 이목구비', '순수한 눈망울'] },
+    { n: '송강', r: '배우', g: 'm', a: { dog: .36, rabbit: .28, deer: .22, cat: .14 }, warm: .62, soft: .76, kw: ['강아지 미소', '부드러운 눈웃음'] },
+    { n: '박서준', r: '배우', g: 'm', a: { dog: .34, bear: .28, dino: .20, deer: .18 }, warm: .60, soft: .52, kw: ['든든한 얼굴형', '남자다운 매력'] },
+    { n: '정해인', r: '배우', g: 'm', a: { dog: .34, deer: .28, bear: .20, cat: .18 }, warm: .58, soft: .70, kw: ['부드러운 눈매', '다정한 인상'] },
+    { n: '이도현', r: '배우', g: 'm', a: { cat: .36, fox: .26, dog: .22, deer: .16 }, warm: .54, soft: .46, kw: ['샤프한 눈매', '소년미'] },
+    { n: '서강준', r: '배우', g: 'm', a: { cat: .34, deer: .30, fox: .24, dino: .12 }, warm: .48, soft: .42, kw: ['조각 미남', '시크한 도시남'] },
+    { n: '김수현', r: '배우', g: 'm', a: { fox: .34, cat: .30, dino: .20, deer: .16 }, warm: .50, soft: .38, kw: ['짙은 쌍꺼풀', '카리스마 눈빛'] },
+    { n: '현빈', r: '배우', g: 'm', a: { fox: .34, bear: .26, dino: .24, cat: .16 }, warm: .52, soft: .40, kw: ['강한 턱선', '클래식한 남성미'] },
+    { n: '공유', r: '배우', g: 'm', a: { bear: .34, deer: .26, dog: .22, fox: .18 }, warm: .58, soft: .64, kw: ['도톰한 입술', '따뜻한 분위기'] },
+    { n: '이종석', r: '배우', g: 'm', a: { fox: .36, cat: .30, dino: .20, deer: .14 }, warm: .48, soft: .34, kw: ['날렵한 턱선', '스마트한 인상'] },
+    { n: '정국', r: '가수', g: 'm', a: { rabbit: .34, dog: .30, hamster: .20, cat: .16 }, warm: .62, soft: .70, kw: ['동글동글한 눈', '귀여운 반전 매력'] },
+    { n: '뷔', r: '가수', g: 'm', a: { cat: .38, fox: .32, dino: .16, deer: .14 }, warm: .46, soft: .30, kw: ['고양이 눈매', '치명적인 분위기'] },
+    { n: '지민', r: '가수', g: 'm', a: { hamster: .34, dog: .30, rabbit: .24, bear: .12 }, warm: .64, soft: .82, kw: ['복숭아 볼', '다정한 미소'] },
+    { n: '백현', r: '가수', g: 'm', a: { dog: .40, rabbit: .28, hamster: .18, deer: .14 }, warm: .62, soft: .78, kw: ['눈웃음 부자', '밝은 에너지'] },
+    { n: '원빈', r: '배우', g: 'm', a: { deer: .36, fox: .30, cat: .20, dino: .14 }, warm: .50, soft: .44, kw: ['조용한 카리스마', '깊은 눈빛'] },
+    { n: '조인성', r: '배우', g: 'm', a: { bear: .38, dog: .26, dino: .20, fox: .16 }, warm: .56, soft: .48, kw: ['묵직한 남성미', '큰 키와 넓은 어깨'] },
+    { n: '남주혁', r: '배우', g: 'm', a: { dog: .36, bear: .28, deer: .22, cat: .14 }, warm: .60, soft: .64, kw: ['귀여운 강아지상', '소년과 남자 사이'] },
+    { n: '김선호', r: '배우', g: 'm', a: { dog: .38, hamster: .24, deer: .22, cat: .16 }, warm: .60, soft: .74, kw: ['부드러운 눈웃음', '편안한 매력'] },
+    { n: '민규', r: '가수', g: 'm', a: { cat: .34, deer: .30, fox: .22, dino: .14 }, warm: .50, soft: .56, kw: ['시크한 눈매', '모델 같은 비율'] }
+  ];
+
+  /* =========================================================
+   *  3. 상태 / 무료 횟수
+   * ========================================================= */
+  var state = { gender: 'f', photo: null, result: null };
+
+  function todayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function loadQuota() {
+    try {
+      var q = JSON.parse(localStorage.getItem(QKEY) || 'null');
+      if (q && q.date === todayKey() && typeof q.used === 'number' && typeof q.bonus === 'number') return q;
+    } catch (_) {}
+    return { date: todayKey(), used: 0, bonus: 0 };
+  }
+  function saveQuota(q) { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} }
+  function remaining() { var q = loadQuota(); return Math.max(0, FREE_TOTAL + q.bonus - q.used); }
+
+  function refreshUi() {
+    var have = !!state.photo;
+    $('#go').disabled = !have;
+    $('#quotaNote').textContent = have ? '준비 완료! 눌러서 분석해요' : '사진을 올리면 시작!';
+    var left = remaining();
+    $('#quotaChip').textContent = left > 0 ? ('오늘 무료 ' + left + '회') : '오늘 무료 0회';
+    $('#quotaTail').textContent = left > 0 ? ('무료 ' + left + '회 남음') : '광고 보고 +2회';
+    $$('.sbtn').forEach(function (b) {
+      b.classList.toggle('on', !!(state.photo && state.photo.sample === b.dataset.sample));
+    });
+  }
+
+  function loadImage(src) {
+    return new Promise(function (resolve, reject) {
+      var im = new Image();
+      im.decoding = 'async';
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { reject(new Error('사진을 열 수 없어요')); };
+      im.src = src;
+    });
+  }
+
+  function setPhoto(img, url, sample) {
+    if (state.photo && state.photo.blob && state.photo.url) { try { URL.revokeObjectURL(state.photo.url); } catch (_) {} }
+    state.photo = { img: img, url: url, sample: sample || null, blob: url.indexOf('blob:') === 0 };
+    var ph = $('#ph');
+    ph.src = url;
+    $('#drop').classList.add('has');
+    refreshUi();
+  }
+
+  function clearPhoto() {
+    if (state.photo && state.photo.blob) { try { URL.revokeObjectURL(state.photo.url); } catch (_) {} }
+    state.photo = null;
+    $('#ph').removeAttribute('src');
+    $('#drop').classList.remove('has');
+    $('#file').value = '';
+    $('#result').hidden = true;
+    state.result = null;
+    refreshUi();
+  }
+
+  /* =========================================================
+   *  4. 얼굴 찾기 (100% 클라이언트)
+   * ========================================================= */
+  function makeCanvas(w, h) {
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    return c;
+  }
+
+  // 피부색 마스크 (YCbCr + RGB)
+  function skinMask(data, w, h) {
+    var m = new Uint8Array(w * h);
+    for (var i = 0, p = 0; p < w * h; p++, i += 4) {
+      var r = data[i], g = data[i + 1], b = data[i + 2];
+      var mx = r > g ? (r > b ? r : b) : (g > b ? g : b);
+      var mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
+      if (r < 60 || mx - mn < 26 || r - g < 10) continue;
+      var sat = (mx - mn) / Math.max(1, mx);
+      if (sat < 0.22) continue;
+      var cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+      var cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+      if (cr > 140 && cr < 186 && cb > 70 && cb < 136 && r > b * 0.9) m[p] = 1;
+    }
+    return m;
+  }
+
+  // 연결 요소 (4-이웃)
+  function components(mask, w, h) {
+    var label = new Int32Array(w * h);
+    var comps = [];
+    var stack = new Int32Array(w * h);
+    var next = 0;
+    for (var s = 0; s < w * h; s++) {
+      if (!mask[s] || label[s]) continue;
+      next++;
+      var sp = 0; stack[sp++] = s; label[s] = next;
+      var cnt = 0, minx = w, maxx = 0, miny = h, maxy = 0;
+      while (sp > 0) {
+        var p = stack[--sp];
+        var x = p % w, y = (p - x) / w;
+        cnt++;
+        if (x < minx) minx = x; if (x > maxx) maxx = x;
+        if (y < miny) miny = y; if (y > maxy) maxy = y;
+        if (x > 0 && mask[p - 1] && !label[p - 1]) { label[p - 1] = next; stack[sp++] = p - 1; }
+        if (x < w - 1 && mask[p + 1] && !label[p + 1]) { label[p + 1] = next; stack[sp++] = p + 1; }
+        if (y > 0 && mask[p - w] && !label[p - w]) { label[p - w] = next; stack[sp++] = p - w; }
+        if (y < h - 1 && mask[p + w] && !label[p + w]) { label[p + w] = next; stack[sp++] = p + w; }
+      }
+      comps.push({ id: next, count: cnt, minx: minx, maxx: maxx, miny: miny, maxy: maxy });
+    }
+    return { label: label, comps: comps };
+  }
+
+  function faceBox(mask, w, h) {
+    var r = components(mask, w, h);
+    var comps = r.comps, label = r.label;
+    if (!comps.length) return null;
+    var total = w * h, best = null, bestScore = 0, i, c;
+    for (i = 0; i < comps.length; i++) {
+      c = comps[i];
+      if (c.count < total * 0.004) continue;
+      var bw = c.maxx - c.minx + 1, bh = c.maxy - c.miny + 1;
+      var fill = c.count / (bw * bh);
+      var cover = (bw * bh) / total;
+      var score = c.count;
+      if (cover > 0.72) score *= 0.25;
+      if (fill > 0.9) score *= 0.4;
+      var ar = bh / bw;
+      if (ar < 0.62 || ar > 2.6) score *= 0.55;
+      var borders = (c.minx <= 1 ? 1 : 0) + (c.maxx >= w - 2 ? 1 : 0) + (c.miny <= 1 ? 1 : 0) + (c.maxy >= h - 2 ? 1 : 0);
+      if (borders >= 3) score *= 0.45;
+      if (score > bestScore) { bestScore = score; best = c; }
+    }
+    if (!best) return null;
+
+    var rowL = new Int32Array(h).fill(-1), rowR = new Int32Array(h).fill(-1);
+    for (var y = best.miny; y <= best.maxy; y++) {
+      var l = -1, rr = -1;
+      for (var x = best.minx; x <= best.maxx; x++) {
+        if (label[y * w + x] === best.id) { if (l < 0) l = x; rr = x; }
+      }
+      rowL[y] = l; rowR[y] = rr;
+    }
+    var maxW = 0, maxRow = -1;
+    for (y = best.miny; y <= best.maxy; y++) {
+      if (rowL[y] < 0) continue;
+      var wd = rowR[y] - rowL[y];
+      if (wd > maxW) { maxW = wd; maxRow = y; }
+    }
+    if (maxRow < 0 || maxW < w * 0.05) return null;
+    var thr = maxW * 0.45;
+    var top = maxRow, bot = maxRow;
+    while (top > best.miny) {
+      var yy = top - 1;
+      if (rowL[yy] < 0 || rowR[yy] - rowL[yy] < thr) break;
+      top = yy;
+    }
+    while (bot < best.maxy) {
+      yy = bot + 1;
+      if (rowL[yy] < 0 || rowR[yy] - rowL[yy] < thr) break;
+      bot = yy;
+    }
+    var faceH = bot - top;
+    if (!isFinite(faceH) || faceH < maxW * 0.75) faceH = maxW * 1.25;
+    faceH = clamp(faceH, maxW * 0.75, maxW * 1.5);
+    var ccx = (rowL[maxRow] + rowR[maxRow]) / 2;
+    var ccy = top + faceH * 0.52;
+    var side = Math.max(maxW * 1.42, faceH * 1.02);
+    return { cx: ccx, cy: ccy, side: side, faceW: maxW, faceH: faceH, found: true };
+  }
+
+  // 브라우저 FaceDetector가 있으면 먼저 시도
+  function detectorBox(img, w, h) {
+    return new Promise(function (resolve) {
+      try {
+        var FD = window.FaceDetector;
+        if (!FD) return resolve(null);
+        var fd = new FD({ fastMode: true, maxDetectedFaces: 1 });
+        var out = fd.detect(img);
+        if (!out || !out.then) return resolve(null);
+        out.then(function (faces) {
+          if (!faces || !faces.length || !faces[0].boundingBox) return resolve(null);
+          var b = faces[0].boundingBox;
+          if (!(b.width > 4 && b.height > 4)) return resolve(null);
+          resolve({ x: b.x / w, y: b.y / h, w: b.width / w, h: b.height / h });
+        })['catch'](function () { resolve(null); });
+      } catch (_) { resolve(null); }
+    });
+  }
+
+  async function cropFace(img) {
+    var natW = img.naturalWidth || img.width, natH = img.naturalHeight || img.height;
+    var scale = Math.min(1, WORK_MAX / Math.max(natW, natH));
+    var w = Math.max(24, Math.round(natW * scale)), h = Math.max(24, Math.round(natH * scale));
+    var cv = makeCanvas(w, h);
+    var cx = cv.getContext('2d', { willReadFrequently: true });
+    cx.drawImage(img, 0, 0, w, h);
+
+    var sx, sy, side, found = false, aspect = 1.2, faceW = 0, faceH = 0;
+    var hint = await detectorBox(img, natW, natH);
+
+    if (hint) {
+      var bw = hint.w * w, bh = hint.h * h;
+      side = Math.max(bw * 1.55, bh * 1.75);
+      sx = hint.x * w + bw / 2 - side / 2;
+      sy = hint.y * h + bh / 2 - side / 2 - side * 0.05;
+      found = true; aspect = bh / Math.max(1, bw); faceW = bw; faceH = bh;
+    } else {
+      var data = cx.getImageData(0, 0, w, h).data;
+      var mask = skinMask(data, w, h);
+      var box = faceBox(mask, w, h);
+      if (box) {
+        side = box.side; sx = box.cx - side / 2; sy = box.cy - side / 2;
+        aspect = box.faceH / Math.max(1, box.faceW); faceW = box.faceW; faceH = box.faceH; found = true;
+      } else {
+        side = Math.min(w, h) * 0.76;
+        sx = (w - side) / 2; sy = (h - side) * 0.30;
+      }
+    }
+
+    side = Math.min(side, Math.min(w, h) * 1.2);
+    sx = clamp(sx, -side * 0.18, w - side + side * 0.18);
+    sy = clamp(sy, -side * 0.18, h - side + side * 0.18);
+
+    var out = makeCanvas(N, N);
+    var ox = out.getContext('2d', { willReadFrequently: true });
+    ox.fillStyle = '#f0e6ee';
+    ox.fillRect(0, 0, N, N);
+    ox.drawImage(cv, sx, sy, side, side, 0, 0, N, N);
+    return { canvas: out, found: found, aspect: aspect, faceW: faceW, faceH: faceH, boxAspect: aspect };
+  }
+
+  /* =========================================================
+   *  5. 특징 측정
+   * ========================================================= */
+  var EYES = [0.15, 0.30, 0.85, 0.50];
+  var MOUTH = [0.25, 0.63, 0.75, 0.84];
+
+  function grayFrom(ctx) {
+    var d = ctx.getImageData(0, 0, N, N).data;
+    var g = new Float32Array(N * N);
+    for (var i = 0, p = 0; p < N * N; p++, i += 4) {
+      g[p] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+    }
+    return { g: g, d: d };
+  }
+
+  function rectPx(r) {
+    return {
+      x0: Math.round(r[0] * N), y0: Math.round(r[1] * N),
+      x1: Math.round(r[2] * N), y1: Math.round(r[3] * N)
+    };
+  }
+
+  // 영역 안 어두운 픽셀 마스크 (평균 - k*표준편차)
+  function darkIn(g, rect, k) {
+    var r = rectPx(rect);
+    var m = 0, n = 0, x, y;
+    for (y = r.y0; y < r.y1; y++) for (x = r.x0; x < r.x1; x++) { m += g[y * N + x]; n++; }
+    m = n ? m / n : 0;
+    var s = 0;
+    for (y = r.y0; y < r.y1; y++) for (x = r.x0; x < r.x1; x++) { var dd = g[y * N + x] - m; s += dd * dd; }
+    var sd = Math.sqrt(s / Math.max(1, n)) || 1;
+    var thr = m - k * sd;
+    var mask = new Uint8Array(N * N);
+    for (y = r.y0; y < r.y1; y++) for (x = r.x0; x < r.x1; x++) if (g[y * N + x] < thr) mask[y * N + x] = 1;
+    return { mask: mask, r: r, mean: m, sd: sd };
+  }
+
+  function blobs(mask, rect) {
+    var w = N, h = N;
+    var label = new Int32Array(w * h);
+    var out = [];
+    var stack = new Int32Array(w * h);
+    for (var y = rect.y0; y < rect.y1; y++) {
+      for (var x = rect.x0; x < rect.x1; x++) {
+        var s = y * w + x;
+        if (!mask[s] || label[s]) continue;
+        var sp = 0; stack[sp++] = s; label[s] = 1;
+        var cnt = 0, minx = x, maxx = x, miny = y, maxy = y;
+        while (sp > 0) {
+          var p = stack[--sp];
+          var px = p % w, py = (p - px) / w;
+          cnt++;
+          if (px < minx) minx = px; if (px > maxx) maxx = px;
+          if (py < miny) miny = py; if (py > maxy) maxy = py;
+          if (px > rect.x0 && mask[p - 1] && !label[p - 1]) { label[p - 1] = 1; stack[sp++] = p - 1; }
+          if (px < rect.x1 - 1 && mask[p + 1] && !label[p + 1]) { label[p + 1] = 1; stack[sp++] = p + 1; }
+          if (py > rect.y0 && mask[p - w] && !label[p - w]) { label[p - w] = 1; stack[sp++] = p - w; }
+          if (py < rect.y1 - 1 && mask[p + w] && !label[p + w]) { label[p + w] = 1; stack[sp++] = p + w; }
+        }
+        if (cnt >= 5) {
+          out.push({ count: cnt, minx: minx, maxx: maxx, miny: miny, maxy: maxy,
+            cx: (minx + maxx) / 2, cy: (miny + maxy) / 2,
+            w: maxx - minx + 1, h: maxy - miny + 1 });
+        }
+      }
+    }
+    out.sort(function (a, b) { return b.count - a.count; });
+    return out;
+  }
+
+  function rgbToLab(r, g, b) {
+    function f(v) { v /= 255; return v > 0.04045 ? Math.pow((v + 0.055) / 1.055, 2.4) : v / 12.92; }
+    var R = f(r), G = f(g), B = f(b);
+    var X = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047;
+    var Y = (R * 0.2126 + G * 0.7152 + B * 0.0722) / 1.0;
+    var Z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
+    function t(v) { return v > 0.008856 ? Math.cbrt(v) : (7.787 * v + 16 / 116); }
+    X = t(X); Y = t(Y); Z = t(Z);
+    return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)];
+  }
+
+  function toneStats(d) {
+    var zones = [[0.20, 0.55, 0.36, 0.72], [0.64, 0.55, 0.80, 0.72], [0.40, 0.14, 0.60, 0.28]];
+    var n = 0, L = 0, sr = 0, sg = 0, sb = 0;
+    for (var zi = 0; zi < zones.length; zi++) {
+      var z = zones[zi];
+      var x0 = Math.round(z[0] * N), x1 = Math.round(z[2] * N);
+      var y0 = Math.round(z[1] * N), y1 = Math.round(z[3] * N);
+      for (var y = y0; y < y1; y++) for (var x = x0; x < x1; x++) {
+        var i = (y * N + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+        var mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        if (mx - mn < 6) continue;
+        var lab = rgbToLab(r, g, b);
+        if (lab[0] < 30) continue;
+        L += lab[0]; sr += r; sg += g; sb += b; n++;
+      }
+    }
+    if (!n) return { L: 58, r: 190, g: 150, b: 130, n: 0 };
+    return { L: L / n, r: sr / n, g: sg / n, b: sb / n, n: n };
+  }
+
+  // 피부 마스크로 얼굴 세로/가로 비율 + 턱선 폭 계산 (128 캔버스 안)
+  function shapeProfile(d, mask) {
+    mask = mask || skinMask(d, N, N);
+    var rows = [];
+    for (var y = 0; y < N; y++) {
+      var l = -1, r = -1, cnt = 0;
+      for (var x = 0; x < N; x++) if (mask[y * N + x]) { if (l < 0) l = x; r = x; cnt++; }
+      rows.push({ l: l, r: r, w: l >= 0 ? r - l + 1 : 0, c: cnt });
+    }
+    var top = -1, bot = -1, maxW = 0, maxY = 0, y2;
+    for (y2 = 0; y2 < N; y2++) {
+      if (rows[y2].w > N * 0.16) { if (top < 0) top = y2; bot = y2; }
+      if (rows[y2].w > maxW) { maxW = rows[y2].w; maxY = y2; }
+    }
+    if (top < 0 || maxW < N * 0.2) return { ok: false };
+    var fh = Math.max(1, bot - top + 1);
+    var at = function (frac) {
+      var yy = clamp(Math.round(top + fh * frac), 0, N - 1);
+      return rows[yy].w / maxW;
+    };
+    var sumW = 0, cntW = 0;
+    for (y2 = top; y2 <= bot; y2++) { if (rows[y2].w > 0) { sumW += rows[y2].w / maxW; cntW++; } }
+    return {
+      ok: true, faceW: maxW, faceH: fh, maxY: maxY, top: top, bot: bot, rows: rows,
+      aspect: fh / maxW,
+      jaw: at(0.85), chin: at(0.94), cheek: at(0.62), temple: at(0.22),
+      fill: cntW ? sumW / cntW : 0.8
+    };
+  }
+
+  // 눈 한쪽 창(window) 안의 어두운 덩어리 통계
+  function eyeWindow(g, x0f, x1f, y0, y1) {
+    var x0 = Math.round(x0f * N), x1 = Math.round(x1f * N);
+    y0 = clamp(Math.round(y0), 0, N - 1); y1 = clamp(Math.round(y1), 1, N);
+    var n = 0, mean = 0, x, y;
+    for (y = y0; y < y1; y++) for (x = x0; x < x1; x++) { mean += g[y * N + x]; n++; }
+    if (!n) return null;
+    mean /= n;
+    var v = 0;
+    for (y = y0; y < y1; y++) for (x = x0; x < x1; x++) { var dd = g[y * N + x] - mean; v += dd * dd; }
+    var sd = Math.sqrt(v / n) || 1;
+    var thr = mean - 0.52 * sd;
+    var cnt = 0, sx = 0, sy = 0, minx = N, maxx = -1, miny = N, maxy = -1;
+    var tops = {};
+    for (y = y0; y < y1; y++) {
+      for (x = x0; x < x1; x++) {
+        if (g[y * N + x] >= thr) continue;
+        cnt++; sx += x; sy += y;
+        if (x < minx) minx = x; if (x > maxx) maxx = x;
+        if (y < miny) miny = y; if (y > maxy) maxy = y;
+        if (tops[x] == null || y < tops[x]) tops[x] = y;
+      }
+    }
+    if (cnt < 6) return null;
+    var pts = [];
+    for (var k in tops) if (Object.prototype.hasOwnProperty.call(tops, k)) pts.push([+k, tops[k]]);
+    var slope = null;
+    if (pts.length >= 5) {
+      var nn = pts.length, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0;
+      for (var i2 = 0; i2 < nn; i2++) { Sx += pts[i2][0]; Sy += pts[i2][1]; Sxx += pts[i2][0] * pts[i2][0]; Sxy += pts[i2][0] * pts[i2][1]; }
+      var den = nn * Sxx - Sx * Sx;
+      if (Math.abs(den) > 1e-6) slope = (nn * Sxy - Sx * Sy) / den;
+    }
+    return {
+      area: cnt / n, count: cnt, cx: sx / cnt, cy: sy / cnt,
+      minx: minx, maxx: maxx, miny: miny, maxy: maxy,
+      w: maxx - minx + 1, h: maxy - miny + 1, slope: slope, win: [x0, y0, x1, y1]
+    };
+  }
+
+  function analyzeFeatures(img) {
+    var face = cropFace(img);
+    return face.then(function (f) {
+      var ctx = f.canvas.getContext('2d', { willReadFrequently: true });
+      var gd = grayFrom(ctx);
+      var g = gd.g, d = gd.d;
+      var skin = skinMask(d, N, N);
+      var P = {};
+
+      // ---- 얼굴형 ----
+      var sh = shapeProfile(d, skin);
+      var boxElong = clamp(((f.aspect || 1.2) - 1.05) / 0.55, 0, 1);
+      if (sh.ok) {
+        var maskElong = clamp((sh.aspect - 1.14) / 0.38, 0, 1);
+        P.elong = clamp(0.84 * maskElong + 0.16 * boxElong, 0, 1);
+        var jawMix = 0.62 * sh.jaw + 0.38 * sh.chin;
+        P.vline = 1 - clamp((jawMix - 0.26) / 0.40, 0, 1);
+        var fullRaw = clamp((sh.fill - 0.60) / 0.22, 0, 1) * 0.50 +
+                      clamp((sh.cheek - 0.54) / 0.30, 0, 1) * 0.30 +
+                      clamp((sh.jaw - 0.34) / 0.32, 0, 1) * 0.20;
+        P.full = clamp(fullRaw, 0, 1);
+      } else {
+        P.elong = boxElong; P.vline = 0.5; P.full = 0.5;
+      }
+
+      // ---- 눈 ----
+      // 얼굴 폭·중심을 기준으로 눈 창을 잡는다 (옆머리 자동 배제)
+      var fw = sh.ok ? sh.faceW : N * 0.62;
+      var fcx = N / 2;
+      if (sh.ok) {
+        var midRow = sh.rows[clamp(Math.round(sh.top + sh.faceH * 0.42), 0, N - 1)];
+        if (midRow && midRow.l >= 0) fcx = (midRow.l + midRow.r) / 2;
+      }
+      // 1) 얼굴 가운데 열만 써서 '눈 줄' 찾기
+      var bandY0 = sh.ok ? clamp(Math.round(sh.top + sh.faceH * 0.24), 0, N - 2) : Math.round(N * 0.28);
+      var bandY1 = sh.ok ? clamp(Math.round(sh.top + sh.faceH * 0.58), 2, N) : Math.round(N * 0.52);
+      var hsx0 = clamp(Math.round(fcx - 0.26 * fw), 0, N - 2), hsx1 = clamp(Math.round(fcx + 0.26 * fw), 1, N);
+      var rowHist = [];
+      for (var yy = bandY0; yy < bandY1; yy++) {
+        var c1 = 0;
+        for (var xx = hsx0; xx < hsx1; xx++) if (g[yy * N + xx] < 88) c1++;
+        rowHist.push(c1);
+      }
+      var peakIdx = 0;
+      for (var ri2 = 0; ri2 < rowHist.length; ri2++) {
+        var sm2 = rowHist[ri2] + (rowHist[ri2 - 1] || 0) + (rowHist[ri2 + 1] || 0);
+        var smBest = rowHist[peakIdx] + (rowHist[peakIdx - 1] || 0) + (rowHist[peakIdx + 1] || 0);
+        if (sm2 > smBest) peakIdx = ri2;
+      }
+      var eyeRow = bandY0 + peakIdx;
+      var wy0 = eyeRow - 5, wy1 = eyeRow + 7;
+      var gapPx = 0.185 * fw, halfPx = 0.118 * fw;
+      var wl = eyeWindow(g, (fcx - gapPx - halfPx) / N, (fcx - gapPx + halfPx) / N, wy0, wy1);
+      var wr = eyeWindow(g, (fcx + gapPx - halfPx) / N, (fcx + gapPx + halfPx) / N, wy0, wy1);
+      // 찾은 눈 중심으로 한 번 더 (조금만 이동)
+      if (wl && wr) {
+        var lc = clamp(wl.cx, fcx - gapPx - 0.05 * fw, fcx - gapPx + 0.05 * fw);
+        var rc = clamp(wr.cx, fcx + gapPx - 0.05 * fw, fcx + gapPx + 0.05 * fw);
+        var wl2 = eyeWindow(g, (lc - halfPx) / N, (lc + halfPx) / N, wy0, wy1);
+        var wr2 = eyeWindow(g, (rc - halfPx) / N, (rc + halfPx) / N, wy0, wy1);
+        if (wl2 && wr2) { wl = wl2; wr = wr2; }
+      }
+      var dbgEyes = { row: eyeRow, y: [wy0, wy1], fcx: fcx, fw: fw, left: wl, right: wr };
+      if (wl && wr) {
+        P.eyeBig = clamp(((wl.area + wr.area) / 2 - 0.20) / 0.32, 0, 1);
+        var rw = ((wl.w / wl.h) + (wr.w / wr.h)) / 2;
+        P.eyeRound = clamp((2.70 - rw) / 1.30, 0, 1);
+        var sp = Math.abs(wl.cx - wr.cx) / N;
+        P.eyeSpace = clamp((sp - 0.20) / 0.20, 0, 1);
+        if (wl.slope != null && wr.slope != null) {
+          var up = (wl.slope - wr.slope) / 2;
+          P.eyeSlant = clamp(0.5 + up * 6, 0, 1);
+          dbgEyes.slope = [wl.slope, wr.slope, up];
+        } else P.eyeSlant = 0.5;
+      } else {
+        P.eyeBig = 0.5; P.eyeRound = 0.5; P.eyeSpace = 0.5; P.eyeSlant = 0.5;
+      }
+
+      // ---- 입 ----
+      var mouthRect = [0.28, 0.63, 0.72, 0.82];
+      if (sh.ok) {
+        mouthRect = [
+          clamp((fcx - 0.235 * fw) / N, 0.08, 0.9),
+          clamp((sh.top + sh.faceH * 0.68) / N, 0.3, 0.95),
+          clamp((fcx + 0.235 * fw) / N, 0.1, 0.92),
+          clamp((sh.top + sh.faceH * 0.94) / N, 0.5, 0.99)
+        ];
+      }
+      var mr = rectPx(mouthRect);
+      var mw = mr.x1 - mr.x0;
+      var red = new Float32Array(N * N);
+      var rgS = 0, rgN = 0, x2, y2;
+      for (y2 = mr.y0; y2 < mr.y1; y2++) {
+        for (x2 = mr.x0; x2 < mr.x1; x2++) {
+          var i2 = (y2 * N + x2) * 4;
+          var rv = d[i2] - (d[i2 + 1] + d[i2 + 2]) / 2;
+          red[y2 * N + x2] = rv; rgS += rv; rgN++;
+        }
+      }
+      var rgM = rgS / Math.max(1, rgN), rgV = 0;
+      for (y2 = mr.y0; y2 < mr.y1; y2++) for (x2 = mr.x0; x2 < mr.x1; x2++) {
+        var dv = red[y2 * N + x2] - rgM; rgV += dv * dv;
+      }
+      var rgSd = Math.sqrt(rgV / Math.max(1, rgN)) || 1;
+      var lipThr = rgM + 0.92 * rgSd;
+      var lipX0 = N, lipX1 = -1, lipY0 = N, lipY1 = -1, lipN = 0;
+      var sumYin = 0, nIn = 0, sumYout = 0, nOut = 0;
+      for (y2 = mr.y0; y2 < mr.y1; y2++) {
+        for (x2 = mr.x0; x2 < mr.x1; x2++) {
+          if (red[y2 * N + x2] <= lipThr) continue;
+          lipN++;
+          if (x2 < lipX0) lipX0 = x2; if (x2 > lipX1) lipX1 = x2;
+          if (y2 < lipY0) lipY0 = y2; if (y2 > lipY1) lipY1 = y2;
+          var rel = (x2 - mr.x0) / Math.max(1, mw);
+          if (rel > 0.40 && rel < 0.60) { sumYin += y2; nIn++; }
+          else if (rel < 0.14 || rel > 0.86) { sumYout += y2; nOut++; }
+        }
+      }
+      var dbgMouth = { lipN: lipN, n: mw * (mr.y1 - mr.y0), lipThr: lipThr, rgM: rgM, rgSd: rgSd, rect: mouthRect,
+        box: [lipX0, lipY0, lipX1, lipY1] };
+      if (lipN > mw * (mr.y1 - mr.y0) * 0.04) {
+        P.mouthW = clamp(((lipX1 - lipX0) / N - 0.12) / 0.16, 0, 1);
+        P.lipThick = clamp(((lipY1 - lipY0) / N - 0.03) / 0.15, 0, 1);
+        var smile = 0.52;
+        if (nIn > 3 && nOut > 3) {
+          var dy = (sumYin / nIn) - (sumYout / nOut);
+          smile = clamp(0.52 - dy * 7, 0, 1);
+        }
+        P.smile = smile;
+      } else {
+        P.mouthW = 0.45; P.lipThick = 0.5; P.smile = 0.55;
+      }
+
+      // ---- 톤 · 대비 ----
+      var tone = toneStats(d);
+      P.warm = clamp(((tone.r - tone.b) / Math.max(1, tone.r) - 0.14) / 0.34, 0, 1);
+      var sS = 0, sN = 0, sQ = 0, sx2, sy2;
+      for (sy2 = Math.round(N * 0.18); sy2 < Math.round(N * 0.92); sy2++) {
+        for (sx2 = Math.round(N * 0.16); sx2 < Math.round(N * 0.84); sx2++) {
+          if (!skin[sy2 * N + sx2]) continue;
+          var gv = g[sy2 * N + sx2];
+          sS += gv; sQ += gv * gv; sN++;
+        }
+      }
+      var sMean = sN ? sS / sN : 120;
+      var sSd = sN ? Math.sqrt(Math.max(0, sQ / sN - sMean * sMean)) : 30;
+      var cvS = sSd / Math.max(1, sMean);
+      P.soft = clamp((0.44 - cvS) / 0.26, 0, 1);
+      P.bright = clamp((tone.L - 40) / 34, 0, 1);
+      P.skinN = sN;
+
+      return { P: P, canvas: f.canvas, found: f.found, tone: tone, shape: sh, aspect: f.aspect,
+        dbg: { eyes: dbgEyes, mouth: dbgMouth, cvS: cvS, skinN: sN } };
+    });
+  }
+
+  /* =========================================================
+   *  6. 동물상 점수 · 연예인 매칭
+   * ========================================================= */
+  var KEYS = ['elong', 'vline', 'full', 'eyeBig', 'eyeSlant', 'eyeRound', 'eyeSpace', 'mouthW', 'soft'];
+
+  function scoreAnimals(P) {
+    var raw = [], sum = 0;
+    ANIMALS.forEach(function (a) {
+      var ideal = IDEAL[a.id], acc = 0, wsum = 0;
+      for (var i = 0; i < KEYS.length; i++) {
+        var w = W8[i], pv = P[KEYS[i]];
+        if (typeof pv !== 'number' || !isFinite(pv)) pv = 0.5;
+        var dd = pv - ideal[i];
+        acc += w * dd * dd; wsum += w;
+      }
+      var dist = Math.sqrt(acc / wsum);
+      var sc = Math.pow(Math.exp(-dist * 4.6), 2.7);   // 1위가 도드라지게
+      raw.push({ id: a.id, score: sc });
+      sum += sc;
+    });
+    // 정수 % (합 100) — 최대 나머지
+    var pcts = raw.map(function (r) { return { id: r.id, exact: r.score / sum * 100 }; });
+    var floorSum = 0;
+    pcts.forEach(function (p) { p.i = Math.floor(p.exact); floorSum += p.i; });
+    var rest = 100 - floorSum;
+    pcts.slice().sort(function (a, b) { return (b.exact - b.i) - (a.exact - a.i); })
+      .forEach(function (p) { if (rest > 0) { p.i++; rest--; } });
+    var out = pcts.map(function (p) { return { id: p.id, pct: p.i }; });
+    out.sort(function (a, b) { return b.pct - a.pct; });
+    return out;
+  }
+
+  function cosSim(a, b) {
+    var s = 0, na = 0, nb = 0;
+    for (var i = 0; i < a.length; i++) { s += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i]; }
+    if (!na || !nb) return 0;
+    return s / Math.sqrt(na * nb);
+  }
+
+  function cfg70(v) { return Math.round(clamp(v, 70, 99)); }
+
+  function matchStars(P, animals) {
+    var vec = ANIMALS.map(function (a) {
+      var hit = animals.filter(function (x) { return x.id === a.id; })[0];
+      return hit ? hit.pct / 100 : 0;
+    });
+    var pool = STARS.filter(function (s) { return s.g === state.gender; });
+    var scored = pool.map(function (s) {
+      var sv = ANIMALS.map(function (a) { return s.a[a.id] || 0; });
+      var sim = cosSim(vec, sv);
+      var warmFit = 1 - Math.abs((P.warm == null ? 0.5 : P.warm) - s.warm);
+      var softFit = 1 - Math.abs((P.soft == null ? 0.5 : P.soft) - s.soft);
+      return { s: s, v: 0.62 * sim + 0.20 * warmFit + 0.18 * softFit, sim: sim };
+    });
+    scored.sort(function (a, b) { return b.v - a.v; });
+    var top = scored.slice(0, 2);
+    var vmax = scored[0].v || 1, vmin = scored[scored.length - 1].v || 0;
+    var span = Math.max(0.02, vmax - vmin);
+    var out = top.map(function (t, idx) {
+      var ratio = clamp((t.v - vmin) / span, 0, 1);
+      var simFit = clamp((t.sim - 0.60) / 0.36, 0, 1);
+      var sync = cfg70(76 + 17 * simFit + 6 * ratio - idx * 2);
+      return { name: t.s.n, role: t.s.r, kw: t.s.kw, sync: sync, raw: t.v };
+    });
+    if (out[1].sync >= out[0].sync) out[1].sync = Math.max(70, out[0].sync - 3);
+    return out;
+  }
+
+  function verdictOf(res) {
+    var a1 = ANIMAL_BY_ID[res.animals[0].id], a2 = ANIMAL_BY_ID[res.animals[1].id];
+    var s1 = res.stars[0], s2 = res.stars[1];
+    return '얼굴형은 <b class="v">' + a1.name.replace('상', '') + '·' + a2.name.replace('상', '') +
+      ' 사이</b>, 분위기는 <b>' + s1.name + '</b> 쪽이에요. ' + s2.name + '도 ' +
+      s2.sync + '%로 은근 닮았어요 😊';
+  }
+
+  async function runAnalysis(opts) {
+    if (busy) return null;
+    if (!state.photo) { toast('사진을 먼저 올려주세요'); return null; }
+    var left = remaining();
+    if (left <= 0 && !(opts && opts.ignoreQuota)) { openAd(); return null; }
+
+    busy = true;
+    $('#loading').hidden = false;
+    var lines = [
+      ['사진을 읽는 중…', '얼굴을 찾고 있어요'],
+      ['얼굴을 펴는 중…', '눈·코·입 위치를 맞추고 있어요'],
+      ['동물상을 재는 중…', '강아지·고양이·여우… 하나씩 비교해요'],
+      ['닮은꼴 찾는 중…', '연예인상이랑 겹쳐 보는 중이에요'],
+      ['정리하는 중…', '거의 다 됐어요!']
+    ];
+    var bar = $('#loadBar');
+    bar.style.width = '8%';
+    var li = 0;
+    $('#loadLine').textContent = lines[0][0];
+    $('#loadSub').textContent = lines[0][1];
+    var stepper = setInterval(function () {
+      li = Math.min(lines.length - 1, li + 1);
+      $('#loadLine').textContent = lines[li][0];
+      $('#loadSub').textContent = lines[li][1];
+    }, 330);
+
+    var t0 = performance.now();
+    var res = null, err = null;
+    try {
+      await sleep(60);
+      var feats = await analyzeFeatures(state.photo.img);
+      bar.style.width = '58%';
+      await sleep(240);
+      var animals = scoreAnimals(feats.P);
+      var stars = matchStars(feats.P, animals);
+      bar.style.width = '88%';
+      await sleep(200);
+      res = { P: feats.P, canvas: feats.canvas, found: feats.found, animals: animals, stars: stars,
+        gender: state.gender, photoUrl: state.photo.url, at: Date.now(), dbg: feats.dbg };
+    } catch (e) {
+      err = e;
+      try { console.error(e); } catch (_) {}
+    }
+    clearInterval(stepper);
+    bar.style.width = '100%';
+    var spent = performance.now() - t0;
+    if (spent < 1400) await sleep(1400 - spent);
+    await sleep(160);
+    $('#loading').hidden = true;
+    busy = false;
+
+    if (err || !res) {
+      toast('분석에 실패했어요. 사진을 바꿔 다시 해볼게요');
+      return null;
+    }
+    if (!(opts && opts.noCount)) {
+      var q = loadQuota(); q.used++; saveQuota(q);
+    }
+    state.result = res;
+    renderResult(res);
+    refreshUi();
+    if (!(opts && opts.silent)) toast('닮은꼴을 찾았어요! ✨');
+    return res;
+  }
+
+  /* =========================================================
+   *  7. 결과 화면
+   * ========================================================= */
+  function renderResult(res) {
+    var top = ANIMALS.filter(function (a) { return a.id === res.animals[0].id; })[0];
+    var c = $('#facebox');
+    c.innerHTML = svgAnimal(top.id);
+    $('#winPct').textContent = res.animals[0].pct + '%';
+    $('#winName').innerHTML = '내 동물상은 <span>' + top.name + '</span>';
+    $('#winDesc').textContent = top.desc;
+    $('#winTags').innerHTML = top.charms.map(function (k) { return '<i>' + k + '</i>'; }).join('');
+
+    // 링
+    var arc = 2 * Math.PI * 53;
+    var ring = $('#ringArc');
+    ring.setAttribute('stroke-dasharray', String(arc));
+    ring.setAttribute('stroke-dashoffset', String(arc));
+    setTimeout(function () {
+      ring.style.transition = 'stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)';
+      ring.setAttribute('stroke-dashoffset', String(arc * (1 - res.animals[0].pct / 100)));
+    }, 60);
+
+    // TOP 3
+    var list = $('#topList');
+    list.innerHTML = res.animals.slice(0, 3).map(function (x, i) {
+      var a = ANIMAL_BY_ID[x.id];
+      return '<div class="trow' + (i === 0 ? ' first' : '') + '">' +
+        '<span class="av">' + svgAnimal(a.id) + '</span>' +
+        '<span class="mid"><span class="nm"><b>' + a.name + '</b><span class="rank">' + (i + 1) + '위</span></span>' +
+        '<span class="pbar"><i data-w="' + x.pct + '"></i></span></span>' +
+        '<span class="pv">' + x.pct + '%</span></div>';
+    }).join('');
+    setTimeout(function () {
+      $$('#topList .pbar i').forEach(function (el) { el.style.width = el.dataset.w + '%'; });
+    }, 60);
+
+    // 전체 8종
+    $('#allChips').innerHTML = res.animals.map(function (x) {
+      var a = ANIMAL_BY_ID[x.id];
+      return '<span class="chip8">' + svgAnimal(a.id) + a.name.replace('상', '') + ' <b>' + x.pct + '%</b></span>';
+    }).join('');
+
+    $('#verdict').innerHTML = verdictOf(res);
+
+    // 연예인
+    var grads = [
+      'linear-gradient(135deg,#8B5CF6,#FF5E6C)',
+      'linear-gradient(135deg,#FF7EB6,#A855F7)'
+    ];
+    $('#celebList').innerHTML = res.stars.map(function (s, i) {
+      return '<div class="celeb">' +
+        '<span class="av" style="background:' + grads[i % grads.length] + '">' + s.name.slice(0, 1) + '</span>' +
+        '<span class="mid"><span class="nm">' + s.name + '<span>' + s.role + '</span></span>' +
+        '<span class="kw">' + s.kw.map(function (k) { return '<i>' + k + '</i>'; }).join('') + '</span></span>' +
+        '<span class="sync"><b>' + s.sync + '%</b><span>싱크로율</span></span></div>';
+    }).join('');
+
+    // 매력 포인트 = 동물 매력 + 톤/분위기 특징
+    var charms = top.charms.slice(0, 2);
+    if (res.P.warm > 0.62) charms.push('따뜻한 피부톤');
+    else if (res.P.warm < 0.3) charms.push('맑고 서늘한 피부톤');
+    if (res.P.eyeBig > 0.62) charms.push('큰 눈망울');
+    if (res.P.vline > 0.66) charms.push('갸름한 턱선');
+    if (res.P.full > 0.64) charms.push('복스러운 볼');
+    if (res.P.smile > 0.62) charms.push('올라간 입꼬리');
+    if (res.P.elong > 0.66) charms.push('긴 얼굴형');
+    var uniq = charms.filter(function (v, i, arr) { return arr.indexOf(v) === i; }).slice(0, 5);
+    $('#charmChips').innerHTML = uniq.map(function (k) { return '<i>✨ ' + k + '</i>'; }).join('');
+
+    $('#shareCard').hidden = true;
+    $('#result').hidden = false;
+    $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* =========================================================
+   *  8. 결과 카드 PNG
+   * ========================================================= */
+  function rr(ctx, x, y, w, h, r) {
+    var rad = Math.min(r, h / 2, w / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rad);
+    ctx.arcTo(x + w, y + h, x, y + h, rad);
+    ctx.arcTo(x, y + h, x, y, rad);
+    ctx.arcTo(x, y, x + w, y, rad);
+    ctx.closePath();
+  }
+
+  function svgToImage(svg) {
+    return new Promise(function (resolve, reject) {
+      var im = new Image();
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { reject(new Error('svg')); };
+      im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    });
+  }
+
+  async function buildCard() {
+    var W = 1080, H = 1440;
+    var cv = makeCanvas(W, H);
+    var ctx = cv.getContext('2d');
+    var res = state.result;
+    var F = '"Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    var top = ANIMAL_BY_ID[res.animals[0].id];
+
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#FFF7FC'); g.addColorStop(0.5, '#F7F1FF'); g.addColorStop(1, '#FFF4F8');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    var blob = function (x, y, r, col) {
+      var rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, col); rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    };
+    blob(90, 60, 400, 'rgba(255,205,230,.55)');
+    blob(1010, 140, 430, 'rgba(206,190,255,.55)');
+    blob(540, 1400, 480, 'rgba(255,220,232,.5)');
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8A5CC9';
+    ctx.font = '900 28px ' + F;
+    ctx.fillText('닮은꼴 연구소', W / 2, 92);
+
+    ctx.fillStyle = '#221B2E';
+    ctx.font = '900 66px ' + F;
+    ctx.fillText('내 닮은꼴은', W / 2, 176);
+
+    // 사진
+    var px = 540, py = 400, pr = 158;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.closePath(); ctx.clip();
+    try { ctx.drawImage(res.canvas, px - pr, py - pr, pr * 2, pr * 2); } catch (_) {}
+    ctx.restore();
+    ctx.lineWidth = 12; ctx.strokeStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.arc(px, py, pr - 6, 0, Math.PI * 2); ctx.stroke();
+
+    // 동물 캐릭터 배지
+    var bx = 668, by = 512, br = 104;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.clip();
+    var bg2 = ctx.createLinearGradient(bx - br, by - br, bx + br, by + br);
+    bg2.addColorStop(0, '#FFF2FB'); bg2.addColorStop(1, '#EADFFF');
+    ctx.fillStyle = bg2; ctx.fillRect(bx - br, by - br, br * 2, br * 2);
+    try {
+      var aim = await svgToImage(svgAnimal(top.id));
+      ctx.drawImage(aim, bx - br * 0.78, by - br * 0.78, br * 1.56, br * 1.56);
+    } catch (_) {}
+    ctx.restore();
+    ctx.lineWidth = 8; ctx.strokeStyle = '#fff';
+    ctx.beginPath(); ctx.arc(bx, by, br - 4, 0, Math.PI * 2); ctx.stroke();
+
+    // 1위
+    ctx.fillStyle = '#3B2F4A';
+    ctx.font = '900 54px ' + F;
+    ctx.fillText(top.name + ' ' + top.emoji, 540, 660);
+    ctx.fillStyle = '#F43F5E';
+    ctx.font = '900 92px ' + F;
+    ctx.fillText(res.animals[0].pct + '%', 540, 748);
+
+    // TOP 3 바
+    var y = 800;
+    for (var i = 0; i < 3; i++) {
+      var a = ANIMAL_BY_ID[res.animals[i].id];
+      var pc = res.animals[i].pct;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = i === 0 ? '#3B2F4A' : '#6E6383';
+      ctx.font = '900 34px ' + F;
+      ctx.fillText((i + 1) + '위  ' + a.name, 120, y + 30);
+      var barX = 430, barW = 440, barH = 22;
+      rr(ctx, barX, y + 8, barW, barH, barH / 2);
+      ctx.fillStyle = '#EFE7F9'; ctx.fill();
+      ctx.save();
+      rr(ctx, barX, y + 8, barW, barH, barH / 2); ctx.clip();
+      var lg = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+      if (i === 0) { lg.addColorStop(0, '#FF9BB0'); lg.addColorStop(1, '#FF5E6C'); }
+      else { lg.addColorStop(0, '#C4A7FF'); lg.addColorStop(1, '#8B5CF6'); }
+      ctx.fillStyle = lg;
+      ctx.fillRect(barX, y + 8, Math.max(barH, barW * pc / 100), barH);
+      ctx.restore();
+      ctx.textAlign = 'right';
+      ctx.fillStyle = i === 0 ? '#F43F5E' : '#6B3BE0';
+      ctx.font = '900 32px ' + F;
+      ctx.fillText(pc + '%', 1010, y + 30);
+      y += 76;
+    }
+
+    // 구분선
+    ctx.strokeStyle = '#EDE3F7'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(120, 1070); ctx.lineTo(960, 1070); ctx.stroke();
+
+    // 연예인
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#8A5CC9';
+    ctx.font = '900 30px ' + F;
+    ctx.fillText('닮은꼴 연예인', 120, 1128);
+    var yy = 1180;
+    for (var j = 0; j < res.stars.length; j++) {
+      var s = res.stars[j];
+      ctx.fillStyle = '#221B2E';
+      ctx.font = '900 42px ' + F;
+      ctx.fillText(s.name + '  ' + s.sync + '%', 120, yy);
+      ctx.fillStyle = '#8B839C';
+      ctx.font = '800 27px ' + F;
+      ctx.fillText(s.kw.join(' · '), 120, yy + 40);
+      yy += 100;
+    }
+
+    // 푸터
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#A99FBB';
+    ctx.font = '800 24px ' + F;
+    ctx.fillText('얼굴은 기기 안에서만 분석 · 재미로 보는 결과예요', 540, 1392);
+    return cv;
+  }
+
+  async function saveCard() {
+    if (!state.result) { toast('먼저 분석을 해주세요'); return null; }
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (_) {}
+    try {
+      var cv = await buildCard();
+      var d = new Date();
+      var name = '닮은꼴-' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.png';
+      var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
+      try {
+        if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], name, { type: 'image/png' })] })) {
+          $('#shareCard').hidden = false;
+        }
+      } catch (_) {}
+      if (blob && navigator.msSaveBlob) { navigator.msSaveBlob(blob, name); }
+      else {
+        var a = document.createElement('a');
+        a.href = cv.toDataURL('image/png');
+        a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      toast('결과 카드를 저장했어요 📸');
+      return { name: name, blob: blob, canvas: cv };
+    } catch (e) {
+      toast('카드 저장에 실패했어요. 한 번 더 눌러주세요');
+      return null;
+    }
+  }
+
+  async function shareCard() {
+    if (!state.result) return false;
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (_) {}
+    var cv = await buildCard();
+    var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
+    var file = new File([blob], '닮은꼴.png', { type: 'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: '내 닮은꼴 동물상', text: '내 동물상은 ' + ANIMAL_BY_ID[state.result.animals[0].id].name + '!' });
+        return true;
+      }
+    } catch (_) {}
+    toast('이 브라우저에서는 저장으로 해주세요');
+    return false;
+  }
+
+  /* =========================================================
+   *  9. 광고 모달
+   * ========================================================= */
+  var adTimerId = null;
+  function openAd() {
+    var modal = $('#adModal');
+    modal.hidden = false;
+    var btn = $('#adClaim'), bar = $('#adBar'), t = $('#adTimer');
+    btn.disabled = true;
+    bar.style.width = '0%';
+    var left = 5;
+    t.textContent = left + '초 뒤 충전 버튼이 열려요';
+    clearInterval(adTimerId);
+    adTimerId = setInterval(function () {
+      left--;
+      bar.style.width = ((5 - left) / 5 * 100) + '%';
+      if (left > 0) t.textContent = left + '초 뒤 충전 버튼이 열려요';
+      else {
+        clearInterval(adTimerId);
+        t.textContent = '광고 시청 완료! 충전 버튼을 눌러요';
+        btn.disabled = false;
+      }
+    }, 1000);
+  }
+  function closeAd() {
+    clearInterval(adTimerId);
+    $('#adModal').hidden = true;
+  }
+
+  /* =========================================================
+   *  10. 이벤트
+   * ========================================================= */
+  var busy = false;
+
+  $$('.gbtn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.gender = b.dataset.g;
+      $$('.gbtn').forEach(function (x) {
+        var on = x === b;
+        x.classList.toggle('on', on);
+        x.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      if (state.result && state.result.gender !== state.gender) {
+        // 성별을 바꾸면 연예인 결과만 다시 계산
+        var r = state.result;
+        r.gender = state.gender;
+        r.stars = matchStars(r.P, r.animals);
+        renderResult(r);
+      }
+    });
+  });
+
+  $('#drop').addEventListener('click', function () { $('#file').click(); });
+  $('#file').addEventListener('change', async function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (!/^image\//.test(f.type)) { toast('사진 파일만 올릴 수 있어요'); e.target.value = ''; return; }
+    if (f.size > 20 * 1024 * 1024) { toast('20MB 이하 사진으로 올려주세요'); e.target.value = ''; return; }
+    var url = URL.createObjectURL(f);
+    try {
+      var img = await loadImage(url);
+      if (!img.naturalWidth) throw new Error('empty');
+      setPhoto(img, url, null);
+      if (state.result) { state.result = null; $('#result').hidden = true; }
+      toast('사진을 올렸어요. 닮은꼴을 찾아볼까요?');
+    } catch (_) {
+      toast('사진을 여는 데 실패했어요. 다른 사진으로 해보세요');
+      try { URL.revokeObjectURL(url); } catch (_) {}
+    }
+  });
+
+  var SAMPLES = {
+    a: ['./assets/lookalike/sample-a.jpg', 'f'],
+    b: ['./assets/lookalike/sample-b.jpg', 'm']
+  };
+  $$('.sbtn').forEach(function (b) {
+    b.addEventListener('click', async function () {
+      var key = b.dataset.sample;
+      var s = SAMPLES[key];
+      try {
+        var img = await loadImage(s[0]);
+        setPhoto(img, s[0], key);
+        var gb = $$('.gbtn').filter(function (x) { return x.dataset.g === s[1]; })[0];
+        if (gb) gb.click();
+        if (state.result) { state.result = null; $('#result').hidden = true; }
+        toast('샘플 얼굴로 준비했어요. 아래 버튼을 눌러요!');
+      } catch (_) {
+        toast('샘플 사진을 불러오지 못했어요');
+      }
+    });
+  });
+
+  $('#go').addEventListener('click', function () { runAnalysis(); });
+  $('#saveCard').addEventListener('click', function () { saveCard(); });
+  $('#shareCard').addEventListener('click', function () { shareCard(); });
+  $('#againBtn').addEventListener('click', function () {
+    clearPhoto();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  $('#adCancel').addEventListener('click', closeAd);
+  $('#adClaim').addEventListener('click', function () {
+    var q = loadQuota(); q.bonus += AD_BONUS; saveQuota(q);
+    closeAd();
+    refreshUi();
+    toast('분석 ' + AD_BONUS + '회가 충전됐어요 🎬');
+    setTimeout(function () { runAnalysis(); }, 320);
+  });
+  $('#adModal').addEventListener('click', function (e) { if (e.target.id === 'adModal') closeAd(); });
+
+  /* =========================================================
+   *  11. 테스트 API
+   * ========================================================= */
+  window.__LK = {
+    version: 1,
+    state: function () { return { gender: state.gender, hasPhoto: !!state.photo, result: state.result }; },
+    setGender: function (g) { var b = $$('.gbtn').filter(function (x) { return x.dataset.g === g; })[0]; if (b) b.click(); return state.gender; },
+    useSample: async function (key) {
+      var s = SAMPLES[key];
+      var img = await loadImage(s[0]);
+      setPhoto(img, s[0], key);
+      if (key === 'a') { try { document.querySelector('.gbtn[data-g="f"]').click(); } catch (_) {} }
+      if (key === 'b') { try { document.querySelector('.gbtn[data-g="m"]').click(); } catch (_) {} }
+      return true;
+    },
+    analyze: function (opts) { return runAnalysis(Object.assign({ silent: true }, opts || {})); },
+    last: function () { return state.result; },
+    profile: async function () {
+      if (!state.photo) return null;
+      var f = await analyzeFeatures(state.photo.img);
+      return { P: f.P, found: f.found, tone: f.tone, shape: f.shape, aspect: f.aspect, dbg: f.dbg,
+        crop: f.canvas.toDataURL('image/png'), rows: f.shape && f.shape.rows.map(function (r) { return [r.l, r.r]; }) };
+    },
+    animals: function () { return state.result ? state.result.animals : null; },
+    stars: function () { return state.result ? state.result.stars : null; },
+    cardDataUrl: async function () {
+      if (!state.result) return null;
+      try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (_) {}
+      var cv = await buildCard();
+      return cv.toDataURL('image/png');
+    },
+    saveCard: function () { return saveCard(); },
+    quota: loadQuota,
+    remaining: remaining,
+    resetQuota: function () { try { localStorage.removeItem(QKEY); } catch (_) {} refreshUi(); return remaining(); },
+    grant: function (n) { var q = loadQuota(); q.bonus += n; saveQuota(q); refreshUi(); return remaining(); },
+    openAd: openAd,
+    errs: window.__errs,
+    ready: true
+  };
+
+  refreshUi();
+})();
+</script>
+</body>
+</html>
