@@ -808,6 +808,12 @@ function paintTrials(){
     html += '<i class="'+(i<left?'on':'')+(i>=FREE_TRIALS?' bonus':'')+'"></i>';
   }
   el.dots.innerHTML = html;
+  var adBtn = $('btnAd');
+  if(adBtn){
+    var maxed = o.bonus >= MAX_BONUS;
+    adBtn.textContent = maxed ? '🎬 오늘 광고 체험 완료' : '🎬 광고 보고 +1회';
+    adBtn.disabled = maxed;
+  }
 }
 function spendTrial(){
   var o = getTrials();
@@ -1829,6 +1835,7 @@ function boot(){
   paintCheck();
   mapLinks(false);
   el.intensity.style.setProperty('--v', S.intensity + '%');
+  $('btnAd').onclick = openAd;
   el.trialPill.onclick = function(){
     showTab('sim');
     var t = $('trialCard');
