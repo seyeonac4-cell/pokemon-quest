@@ -1378,8 +1378,8 @@ function setSplit(pct, silent){
   el.clip.style.clipPath = 'inset(0 0 0 ' + S.split + '%)';
   el.divider.style.left = S.split + '%';
   var b = document.getElementById('tagB'), a = document.getElementById('tagA');
-  if(b) b.style.opacity = (S.split < 96) ? '1' : '0';
-  if(a) a.style.opacity = (S.split > 4) ? '1' : '0';
+  if(b) b.style.opacity = (S.split > 4) ? '1' : '0';
+  if(a) a.style.opacity = (S.split < 96) ? '1' : '0';
   if(!silent){
     Array.prototype.forEach.call($('seg').querySelectorAll('button'), function(b){
       b.classList.toggle('on', Number(b.getAttribute('data-split')) === Math.round(S.split));
