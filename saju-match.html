@@ -1423,6 +1423,7 @@ function makeProfile(){
   var p={name:name.slice(0,12), gender:genderOf('pGender'), y:b.y,m:b.m,d:b.d,
     h:t?t.h:0, mi:t?t.mi:0, timeKnown:!!t, ts:Date.now()};
   saveProfile(p);
+  if(fbInit()) listenInvites();
   renderSaju();
   switchTab('saju');
   toast('사주를 세웠어요 ✨',1800);
@@ -2196,7 +2197,8 @@ function fbInit(){
     S.fb=firebase.database(app);
   }catch(e){ console.warn('fb init fail',e); S.fb=null; }
   if(!S.fb) return null;
-  S.uid=S.uid||('u'+Math.random().toString(36).slice(2,9));
+  S.uid=S.uid||LS('saju.uid',null)||('u'+Math.random().toString(36).slice(2,9));
+  SS('saju.uid',S.uid);
   return S.fb;
 }
 Object.defineProperty(S,'fbRoomRef',{get:function(){ return S_fbRoomRef; }});
@@ -2367,7 +2369,7 @@ function switchTab(tab){
     b.classList.toggle('on',b.getAttribute('data-tab')===tab || (tab==='jj'&&b.getAttribute('data-tab')==='match'));
   });
   if(tab==='match'){ if(S.profile&&!S.match) restoreMatch(); renderMatch(); }
-  if(tab==='chat'){ renderChatList(); rotateTip(); }
+  if(tab==='chat'){ renderChatList(); rotateTip(); if(fbInit()) listenInvites(); }
   if(tab==='saju'){ if(!S.profile){ $('sajuEmpty').hidden=false; $('sajuResult').hidden=true; } }
   window.scrollTo({top:0,behavior:'smooth'});
 }
