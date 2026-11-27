@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/pinball.html",
+  "name": "네온 핀볼 · 오감자극 아케이드",
+  "short_name": "네온 핀볼",
+  "description": "왼쪽·오른쪽 터치로 플리퍼를 튕기고 플런저로 발사하는 네온 아케이드 핀볼. 범퍼·콤보·멀티볼·피버 2배에 소리·진동 손맛까지",
+  "start_url": "./pinball.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07080F",
+  "theme_color": "#07080F",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/pinball/pinball-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pinball/pinball-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pinball/pinball-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
