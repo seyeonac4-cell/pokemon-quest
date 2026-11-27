@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/video-editor.html",
+  "name": "만능 동영상 편집기",
+  "short_name": "동영상 편집",
+  "description": "컷 편집·자막·모자이크(얼굴 가리기)·배경음악·필터를 폰 안에서 끝내고 MP4로 저장하는 편집기",
+  "start_url": "./video-editor.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a11",
+  "theme_color": "#0b0b12",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/video-editor/video-editor-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/video-editor/video-editor-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/video-editor/video-editor-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
