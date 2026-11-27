@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/skin-sim.html",
+  "name": "스킨랩 — 시술 비포/애프터 체험",
+  "short_name": "스킨랩",
+  "description": "내 사진으로 피부과 시술 비포·애프터를 미리 보는 시뮬레이터와 시술 백과·주변 피부과 찾기",
+  "start_url": "./skin-sim.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFBF6",
+  "theme_color": "#FFFBF6",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/skin-sim/skin-sim-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/skin-sim/skin-sim-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/skin-sim/skin-sim-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
