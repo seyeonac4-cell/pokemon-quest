@@ -2100,7 +2100,7 @@ function sendMessage(){
   inp.value='';
   if(c.mode==='fb'){
     if(!S.fbRoomRef){ toast('아직 실시간 연결이 준비되지 않았어요'); return; }
-    S.fbRoomRef.child('msgs').push({u:S.uid,n:S.profile?S.profile.name:'익명',c:c.charKey||'',t:text,ts:Date.now()});
+    S.fbRoomRef.push({u:S.uid,n:S.profile?S.profile.name:'익명',c:c.charKey||'',t:text,ts:Date.now()});
     return;
   }
   c.msgs.push({r:'me',t:text,ts:Date.now()}); c.turn=(c.turn||0)+1;
@@ -2396,6 +2396,7 @@ function init(){
   window.__READY__=true;
 }
 
+window.__saju={S:S, buildSaju:buildSaju, compat:compat, tojeong:tojeong};
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
 else init();
 
