@@ -946,7 +946,7 @@ function setSource(img, label, preset){
   el.cvB.getContext('2d').drawImage(cv, 0, 0);
   el.stage.style.aspectRatio = w + ' / ' + h;
   el.stage.style.setProperty('--ar', (w/h).toFixed(4));
-  setSplit(50, true);
+  setSplit(50, false);
 
   var done = function(face, hint){
     S.faceBase = { cx: face.cx, cy: face.cy, w: face.w, h: face.h };
