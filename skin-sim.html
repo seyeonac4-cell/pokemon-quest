@@ -144,8 +144,14 @@ main{padding-top:12px}
 .sample span{font-size:11px; font-weight:800; color:var(--ink2); padding-bottom:2px}
 
 .stage{
-  position:relative; width:100%; border-radius:16px; overflow:hidden; background:#F4EDE6;
+  position:relative; width:min(100%, calc(74vh * var(--ar, .8))); margin:0 auto;
+  border-radius:16px; overflow:hidden; background:#F4EDE6; cursor:ew-resize;
   touch-action:none; user-select:none; box-shadow:inset 0 0 0 1px rgba(228,216,206,.9);
+}
+.faceguide{
+  position:absolute; transform:translate(-50%,-50%); border-radius:50%;
+  border:2px dashed rgba(199,154,75,.9); box-shadow:0 0 0 2000px rgba(255,255,255,.12);
+  pointer-events:none; z-index:3;
 }
 .stage canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
 .afterClip{position:absolute; inset:0; will-change:clip-path}
@@ -166,6 +172,7 @@ main{padding-top:12px}
 }
 .tag.before{left:10px}
 .tag.after{right:10px; background:rgba(199,154,75,.86)}
+.zoominfo{position:absolute; left:10px; bottom:10px; font-size:10.5px; font-weight:800; color:#fff; background:rgba(28,24,20,.45); padding:4px 8px; border-radius:8px; pointer-events:none}
 .stage-tools{display:flex; gap:6px; margin-top:10px}
 .seg{display:flex; flex:1 1 auto; background:#F7F1EA; border-radius:12px; padding:3px; gap:3px}
 .seg button{
@@ -409,6 +416,8 @@ footer a{color:#8A7C6E}
         <span class="tag before">BEFORE</span>
         <span class="tag after">AFTER</span>
         <div class="divider" id="divider"><span class="knob">↔</span></div>
+        <div class="faceguide" id="faceGuide" hidden></div>
+        <span class="zoominfo">↔ 좌우로 밀어 비교</span>
       </div>
       <div class="stage-tools">
         <div class="seg" id="seg">
@@ -721,12 +730,18 @@ var CHECKLIST = {
 
 /* ═════════ 상태 ═════════ */
 var S = {
-  img:null, src:null, before:null, after:null,
+  img:null, src:null, srcLo:null, before:null, after:null,
   face:null, faceBase:null,
   treat:'ulthera', intensity:60,
-  split:50, srcLabel:''
+  split:50, srcLabel:'', _wantHi:false
 };
-var WORK_MAX = 880;
+var WORK_MAX = 820, LO_SCALE = 0.58;
+
+/* 샘플 얼굴은 정확한 얼굴 위치를 미리 알고 있다 */
+var SAMPLE_FACE = {
+  '1': { cx:.497, cy:.412, w:.619, h:.700 },
+  '2': { cx:.508, cy:.417, w:.539, h:.727 }
+};
 var FREE_TRIALS = 5, MAX_BONUS = 2;
 var TRIAL_KEY = 'skinsim.trials.v2';
 var INQ_KEY = 'skinsim.inqEmail.v1';
@@ -736,7 +751,7 @@ function $(id){ return document.getElementById(id); }
 var el = {
   tabs:$('tabs'), paneSim:$('pane-sim'), paneWiki:$('pane-wiki'), paneNear:$('pane-near'),
   empty:$('emptyBox'), stageBox:$('stageBox'), stage:$('stage'),
-  cvB:$('cvBefore'), cvA:$('cvAfter'), clip:$('afterClip'), divider:$('divider'),
+  cvB:$('cvBefore'), cvA:$('cvAfter'), clip:$('afterClip'), divider:$('divider'), guide:$('faceGuide'),
   treats:$('treats'), intVal:$('intVal'), intensity:$('intensity'), effectNote:$('effectNote'),
   treatSub:$('treatSub'), faceHint:$('faceHint'),
   trialPill:$('trialPill'), trialLeft:$('trialLeft'), trialBig:$('trialBig'), trialSub:$('trialSub'), dots:$('dots'),
@@ -876,28 +891,27 @@ function handleFile(file){
   if(!file) return;
   if(!/^image\//.test(file.type)){ toast('사진 파일만 올릴 수 있어요'); return; }
   var url = URL.createObjectURL(file);
-  loadPhoto(url, '내 사진', function(){ URL.revokeObjectURL(url); });
+  loadPhoto(url, '내 사진', null, function(){ URL.revokeObjectURL(url); });
 }
 
-function loadPhoto(url, label, revoke){
+function loadPhoto(url, label, preset, revoke){
   if(trialsLeft() <= 0){ if(revoke) revoke(); openAd(); return; }
   var img = new Image();
   img.decoding = 'async';
   img.onload = function(){
     if(!spendTrial()){ if(revoke) revoke(); openAd(); return; }
     if(revoke) revoke();
-    setSource(img, label);
+    setSource(img, label, preset);
   };
   img.onerror = function(){
     if(revoke) revoke();
     toast('사진을 열 수 없어요. 다른 사진으로 해보세요.');
-    /* 실패했으면 횟수를 돌려준다 */
     var o = getTrials(); if(o.used>0){ o.used--; saveTrials(o); paintTrials(); }
   };
   img.src = url;
 }
 
-function setSource(img, label){
+function setSource(img, label, preset){
   S.img = img;
   var scale = Math.min(1, WORK_MAX / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
   var w = Math.max(2, Math.round((img.naturalWidth || img.width) * scale));
@@ -908,32 +922,44 @@ function setSource(img, label){
   cx.drawImage(img, 0, 0, w, h);
   S.src = cv;
   S.before = cv;
+  S.after = null;
   S.srcLabel = label || '사진';
 
-  /* 화면 세팅 */
+  var lo = mkCanvas(Math.max(2, Math.round(w*LO_SCALE)), Math.max(2, Math.round(h*LO_SCALE)));
+  var lx = lo.getContext('2d');
+  lx.imageSmoothingQuality = 'high';
+  lx.drawImage(cv, 0, 0, lo.width, lo.height);
+  S.srcLo = lo;
+
   el.empty.hidden = true;
   el.stageBox.hidden = false;
   el.cvB.width = w; el.cvB.height = h;
   el.cvA.width = w; el.cvA.height = h;
   el.cvB.getContext('2d').drawImage(cv, 0, 0);
   el.stage.style.aspectRatio = w + ' / ' + h;
-  el.stage.style.setProperty('--p', '50');
+  el.stage.style.setProperty('--ar', (w/h).toFixed(4));
   setSplit(50, true);
 
-  /* 얼굴 위치 */
-  estimateFace(cv).then(function(face){
+  var done = function(face, hint){
     S.faceBase = { cx: face.cx, cy: face.cy, w: face.w, h: face.h };
     S.face = { cx: face.cx, cy: face.cy, w: face.w, h: face.h };
     resetFaceSliders();
-    if(face.src === 'detector'){ el.faceHint.textContent = '✔ 얼굴을 자동으로 찾았어요 (' + label + ')'; }
-    else if(face.src === 'skin'){ el.faceHint.textContent = '✔ 피부색으로 얼굴 위치를 추정했어요. 어긋나면 ⚙️ 얼굴 위치에서 맞춰 주세요.'; }
-    else{ el.faceHint.textContent = '⚠️ 얼굴을 잘 못 찾았어요. ⚙️ 얼굴 위치에서 맞춰 주세요.'; }
+    paintGuide();
+    el.faceHint.textContent = hint;
     render(true);
+  };
+
+  if(preset){
+    done(preset, '✔ 얼굴 위치를 미리 맞춰 뒀어요 (' + S.srcLabel + ') · 어른 얼굴 기준');
+    return;
+  }
+
+  estimateFace(cv).then(function(face){
+    if(face.src === 'detector'){ done(face, '✔ 얼굴을 자동으로 찾았어요 (' + S.srcLabel + ')'); }
+    else if(face.src === 'skin'){ done(face, '✔ 피부색으로 얼굴 위치를 추정했어요. 어긋나면 ⚙️ 얼굴 위치에서 맞춰 주세요.'); }
+    else{ done(face, '⚠️ 얼굴을 잘 못 찾았어요. ⚙️ 얼굴 위치에서 맞춰 주세요.'); }
   }).catch(function(){
-    S.face = { cx:.5, cy:.45, w:.46, h:.58 };
-    S.faceBase = { cx:.5, cy:.45, w:.46, h:.58 };
-    el.faceHint.textContent = '⚠️ 얼굴 위치를 추정하지 못했어요. ⚙️ 얼굴 위치에서 맞춰 주세요.';
-    render(true);
+    done({ cx:.5, cy:.42, w:.46, h:.58 }, '⚠️ 얼굴 위치를 추정하지 못했어요. ⚙️ 얼굴 위치에서 맞춰 주세요.');
   });
 }
 
@@ -994,27 +1020,27 @@ function skinHeuristic(cv){
       }
     }
     if(xs.length < 120){
-      return { cx:.5, cy:.45, w:.46, h:.58, src:'default' };
+      return { cx:.5, cy:.42, w:.46, h:.58, src:'default' };
     }
     var medX = pct(xs, .5);
     var kx = [], ky = [];
     for(var k=0;k<xs.length;k++){
-      if(Math.abs(xs[k] - medX) < W*0.24){ kx.push(xs[k]); ky.push(ys[k]); }
+      if(Math.abs(xs[k] - medX) < W*0.26){ kx.push(xs[k]); ky.push(ys[k]); }
     }
-    if(kx.length < 80) return { cx:.5, cy:.45, w:.46, h:.58, src:'default' };
-    var x0 = pct(kx, .12), x1 = pct(kx, .88);
-    var y0 = pct(ky, .06), y1 = pct(ky, .86);
-    var w = clamp((x1-x0) / W * 1.05, .16, .70);
-    var h = clamp((y1-y0) / H * 0.98, .22, .86);
+    if(kx.length < 80) return { cx:.5, cy:.42, w:.46, h:.58, src:'default' };
+    var x0 = pct(kx, .10), x1 = pct(kx, .90);
+    var y0 = pct(ky, .05), y1 = pct(ky, .84);
+    var w = clamp((x1-x0) / W * 1.38, .22, .78);
+    var h = clamp((y1-y0) / H * 1.02, w*1.05, w*1.42);
     var cx = ((x0+x1)/2) / W;
-    var cy = ((y0+y1)/2) / H - h*0.02;
+    var cy = ((y0+y1)/2) / H - h*0.03;
     return {
       cx: clamp(cx, .12, .88),
       cy: clamp(cy, .10, .88),
       w: w, h: h, src:'skin'
     };
   }catch(e){
-    return { cx:.5, cy:.45, w:.46, h:.58, src:'default' };
+    return { cx:.5, cy:.42, w:.46, h:.58, src:'default' };
   }
 }
 
@@ -1035,20 +1061,20 @@ function warp(cvIn, face, p){
     cps.push({ x:x, y:y, dx:dx, dy:dy, r2:(r*r) });
   }
   /* 턱선 안쪽으로 */
-  add(fx - fw*0.37, fy + fh*0.255,  fw*0.055*p.jaw, -fh*0.012*p.jaw, fw*0.30);
-  add(fx + fw*0.37, fy + fh*0.255, -fw*0.055*p.jaw, -fh*0.012*p.jaw, fw*0.30);
+  add(fx - fw*0.375, fy + fh*0.255,  fw*0.080*p.jaw, -fh*0.014*p.jaw, fw*0.33);
+  add(fx + fw*0.375, fy + fh*0.255, -fw*0.080*p.jaw, -fh*0.014*p.jaw, fw*0.33);
   /* 턱 끝 위로 (이중턱) */
-  add(fx, fy + fh*0.455, 0, -fh*0.048*p.chin, fw*0.34);
-  add(fx, fy + fh*0.63,  0, -fh*0.020*p.chin, fw*0.30);
+  add(fx, fy + fh*0.445, 0, -fh*0.062*p.chin, fw*0.36);
+  add(fx, fy + fh*0.62,  0, -fh*0.028*p.chin, fw*0.32);
   /* 볼 올리기 */
-  add(fx - fw*0.30, fy + fh*0.135,  fw*0.024*p.cheek, -fh*0.032*p.cheek, fw*0.26);
-  add(fx + fw*0.30, fy + fh*0.135, -fw*0.024*p.cheek, -fh*0.032*p.cheek, fw*0.26);
+  add(fx - fw*0.31, fy + fh*0.135,  fw*0.030*p.cheek, -fh*0.042*p.cheek, fw*0.27);
+  add(fx + fw*0.31, fy + fh*0.135, -fw*0.030*p.cheek, -fh*0.042*p.cheek, fw*0.27);
   /* 팔자·볼 앞 */
-  add(fx - fw*0.15, fy + fh*0.19,  fw*0.010*p.cheek, -fh*0.014*p.cheek, fw*0.14);
-  add(fx + fw*0.15, fy + fh*0.19, -fw*0.010*p.cheek, -fh*0.014*p.cheek, fw*0.14);
+  add(fx - fw*0.15, fy + fh*0.19,  fw*0.012*p.cheek, -fh*0.018*p.cheek, fw*0.15);
+  add(fx + fw*0.15, fy + fh*0.19, -fw*0.012*p.cheek, -fh*0.018*p.cheek, fw*0.15);
   /* 눈썹·관자 올리기 */
-  add(fx - fw*0.30, fy - fh*0.30, 0, -fh*0.016*p.lift, fw*0.24);
-  add(fx + fw*0.30, fy - fh*0.30, 0, -fh*0.016*p.lift, fw*0.24);
+  add(fx - fw*0.31, fy - fh*0.30, 0, -fh*0.019*p.lift, fw*0.25);
+  add(fx + fw*0.31, fy - fh*0.30, 0, -fh*0.019*p.lift, fw*0.25);
 
   if(!cps.length) return boxCopy(cvIn);
 
@@ -1251,7 +1277,11 @@ function skinFilter(cvIn, face, p){
 
 /* ═════════ 렌더 ═════════ */
 var renderToken = 0;
-var renderQueued = false;
+var renderPending = false;
+
+function nowMs(){
+  return (window.performance && performance.now) ? performance.now() : Date.now();
+}
 
 function paramsFor(treatId, k){
   var t = TREAT[treatId] || WIKI[0];
@@ -1262,36 +1292,41 @@ function paramsFor(treatId, k){
   return out;
 }
 
-function render(now){
-  if(!S.src || !S.face) return;
-  if(renderQueued && !now) return;
-  renderQueued = false;
-  var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
-  var token = ++renderToken;
+function renderBitmap(srcCv, face){
   var p = paramsFor(S.treat, S.intensity/100);
-  var warped = warp(S.src, S.face, p);
-  if(token !== renderToken) return;
-  var out = skinFilter(warped, S.face, p);
-  if(token !== renderToken) return;
-
-  var cA = el.cvA, ax = cA.getContext('2d');
-  cA.width = out.width; cA.height = out.height;
-  ax.drawImage(out, 0, 0);
-  S.after = out;
-  var cB = el.cvB, bx = cB.getContext('2d');
-  if(cB.width !== out.width || cB.height !== out.height){
-    cB.width = out.width; cB.height = out.height;
-    bx.drawImage(S.src, 0, 0);
-  }
-  if(S.split >= 99.5) { /* 원본만 보는 중 */ }
-  var dt = ((window.performance && performance.now) ? performance.now() : Date.now()) - t0;
-  window.__skinMs = Math.round(dt);
+  var warped = warp(srcCv, face, p);
+  return skinFilter(warped, face, p);
 }
 
-function queueRender(){
-  if(renderQueued) return;
-  renderQueued = true;
-  requestAnimationFrame(function(){ render(true); });
+function render(hi){
+  if(!S.src || !S.face) return;
+  var src = (hi || !S.srcLo) ? S.src : S.srcLo;
+  var token = ++renderToken;
+  var t0 = nowMs();
+  var out = renderBitmap(src, S.face);
+  if(token !== renderToken) return;
+  var W = S.src.width, H = S.src.height;
+  var cA = el.cvA;
+  if(cA.width !== W || cA.height !== H){ cA.width = W; cA.height = H; }
+  var ax = cA.getContext('2d');
+  ax.imageSmoothingEnabled = true;
+  ax.imageSmoothingQuality = 'high';
+  ax.clearRect(0, 0, W, H);
+  ax.drawImage(out, 0, 0, W, H);
+  if(hi) S.after = out;
+  window.__skinMs = Math.round(nowMs() - t0);
+}
+
+function queueRender(hi){
+  if(hi) S._wantHi = true;
+  if(renderPending) return;
+  renderPending = true;
+  requestAnimationFrame(function(){
+    renderPending = false;
+    var wantHi = S._wantHi;
+    S._wantHi = false;
+    render(!!wantHi);
+  });
 }
 
 /* ═════════ 비교 슬라이더 ═════════ */
@@ -1348,16 +1383,18 @@ el.treats.addEventListener('click', function(e){
   if(!b) return;
   S.treat = b.getAttribute('data-t');
   paintTreats();
-  if(S.src) queueRender();
+  if(S.src) queueRender(true);
 });
 el.intensity.addEventListener('input', function(){
   S.intensity = Number(this.value);
   el.intVal.textContent = S.intensity + '%';
   this.style.setProperty('--v', S.intensity + '%');
-  var t = TREAT[S.treat];
   el.effectNote.innerHTML = (EFFECT_NOTE[S.treat] || '') +
     ' <span style="color:#8E857D;font-weight:700">· 강도 ' + S.intensity + '% 기준</span>';
-  if(S.src) queueRender();
+  if(S.src) queueRender(false);
+});
+el.intensity.addEventListener('change', function(){
+  if(S.src) queueRender(true);
 });
 
 /* ═════════ 얼굴 위치 조정 ═════════ */
@@ -1375,35 +1412,51 @@ function applyFaceSliders(){
   $('faXVal').textContent = $('faX').value;
   $('faYVal').textContent = $('faY').value;
   $('faSVal').textContent = $('faS').value + '%';
-  if(S.src) queueRender();
+  paintGuide();
+  if(S.src) queueRender(false);
 }
 function resetFaceSliders(){
   var a = $('faX'), b = $('faY'), c = $('faS');
   a.value = 0; b.value = 0; c.value = 100;
   $('faXVal').textContent = '0'; $('faYVal').textContent = '0'; $('faSVal').textContent = '100%';
 }
+function paintGuide(){
+  if(!S.face){ return; }
+  var g = el.guide;
+  g.style.left = (S.face.cx*100) + '%';
+  g.style.top = (S.face.cy*100) + '%';
+  g.style.width = (S.face.w*100) + '%';
+  g.style.height = (S.face.h*100) + '%';
+}
 $('btnFaceAdjust').onclick = function(){
   var box = $('faceAdjust');
   box.hidden = !box.hidden;
+  el.guide.hidden = box.hidden;
   this.classList.toggle('soft', !box.hidden);
+  paintGuide();
 };
 ['faX','faY','faS'].forEach(function(id){
   $(id).addEventListener('input', applyFaceSliders);
+  $(id).addEventListener('change', function(){ if(S.src) queueRender(true); });
 });
 $('btnFaceReset').onclick = function(){
   resetFaceSliders();
   if(S.faceBase){
     S.face = { cx:S.faceBase.cx, cy:S.faceBase.cy, w:S.faceBase.w, h:S.faceBase.h };
   }
-  queueRender();
+  paintGuide();
+  queueRender(true);
   toast('자동 감지 위치로 돌아갔어요');
 };
 $('btnPickOther').onclick = function(){ openFile('gal'); };
 
 /* ═════════ 저장 ═════════ */
 $('btnSave').onclick = function(){
-  if(!S.src || !S.after){ toast('먼저 사진을 올려 주세요'); return; }
-  try{ saveResult(); }catch(e){ toast('저장에 실패했어요: ' + (e.message||e)); }
+  if(!S.src){ toast('먼저 사진을 올려 주세요'); return; }
+  try{
+    S.after = renderBitmap(S.src, S.face);   /* 저장은 항상 원본 해상도로 다시 계산 */
+    saveResult();
+  }catch(e){ toast('저장에 실패했어요: ' + (e.message||e)); }
 };
 
 function roundRect(x, y, w, h, r){
@@ -1565,7 +1618,7 @@ $('wikiList').addEventListener('click', function(e){
   S.treat = b.getAttribute('data-try');
   paintTreats();
   showTab('sim');
-  if(S.src){ queueRender(); toast(TREAT[S.treat].name + '로 바꿨어요'); }
+  if(S.src){ queueRender(true); toast(TREAT[S.treat].name + '로 바꿨어요'); }
   else{ toast('사진을 올리면 ' + TREAT[S.treat].name + '로 보여 드려요'); }
 });
 
@@ -1720,6 +1773,7 @@ function fallbackCopy(txt, done){
 }
 $('btnMailInq').onclick = function(){
   var to = (savedMail || '').trim();
+  if(!to){ toast('문의 받을 메일 주소를 먼저 적어 주세요'); $('inqEmail').focus(); return; }
   var subj = '[스킨랩] 입점·광고 문의';
   var body = inquiryText();
   var url = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
@@ -1741,7 +1795,7 @@ function boot(){
   Array.prototype.forEach.call(document.querySelectorAll('button[data-sample]'), function(b){
     b.onclick = function(){
       var n = b.getAttribute('data-sample');
-      loadPhoto('./assets/skin-sim/sample-' + n + '.jpg', '샘플 얼굴 ' + n);
+      loadPhoto('./assets/skin-sim/sample-' + n + '.jpg', '샘플 얼굴 ' + n, SAMPLE_FACE[n] || null);
     };
   });
 }
@@ -1750,7 +1804,7 @@ function boot(){
 window.__skinSim = {
   S:S, setSplit:setSplit, render:render, TRIAL_KEY:TRIAL_KEY,
   resetTrials:function(){ stat(TRIAL_KEY, JSON.stringify({d:todayKey(),used:0,bonus:0})); paintTrials(); },
-  loadSample:function(n){ loadPhoto('./assets/skin-sim/sample-' + n + '.jpg', '샘플 ' + n); },
+  loadSample:function(n){ loadPhoto('./assets/skin-sim/sample-' + n + '.jpg', '샘플 ' + n, SAMPLE_FACE[n] || null); },
   info:function(){
     return {
       face:S.face, hasSrc:!!S.src,
