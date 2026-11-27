@@ -209,6 +209,8 @@ input[type=range]::-webkit-slider-runnable-track{
   height:8px; border-radius:999px;
   background:linear-gradient(90deg,#E8D3B4 var(--v,60%), #F1E8DE var(--v,60%));
 }
+input[type=range]:focus{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 5px rgba(199,154,75,.22), 0 3px 9px rgba(70,52,40,.22)}
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:#fff;
   border:3px solid var(--gold); box-shadow:0 3px 9px rgba(70,52,40,.22); margin-top:-8px;
@@ -1456,12 +1458,22 @@ function applyFaceSliders(){
   $('faXVal').textContent = $('faX').value;
   $('faYVal').textContent = $('faY').value;
   $('faSVal').textContent = $('faS').value + '%';
+  ['faX','faY','faS'].forEach(function(id){
+    var r = $(id);
+    var pctv = ((Number(r.value) - Number(r.min)) / (Number(r.max) - Number(r.min))) * 100;
+    r.style.setProperty('--v', pctv + '%');
+  });
   paintGuide();
   if(S.src) queueRender(false);
 }
 function resetFaceSliders(){
   var a = $('faX'), b = $('faY'), c = $('faS');
   a.value = 0; b.value = 0; c.value = 100;
+  ['faX','faY','faS'].forEach(function(id){
+    var r = $(id);
+    var pctv = ((Number(r.value) - Number(r.min)) / (Number(r.max) - Number(r.min))) * 100;
+    r.style.setProperty('--v', pctv + '%');
+  });
   $('faXVal').textContent = '0'; $('faYVal').textContent = '0'; $('faSVal').textContent = '100%';
 }
 function paintGuide(){
