@@ -1627,8 +1627,11 @@ pbody.addEventListener('click', ev => {
     renderFrame(S.playhead); renderPanel(); return;
   }
   if (act === 'addSub') {
-    const t = clamp(S.playhead, 0, Math.max(0, totalDur() - 0.1));
-    const s = { id: uid(), text: '자막을 입력하세요', start: t, end: Math.min(totalDur() || t + 2, t + 3), size: 1, color: '#ffffff', bg: true, pos: 'bottom' };
+    const total = totalDur();
+    let st0 = clamp(S.playhead, 0, Math.max(0, total - 0.5));
+    if (total && st0 >= total - 0.06) st0 = Math.max(0, total - 2);
+    const en0 = total ? Math.min(total, st0 + 3) : st0 + 2;
+    const s = { id: uid(), text: '자막을 입력하세요', start: st0, end: Math.max(st0 + 0.5, en0), size: 1, color: '#ffffff', bg: true, pos: 'bottom' };
     S.subs.push(s); S.selSub = s.id; renderFrame(S.playhead); renderPanel();
     const ta = $('textarea[data-set="subText"]'); if (ta) { ta.focus(); ta.select(); }
     return;
@@ -1860,6 +1863,9 @@ document.addEventListener('drop', async e => {
   e.preventDefault();
   const files = Array.from(e.dataTransfer && e.dataTransfer.files || []);
   if (files.length) { toast('불러오는 중…'); await addFiles(files); }
+});
+addEventListener('beforeunload', e => {
+  if (S.clips.length) { e.preventDefault(); e.returnValue = ''; }
 });
 document.addEventListener('keydown', e => {
   if (e.target.matches('input,textarea')) return;
