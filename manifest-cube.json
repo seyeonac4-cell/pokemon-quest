@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/cube.html",
+  "name": "3x3 루빅스 큐브",
+  "short_name": "루빅스 큐브",
+  "description": "손가락으로 돌리고 착착 소리·진동으로 손맛 느끼는 3D 루빅스 큐브. 원리 7단계, 혼자 풀기 기록, AI·친구와 대결",
+  "start_url": "./cube.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F4F6",
+  "theme_color": "#F2F4F6",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/cube/cube-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/cube/cube-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/cube/cube-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
