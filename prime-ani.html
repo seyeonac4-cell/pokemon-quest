@@ -1288,26 +1288,34 @@ footer{margin:22px 0 0; text-align:center; color:#B4A8BE; font-size:11.5px; line
     }, function (err, committed) {
       if (!committed || err) { seeding = false; return; }
       var now = Date.now();
+      var ex = function (n) { var o = {}, i; for (i = 1; i <= n; i++) o['ex' + i] = 1; return o; };
       var seeds = {
         p_seed1: {
           nick: '복숭아소녀', year: 2015, style: 'shoujo', seed: true, by: 'seed',
           cap: '고3 때가 제일 예뻤다니까요 😳 그때로 돌아가고 싶다…',
-          img: 'assets/prime-ani/seed-1.jpg', ts: now - 38 * 60000, likes: {}
+          img: 'assets/prime-ani/seed-1.jpg', ts: now - 38 * 60000, likes: ex(7),
+          comments: {
+            c1: { nick: '여름날', txt: '이때 완전 순정만화 주인공 같아요 😍', ts: now - 30 * 60000 },
+            c2: { nick: '시티팝여왕', txt: '눈이 반짝반짝 ✨', ts: now - 12 * 60000 }
+          }
         },
         p_seed2: {
           nick: '여름날', year: 2011, style: 'ghibli', seed: true, by: 'seed',
           cap: '여름 방학 셀카. 필름 감성 그대로 남아 있어요 🌿',
-          img: 'assets/prime-ani/seed-2.jpg', ts: now - 3 * 3600000, likes: {}
+          img: 'assets/prime-ani/seed-2.jpg', ts: now - 3 * 3600000, likes: ex(4),
+          comments: { c1: { nick: '복숭아소녀', txt: '초록 배경이랑 너무 잘 어울려요 🌿', ts: now - 2 * 3600000 } }
         },
         p_seed3: {
           nick: '만화방주인', year: 2018, style: 'webtoon', seed: true, by: 'seed',
           cap: '첫 회사 다닐 때, 눈썹이 제일 진심이었음 ㅋㅋ',
-          img: 'assets/prime-ani/seed-3.jpg', ts: now - 11 * 3600000, likes: {}
+          img: 'assets/prime-ani/seed-3.jpg', ts: now - 11 * 3600000, likes: ex(9),
+          comments: { c1: { nick: '복숭아소녀', txt: '눈썹 진심 ㅋㅋㅋ 완전 웃겨요', ts: now - 9 * 3600000 } }
         },
         p_seed4: {
           nick: '시티팝여왕', year: 2009, style: 'retro', seed: true, by: 'seed',
           cap: '웨이브 머리 하던 시절 ✨ 카세트테이프 감성',
-          img: 'assets/prime-ani/seed-4.jpg', ts: now - 27 * 3600000, likes: {}
+          img: 'assets/prime-ani/seed-4.jpg', ts: now - 27 * 3600000, likes: ex(5),
+          comments: { c1: { nick: '여름날', txt: '카세트테이프 감성 완전 취향이에요 🌆', ts: now - 20 * 3600000 } }
         }
       };
       fb.db.ref(FEED).update(seeds).then(function () { seeding = false; })
