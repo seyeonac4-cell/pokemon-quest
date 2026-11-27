@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF7EF">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="엄마·아빠·아이 사진 3장으로 눈·코·입·얼굴형·피부톤을 비교해 닮은 비율을 알려주는 채씨네 가족 연구소 — 사진은 기기 안에서만 분석">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="닮은꼴 분석기">
+<meta name="application-name" content="닮은꼴 분석기">
+<title>👨‍👩‍👧 엄마·아빠·아이 닮은꼴 분석기</title>
+<script>
+window.__errs = [];
+addEventListener('error', function (e) { try { __errs.push(String(e.message || (e.error && e.error.message) || e.type) + ' @' + (e.filename || '') + ':' + (e.lineno || '')); } catch (_) {} });
+addEventListener('unhandledrejection', function (e) { try { __errs.push('rejection: ' + String(e.reason && e.reason.message || e.reason)); } catch (_) {} });
+</script>
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/family-look/family-look-icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./assets/family-look/family-look-icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/family-look/family-look-icon-180.png">
+<link rel="manifest" href="./manifest-family-look.json">
+<style>
+:root{
+  --cream:#FFF7EF; --paper:#FFFFFF; --ink:#3B2F33; --ink2:#6C5C61; --muted:#9C8C90;
+  --coral:#FF7A63; --coral-d:#EF5F46; --coral-s:#FFEDE6; --coral-l:#FFD9CD;
+  --lav:#A78BFA; --lav-d:#8B6BE8; --lav-s:#F1EBFF; --lav-l:#DED2FF;
+  --peach:#FFC59E; --line:#F3E6DC; --ok:#14B87D;
+  --shadow:0 12px 30px rgba(120,80,60,.10), 0 2px 6px rgba(120,80,60,.05);
+  --shadow-lg:0 22px 50px rgba(120,80,60,.16), 0 4px 10px rgba(120,80,60,.06);
+  --r:26px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); line-height:1.5; word-break:keep-all;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,
+    "Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",sans-serif;
+  min-height:100vh; padding:calc(14px + env(safe-area-inset-top)) 12px calc(40px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(700px 460px at 8% -6%, #FFE7D6 0%, rgba(255,231,214,0) 62%),
+    radial-gradient(680px 480px at 100% 0%, #EDE4FF 0%, rgba(237,228,255,0) 60%),
+    linear-gradient(180deg,#FFFBF6 0%,#FFF6F1 55%,#F8F3FF 100%);
+  background-attachment:fixed;
+}
+.wrap{max-width:620px;margin:0 auto}
+.card{background:var(--paper); border:1px solid #FFF; border-radius:var(--r); box-shadow:var(--shadow); padding:18px 16px}
+
+/* ---------- 히어로 ---------- */
+.hero{text-align:center; padding:8px 6px 4px}
+.kicker{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; letter-spacing:.01em;
+  color:#A9563F; background:#FFEADD; border:1px solid #FFD6C4; border-radius:999px; padding:5px 12px}
+h1{margin:12px 0 10px; font-size:clamp(26px,7.4vw,34px); font-weight:900; letter-spacing:-.035em; line-height:1.24}
+h1 em{font-style:normal; color:var(--coral-d); background:linear-gradient(180deg,transparent 62%,#FFE6A8 62%)}
+.lead{margin:0 auto; max-width:30em; color:var(--ink2); font-size:14.5px; line-height:1.62}
+.lead b{color:var(--ink)}
+
+/* ---------- 사진 칸 ---------- */
+.section-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 2px 12px}
+.section-head h2{margin:0; font-size:16.5px; font-weight:900; letter-spacing:-.02em}
+.step{font-size:12px; font-weight:800; color:var(--coral-d); background:var(--coral-s); border-radius:999px; padding:4px 10px}
+.slots{display:grid; grid-template-columns:repeat(3,1fr); gap:9px}
+.slot{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  aspect-ratio:1/1.12; border-radius:20px; border:2px dashed #F0DCCF; background:#FFFAF5;
+  cursor:pointer; overflow:hidden; transition:transform .12s ease, border-color .15s ease, box-shadow .15s ease}
+.slot:active{transform:scale(.98)}
+.slot .ph{font-size:30px; line-height:1; filter:saturate(1.05)}
+.slot .lbl{font-size:12.5px; font-weight:800; color:#7A5F52}
+.slot .hint{font-size:10.5px; color:#B49A8E; font-weight:700}
+.slot .thumb{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none}
+.slot.filled{border-style:solid; border-color:#FFD9CB; box-shadow:0 6px 16px rgba(255,122,99,.16)}
+.slot.filled .ph,.slot.filled .lbl,.slot.filled .hint{display:none}
+.slot.filled .thumb{display:block}
+.slot .swap{position:absolute; right:6px; bottom:6px; z-index:2; font-size:10px; font-weight:900; color:#fff;
+  background:rgba(59,47,51,.62); border-radius:999px; padding:3px 8px; display:none; backdrop-filter:blur(4px)}
+.slot.filled .swap{display:block}
+.slot.dad{border-color:#E4DCF7; background:#FCFAFF}
+.slot.kid{border-color:#FFE3C8; background:#FFFCF5}
+.slot .file{display:none}
+.slot .ring{position:absolute; right:6px; top:6px; z-index:2; width:18px; height:18px; border-radius:50%; display:none;
+  background:var(--ok); color:#fff; font-size:12px; font-weight:900; align-items:center; justify-content:center; line-height:1}
+.slot.filled .ring{display:flex}
+
+.sample-btn{margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+  border:1px solid #EADFD3; background:#FFFDF9; color:#7A5F52; font-weight:800; font-size:13.5px;
+  padding:12px; border-radius:16px; cursor:pointer; font-family:inherit}
+.sample-btn:active{background:#FFF6EC}
+.privacy{margin:10px 2px 0; font-size:11.5px; color:#A08D84; display:flex; gap:6px; align-items:flex-start; line-height:1.45}
+.cta{margin-top:14px; width:100%; border:0; border-radius:18px; padding:16px; font-size:16.5px; font-weight:900; color:#fff;
+  font-family:inherit; cursor:pointer; letter-spacing:-.02em;
+  background:linear-gradient(135deg,#FF8E71 0%,#FF6B52 55%,#F45B69 100%);
+  box-shadow:0 12px 26px rgba(244,91,105,.32), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .12s ease, filter .15s ease}
+.cta:active{transform:translateY(1px) scale(.995)}
+.cta[disabled]{background:#E9DED8; color:#B3A29A; box-shadow:none; cursor:not-allowed}
+.quota-row{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; font-size:12px; color:#8C7A73; font-weight:700}
+.quota-chip{background:#FFF3E9; border:1px solid #FBE2D2; border-radius:999px; padding:4px 10px; font-weight:900; color:#B4694B}
+
+/* ---------- 진행 ---------- */
+#loading{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,248,242,.92); backdrop-filter:blur(6px); padding:22px}
+.loader{width:100%; max-width:340px; text-align:center}
+.scan{width:150px; height:150px; margin:0 auto 18px; border-radius:50%; position:relative;
+  background:radial-gradient(circle at 50% 40%,#FFE7DC,#FFD9CB 60%,#F6E2FF 100%); overflow:hidden;
+  box-shadow:0 16px 36px rgba(255,122,99,.24)}
+.scan::after{content:"👨‍👩‍👧"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:60px}
+.scan .line{position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,#FF6B52,transparent);
+  animation:scanline 1.25s ease-in-out infinite}
+@keyframes scanline{0%{top:12%}50%{top:84%}100%{top:12%}}
+.load-line{font-size:15px; font-weight:900; color:#5C4740; min-height:1.4em}
+.load-sub{margin-top:6px; font-size:12.5px; color:#9C8C90; font-weight:700}
+.bar{height:8px; border-radius:999px; background:#F5E8E1; margin-top:14px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#FFB199,#FF6B52); transition:width .3s ease}
+
+/* ---------- 결과 ---------- */
+#result{margin-top:16px; scroll-margin-top:12px}
+.result-card{padding:20px 16px 18px; background:
+  radial-gradient(420px 220px at 50% -10%, #FFEDE4 0%, rgba(255,237,228,0) 70%), #fff}
+.face-row{display:flex; align-items:flex-end; justify-content:center; gap:10px; margin-bottom:6px}
+.face{display:flex; flex-direction:column; align-items:center; gap:6px}
+.face .pic{width:74px; height:74px; border-radius:50%; overflow:hidden; background:#F6EEE9; border:3px solid #fff;
+  box-shadow:0 8px 18px rgba(120,80,60,.14)}
+.face.kid .pic{width:96px; height:96px; border-color:#FFF0D8; box-shadow:0 12px 24px rgba(255,150,90,.26)}
+.face .pic canvas,.face .pic img{width:100%; height:100%; display:block; object-fit:cover}
+.face .who{font-size:11.5px; font-weight:900; color:#8B7570}
+.tagline{margin:2px 0 14px; text-align:center; font-size:13px; color:#9C8C90; font-weight:800}
+.total{display:flex; align-items:stretch; gap:8px; margin-top:4px}
+.tbox{flex:0 0 50%; border-radius:20px; padding:14px 12px; text-align:center; position:relative; overflow:hidden}
+.tbox.mom{background:linear-gradient(160deg,#FFF0E9,#FFE0D3)}
+.tbox.dad{background:linear-gradient(160deg,#F6F0FF,#E6DAFF)}
+.tbox .who{font-size:13px; font-weight:900; color:#8B6A5C}
+.tbox.dad .who{color:#6E5A9C}
+.tbox .num{font-size:40px; font-weight:900; letter-spacing:-.04em; line-height:1.05; margin-top:2px}
+.tbox.mom .num{color:var(--coral-d)}
+.tbox.dad .num{color:var(--lav-d)}
+.tbox .num small{font-size:19px; font-weight:900; margin-left:1px}
+.tbox .crown{position:absolute; top:6px; right:8px; font-size:15px; opacity:0; transform:scale(.6); transition:.35s ease}
+.tbox.win .crown{opacity:1; transform:scale(1)}
+.split{height:16px; border-radius:999px; overflow:hidden; display:flex; margin-top:10px; background:#F2E8E2; box-shadow:inset 0 1px 3px rgba(0,0,0,.06)}
+.split .m{background:linear-gradient(90deg,#FFA98E,#FF6B52); width:0; transition:width .9s cubic-bezier(.22,1,.36,1)}
+.split .d{background:linear-gradient(90deg,#C9B4FF,#9A7BF0); flex:1}
+.scale-row{display:flex; justify-content:space-between; font-size:10.5px; color:#B3A29A; font-weight:800; margin-top:4px}
+.verdict{margin:14px 0 0; padding:14px; border-radius:18px; background:#FFF8EE; border:1px dashed #F6DFC4;
+  font-size:14.5px; font-weight:800; color:#6B5145; line-height:1.62; text-align:center}
+.verdict b{color:var(--coral-d)}
+.verdict b.l{color:var(--lav-d)}
+.hintline{margin:8px 0 0; font-size:11.5px; color:#B3A29A; text-align:center; font-weight:700}
+
+.parts{margin-top:16px; display:grid; gap:9px}
+.part{background:#fff; border:1px solid #F7EBE3; border-radius:18px; padding:11px 13px; box-shadow:0 4px 12px rgba(120,80,60,.05)}
+.part-top{display:flex; align-items:center; gap:8px; margin-bottom:7px}
+.part-top .ico{font-size:17px}
+.part-top .nm{font-size:13.5px; font-weight:900; color:#5C4740; flex:1}
+.part-top .win{font-size:11px; font-weight:900; padding:3px 8px; border-radius:999px}
+.win.m{background:var(--coral-s); color:var(--coral-d)}
+.win.d{background:var(--lav-s); color:var(--lav-d)}
+.pbar{height:10px; border-radius:999px; background:#F5EAE4; overflow:hidden; display:flex}
+.pbar .m{background:linear-gradient(90deg,#FFA98E,#FF6B52); width:0; transition:width .8s cubic-bezier(.22,1,.36,1)}
+.pbar .d{background:linear-gradient(90deg,#C9B4FF,#9A7BF0); flex:1}
+.pmeta{display:flex; justify-content:space-between; font-size:10.5px; font-weight:800; color:#A08D84; margin-top:4px}
+.pnote{font-size:11.5px; color:#9C8C90; margin-top:3px; font-weight:700}
+
+.result-actions{margin-top:16px; display:grid; gap:8px; grid-template-columns:1fr 1fr}
+.result-actions .cta{margin:0; grid-column:1/-1; padding:15px; font-size:15.5px}
+.btn2{border:1px solid #EADFD3; background:#fff; color:#6C5C61; font-weight:900; font-size:14px; padding:13px;
+  border-radius:16px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:6px}
+.btn2:active{background:#FFF7F1}
+.btn2.ghost{background:#FFFBF6}
+
+/* ---------- 광고/횟수 ---------- */
+#adModal{position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:18px;
+  background:rgba(59,47,51,.45); backdrop-filter:blur(3px)}
+.adbox{width:100%; max-width:360px; background:#fff; border-radius:24px; padding:20px 18px 16px; box-shadow:var(--shadow-lg); text-align:center}
+.adbox .k{font-size:11.5px; font-weight:900; color:#B4694B; background:#FFF3E9; border-radius:999px; padding:4px 10px; display:inline-block}
+.adbox h3{margin:10px 0 6px; font-size:18px; font-weight:900; letter-spacing:-.02em}
+.adbox p{margin:0; font-size:12.5px; color:#8C7A73; line-height:1.55}
+.adslot{margin:14px 0 4px; height:120px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; background:repeating-linear-gradient(45deg,#FFF7F0,#FFF7F0 10px,#FFF1E7 10px,#FFF1E7 20px); border:1px dashed #F3D9C7}
+.adslot b{font-size:13.5px; color:#B4694B}
+.adslot span{font-size:11px; color:#B3A29A; font-weight:700}
+.adtimer{margin-top:10px; font-size:12.5px; font-weight:900; color:#8C7A73}
+.adbar{height:7px; border-radius:999px; background:#F5E8E1; margin:8px 0 14px; overflow:hidden}
+.adbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#FFB199,#FF6B52)}
+.adbtns{display:flex; gap:8px}
+.adbtns button{flex:1; border:0; border-radius:14px; padding:13px; font-family:inherit; font-weight:900; font-size:14px; cursor:pointer}
+#adCancel{background:#F4EEEA; color:#8C7A73}
+#adClaim{background:linear-gradient(135deg,#FF8E71,#FF6B52); color:#fff}
+#adClaim[disabled]{background:#EADFD8; color:#B3A29A}
+
+.foot{margin:22px 4px 0; text-align:center; font-size:11px; color:#B3A29A; line-height:1.6}
+.toast{position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); z-index:80;
+  background:rgba(59,47,51,.92); color:#fff; font-size:13px; font-weight:800; padding:11px 16px; border-radius:999px;
+  opacity:0; pointer-events:none; transition:.25s ease; max-width:88vw; text-align:center}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+.err-tag{margin-top:8px; font-size:11px; color:#B4694B; background:#FFF3E9; border-radius:10px; padding:7px 10px}
+@media (max-width:360px){
+  .face .pic{width:62px;height:62px} .face.kid .pic{width:80px;height:80px}
+  .tbox .num{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">👨‍👩‍👧 채씨네 가족 연구소</span>
+    <h1>우리 아이는<br><em>누구를 닮았을까?</em></h1>
+    <p class="lead">엄마·아빠·아이 사진 <b>3장</b>을 올리면 <b>눈매·콧대·입매·얼굴형·피부톤</b>을 하나하나 재서 닮은 비율을 알려드려요. 사진은 <b>이 기기 안에서만</b> 분석돼요.</p>
+  </header>
+
+  <section class="card" style="margin-top:16px" id="photoCard">
+    <div class="section-head">
+      <h2>사진 3장 올려주세요</h2>
+      <span class="step">1 / 3 단계</span>
+    </div>
+    <div class="slots" id="slots">
+      <label class="slot mom" data-role="mom">
+        <input class="file" type="file" accept="image/*" data-role="mom" aria-label="엄마 사진 올리기">
+        <span class="ph">👩</span>
+        <span class="lbl">엄마 사진</span>
+        <span class="hint">눌러서 올리기</span>
+        <img class="thumb" alt="엄마 사진 미리보기" hidden>
+        <span class="swap">바꾸기</span>
+        <span class="ring">✓</span>
+      </label>
+      <label class="slot dad" data-role="dad">
+        <input class="file" type="file" accept="image/*" data-role="dad" aria-label="아빠 사진 올리기">
+        <span class="ph">👨</span>
+        <span class="lbl">아빠 사진</span>
+        <span class="hint">눌러서 올리기</span>
+        <img class="thumb" alt="아빠 사진 미리보기" hidden>
+        <span class="swap">바꾸기</span>
+        <span class="ring">✓</span>
+      </label>
+      <label class="slot kid" data-role="kid">
+        <input class="file" type="file" accept="image/*" data-role="kid" aria-label="아이 사진 올리기">
+        <span class="ph">👶</span>
+        <span class="lbl">우리 아이</span>
+        <span class="hint">눌러서 올리기</span>
+        <img class="thumb" alt="아이 사진 미리보기" hidden>
+        <span class="swap">바꾸기</span>
+        <span class="ring">✓</span>
+      </label>
+    </div>
+
+    <button class="sample-btn" id="sampleBtn" type="button">🎁 샘플 가족 사진으로 먼저 해보기</button>
+
+    <p class="privacy"><span>🔒</span><span>사진은 서버로 보내지 않고 이 브라우저 안에서만 계산해요. 올린 사진은 저장되지 않아요.</span></p>
+
+    <button class="cta" id="analyzeBtn" type="button" disabled>닮은꼴 분석하기 ✨</button>
+    <div class="quota-row">
+      <span class="quota-chip" id="quotaChip">무료 분석 3회</span>
+      <span id="quotaNote">사진 3장을 올리면 시작!</span>
+    </div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="card result-card">
+      <div class="face-row" id="faceRow">
+        <div class="face mom"><div class="pic" id="picMom"></div><span class="who">엄마</span></div>
+        <div class="face kid"><div class="pic" id="picKid"></div><span class="who">우리 아이</span></div>
+        <div class="face dad"><div class="pic" id="picDad"></div><span class="who">아빠</span></div>
+      </div>
+      <div class="tagline" id="tagline">엄마·아빠·아이 얼굴을 비교했어요</div>
+
+      <div class="total">
+        <div class="tbox mom" id="boxMom">
+          <span class="crown">👑</span>
+          <div class="who">👩 엄마 닮은 비율</div>
+          <div class="num"><span id="pctMom">0</span><small>%</small></div>
+        </div>
+        <div class="tbox dad" id="boxDad">
+          <span class="crown">👑</span>
+          <div class="who">👨 아빠 닮은 비율</div>
+          <div class="num"><span id="pctDad">0</span><small>%</small></div>
+        </div>
+      </div>
+      <div class="split"><div class="m" id="splitMom"></div><div class="d"></div></div>
+      <div class="scale-row"><span>👩 엄마 쪽</span><span>👨 아빠 쪽</span></div>
+
+      <p class="verdict" id="verdict"></p>
+      <p class="hintline" id="hintline"></p>
+    </div>
+
+    <div class="parts" id="parts"></div>
+
+    <div class="result-actions">
+      <button class="cta" id="saveCard" type="button">📸 결과 카드 저장</button>
+      <button class="btn2" id="shareCard" type="button" hidden>📤 공유하기</button>
+      <button class="btn2 ghost" id="againBtn" type="button">🔄 다시 하기</button>
+      <button class="btn2 ghost" id="adBtn2" type="button">🎬 광고 보고 +3회</button>
+    </div>
+  </section>
+
+  <p class="foot">재미로 보는 얼굴 비교예요. 의학적·과학적 판정이 아니고, 사진 각도·조명에 따라 결과가 달라질 수 있어요.<br>토스 미니앱 버전에서는 무료 3회 이후 보상형 광고로 횟수를 충전해요.</p>
+</div>
+
+<div id="loading" hidden>
+  <div class="loader">
+    <div class="scan"><span class="line"></span></div>
+    <div class="load-line" id="loadLine">사진을 읽는 중…</div>
+    <div class="load-sub" id="loadSub">얼굴을 찾고 있어요</div>
+    <div class="bar"><i id="loadBar"></i></div>
+  </div>
+</div>
+
+<div id="adModal" hidden>
+  <div class="adbox">
+    <span class="k">광고 자리 · 보상형</span>
+    <h3>광고 보고 <b style="color:#F45B69">3회</b> 더 분석하기</h3>
+    <p>무료 분석 횟수를 다 썼어요. 광고를 끝까지 보면 3회가 충전돼요.</p>
+    <div class="adslot"><b>광고가 들어갈 자리</b><span>토스 미니앱 연동 시 실제 보상형 광고로 바뀌어요</span></div>
+    <div class="adbar"><i id="adBar"></i></div>
+    <div class="adtimer" id="adTimer">5초 뒤 충전 버튼이 열려요</div>
+    <div class="adbtns">
+      <button id="adCancel" type="button">그냥 닫기</button>
+      <button id="adClaim" type="button" disabled>3회 충전</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+   *  0. 공통
+   * ========================================================= */
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const ROLES = ['mom', 'dad', 'kid'];
+  const ROLE_KO = { mom: '엄마', dad: '아빠', kid: '아이' };
+  const N = 128;               // 정규화 얼굴 크기
+  const WORK_MAX = 340;        // 분석용 축소 크기
+  const FREE_TOTAL = 3;
+  const QKEY = 'familyLookQuotaV1';
+
+  function toast(msg) {
+    const el = $('#toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const round1 = (v) => Math.round(v * 10) / 10;
+
+  /* =========================================================
+   *  1. 사진 상태
+   * ========================================================= */
+  const photos = { mom: null, dad: null, kid: null };   // { img, url, faceCanvas, features }
+  const SAMPLES = {
+    mom: './assets/family-look/sample-mom.jpg',
+    dad: './assets/family-look/sample-dad.jpg',
+    kid: './assets/family-look/sample-kid.jpg'
+  };
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.onload = () => resolve(im);
+      im.onerror = () => reject(new Error('사진을 열 수 없어요'));
+      im.src = src;
+    });
+  }
+
+  function setPhoto(role, img, url, isSample) {
+    photos[role] = { img, url, isSample: !!isSample, features: null };
+    const slot = $('.slot[data-role="' + role + '"]');
+    const thumb = $('.thumb', slot);
+    thumb.src = url;
+    thumb.hidden = false;
+    slot.classList.add('filled');
+    refreshAnalyzeBtn();
+  }
+
+  function clearPhotos() {
+    ROLES.forEach((r) => {
+      if (photos[r] && !photos[r].isSample && photos[r].url && photos[r].url.startsWith('blob:')) {
+        try { URL.revokeObjectURL(photos[r].url); } catch (_) {}
+      }
+      photos[r] = null;
+      const slot = $('.slot[data-role="' + r + '"]');
+      slot.classList.remove('filled');
+      const thumb = $('.thumb', slot);
+      thumb.removeAttribute('src');
+      thumb.hidden = true;
+      $('.file', slot).value = '';
+    });
+    $('#result').hidden = true;
+    refreshAnalyzeBtn();
+  }
+
+  function refreshAnalyzeBtn() {
+    const ready = ROLES.every((r) => photos[r]);
+    $('#analyzeBtn').disabled = !ready;
+    const have = ROLES.filter((r) => photos[r]).length;
+    const note = $('#quotaNote');
+    if (!ready) note.textContent = have ? (3 - have) + '장 더 올려주세요' : '사진 3장을 올리면 시작!';
+    else note.textContent = '준비 완료! 눌러서 분석해요';
+    const left = remaining();
+    $('#quotaChip').textContent = left > 0 ? ('무료 분석 ' + left + '회 남음') : '무료 분석 0회';
+  }
+
+  // 파일 선택
+  $$('.slot .file').forEach((inp) => {
+    inp.addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const role = inp.dataset.role;
+      if (!/^image\//.test(f.type)) { toast('사진 파일만 올릴 수 있어요'); inp.value = ''; return; }
+      if (f.size > 18 * 1024 * 1024) { toast('18MB 이하 사진으로 올려주세요'); inp.value = ''; return; }
+      const url = URL.createObjectURL(f);
+      try {
+        const img = await loadImage(url);
+        if (!img.naturalWidth) throw new Error('empty');
+        const prev = photos[role];
+        if (prev && !prev.isSample && prev.url && prev.url.startsWith('blob:')) { try { URL.revokeObjectURL(prev.url); } catch (_) {} }
+        setPhoto(role, img, url, false);
+      } catch (err) {
+        toast('사진을 여는 데 실패했어요. 다른 사진으로 해보세요');
+        try { URL.revokeObjectURL(url); } catch (_) {}
+      }
+    });
+  });
+
+  // 샘플 넣기
+  $('#sampleBtn').addEventListener('click', async () => {
+    const btn = $('#sampleBtn');
+    btn.disabled = true;
+    btn.textContent = '샘플 사진 불러오는 중…';
+    try {
+      for (const r of ROLES) {
+        const img = await loadImage(SAMPLES[r]);
+        setPhoto(r, img, SAMPLES[r], true);
+      }
+      toast('샘플 가족 사진 3장을 넣었어요 👨‍👩‍👧');
+    } catch (e) {
+      toast('샘플 사진을 불러오지 못했어요');
+    }
+    btn.disabled = false;
+    btn.textContent = '🎁 샘플 가족 사진으로 다시 넣기';
+  });
+
+  /* =========================================================
+   *  2. 얼굴 찾기 + 정규화 (100% 클라이언트)
+   * ========================================================= */
+  function makeCanvas(w, h) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    return c;
+  }
+
+  // 피부색 마스크 (YCbCr + RGB 규칙)
+  function skinMask(data, w, h) {
+    const m = new Uint8Array(w * h);
+    for (let i = 0, p = 0; p < w * h; p++, i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      const mx = r > g ? (r > b ? r : b) : (g > b ? g : b);
+      const mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
+      if (r < 60 || mx - mn < 26 || r - g < 10) continue;          // 회색·베이지 배경 배제
+      const sat = (mx - mn) / Math.max(1, mx);
+      if (sat < 0.22) continue;                                      // 창백한 벽 등 저채도 배경 배제
+      const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+      const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+      if (cr > 140 && cr < 186 && cb > 70 && cb < 136 && r > b * 0.9) m[p] = 1;
+    }
+    return m;
+  }
+
+  // 연결 요소 라벨링 (4-이웃, BFS)
+  function components(mask, w, h) {
+    const label = new Int32Array(w * h);
+    const comps = [];
+    const stack = new Int32Array(w * h);
+    let next = 0;
+    for (let s = 0; s < w * h; s++) {
+      if (!mask[s] || label[s]) continue;
+      next++;
+      let sp = 0; stack[sp++] = s; label[s] = next;
+      let cnt = 0, minx = w, maxx = 0, miny = h, maxy = 0;
+      while (sp > 0) {
+        const p = stack[--sp];
+        const x = p % w, y = (p - x) / w;
+        cnt++;
+        if (x < minx) minx = x; if (x > maxx) maxx = x;
+        if (y < miny) miny = y; if (y > maxy) maxy = y;
+        if (x > 0 && mask[p - 1] && !label[p - 1]) { label[p - 1] = next; stack[sp++] = p - 1; }
+        if (x < w - 1 && mask[p + 1] && !label[p + 1]) { label[p + 1] = next; stack[sp++] = p + 1; }
+        if (y > 0 && mask[p - w] && !label[p - w]) { label[p - w] = next; stack[sp++] = p - w; }
+        if (y < h - 1 && mask[p + w] && !label[p + w]) { label[p + w] = next; stack[sp++] = p + w; }
+      }
+      comps.push({ id: next, count: cnt, minx, maxx, miny, maxy });
+    }
+    return { label, comps };
+  }
+
+  // 얼굴 상자 추정: '얼굴다운' 연결 요소를 고르고 행별 폭 프로파일로 다듬기
+  function faceBox(mask, w, h) {
+    const { label, comps } = components(mask, w, h);
+    if (!comps.length) return null;
+    const total = w * h;
+    let best = null, bestScore = 0;
+    for (const c of comps) {
+      if (c.count < total * 0.004) continue;
+      const bw = c.maxx - c.minx + 1, bh = c.maxy - c.miny + 1;
+      const fill = c.count / (bw * bh);
+      const cover = (bw * bh) / total;
+      let score = c.count;
+      if (cover > 0.72) score *= 0.25;                  // 화면을 거의 다 덮으면 배경일 확률
+      if (fill > 0.9) score *= 0.4;                     // 꽉 찬 덩어리 = 단색 배경
+      const ar = bh / bw;
+      if (ar < 0.62 || ar > 2.6) score *= 0.55;         // 얼굴은 세로로 조금 긴 편
+      const borders = (c.minx <= 1 ? 1 : 0) + (c.maxx >= w - 2 ? 1 : 0) + (c.miny <= 1 ? 1 : 0) + (c.maxy >= h - 2 ? 1 : 0);
+      if (borders >= 3) score *= 0.45;
+      if (score > bestScore) { bestScore = score; best = c; }
+    }
+    if (!best) return null;
+
+    const rowL = new Int32Array(h).fill(-1), rowR = new Int32Array(h).fill(-1);
+    for (let y = best.miny; y <= best.maxy; y++) {
+      let l = -1, r = -1;
+      for (let x = best.minx; x <= best.maxx; x++) {
+        if (label[y * w + x] === best.id) { if (l < 0) l = x; r = x; }
+      }
+      rowL[y] = l; rowR[y] = r;
+    }
+    // 가장 넓은 행 (얼굴 광대)
+    let maxW = 0, maxRow = -1;
+    for (let y = best.miny; y <= best.maxy; y++) {
+      if (rowL[y] < 0) continue;
+      const wd = rowR[y] - rowL[y];
+      if (wd > maxW) { maxW = wd; maxRow = y; }
+    }
+    if (maxRow < 0 || maxW < w * 0.05) return null;
+    const thr = maxW * 0.45;
+    let top = maxRow, bot = maxRow;
+    while (top > best.miny) {
+      const y = top - 1;
+      if (rowL[y] < 0 || rowR[y] - rowL[y] < thr) break;
+      top = y;
+    }
+    while (bot < best.maxy) {
+      const y = bot + 1;
+      if (rowL[y] < 0 || rowR[y] - rowL[y] < thr) break;
+      bot = y;
+    }
+    let faceH = bot - top;
+    if (!isFinite(faceH) || faceH < maxW * 0.75) faceH = maxW * 1.25;
+    faceH = clamp(faceH, maxW * 0.75, maxW * 1.5);      // 목·가슴까지 늘어나는 것 방지
+    const cx = (rowL[maxRow] + rowR[maxRow]) / 2;
+    const cy = top + faceH * 0.52;
+    const side = Math.max(maxW * 1.42, faceH * 1.02);
+    return { cx, cy, side, faceW: maxW, faceH, found: true, top, bottom: top + faceH };
+  }
+
+  function cropFace(img) {
+    const natW = img.naturalWidth || img.width, natH = img.naturalHeight || img.height;
+    const scale = Math.min(1, WORK_MAX / Math.max(natW, natH));
+    const w = Math.max(24, Math.round(natW * scale)), h = Math.max(24, Math.round(natH * scale));
+    const cv = makeCanvas(w, h);
+    const cx = cv.getContext('2d', { willReadFrequently: true });
+    cx.drawImage(img, 0, 0, w, h);
+    const data = cx.getImageData(0, 0, w, h).data;
+
+    const mask = skinMask(data, w, h);
+    const box = faceBox(mask, w, h);
+
+    let sx, sy, side, found = true, aspect = 1.25;
+    if (box) {
+      side = box.side;
+      sx = box.cx - side / 2;
+      sy = box.cy - side / 2;
+      aspect = box.faceH / Math.max(1, box.faceW);
+    } else {
+      found = false;
+      side = Math.min(w, h) * 0.72;
+      sx = (w - side) / 2; sy = (h - side) * 0.34;
+    }
+    // 경계 안으로 밀어 넣기 (넘치면 확대 대신 이동)
+    side = Math.min(side, Math.min(w, h) * 1.15);
+    sx = clamp(sx, -side * 0.15, w - side + side * 0.15);
+    sy = clamp(sy, -side * 0.15, h - side + side * 0.15);
+
+    const out = makeCanvas(N, N);
+    const ox = out.getContext('2d', { willReadFrequently: true });
+    ox.fillStyle = '#efe6e0';
+    ox.fillRect(0, 0, N, N);
+    ox.drawImage(cv, sx, sy, side, side, 0, 0, N, N);
+    return { canvas: out, found, faceW: box ? box.faceW : 0, faceH: box ? box.faceH : 0, aspect, mask, w, h,
+      box: box ? { cx: Math.round(sx), cy: Math.round(sy), side: Math.round(side), faceW: Math.round(box.faceW), faceH: Math.round(box.faceH), top: box.top, bottom: box.bottom } : null };
+  }
+
+  /* =========================================================
+   *  3. 특징 벡터 만들기
+   * ========================================================= */
+  function grayOf(ctx) {
+    const d = ctx.getImageData(0, 0, N, N).data;
+    const g = new Float32Array(N * N);
+    for (let i = 0, p = 0; p < N * N; p++, i += 4) {
+      g[p] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+    }
+    // 3x3 박스 블러 (질감/노이즈 완화, 구조만 남김)
+    const b = new Float32Array(N * N);
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        let s = 0, n = 0;
+        for (let dy = -1; dy <= 1; dy++) {
+          const yy = y + dy; if (yy < 0 || yy >= N) continue;
+          for (let dx = -1; dx <= 1; dx++) {
+            const xx = x + dx; if (xx < 0 || xx >= N) continue;
+            s += g[yy * N + xx]; n++;
+          }
+        }
+        b[y * N + x] = s / n;
+      }
+    }
+    return b;
+  }
+
+  function gridMeans(gray, rect, gw, gh) {
+    const x0 = Math.round(rect[0] * N), x1 = Math.round(rect[2] * N);
+    const y0 = Math.round(rect[1] * N), y1 = Math.round(rect[3] * N);
+    const out = new Float64Array(gw * gh);
+    for (let gy = 0; gy < gh; gy++) {
+      const sy = y0 + Math.floor((y1 - y0) * gy / gh);
+      const ey = Math.max(sy + 1, y0 + Math.floor((y1 - y0) * (gy + 1) / gh));
+      for (let gx = 0; gx < gw; gx++) {
+        const sx = x0 + Math.floor((x1 - x0) * gx / gw);
+        const ex = Math.max(sx + 1, x0 + Math.floor((x1 - x0) * (gx + 1) / gw));
+        let s = 0, n = 0;
+        for (let y = sy; y < ey; y++) for (let x = sx; x < ex; x++) { s += gray[y * N + x]; n++; }
+        out[gy * gw + gx] = n ? s / n : 0;
+      }
+    }
+    return out;
+  }
+
+  function standardize(v) {
+    let m = 0;
+    for (let i = 0; i < v.length; i++) m += v[i];
+    m /= v.length;
+    let s = 0;
+    for (let i = 0; i < v.length; i++) { const d = v[i] - m; s += d * d; }
+    s = Math.sqrt(s / v.length) || 1;
+    const o = new Float64Array(v.length);
+    for (let i = 0; i < v.length; i++) o[i] = (v[i] - m) / s;
+    return o;
+  }
+
+  function meanAbsDiff(a, b) {
+    let s = 0;
+    for (let i = 0; i < a.length; i++) s += Math.abs(a[i] - b[i]);
+    return s / a.length;
+  }
+
+  // 어두운 부분(눈동자·콧구멍·입술선) 모양 비교
+  function darkPattern(gray, rect, gw, gh) {
+    const cells = gridMeans(gray, rect, gw, gh);
+    let m = 0;
+    for (let i = 0; i < cells.length; i++) m += cells[i];
+    m /= cells.length;
+    let s = 0;
+    for (let i = 0; i < cells.length; i++) { const d = cells[i] - m; s += d * d; }
+    const sd = Math.sqrt(s / cells.length) || 1;
+    const out = new Int8Array(cells.length);
+    for (let i = 0; i < cells.length; i++) out[i] = cells[i] < m - 0.45 * sd ? 1 : 0;
+    return out;
+  }
+
+  function iou(a, b) {
+    let inter = 0, uni = 0;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] && b[i]) inter++;
+      if (a[i] || b[i]) uni++;
+    }
+    if (!uni) return 0.5;
+    return inter / uni;
+  }
+
+  const REGIONS = {
+    eyes:  [0.13, 0.30, 0.87, 0.49],
+    nose:  [0.33, 0.47, 0.67, 0.66],
+    mouth: [0.25, 0.64, 0.75, 0.84]
+  };
+
+  function rgbToLab(r, g, b) {
+    const f = (v) => { v /= 255; return v > 0.04045 ? Math.pow((v + 0.055) / 1.055, 2.4) : v / 12.92; };
+    const R = f(r), G = f(g), B = f(b);
+    let X = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047;
+    let Y = (R * 0.2126 + G * 0.7152 + B * 0.0722) / 1.00000;
+    let Z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
+    const t = (v) => (v > 0.008856 ? Math.cbrt(v) : (7.787 * v + 16 / 116));
+    X = t(X); Y = t(Y); Z = t(Z);
+    return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)];
+  }
+
+  function toneStats(ctx) {
+    // 볼·이마 쪽 피부만
+    const d = ctx.getImageData(0, 0, N, N).data;
+    const zones = [[0.20, 0.55, 0.36, 0.72], [0.64, 0.55, 0.80, 0.72], [0.40, 0.14, 0.60, 0.28]];
+    let n = 0, L = 0, A = 0, Bb = 0, sr = 0, sg = 0, sb = 0;
+    for (const z of zones) {
+      const x0 = Math.round(z[0] * N), x1 = Math.round(z[2] * N), y0 = Math.round(z[1] * N), y1 = Math.round(z[3] * N);
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const i = (y * N + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+        const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        if (mx - mn < 6) continue;               // 회색(머리카락·배경) 제외
+        const lab = rgbToLab(r, g, b);
+        if (lab[0] < 30) continue;
+        L += lab[0]; A += lab[1]; Bb += lab[2];
+        sr += r; sg += g; sb += b; n++;
+      }
+    }
+    if (!n) return { L: 55, A: 12, Bb: 18, r: 180, g: 140, b: 120, n: 0 };
+    return { L: L / n, A: A / n, Bb: Bb / n, r: sr / n, g: sg / n, b: sb / n, n };
+  }
+
+  function extractFeatures(img) {
+    const face = cropFace(img);
+    const ctx = face.canvas.getContext('2d', { willReadFrequently: true });
+    const gray = grayOf(ctx);
+    const feats = { found: face.found, aspect: face.aspect, canvas: face.canvas, box: face.box };
+    feats.gray = gray;
+    for (const k of ['eyes', 'nose', 'mouth']) {
+      const cells = gridMeans(gray, REGIONS[k], k === 'eyes' ? 12 : 9, k === 'eyes' ? 6 : 8);
+      feats[k] = {
+        grid: standardize(cells),
+        dark: darkPattern(gray, REGIONS[k], k === 'eyes' ? 12 : 9, k === 'eyes' ? 6 : 8),
+        contrast: (() => {
+          let m = 0; for (let i = 0; i < cells.length; i++) m += cells[i]; m /= cells.length;
+          let s = 0; for (let i = 0; i < cells.length; i++) { const dd = cells[i] - m; s += dd * dd; }
+          return Math.sqrt(s / cells.length);
+        })()
+      };
+    }
+    // 얼굴형: 가로 폭 프로파일 (턱선 모양)
+    const prof = [];
+    const x0 = Math.round(0.08 * N), x1 = Math.round(0.92 * N);
+    for (let i = 0; i < 14; i++) {
+      const y = Math.round((0.30 + (i / 13) * 0.62) * N);
+      let l = -1, r = -1;
+      for (let x = x0; x < x1; x++) {
+        const g = gray[y * N + x];
+        if (g < 70) { if (l < 0) l = x; r = x; }   // 어두운 머리카락/그림자 = 얼굴 바깥
+      }
+      let width;
+      if (l >= 0 && r > l) width = (r - l) / N;
+      else {
+        // 어두운 경계를 못 찾으면 밝기 변화(윤곽)로 근사
+        let s = 0;
+        for (let x = x0; x < x1; x++) s += gray[y * N + x];
+        width = s / (x1 - x0) > 120 ? 0.84 : 0.6;
+      }
+      prof.push(width);
+    }
+    const maxP = Math.max.apply(null, prof) || 1;
+    feats.shape = standardize(prof.map((v) => v / maxP));
+    feats.shapeRaw = prof.map((v) => v / maxP);
+    feats.tone = toneStats(ctx);
+    return feats;
+  }
+
+  /* =========================================================
+   *  4. 비교 → %
+   * ========================================================= */
+  const K = 1.5;     // 차이 증폭 (보정값)
+  function pctFrom(delta) {          // delta = sim(엄마) - sim(아빠)
+    return clamp(50 + 45 * Math.tanh(delta * K), 3, 97);
+  }
+
+  const SHIFTS = [[0, 0], [-3, 0], [3, 0], [0, -3], [0, 3], [-2, -2], [2, -2], [-2, 2], [2, 2]];
+  const GMAP = { eyes: [12, 6], nose: [9, 8], mouth: [9, 8] };
+
+  // 작은 위치 어긋남을 견디는 지역 특징 (필요할 때만 계산해 캐시)
+  function shifted(f, key, dx, dy) {
+    f._c = f._c || {};
+    const id = key + '|' + dx + '|' + dy;
+    if (f._c[id]) return f._c[id];
+    const r = REGIONS[key], g = GMAP[key];
+    const nx = dx / N, ny = dy / N;
+    const rect = [r[0] + nx, r[1] + ny, r[2] + nx, r[3] + ny];
+    const cells = gridMeans(f.gray, rect, g[0], g[1]);
+    const o = { grid: standardize(cells), dark: darkPattern(f.gray, rect, g[0], g[1]) };
+    f._c[id] = o;
+    return o;
+  }
+
+  function simRegion(a, b, key) {
+    let best = -1;
+    const A = shifted(a, key, 0, 0);
+    for (const sh of SHIFTS) {
+      const B = shifted(b, key, sh[0], sh[1]);
+      const sGrid = 1 - clamp(meanAbsDiff(A.grid, B.grid) / 1.55, 0, 1);
+      const sDark = iou(A.dark, B.dark);
+      const s = clamp(0.66 * sGrid + 0.34 * sDark, 0, 1);
+      if (s > best) best = s;
+    }
+    return best;
+  }
+
+  function simShape(a, b) {
+    const s1 = 1 - clamp(meanAbsDiff(a.shape, b.shape) / 1.5, 0, 1);
+    const aspDiff = Math.abs(clamp(a.aspect, 0.7, 2.0) - clamp(b.aspect, 0.7, 2.0));
+    const s2 = 1 - clamp(aspDiff / 0.75, 0, 1);
+    return clamp(0.7 * s1 + 0.3 * s2, 0, 1);
+  }
+
+  function simTone(a, b) {
+    const dE = Math.sqrt(Math.pow(a.tone.L - b.tone.L, 2) + Math.pow(a.tone.A - b.tone.A, 2) + Math.pow(a.tone.Bb - b.tone.Bb, 2));
+    return clamp(1 - dE / 42, 0, 1);
+  }
+
+  function compare(kid, mom, dad) {
+    const parts = {};
+    const defs = [
+      ['eyes',  '👀', '눈매',        0.30, () => simRegion(kid, mom, 'eyes')  - simRegion(kid, dad, 'eyes')],
+      ['nose',  '👃', '콧대·코끝',   0.22, () => simRegion(kid, mom, 'nose')  - simRegion(kid, dad, 'nose')],
+      ['mouth', '👄', '입매·미소',   0.18, () => simRegion(kid, mom, 'mouth') - simRegion(kid, dad, 'mouth')],
+      ['shape', '😊', '얼굴형·윤곽', 0.18, () => simShape(kid, mom) - simShape(kid, dad)],
+      ['tone',  '💛', '피부톤·분위기', 0.12, () => simTone(kid, mom) - simTone(kid, dad)]
+    ];
+    let wsum = 0, tot = 0;
+    const dbg = [];
+    for (const [key, ico, name, w, fn] of defs) {
+      const delta = fn();
+      const pct = pctFrom(delta);
+      parts[key] = { key, ico, name, w, pct, delta };
+      tot += pct * w; wsum += w;
+      dbg.push({ key, delta: round1(delta * 1000) / 1000, sim: round1(pct * 10) / 10 });
+    }
+    let momPct = Math.round(clamp(tot / wsum, 4, 96));
+    let dadPct = 100 - momPct;
+    // 부위별도 정수로 맞추기
+    for (const k in parts) {
+      const m = Math.round(clamp(parts[k].pct, 5, 95));
+      parts[k].mom = m; parts[k].dad = 100 - m;
+    }
+    return { mom: momPct, dad: dadPct, parts, debug: dbg };
+  }
+
+  /* =========================================================
+   *  5. 한줄 총평
+   * ========================================================= */
+  function verdictOf(res) {
+    const arr = Object.values(res.parts).slice().sort((a, b) => Math.abs(b.mom - 50) - Math.abs(a.mom - 50));
+    const phrase = {
+      eyes: [['눈웃음', '은'], ['눈매', '는']],
+      nose: [['콧대', '는'], ['코끝', '은']],
+      mouth: [['입매', '는'], ['웃는 입 모양', '은']],
+      shape: [['얼굴형', '은'], ['볼살 흐름', '은']],
+      tone: [['피부톤', '은'], ['전체적인 분위기', '는']]
+    };
+    const side = (p) => (p.mom >= 50 ? 'mom' : 'dad');
+    const name = (s) => (s === 'mom' ? '엄마' : '아빠');
+    const word = (p, i) => {
+      const w = phrase[p.key][i % 2];
+      return w[0] + w[1];
+    };
+    const noun = (p, i) => phrase[p.key][i % 2][0];
+
+    const p1 = arr[0];
+    const s1 = side(p1);
+    // 두 번째는 반대쪽 부모를 닮은 부위를 우선 (문장이 더 재밌게)
+    let p2 = arr.slice(1).find((p) => side(p) !== s1 && Math.abs(p.mom - 50) >= 3.5);
+    if (!p2) p2 = arr[1];
+    const s2 = side(p2);
+
+    const t1 = word(p1, 0);
+    const t2 = word(p2, 1);
+    const m1 = res.mom >= res.dad ? 'mom' : 'dad';
+    const margin = Math.abs(res.mom - 50);
+
+    // 총평 문장 (같은 결과면 같은 문장 — 결정적)
+    let out;
+    if (margin >= 13) {
+      out = t1 + ' ' + name(s1) + ' 판박이! ' + t2 + ' ' + name(s2) + '를 쏙 빼닮았네요!';
+    } else if (margin >= 5) {
+      out = '우리 아이, ' + name(m1) + ' 쪽 얼굴이 조금 더 보여요. ' + t1 + ' ' + name(s1) + ', ' + t2 + ' ' + name(s2) + '!'; 
+    } else {
+      out = name(s1) + '의 ' + noun(p1, 0) + ' + ' + name(s2) + '의 ' + noun(p2, 1) + '. 둘 다 고루 닮은 우리 아이예요 💛';
+    }
+    for (const p of Object.values(res.parts)) if (p.key === p1.key) p.isLead = true;
+    return out;
+  }
+
+  /* =========================================================
+   *  6. 화면 그리기
+   * ========================================================= */
+  function el(tag, cls, txt) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+
+  function faceThumb(feats) {
+    const c = makeCanvas(feats.canvas.width, feats.canvas.height);
+    c.getContext('2d').drawImage(feats.canvas, 0, 0);
+    return c;
+  }
+
+  function renderResult(res) {
+    const momWins = res.mom >= res.dad;
+    $('#pctMom').textContent = res.mom;
+    $('#pctDad').textContent = res.dad;
+    $('#boxMom').classList.toggle('win', momWins);
+    $('#boxDad').classList.toggle('win', !momWins);
+    const sp = $('#splitMom');
+    sp.style.width = '0%';
+    requestAnimationFrame(() => { sp.style.width = res.mom + '%'; });
+
+    // 얼굴 썸네일
+    [['picMom', 'mom'], ['picDad', 'dad'], ['picKid', 'kid']].forEach(([id, role]) => {
+      const box = $('#' + id);
+      box.innerHTML = '';
+      box.appendChild(faceThumb(photos[role].features));
+    });
+
+    const margin = Math.abs(res.mom - 50);
+    const who = momWins ? '엄마' : '아빠';
+    $('#tagline').textContent = margin < 5
+      ? '우리 아이는 엄마·아빠를 거의 반반 닮았어요'
+      : '우리 아이는 ' + who + '를 ' + (margin >= 15 ? '훨씬 더' : '조금 더') + ' 닮았어요';
+
+    const v = verdictOf(res);
+    $('#verdict').innerHTML = v
+      .replace(/엄마/g, '<b>엄마</b>')
+      .replace(/아빠/g, '<b class="l">아빠</b>');
+
+    const hi = $('#hintline');
+    const notFound = ROLES.filter((r) => !photos[r].features.found);
+    hi.textContent = notFound.length
+      ? '🙈 ' + notFound.map((r) => ROLE_KO[r]).join('·') + ' 사진에서 얼굴을 또렷하게 찾지 못해 가운데를 기준으로 비교했어요. 정면 사진이면 더 정확해요.'
+      : '정면에 가까운 사진일수록 더 정확해요 · 같은 사진이면 늘 같은 결과예요';
+
+    // 부위별 카드
+    const wrap = $('#parts');
+    wrap.innerHTML = '';
+    const order = ['eyes', 'nose', 'mouth', 'shape', 'tone'];
+    for (const key of order) {
+      const p = res.parts[key];
+      const card = el('div', 'part');
+      const top = el('div', 'part-top');
+      top.appendChild(el('span', 'ico', p.ico));
+      top.appendChild(el('span', 'nm', p.name));
+      const win = el('span', 'win ' + (p.mom >= 50 ? 'm' : 'd'),
+        (p.mom >= 50 ? '👩 엄마 ' : '👨 아빠 ') + Math.max(p.mom, p.dad) + '%');
+      top.appendChild(win);
+      card.appendChild(top);
+      const bar = el('div', 'pbar');
+      const m = el('div', 'm'); m.dataset.w = String(p.mom); m.style.width = '0%';
+      bar.appendChild(m); bar.appendChild(el('div', 'd'));
+      card.appendChild(bar);
+      const meta = el('div', 'pmeta');
+      meta.appendChild(el('span', null, '👩 ' + p.mom + '%'));
+      meta.appendChild(el('span', null, '👨 ' + p.dad + '%'));
+      card.appendChild(meta);
+      wrap.appendChild(card);
+    }
+
+    $('#result').hidden = false;
+    $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(() => {
+      $$('#parts .pbar .m').forEach((d) => { d.style.width = d.dataset.w + '%'; });
+    });
+  }
+
+  /* =========================================================
+   *  7. 분석 실행
+   * ========================================================= */
+  let busy = false;
+  async function runAnalysis(opts) {
+    if (busy) return null;
+    const silent = opts && opts.silent;
+    if (!ROLES.every((r) => photos[r])) { toast('사진 3장이 모두 필요해요'); return null; }
+    const left = remaining();
+    if (left <= 0 && !(opts && opts.ignoreQuota)) { openAd(); return null; }
+
+    busy = true;
+    $('#loading').hidden = false;
+    const lines = [
+      ['사진을 읽는 중…', '얼굴을 찾고 있어요'],
+      ['얼굴을 펴는 중…', '눈·코·입 위치를 맞추고 있어요'],
+      ['닮은 부분을 재는 중…', '엄마·아빠와 하나씩 비교하고 있어요'],
+      ['총평 쓰는 중…', '거의 다 됐어요!']
+    ];
+    const bar = $('#loadBar');
+    bar.style.width = '8%';
+    let li = 0;
+    $('#loadLine').textContent = lines[0][0];
+    $('#loadSub').textContent = lines[0][1];
+    const stepper = setInterval(() => {
+      li = Math.min(lines.length - 1, li + 1);
+      $('#loadLine').textContent = lines[li][0];
+      $('#loadSub').textContent = lines[li][1];
+    }, 320);
+
+    const t0 = performance.now();
+    let res = null, err = null;
+    try {
+      await sleep(60);
+      // 얼굴 검출 + 특징
+      for (const r of ROLES) {
+        photos[r].features = extractFeatures(photos[r].img);
+        await sleep(30);
+      }
+      bar.style.width = '62%';
+      await sleep(220);
+      res = compare(photos.kid.features, photos.mom.features, photos.dad.features);
+      bar.style.width = '92%';
+      await sleep(200);
+    } catch (e) {
+      err = e;
+      console.error(e);
+    }
+    clearInterval(stepper);
+    bar.style.width = '100%';
+    const spent = performance.now() - t0;
+    if (spent < 1000) await sleep(1000 - spent);
+    await sleep(180);
+    $('#loading').hidden = true;
+    busy = false;
+
+    if (err || !res) {
+      toast('분석에 실패했어요. 사진을 바꿔 다시 해볼게요');
+      return null;
+    }
+    // 횟수 차감
+    if (!(opts && opts.noCount)) {
+      const q = loadQuota(); q.used++; saveQuota(q); refreshAnalyzeBtn();
+    }
+    lastResult = res;
+    renderResult(res);
+    if (!silent) toast('분석 완료! 아래에서 결과를 봐요 ✨');
+    return res;
+  }
+
+  let lastResult = null;
+
+  $('#analyzeBtn').addEventListener('click', () => runAnalysis());
+  $('#adBtn2').addEventListener('click', () => openAd());
+  $('#againBtn').addEventListener('click', () => {
+    $('#result').hidden = true;
+    clearPhotos();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* =========================================================
+   *  8. 무료 횟수 / 광고 자리
+   * ========================================================= */
+  function loadQuota() {
+    try {
+      const q = JSON.parse(localStorage.getItem(QKEY) || 'null');
+      if (q && typeof q.used === 'number' && typeof q.bonus === 'number') return q;
+    } catch (_) {}
+    return { used: 0, bonus: 0 };
+  }
+  function saveQuota(q) { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} }
+  function remaining() { const q = loadQuota(); return Math.max(0, FREE_TOTAL + q.bonus - q.used); }
+
+  let adTimerId = null;
+  function openAd() {
+    const modal = $('#adModal');
+    modal.hidden = false;
+    const btn = $('#adClaim'), bar = $('#adBar'), t = $('#adTimer');
+    btn.disabled = true;
+    bar.style.width = '0%';
+    let left = 5;
+    t.textContent = left + '초 뒤 충전 버튼이 열려요';
+    clearInterval(adTimerId);
+    adTimerId = setInterval(() => {
+      left--;
+      bar.style.width = ((5 - left) / 5 * 100) + '%';
+      if (left > 0) t.textContent = left + '초 뒤 충전 버튼이 열려요';
+      else {
+        clearInterval(adTimerId);
+        t.textContent = '광고 시청 완료! 충전 버튼을 눌러요';
+        btn.disabled = false;
+      }
+    }, 1000);
+  }
+  function closeAd() {
+    clearInterval(adTimerId);
+    $('#adModal').hidden = true;
+  }
+  $('#adCancel').addEventListener('click', closeAd);
+  $('#adClaim').addEventListener('click', () => {
+    const q = loadQuota(); q.bonus += 3; saveQuota(q);
+    closeAd();
+    refreshAnalyzeBtn();
+    toast('분석 3회가 충전됐어요 🎬');
+  });
+  $('#adModal').addEventListener('click', (e) => { if (e.target.id === 'adModal') closeAd(); });
+
+  /* =========================================================
+   *  9. 결과 카드 이미지
+   * ========================================================= */
+  function drawFaceCircle(ctx, feats, cx, cy, r) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(feats.canvas, cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 5, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  function rr(ctx, x, y, w, h, r) {
+    const rad = Math.min(r, h / 2, w / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rad);
+    ctx.arcTo(x + w, y + h, x, y + h, rad);
+    ctx.arcTo(x, y + h, x, y, rad);
+    ctx.arcTo(x, y, x + w, y, rad);
+    ctx.closePath();
+  }
+
+  function buildCard() {
+    const W = 1080, H = 1350;
+    const c = makeCanvas(W, H);
+    const ctx = c.getContext('2d');
+    const res = lastResult;
+    const F = '"Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+
+    // 배경
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#FFFBF6'); g.addColorStop(0.55, '#FFF4EE'); g.addColorStop(1, '#F7F1FF');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // 블롭
+    const blob = (x, y, r, col) => {
+      const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, col); rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    };
+    blob(120, 90, 380, 'rgba(255,206,178,.55)');
+    blob(990, 180, 420, 'rgba(214,198,255,.55)');
+    blob(540, 1330, 460, 'rgba(255,225,196,.5)');
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#B4694B';
+    ctx.font = '800 30px ' + F;
+    ctx.fillText('채씨네 가족 연구소', W / 2, 108);
+    ctx.fillStyle = '#3B2F33';
+    ctx.font = '900 62px ' + F;
+    ctx.fillText('우리 아이 닮은꼴', W / 2, 186);
+
+    // 얼굴 3개
+    const cy = 400;
+    drawFaceCircle(ctx, photos.mom.features, 210, cy, 118);
+    drawFaceCircle(ctx, photos.dad.features, 870, cy, 118);
+    drawFaceCircle(ctx, photos.kid.features, 540, cy - 18, 158);
+    ctx.fillStyle = '#3B2F33';
+    ctx.font = '900 30px ' + F;
+    ctx.fillText('아이', 540, cy + 186);
+    ctx.fillStyle = '#8B7570';
+    ctx.font = '800 26px ' + F;
+    ctx.fillText('엄마', 210, cy + 156);
+    ctx.fillText('아빠', 870, cy + 156);
+
+    // 퍼센트
+    const momWins = res.mom >= res.dad;
+    ctx.textAlign = 'left';
+    ctx.font = '900 34px ' + F;
+    ctx.fillStyle = momWins ? '#EF5F46' : '#9C8C90';
+    ctx.fillText('👩 엄마', 150, 700);
+    ctx.font = '900 104px ' + F;
+    ctx.fillStyle = momWins ? '#EF5F46' : '#C4B4B0';
+    ctx.fillText(res.mom + '%', 150, 800);
+    ctx.textAlign = 'right';
+    ctx.font = '900 34px ' + F;
+    ctx.fillStyle = !momWins ? '#8B6BE8' : '#9C8C90';
+    ctx.fillText('아빠 👨', 930, 700);
+    ctx.font = '900 104px ' + F;
+    ctx.fillStyle = !momWins ? '#8B6BE8' : '#C4B4B0';
+    ctx.fillText(res.dad + '%', 930, 800);
+
+    // 전체 바
+    const bx = 150, bw = 780, by = 838, bh = 34;
+    rr(ctx, bx, by, bw, bh, bh / 2); ctx.fillStyle = '#F3E7E0'; ctx.fill();
+    const mw = Math.max(bh, bw * res.mom / 100);
+    ctx.save();
+    rr(ctx, bx, by, bw, bh, bh / 2); ctx.clip();
+    const bg1 = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+    bg1.addColorStop(0, '#FFA98E'); bg1.addColorStop(1, '#FF6B52');
+    ctx.fillStyle = bg1; ctx.fillRect(bx, by, mw, bh);
+    const bg2 = ctx.createLinearGradient(bx + mw, 0, bx + bw, 0);
+    bg2.addColorStop(0, '#C9B4FF'); bg2.addColorStop(1, '#9A7BF0');
+    ctx.fillStyle = bg2; ctx.fillRect(bx + mw, by, bw - mw, bh);
+    ctx.restore();
+
+    // 부위별
+    const rows = [['eyes', '눈매'], ['nose', '콧대·코끝'], ['mouth', '입매·미소'], ['shape', '얼굴형·윤곽'], ['tone', '피부톤']];
+    let y = 946;
+    for (const [key, shortName] of rows) {
+      const p = res.parts[key];
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#5C4740';
+      ctx.font = '900 28px ' + F;
+      ctx.fillText(p.ico + ' ' + shortName, 132, y + 21);
+      // 작은 바
+      const mx = 450, mwid = 290, mh = 18;
+      rr(ctx, mx, y + 3, mwid, mh, mh / 2); ctx.fillStyle = '#F3E7E0'; ctx.fill();
+      ctx.save(); rr(ctx, mx, y + 3, mwid, mh, mh / 2); ctx.clip();
+      ctx.fillStyle = '#FF7A63'; ctx.fillRect(mx, y + 3, mwid * p.mom / 100, mh);
+      ctx.fillStyle = '#A78BFA'; ctx.fillRect(mx + mwid * p.mom / 100, y + 3, mwid * (1 - p.mom / 100) + 1, mh);
+      ctx.restore();
+      ctx.font = '900 27px ' + F;
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#EF5F46'; ctx.fillText(p.mom + '%', mx - 22, y + 22);
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#8B6BE8'; ctx.fillText(p.dad + '%', mx + mwid + 22, y + 22);
+      y += 62;
+    }
+
+    // 하단
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8C7A73';
+    ctx.font = '800 26px ' + F;
+    ctx.fillText(verdictOf(res).replace(/<[^>]+>/g, ''), W / 2, 1262);
+    ctx.fillStyle = '#B9A8A0';
+    ctx.font = '700 21px ' + F;
+    ctx.fillText('사진은 기기 안에서만 분석 · 재미로 보는 결과예요', W / 2, 1305);
+    return c;
+  }
+
+  async function downloadCard() {
+    if (!lastResult) { toast('먼저 분석을 해주세요'); return null; }
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (_) {}
+    const c = buildCard();
+    const dataUrl = c.toDataURL('image/png');
+    const d = new Date();
+    const name = '닮은꼴-' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.png';
+    const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
+    // 공유 지원 시 공유 버튼도 노출
+    try {
+      if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], name, { type: 'image/png' })] })) {
+        $('#shareCard').hidden = false;
+      }
+    } catch (_) {}
+    const a = document.createElement('a');
+    a.href = dataUrl; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('결과 카드를 저장했어요 📸');
+    return { dataUrl, name, blob };
+  }
+
+  async function shareCard() {
+    if (!lastResult) return false;
+    const c = buildCard();
+    const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
+    const name = '닮은꼴.png';
+    const file = new File([blob], name, { type: 'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: '우리 아이 닮은꼴', text: '엄마 ' + lastResult.mom + '% · 아빠 ' + lastResult.dad + '%' });
+        return true;
+      }
+    } catch (_) {}
+    toast('이 브라우저에서는 공유 대신 저장해 주세요');
+    return false;
+  }
+
+  $('#saveCard').addEventListener('click', () => downloadCard());
+  $('#shareCard').addEventListener('click', () => shareCard());
+
+  /* =========================================================
+   *  10. 테스트용 API
+   * ========================================================= */
+  window.__FL = {
+    version: 1,
+    roles: ROLES,
+    photos,
+    samples: SAMPLES,
+    useSamples: async () => { $('#sampleBtn').click(); await sleep(900); return ROLES.every((r) => !!photos[r]); },
+    setPhotoFromUrl: async (role, url) => { const img = await loadImage(url); setPhoto(role, img, url, true); return true; },
+    extract: (role) => {
+      const f = extractFeatures(photos[role].img);
+      photos[role].features = f;
+      return { found: f.found, box: f.box, aspect: f.aspect, tone: f.tone };
+    },
+    analyze: (opts) => runAnalysis(Object.assign({ silent: true }, opts || {})),
+    last: () => lastResult,
+    cardDataUrl: async () => {
+      if (!lastResult) return null;
+      try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (_) {}
+      return buildCard().toDataURL('image/png');
+    },
+    saveCard: () => downloadCard(),
+    quota: () => loadQuota(),
+    remaining,
+    resetQuota: () => { localStorage.removeItem(QKEY); refreshAnalyzeBtn(); return remaining(); },
+    grant: (n) => { const q = loadQuota(); q.bonus += n; saveQuota(q); refreshAnalyzeBtn(); return remaining(); },
+    errs: window.__errs,
+    ready: true
+  };
+
+  // 초기
+  refreshAnalyzeBtn();
+})();
+</script>
+</body>
+</html>
