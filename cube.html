@@ -2693,6 +2693,11 @@ function boot(){
   Tickets.sync();
   renderPanel();
 
+  // PWA: 홈 화면에 설치(Chrome 메뉴 → 앱 설치)할 수 있게
+  try{
+    if(navigator.serviceWorker) navigator.serviceWorker.register('./sw.js', { scope:'./' }).catch(function(){});
+  }catch(e){}
+
   setInterval(function(){ if(S.mode === 'online') publishMe(); }, 700);
 
   loadThree().then(function(T){
