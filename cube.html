@@ -1209,7 +1209,7 @@ function nextQueued(){
   }
   var q = V.queue.shift();
   var mk = makePivot(q.axisIdx, q.layer);
-  if(q.kind !== 'scramble') Sfx.whirr(q.dur);
+  Sfx.whirr(q.kind === 'scramble' ? 85 : q.dur);
   animatePivot({
     axisIdx:q.axisIdx, layer:q.layer, pivot:mk.pivot, gs:mk.gs,
     from:0, to:q.s * Math.PI/2, dur:q.dur, commit:true, kind:q.kind
@@ -1376,7 +1376,7 @@ function endDragTurn(){
   var dm = P.dm; P.dm = null;
   if(!dm) return;
   Sfx.dragEnd();
-  var half = Math.PI/4;
+  var half = Math.PI/6;   // 30°만 넘기면 자석처럼 붙는다
   var commit = Math.abs(dm.rot) > half;
   var to = commit ? (dm.rot > 0 ? Math.PI/2 : -Math.PI/2) : 0;
   if(commit){ Sfx.whirr(120); }
@@ -1744,6 +1744,7 @@ function startSolo(diff){
   queueAlg(parseAlg(sc), 'scramble', 100);
   S.queueDone = function(){
     S.armed = true;
+    Sfx.snap(0.65); Hap.tap();
     updateHUD(true);
     renderPanel();
     toast('준비 완료! 첫 수를 돌리면 타이머가 시작돼요', 2200);
@@ -1894,6 +1895,7 @@ function startAI(level){
   queueAlg(parseAlg(sc), 'scramble', 100);
   S.queueDone = function(){
     S.armed = true;
+    Sfx.snap(0.65); Hap.tap();
     var a = S.ai; if(a){ a.running = true; a.t0 = nowMs(); a.next = nowMs() + 420; }
     $('ministage').hidden = false;
     drawMini(S.ai.model);
@@ -1997,7 +1999,7 @@ function relayBegin(){
   S.base = invertSeq(parseAlg(S.relay.sc));
   resetTimer(); resetToSolved(); clearQueue();
   queueAlg(parseAlg(S.relay.sc), 'scramble', 90);
-  S.queueDone = function(){ S.armed = true; renderPanel(); updateHUD(true); };
+  S.queueDone = function(){ S.armed = true; Sfx.snap(0.65); Hap.tap(); renderPanel(); updateHUD(true); };
   renderPanel();
   toast('🎯 ' + S.relay.names[S.relay.idx] + ' 님 차례 — 첫 수에 타이머 시작!', 2800);
 }
@@ -2240,7 +2242,7 @@ function beginOnlineRace(sc){
   S.base = invertSeq(parseAlg(sc));
   resetTimer(); resetToSolved(); clearQueue();
   queueAlg(parseAlg(sc), 'scramble', 95);
-  S.queueDone = function(){ S.armed = true; renderPanel(); updateHUD(true); };
+  S.queueDone = function(){ S.armed = true; Sfx.snap(0.65); Hap.tap(); renderPanel(); updateHUD(true); };
   renderPanel();
 }
 function onlineStart(){
