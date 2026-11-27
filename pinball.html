@@ -1383,7 +1383,7 @@ function drawSpinner(g,t){
     g.globalCompositeOperation='lighter'; g.globalAlpha=s.flash*0.7;
     g.drawImage(SPR.violet,-50,-50,100,100);
   }
-  g.rotate(Math.sin(s.angle)*0.85);
+  g.rotate(Math.sin(s.angle)*0.42);
   rr(g,-3,-s.half,6,s.half*2,3);
   var lg=g.createLinearGradient(-3,0,3,0);
   lg.addColorStop(0,hexA(C.violet,0.98)); lg.addColorStop(1,hexA('#FFFFFF',0.9));
