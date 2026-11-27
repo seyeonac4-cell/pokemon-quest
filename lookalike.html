@@ -1170,7 +1170,7 @@ h1 em{font-style:normal; background:linear-gradient(135deg,#7C4DFF,#FF5E6C); -we
         acc += w * dd * dd; wsum += w;
       }
       var dist = Math.sqrt(acc / wsum);
-      var sc = Math.pow(Math.exp(-dist * 4.6), 2.7);   // 1위가 도드라지게
+      var sc = Math.pow(Math.exp(-dist * 4.6), 3.4);   // 1위가 도드라지게
       raw.push({ id: a.id, score: sc });
       sum += sc;
     });
