@@ -1205,7 +1205,7 @@ function skinFilter(cvIn, face, p){
       var o = (y*W + x) * 4;
       var r = d[o], g = d[o+1], b = d[o+2];
       var yy = 0.299*r + 0.587*g + 0.114*b;
-      if(yy < 48) continue;
+      if(yy < 60) continue;
       var cb = 128 - 0.168736*r - 0.331264*g + 0.5*b;
       var cr = 128 + 0.5*r - 0.418688*g - 0.081312*b;
       var cg = 1;
@@ -1230,12 +1230,12 @@ function skinFilter(cvIn, face, p){
       }
       var wS = w * (1 - prot*0.88);
 
-      /* 주변보다 훨씬 어두운 곳(속눈썹·눈동자·입술 경계)은 남긴다 */
+      /* 주변보다 훨씬 어두운 곳(속눈썹·눈동자·잔머리)은 남긴다 */
       var blLum = aB[o]*0.299 + aB[o+1]*0.587 + aB[o+2]*0.114;
       var dark = blLum - yy;
-      var feat = dark > 16 ? Math.min(1, (dark-16)/26) : 0;
-      wS *= (1 - feat*0.55);
-      var wP = w * (1 - prot*0.9) * (1 - feat*0.92);
+      var feat = dark > 8 ? Math.min(1, (dark-8)/16) : 0;
+      wS *= (1 - feat*0.7);
+      var wP = w * (1 - prot*0.9) * (1 - feat*0.96);
 
       var nr = r, ng = g, nb = b;
       if(sm > 0.01 && wS > 0.002){
@@ -1243,10 +1243,10 @@ function skinFilter(cvIn, face, p){
         ng += (aS[o+1] - g) * sm * wS;
         nb += (aS[o+2] - b) * sm * wS;
       }
-      if(sp > 0.01 && wP > 0.002){
-        var dr = aB[o]   - nr; if(dr > 4.5 && dr < 55){ nr += dr * 0.75 * sp * wP; }
-        var dg = aB[o+1] - ng; if(dg > 4.5 && dg < 55){ ng += dg * 0.75 * sp * wP; }
-        var db = aB[o+2] - nb; if(db > 4.5 && db < 55){ nb += db * 0.75 * sp * wP; }
+      if(sp > 0.01 && wP > 0.002 && yy > 96){
+        var dr = aB[o]   - nr; if(dr > 4.5 && dr < 38){ nr += dr * 0.72 * sp * wP; }
+        var dg = aB[o+1] - ng; if(dg > 4.5 && dg < 38){ ng += dg * 0.72 * sp * wP; }
+        var db = aB[o+2] - nb; if(db > 4.5 && db < 38){ nb += db * 0.72 * sp * wP; }
       }
       if(lift > 0.001){
         var lf = lift * w;
