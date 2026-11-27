@@ -337,6 +337,7 @@ select.inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.
   opacity:0;pointer-events:none;transition:.22s;max-width:86vw;text-align:center;line-height:1.4;
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
+body.in-room .toast{bottom:calc(150px + var(--safeB))}
 
 /* ── 광고 시뮬 ── */
 .adbox{border-radius:20px;background:linear-gradient(150deg,#F6F1FF,#FFF4F7);border:1px solid #EFE5F8;padding:18px;text-align:center}
@@ -352,13 +353,20 @@ select.inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.
 @keyframes beat{0%,100%{transform:scale(1)}12%{transform:scale(1.14)}24%{transform:scale(1)}36%{transform:scale(1.09)}48%{transform:scale(1)}}
 
 /* ── 넓은 화면 ── */
-@media(min-width:900px){
-  .app{max-width:980px;padding-bottom:110px}
-  .tabs{max-width:640px}
-  .wide2{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
+@media(min-width:640px){
+  .app{max-width:720px;padding-bottom:110px}
+  .tabs{max-width:600px}
+  .wide2{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
   .wide2 .col-a{position:sticky;top:78px}
-  .bottomnav{max-width:980px}
+  .bottomnav{max-width:720px}
   .room{left:50%;right:auto;width:720px;margin-left:-360px}
+  .char-wrap svg{max-height:400px}
+}
+@media(min-width:1000px){
+  .app{max-width:980px}
+  .tabs{max-width:660px}
+  .wide2{grid-template-columns:340px 1fr}
+  .bottomnav{max-width:980px}
 }
 @media(max-width:360px){
   body{font-size:15px}
@@ -2052,6 +2060,7 @@ function openChat(key){
   renderMessages();
   quickReplies();
   $('room').hidden=false;
+  document.body.classList.add('in-room');
   sizeRoom();
   document.body.style.overflow='hidden';
   setTimeout(function(){ $('msgInput').focus(); },160);
@@ -2067,6 +2076,7 @@ if(window.visualViewport) window.visualViewport.addEventListener('resize',sizeRo
 
 function closeRoom(){
   $('room').hidden=true;
+  document.body.classList.remove('in-room');
   document.body.style.overflow='';
   if(S.room&&S.room.mode==='fb'&&S.room.chat&&S.room.chat.ref){ try{ S.room.chat.ref.off(); }catch(e){} }
   S.room=null;
