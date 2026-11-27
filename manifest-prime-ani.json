@@ -1,0 +1,33 @@
+{
+  "id": "/pokemon-quest/prime-ani.html",
+  "name": "나의 리즈사진 — 애니 변환 & 자랑 피드",
+  "short_name": "리즈 애니",
+  "description": "그 시절 리즈사진을 순정만화·지브리풍·웹툰·시티팝 애니로 바꾸고, 자랑 피드에 올려 좋아요와 응원을 나누는 리즈 연구소",
+  "start_url": "./prime-ani.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF4F8",
+  "theme_color": "#FFF4F8",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./assets/prime-ani/prime-ani-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/prime-ani/prime-ani-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/prime-ani/prime-ani-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
